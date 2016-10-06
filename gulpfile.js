@@ -3,7 +3,19 @@ var source = require("vinyl-source-stream");
 var browserify = require("browserify");
 var browserifyCss = require("browserify-css");
 
-gulp.task("default", function() {
+var paths = {
+	scripts: "scripts/**/*",
+	styles: "styles/**/*"
+};
+
+gulp.task("default", ["browserify"]);
+
+gulp.task("watch", function() {
+	gulp.start(["default"]);
+	gulp.watch([paths.scripts, paths.styles], ["default"]);
+});
+
+gulp.task("browserify", function() {
 	var destDir = "./build";
 
 	var entryPoints = function(files) {

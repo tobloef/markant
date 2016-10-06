@@ -1,1 +1,47 @@
-/* Todo: CSS code for the editor goes here */
+@import url("node_modules/codemirror/lib/codemirror.css");
+
+html, body {
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+.wrapper {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+}
+
+.panes {
+    flex: 1;
+    display: flex;
+}
+
+#editor, #viewer {
+	height: 100%;
+}
+
+#editor {
+    flex: 1;
+}
+
+#editor > .CodeMirror {
+	height: 100%;
+    background-color: #f2f2f2;
+}
+
+#viewer {
+    flex: 1;
+	padding-left: 10px;
+	padding-right: 10px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+@media screen and (max-width: 800px) {
+    #viewer {
+		display: none;
+	}
+}
