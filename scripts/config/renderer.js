@@ -1,10 +1,8 @@
-;(function(){
-	"use strict";
-
-	var config = {
+;(function () {
+	const config = {
 		useDelayedRendering: true,
-		renderDelay: 200
+		renderDelay: 200,
 	};
 
 	module.exports = config;
-})();
+}());

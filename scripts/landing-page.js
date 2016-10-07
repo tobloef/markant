@@ -1,5 +1,3 @@
-;(function(){
-	"use strict";
-
+;(function () {
 	require("../styles/landing-page.css");
-})();
+}());

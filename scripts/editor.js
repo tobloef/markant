@@ -1,18 +1,15 @@
-;(function(){
-	"use strict";
-
-	var CodeMirror = require("codemirror");
+;(function () {
+	const CodeMirror = require("codemirror");
 	require("codemirror/mode/markdown/markdown");
-	var config = require("./config/editor");
 
-	module.exports = function(editorElementId) {
-		var module = {};
+	module.exports = function (editorElementId) {
+		const module = {};
 
-		var element = document.getElementById(editorElementId);
-		var codemirror = new CodeMirror(element);
+		const element = document.getElementById(editorElementId);
+		const codemirror = new CodeMirror(element);
 
 		module.codemirror = codemirror;
 
 		return module;
 	};
-})();
+}());

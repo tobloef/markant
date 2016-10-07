@@ -1,14 +1,24 @@
-;(function(viewerElementId){
-	"use strict";
+;(function () {
+	const md = require("markdown-it")();
+	const config = require("./config/renderer");
 
-	var md = require('markdown-it')();
-	var config = require("./config/renderer");
+	let renderTimeout;
+	let viewer;
 
-	var renderTimeout;
-	var viewer;
+	function render(markdown) {
+		const result = md.render(markdown || "");
+		viewer.innerHTML = result;
+	}
 
-	module.exports = function(viewerElementId) {
-		var module = {};
+	function delayedRender(markdown) {
+		clearTimeout(renderTimeout);
+		renderTimeout = setTimeout(() => {
+			render(markdown);
+		}, config.renderDelay);
+	}
+
+	module.exports = function (viewerElementId) {
+		const module = {};
 
 		viewer = document.getElementById(viewerElementId);
 
@@ -20,19 +30,4 @@
 
 		return module;
 	};
-
-	function delayedRender(markdown) {
-		clearTimeout(renderTimeout);
-		renderTimeout = setTimeout(function() {
-			render(markdown);
-		}, config.renderDelay);
-	}
-
-	function render(markdown) {
-		if (markdown === undefined) {
-			markdown = "";
-		}
-		var result = md.render(markdown);
-		viewer.innerHTML = result;
-	}
-})();
+}());

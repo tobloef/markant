@@ -1,0 +1,15 @@
+{
+	"extends": "airbnb",
+	"env": {
+		"commonjs": true,
+		"browser": true
+	},
+	"rules": {
+		"no-extra-semi": "off",
+		"func-names": "off",
+		"quotes": ["warn", "double"],
+		"indent": ["warn", "tab"],
+		"no-tabs": "off",
+		"global-require": "off"
+	}
+}

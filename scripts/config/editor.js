@@ -1,9 +1,7 @@
-;(function(){
-	"use strict";
-
-	var config = {
+;(function () {
+	const config = {
 
 	};
 
 	module.exports = config;
-})();
+}());

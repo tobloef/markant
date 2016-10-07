@@ -3,6 +3,8 @@ var source = require("vinyl-source-stream");
 var browserify = require("browserify");
 var browserifyCss = require("browserify-css");
 var del = require("del");
+var eslint = require("gulp-eslint");
+var csslint = require("gulp-csslint");
 
 gulp.task("default", ["clean", "browserify"]);
 
@@ -12,7 +14,25 @@ gulp.task("watch", function() {
 });
 
 gulp.task("clean", function() {
-	del(['build']);
+	return del(['build']);
+});
+
+gulp.task("jslint", function() {
+	return gulp.src("scripts/**/*.js")
+		.pipe(eslint())
+		.pipe(eslint.formatEach())
+		.pipe(eslint.failAfterError());
+});
+
+gulp.task("csslint", function() {
+  return gulp.src(['**/*.css', "!node_modules/**", "!build/**/*"])
+    .pipe(csslint())
+    .pipe(csslint.formatter())
+    .pipe(csslint.failFormatter());
+});
+
+gulp.task("lint", function() {
+	gulp.start(["jslint", "csslint"]);
 });
 
 gulp.task("browserify", function() {
@@ -27,11 +47,11 @@ gulp.task("browserify", function() {
 
 			b.transform(browserifyCss);
 
-			b.bundle()
+			return b.bundle()
 			 .pipe(source(file + "-bundle.js"))
 			 .pipe(gulp.dest(destDir));
 		});
 	};
 
-	entryPoints(["landing-page", "app"]);
+	return entryPoints(["landing-page", "app"]);
 });

@@ -17,20 +17,20 @@ html, body {
     display: flex;
 }
 
-#editor, #viewer {
+.editor-pane, .viewer-pane {
 	height: 100%;
 }
 
-#editor {
+.editor-pane {
     flex: 1;
 }
 
-#editor > .CodeMirror {
+.editor-pane > .CodeMirror {
 	height: 100%;
     background-color: #f2f2f2;
 }
 
-#viewer {
+.viewer-pane {
     flex: 1;
 	padding-left: 10px;
 	padding-right: 10px;
@@ -41,7 +41,7 @@ html, body {
 }
 
 @media screen and (max-width: 800px) {
-    #viewer {
+    .viewer-pane {
 		display: none;
 	}
 }

@@ -1,10 +1,8 @@
-;(function(){
-	"use strict";
-
-	var config = {
+;(function () {
+	const config = {
 		viewerElementId: "viewer",
-		editorElementId: "editor"
+		editorElementId: "editor",
 	};
 
 	module.exports = config;
-})();
+}());
