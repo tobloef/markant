@@ -1,3 +1,5 @@
-require("../styles/landing-page.css");
+;(function(){
+	"use strict";
 
-// Todo: Javascript code for the landing page here
+	require("../styles/landing-page.css");
+})();

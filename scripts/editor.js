@@ -1,6 +1,6 @@
-"use strict";
-
 ;(function(){
+	"use strict";
+
 	var CodeMirror = require("codemirror");
 	require("codemirror/mode/markdown/markdown");
 	var config = require("./config/editor");

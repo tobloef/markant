@@ -1,6 +1,6 @@
-"use strict";
-
 ;(function(viewerElementId){
+	"use strict";
+
 	var md = require('markdown-it')();
 	var config = require("./config/renderer");
 
