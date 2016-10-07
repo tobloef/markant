@@ -2,17 +2,17 @@ var gulp = require("gulp");
 var source = require("vinyl-source-stream");
 var browserify = require("browserify");
 var browserifyCss = require("browserify-css");
+var del = require("del");
 
-var paths = {
-	scripts: "scripts/**/*",
-	styles: "styles/**/*"
-};
-
-gulp.task("default", ["browserify"]);
+gulp.task("default", ["clean", "browserify"]);
 
 gulp.task("watch", function() {
 	gulp.start(["default"]);
-	gulp.watch([paths.scripts, paths.styles], ["default"]);
+	gulp.watch(["scripts/**/*", "styles/**/*"], ["default"]);
+});
+
+gulp.task("clean", function() {
+	del(['build']);
 });
 
 gulp.task("browserify", function() {
@@ -28,10 +28,10 @@ gulp.task("browserify", function() {
 			b.transform(browserifyCss);
 
 			b.bundle()
-			 .pipe(source(file + "_bundle.js"))
+			 .pipe(source(file + "-bundle.js"))
 			 .pipe(gulp.dest(destDir));
 		});
 	};
 
-	entryPoints(["landing", "editor"]);
+	entryPoints(["landing-page", "app"]);
 });

@@ -1,25 +1,18 @@
-require("../styles/editor.css");
+"use strict";
 
-var md = require('markdown-it')();
-var CodeMirror = require("codemirror");
-require("codemirror/mode/markdown/markdown");
+;(function(){
+	var CodeMirror = require("codemirror");
+	require("codemirror/mode/markdown/markdown");
+	var config = require("./config/editor");
 
-var config = {
-	autofocus: true,
-	mode: "markdown"
-};
+	module.exports = function(editorElementId) {
+		var module = {};
 
-var editor = CodeMirror(document.getElementById("editor"), config);
-editor.on("change", onChange);
+		var element = document.getElementById(editorElementId);
+		var codemirror = new CodeMirror(element);
 
-var renderTimeout;
+		module.codemirror = codemirror;
 
-function onChange() {
-	clearTimeout(renderTimeout);
-	renderTimeout = setTimeout(render, 200);
-}
-
-function render() {
-	var result = md.render(editor.getValue());
-	document.getElementById("viewer").innerHTML = result;
-}
+		return module;
+	};
+})();

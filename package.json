@@ -15,6 +15,7 @@
   "homepage": "https://github.com/tobloef/markant.io#readme",
   "dependencies": {
     "codemirror": "^5.19.0",
+    "del": "^2.2.2",
     "jquery": "^3.1.1",
     "katex": "^0.6.0",
     "markdown-it": "^8.0.0",
