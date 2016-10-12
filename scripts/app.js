@@ -1,13 +1,12 @@
 ;(function () {
 	require("../styles/editor.css");
 
-	const config = require("./config/app");
-	const renderer = require("./renderer")(config.viewerElementId);
-	const editor = require("./editor")(config.editorElementId);
+	const viewer = require("./viewer")();
+	const editor = require("./editor")();
 
 	editor.codemirror.on("change", () => {
-		renderer.render(editor.codemirror.getValue());
+		viewer.render(editor.codemirror.getValue());
 	});
 
-	renderer.render(editor.codemirror.getValue());
+	viewer.render(editor.codemirror.getValue());
 }());

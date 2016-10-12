@@ -1,7 +1,7 @@
 ;(function () {
 	const $ = require("jquery");
 	const md = require("markdown-it")();
-	const config = require("./config/renderer");
+	const config = require("./config/viewer");
 
 	let renderTimeout;
 	let viewer;
@@ -18,10 +18,10 @@
 		}, config.renderDelay);
 	}
 
-	module.exports = function (viewerElementId) {
+	module.exports = function () {
 		const module = {};
 
-		viewer = $(`#${viewerElementId}`).get(0);
+		viewer = $(`#${config.viewerElementId}`).get(0);
 
 		if (config.useDelayedRendering) {
 			module.render = delayedRender;

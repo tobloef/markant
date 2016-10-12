@@ -11,36 +11,40 @@ html, body {
     height: 100%;
 }
 
-.panes {
+#paneContainer {
 	height: 100%;
 }
 
-.editor-pane, .viewer-pane {
+#editor, #viewer {
 	height: 100%;
-	width: calc(50% - 10px);
+	width: 50%;
+	min-width: 300px;
+	max-width: calc(100% - 300px);
 	display: inline-block;
 }
 
-.editor-pane {
+#editor {
 	float: left;
 }
 
-.editor-pane > .CodeMirror {
+#editor > .CodeMirror {
 	height: 100%;
     background-color: #f0f0f0;
 }
 
-.viewer-pane {
-	padding-left: 10px;
-	padding-right: 10px;
+#viewer {
+	padding: 0 10px;
     overflow-x: hidden;
     overflow-y: auto;
     white-space: pre-wrap;
     word-wrap: break-word;
     float: right;
+	position: absolute;
+	top: 0;
+	box-sizing: border-box; 
 }
 
-.dragbar {
+#dragbar {
 	cursor: col-resize;
 	width: 4px;
 	float: right;
@@ -49,8 +53,14 @@ html, body {
     background: linear-gradient(to right, lightgray, white);
 }
 
-@media screen and (max-width: 700px) {
-    .viewer-pane {
+@media screen and (max-width: 600px) {
+    #viewer {
 		display: none;
+	}
+
+	#editor {
+		min-width: 100%;
+		max-width: 100%;
+		width: 100%;
 	}
 }

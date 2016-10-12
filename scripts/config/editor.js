@@ -6,8 +6,11 @@
 			lineNumbers: true,
 			autofocus: true,
 			viewportMargin: 10,
-			value: "Test",
 		},
+		dragbarElementId: "dragbar",
+		editorElementId: "editor",
+		viewerElementId: "viewer",
+		paneContainerElementId: "paneContainer",
 	};
 
 	module.exports = config;

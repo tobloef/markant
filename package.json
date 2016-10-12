@@ -30,6 +30,7 @@
     "eslint-plugin-jsx-a11y": "^2.2.2",
     "eslint-plugin-react": "^6.3.0",
     "gulp": "^3.9.1",
+    "gulp-cli": "^1.2.2",
     "gulp-csslint": "^1.0.0",
     "gulp-eslint": "^3.0.1",
     "vinyl-source-stream": "^1.1.0"

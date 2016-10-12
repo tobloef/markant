@@ -1,16 +1,20 @@
 ;(function () {
+	const config = require("./config/editor");
 	const $ = require("jquery");
 	const CodeMirror = require("codemirror");
 	require("codemirror/mode/markdown/markdown");
 	require("codemirror/mode/gfm/gfm");
-	require("./utils/dragbar")("dragbar", "editor", "viewer");
+	require("./utils/dragbar")(
+		config.dragbarElementId,
+		config.editorElementId,
+		config.viewerElementId,
+		config.paneContainerElementId
+	);
 
-	const config = require("./config/editor.js");
-
-	module.exports = function (editorElementId) {
+	module.exports = function () {
 		const module = {};
 
-		const element = $(`#${editorElementId}`).get(0);
+		const element = $(`#${config.editorElementId}`).get(0);
 		if (element) {
 			module.codemirror = new CodeMirror(element, config.CodeMirror);
 		}
