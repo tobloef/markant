@@ -6,8 +6,8 @@
 			lineNumbers: true,
 			autofocus: true,
 			viewportMargin: 10,
-			value: "Test"
-		}
+			value: "Test",
+		},
 	};
 
 	module.exports = config;
