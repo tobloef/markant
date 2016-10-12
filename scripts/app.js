@@ -8,4 +8,6 @@
 	editor.codemirror.on("change", () => {
 		renderer.render(editor.codemirror.getValue());
 	});
+
+	renderer.render(editor.codemirror.getValue());
 }());
