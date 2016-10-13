@@ -28,15 +28,16 @@
 			$dragbar.on("mousedown", (mousedownEvent) => {
 				mousedownEvent.preventDefault();
 				dragging = true;
-				let prevPageX = mousedownEvent.pageX;
+				const mouseDownPos = mousedownEvent.pageX;
+				const initialLeftPaneWidth = $leftPane.width();
+				const initialRightPaneWidth = $rightPane.width();
 
 				$(document).on("mousemove", (mousemoveEvent) => {
 					if (dragging) {
 						if ($leftPane && $rightPane) {
-							const deltaPageX = mousemoveEvent.pageX - prevPageX;
-							prevPageX = mousemoveEvent.pageX;
-							$leftPane.width($leftPane.width() + deltaPageX);
-							$rightPane.width($rightPane.width() - deltaPageX);
+							const deltaPageX = mousemoveEvent.pageX - mouseDownPos;
+							$leftPane.width(initialLeftPaneWidth + deltaPageX);
+							$rightPane.width(initialRightPaneWidth - deltaPageX);
 							leftPanePercentage = 100 / $paneContainer.width() * $leftPane.width();
 							rightPanePercentage = 100 / $paneContainer.width() * $rightPane.width();
 						}

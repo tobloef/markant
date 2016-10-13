@@ -18,8 +18,8 @@ html, body {
 #editor, #viewer {
 	height: 100%;
 	width: 50%;
-	min-width: 300px;
-	max-width: calc(100% - 300px);
+	min-width: 200px;
+	max-width: calc(100% - 200px);
 	display: inline-block;
 }
 
@@ -41,7 +41,7 @@ html, body {
     float: right;
 	position: absolute;
 	top: 0;
-	box-sizing: border-box; 
+	box-sizing: border-box;
 }
 
 #dragbar {
