@@ -42,15 +42,21 @@ html, body {
 	position: absolute;
 	top: 0;
 	box-sizing: border-box;
+	background-color: #fff;
 }
 
 #dragbar {
 	cursor: col-resize;
-	width: 4px;
+	width: 6px;
 	float: right;
 	height: 100%;
 	background: lightgray;
     background: linear-gradient(to right, lightgray, white);
+}
+
+#dragbar:hover,
+#dragbar:active {
+  background: lightgray;
 }
 
 @media screen and (max-width: 600px) {
