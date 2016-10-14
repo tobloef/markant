@@ -25,14 +25,14 @@
 		$(window).on("resize", setInitialPaneSizes);
 
 		if ($dragbar) {
-			$dragbar.on("mousedown", (mousedownEvent) => {
+			$dragbar.on("mousedown", function (mousedownEvent) {
 				mousedownEvent.preventDefault();
 				dragging = true;
 				const mouseDownPos = mousedownEvent.pageX;
 				const initialLeftPaneWidth = $leftPane.width();
 				const initialRightPaneWidth = $rightPane.width();
 
-				$(document).on("mousemove", (mousemoveEvent) => {
+				$(document).on("mousemove", function (mousemoveEvent) {
 					if (dragging) {
 						if ($leftPane && $rightPane) {
 							const deltaPageX = mousemoveEvent.pageX - mouseDownPos;
@@ -44,7 +44,7 @@
 					}
 				});
 
-				$(document).on("mouseup", () => {
+				$(document).on("mouseup", function () {
 					if (dragging) {
 						dragging = false;
 						$(document).unbind("mousemove");

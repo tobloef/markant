@@ -13,7 +13,7 @@
 
 	function delayedRender(markdown) {
 		clearTimeout(renderTimeout);
-		renderTimeout = setTimeout(() => {
+		renderTimeout = setTimeout(function () {
 			render(markdown);
 		}, config.renderDelay);
 	}

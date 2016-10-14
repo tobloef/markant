@@ -32,6 +32,10 @@ html, body {
     background-color: #f0f0f0;
 }
 
+#editor .CodeMirror-scroll {
+	padding: 30px 20px;
+}
+
 #viewer {
 	padding: 0 10px;
     overflow-x: hidden;

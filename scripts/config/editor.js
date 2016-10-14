@@ -1,11 +1,10 @@
 ;(function () {
 	const config = {
 		CodeMirror: {
-			mode: "gfm",
+			mode: "text/plain",
 			lineWrapping: true,
-			lineNumbers: true,
+			lineNumbers: false,
 			autofocus: true,
-			viewportMargin: 10,
 		},
 		dragbarElementId: "dragbar",
 		editorElementId: "editor",

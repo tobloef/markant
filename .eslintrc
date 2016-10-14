@@ -10,6 +10,8 @@
 		"quotes": ["warn", "double"],
 		"indent": ["warn", "tab"],
 		"no-tabs": "off",
-		"global-require": "off"
+		"global-require": "off",
+		"prefer-arrow-callback": "off",
+		"linebreak-style": "off",
 	}
 }
