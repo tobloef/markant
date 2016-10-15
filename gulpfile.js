@@ -53,5 +53,5 @@ gulp.task("browserify", function () {
 		});
 	};
 
-	return entryPoints(["landing-page", "app"]);
+	return entryPoints(["app"]);
 });
