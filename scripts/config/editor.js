@@ -1,4 +1,4 @@
-;(function () {
+;(function() {
 	const config = {
 		CodeMirror: {
 			mode: "text/plain",

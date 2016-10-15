@@ -1,4 +1,4 @@
-;(function () {
+;(function() {
 	const config = require("./config/editor");
 	const $ = require("jquery");
 	const CodeMirror = require("codemirror");
@@ -13,7 +13,7 @@
 		config.rightCollapseButtonId
 	);
 
-	module.exports = function () {
+	module.exports = function() {
 		const module = {};
 
 		const editorElement = $(`#${config.editorId}`).get(0);

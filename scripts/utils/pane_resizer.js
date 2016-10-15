@@ -1,7 +1,7 @@
-;(function () {
+;(function() {
 	const $ = require("jquery");
 
-	module.exports = function (dragbarId, leftPaneId, rightPaneId, paneContainerId, leftCollapseButtonId, rightCollapseButtonId) {
+	module.exports = function(dragbarId, leftPaneId, rightPaneId, paneContainerId, leftCollapseButtonId, rightCollapseButtonId) {
 		const $paneContainer = $(`#${paneContainerId}`);
 		const $dragbar = $(`#${dragbarId}`);
 		const $leftPane = $(`#${leftPaneId}`);
@@ -27,16 +27,16 @@
 			}
 		}
 
-		$(document).ready(function () {
+		$(document).ready(function() {
 			// Todo: Load these from previous session.
 			resizePanesToPercentage(50, 50);
 		});
 
-		$(window).on("resize", function () {
+		$(window).on("resize", function() {
 			resizePanesToPercentage(leftPanePercentage, rightPanePercentage);
 		});
 
-		$leftCollapseButton.on("click", function () {
+		$leftCollapseButton.on("click", function() {
 			if (leftPanePercentage === 100) {
 				$dragbar.show();
 				$leftCollapseButton.css("left", "calc(100% - 37px)");
@@ -49,7 +49,7 @@
 			}
 		});
 
-		$rightCollapseButton.on("click", function () {
+		$rightCollapseButton.on("click", function() {
 			if (rightPanePercentage === 100) {
 				$rightCollapseButton.css("left", "initial");
 				resizePanesToPercentage(oldLeftPanePercentage, oldRightPanePercentage);
@@ -62,13 +62,13 @@
 			}
 		});
 
-		$dragbar.on("mousedown", function (mousedownEvent) {
+		$dragbar.on("mousedown", function(mousedownEvent) {
 			dragging = true;
 			const mouseDownPos = mousedownEvent.pageX;
 			const initialLeftPaneWidth = $leftPane.width();
 			const initialRightPaneWidth = $rightPane.width();
 
-			$(document).on("mousemove", function (mousemoveEvent) {
+			$(document).on("mousemove", function(mousemoveEvent) {
 				if (dragging) {
 					if ($leftPane && $rightPane) {
 						const deltaPageX = mousemoveEvent.pageX - mouseDownPos;
@@ -80,7 +80,7 @@
 				}
 			});
 
-			$(document).on("mouseup", function () {
+			$(document).on("mouseup", function() {
 				if (dragging) {
 					dragging = false;
 					$(document).unbind("mousemove");

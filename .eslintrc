@@ -13,5 +13,6 @@
 		"global-require": "off",
 		"prefer-arrow-callback": "off",
 		"linebreak-style": "off",
+		"space-before-function-paren": ["error", "never"]
 	}
 }

@@ -1,4 +1,6 @@
 {
 	"order-alphabetical": false,
-	"import": false
+	"import": false,
+	"ids": false,
+	"box-sizing": false
 }

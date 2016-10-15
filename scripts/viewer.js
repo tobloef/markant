@@ -1,4 +1,4 @@
-;(function () {
+;(function() {
 	const $ = require("jquery");
 	const md = require("markdown-it")();
 	const config = require("./config/viewer");
@@ -13,12 +13,12 @@
 
 	function delayedRender(markdown) {
 		clearTimeout(renderTimeout);
-		renderTimeout = setTimeout(function () {
+		renderTimeout = setTimeout(function() {
 			render(markdown);
 		}, config.renderDelay);
 	}
 
-	module.exports = function () {
+	module.exports = function() {
 		const module = {};
 
 		viewer = $(`#${config.viewerElementId}`).get(0);
