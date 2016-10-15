@@ -6,10 +6,14 @@
 			lineNumbers: false,
 			autofocus: true,
 		},
-		dragbarElementId: "dragbar",
-		editorElementId: "editor",
-		viewerElementId: "viewer",
-		paneContainerElementId: "paneContainer",
+		dragbarId: "dragbar",
+		editorPaneId: "editor-pane",
+		editorId: "editor",
+		viewerPaneId: "viewer-pane",
+		viewerId: "viewer",
+		paneContainerId: "pane-container",
+		leftCollapseButtonId: "left-pane-collapse-button",
+		rightCollapseButtonId: "right-pane-collapse-button",
 	};
 
 	module.exports = config;

@@ -4,19 +4,21 @@
 	const CodeMirror = require("codemirror");
 	require("codemirror/mode/markdown/markdown");
 	require("codemirror/mode/gfm/gfm");
-	require("./utils/dragbar")(
-		config.dragbarElementId,
-		config.editorElementId,
-		config.viewerElementId,
-		config.paneContainerElementId
+	require("./utils/pane_resizer")(
+		config.dragbarId,
+		config.editorPaneId,
+		config.viewerPaneId,
+		config.paneContainerId,
+		config.leftCollapseButtonId,
+		config.rightCollapseButtonId
 	);
 
 	module.exports = function () {
 		const module = {};
 
-		const element = $(`#${config.editorElementId}`).get(0);
-		if (element) {
-			module.codemirror = new CodeMirror(element, config.CodeMirror);
+		const editorElement = $(`#${config.editorId}`).get(0);
+		if (editorElement) {
+			module.codemirror = new CodeMirror(editorElement, config.CodeMirror);
 		}
 
 		return module;

@@ -2,14 +2,30 @@
 <html>
     <head>
         <meta charset="utf-8">
+        <title>Markant.io</title>
+        <link href="build/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     </head>
     <body>
         <div class="wrapper">
-            <div id="paneContainer">
-                <div id="editor">
-                	<div id="dragbar"></div>
+            <div id="pane-container">
+                <div id="editor-pane">
+                    <div id="editor">
+                        <div class="collapse-pane-button" id="left-pane-collapse-button">
+                            <div>
+                                <i class="fa fa-fw fa-chevron-left"></i>
+                            </div>
+                        </div>
+                        <div id="dragbar"></div>
+                    </div>
                 </div>
-                <div id="viewer"></div>
+                <div id="viewer-pane">
+                    <div class="collapse-pane-button" id="right-pane-collapse-button">
+                        <div>
+                            <i class="fa fa-fw fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    <div id="viewer"></div>
+                </div>
             </div>
         </div>
 

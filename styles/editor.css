@@ -11,29 +11,30 @@ html, body {
     height: 100%;
 }
 
-#paneContainer {
+#pane-container {
 	height: 100%;
+}
+
+#editor-pane, #viewer-pane {
+	height: 100%;
+	width: 50%;
+	display: inline-block;
+}
+
+#editor-pane {
+	float: left;
+    background-color: #f0f0f0;
+}
+
+#viewer-pane {
+    float: right;
+	position: absolute;
+	top: 0;
+	background-color: #fff;
 }
 
 #editor, #viewer {
 	height: 100%;
-	width: 50%;
-	min-width: 200px;
-	max-width: calc(100% - 200px);
-	display: inline-block;
-}
-
-#editor {
-	float: left;
-}
-
-#editor > .CodeMirror {
-	height: 100%;
-    background-color: #f0f0f0;
-}
-
-#editor .CodeMirror-scroll {
-	padding: 30px 20px;
 }
 
 #viewer {
@@ -42,11 +43,16 @@ html, body {
     overflow-y: auto;
     white-space: pre-wrap;
     word-wrap: break-word;
-    float: right;
-	position: absolute;
-	top: 0;
 	box-sizing: border-box;
-	background-color: #fff;
+}
+
+#editor > .CodeMirror {
+	height: 100%;
+	background-color: inherit;
+}
+
+#editor .CodeMirror-scroll {
+	padding: 30px 20px;
 }
 
 #dragbar {
@@ -54,23 +60,52 @@ html, body {
 	width: 6px;
 	float: right;
 	height: 100%;
-	background: lightgray;
-    background: linear-gradient(to right, lightgray, white);
+	background: #d3d3d3;
+    background: linear-gradient(to right, #d3d3d3, #fff);
 }
 
 #dragbar:hover,
 #dragbar:active {
-  background: lightgray;
+	background: #d3d3d3;
 }
 
 @media screen and (max-width: 600px) {
-    #viewer {
-		display: none;
-	}
+    /* Make mobile friendly */
+}
 
-	#editor {
-		min-width: 100%;
-		max-width: 100%;
-		width: 100%;
-	}
+.collapse-pane-button {
+	position: relative;
+	width: 0;
+	height: 0;
+	top: 40%;
+}
+
+.collapse-pane-button > div {
+	position: absolute;
+	z-index: 10;
+	color: black;
+	width: 25px;
+	cursor: pointer;
+	padding: 20px 0;
+	border-radius: 3px;
+	opacity: 0.1;
+}
+
+.collapse-pane-button > div i {
+	vertical-align: middle;
+    text-align: center;
+	width: 100%;
+}
+
+.collapse-pane-button > div:hover {
+	background-color: #bbb;
+	opacity: 0.8;
+}
+
+.collapse-pane-button > div:active {
+	opacity: 1;
+}
+
+#left-pane-collapse-button {
+	left: calc(100% - 37px);
 }
