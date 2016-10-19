@@ -1,21 +1,7 @@
 @import url("node_modules/codemirror/lib/codemirror.css");
 @import url("node_modules/codemirror/addon/dialog/dialog.css");
 
-html, body {
-    margin: 0;
-    height: 100%;
-    overflow: hidden;
-}
-
-.wrapper {
-    height: 100%;
-}
-
-#pane-container {
-	height: 100%;
-}
-
-#editor-pane, #viewer-pane {
+#editor-pane {
 	height: 100%;
 	width: 50%;
 	display: inline-block;
@@ -26,24 +12,8 @@ html, body {
     background-color: #f0f0f0;
 }
 
-#viewer-pane {
-    float: right;
-	position: absolute;
-	top: 0;
-	background-color: #fff;
-}
-
-#editor, #viewer {
+#editor {
 	height: 100%;
-}
-
-#viewer {
-	padding: 0 10px;
-    overflow-x: hidden;
-    overflow-y: auto;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-	box-sizing: border-box;
 }
 
 #editor > .CodeMirror {
@@ -53,59 +23,4 @@ html, body {
 
 #editor .CodeMirror-scroll {
 	padding: 30px 20px;
-}
-
-#dragbar {
-	cursor: col-resize;
-	width: 6px;
-	float: right;
-	height: 100%;
-	background: #d3d3d3;
-    background: linear-gradient(to right, #d3d3d3, #fff);
-}
-
-#dragbar:hover,
-#dragbar:active {
-	background: #d3d3d3;
-}
-
-@media screen and (max-width: 600px) {
-    /* Make mobile friendly */
-}
-
-.collapse-pane-button {
-	position: relative;
-	width: 0;
-	height: 0;
-	top: 40%;
-}
-
-.collapse-pane-button > div {
-	position: absolute;
-	z-index: 10;
-	color: black;
-	width: 25px;
-	cursor: pointer;
-	padding: 20px 0;
-	border-radius: 3px;
-	opacity: 0.1;
-}
-
-.collapse-pane-button > div i {
-	vertical-align: middle;
-    text-align: center;
-	width: 100%;
-}
-
-.collapse-pane-button > div:hover {
-	background-color: #bbb;
-	opacity: 0.8;
-}
-
-.collapse-pane-button > div:active {
-	opacity: 1;
-}
-
-#left-pane-collapse-button {
-	left: calc(100% - 37px);
 }

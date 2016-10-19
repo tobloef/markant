@@ -1,4 +1,6 @@
 ;(function() {
+	require("../../styles/utils/pane_resizer.css");
+
 	const $ = require("jquery");
 
 	module.exports = function(dragbarId, leftPaneId, rightPaneId, paneContainerId, leftCollapseButtonId, rightCollapseButtonId) {

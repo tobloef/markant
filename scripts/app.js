@@ -1,5 +1,5 @@
 ;(function() {
-	require("../styles/editor.css");
+	require("../styles/app.css");
 
 	const viewer = require("./viewer")();
 	const editor = require("./editor")();

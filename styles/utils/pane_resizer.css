@@ -1,0 +1,50 @@
+#dragbar {
+	cursor: col-resize;
+	width: 6px;
+	float: right;
+	height: 100%;
+	background: #d3d3d3;
+    background: linear-gradient(to right, #d3d3d3, #fff);
+}
+
+#dragbar:hover,
+#dragbar:active {
+	background: #d3d3d3;
+}
+
+.collapse-pane-button {
+	position: relative;
+	width: 0;
+	height: 0;
+	top: 40%;
+}
+
+.collapse-pane-button > div {
+	position: absolute;
+	z-index: 10;
+	color: black;
+	width: 25px;
+	cursor: pointer;
+	padding: 20px 0;
+	border-radius: 3px;
+	opacity: 0.2;
+}
+
+.collapse-pane-button > div i {
+	vertical-align: middle;
+    text-align: center;
+	width: 100%;
+}
+
+.collapse-pane-button > div:hover {
+	background-color: #bbb;
+	opacity: 0.8;
+}
+
+.collapse-pane-button > div:active {
+	opacity: 1;
+}
+
+#left-pane-collapse-button {
+	left: calc(100% - 37px);
+}

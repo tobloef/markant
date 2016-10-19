@@ -1,4 +1,6 @@
 ;(function() {
+	require("../styles/viewer.css");
+
 	const $ = require("jquery");
 	const md = require("markdown-it")();
 	const config = require("./config/viewer");

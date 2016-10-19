@@ -1,0 +1,19 @@
+#viewer-pane {
+	height: 100%;
+	width: 50%;
+	display: inline-block;
+    float: right;
+	position: absolute;
+	top: 0;
+	background-color: #fff;
+    overflow-y: auto;
+}
+
+#viewer {
+	max-width: 850px;
+	margin: 0 auto;
+	padding: 0 10px 100px 10px;
+    overflow-x: hidden;
+    word-wrap: break-word;
+	box-sizing: border-box;
+}
