@@ -17,3 +17,66 @@
     word-wrap: break-word;
 	box-sizing: border-box;
 }
+
+#viewer * {
+	font-size: 16px;
+}
+
+#viewer h1,
+#viewer h2,
+#viewer h3 {
+	font-weight: normal;
+}
+
+#viewer h4,
+#viewer h5,
+#viewer h6 {
+	font-weight: bold;
+}
+
+#viewer h1 {
+	font-size: 2.5em;
+}
+
+#viewer h2 {
+	font-size: 2.0em;
+}
+
+#viewer h3 {
+	font-size: 1.5em;
+}
+
+#viewer h4 {
+	font-size: 1.3em;
+}
+
+#viewer h5 {
+	font-size: 1.15em;
+}
+
+#viewer h6 {
+	font-size: 1.0em;
+}
+
+#viewer pre {
+	background-color: #f0f0f0;
+	padding: 5px;
+	word-wrap: break-word;
+	white-space: pre-wrap;
+	font-family: monospace;
+	border: 1px solid #ccc;
+	border-radius: 3px;
+}
+
+#viewer code {
+	font-size: 14px;
+	line-height: 1em;
+}
+
+#viewer a {
+	text-decoration: none;
+}
+
+#viewer li {
+	line-height: 1.4em;
+}
