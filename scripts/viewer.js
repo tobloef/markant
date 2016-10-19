@@ -6,11 +6,13 @@
 	let renderTimeout;
 	let viewer;
 
+	// Render the specified Markdown and insert the resulting HTML into the viewer.
 	function render(markdown) {
 		const result = md.render(markdown || "");
 		viewer.innerHTML = result;
 	}
 
+	// Wait for the user to stop typing before rendering the Markdown.
 	function delayedRender(markdown) {
 		clearTimeout(renderTimeout);
 		renderTimeout = setTimeout(function() {

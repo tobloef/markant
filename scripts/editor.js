@@ -16,6 +16,7 @@
 	module.exports = function() {
 		const module = {};
 
+		// Set up the CodeMirror editor.
 		const editorElement = $(`#${config.editorId}`).get(0);
 		if (editorElement) {
 			module.codemirror = new CodeMirror(editorElement, config.CodeMirror);
