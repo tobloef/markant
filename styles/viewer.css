@@ -16,6 +16,7 @@
     overflow-x: hidden;
     word-wrap: break-word;
 	box-sizing: border-box;
+	font-family: sans-serif;
 }
 
 #viewer * {
@@ -24,14 +25,11 @@
 
 #viewer h1,
 #viewer h2,
-#viewer h3 {
-	font-weight: normal;
-}
-
+#viewer h3,
 #viewer h4,
 #viewer h5,
 #viewer h6 {
-	font-weight: bold;
+	margin-bottom: 0;
 }
 
 #viewer h1 {
@@ -75,6 +73,11 @@
 
 #viewer a {
 	text-decoration: none;
+	color: #2a5db0;
+}
+
+#viewer a:hover {
+	text-decoration: underline;
 }
 
 #viewer li {
