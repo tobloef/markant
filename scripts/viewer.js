@@ -2,7 +2,8 @@
 	require("../styles/viewer.css");
 
 	const $ = require("jquery");
-	const md = require("markdown-it")();
+	const md = require("markdown-it")()
+			   .use(require("markdown-it-lazy-headers"));
 	const config = require("./config/viewer");
 
 	let renderTimeout;
