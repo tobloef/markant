@@ -34,7 +34,9 @@
 		}
 
 		$(document).ready(function() {
-			// Set the panes to their initial size.
+			// Show the collapse buttons and set the panes to their initial size.
+			$leftCollapseButton.css("visibility", "visible");
+			$rightCollapseButton.css("visibility", "visible");
 			// Todo: Load these from previous session.
 			resizePanesToPercentage(50, 50);
 		});
