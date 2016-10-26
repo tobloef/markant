@@ -27,7 +27,7 @@
 	cursor: pointer;
 	padding: 20px 0;
 	border-radius: 3px;
-	opacity: 0.2;
+	opacity: 0.3;
 }
 
 .collapse-pane-button > div i {
@@ -45,6 +45,6 @@
 	opacity: 1;
 }
 
-#left-pane-collapse-button {
-	left: calc(100% - 37px);
+#right-pane-collapse-button {
+	left: 2px;
 }

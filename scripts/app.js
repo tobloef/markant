@@ -4,11 +4,13 @@
 	const viewer = require("./viewer")();
 	const editor = require("./editor")();
 
-	// When the user types in the editor, render the Markdown.
-	editor.codemirror.on("change", function() {
+	// Render the Markdown based on the text in the editor
+	function onChangeHandler() {
 		viewer.render(editor.codemirror.getValue());
-	});
+	}
+
+	editor.codemirror.on("change", onChangeHandler);
 
 	// Render any intial Markdown in the editor.
-	viewer.render(editor.codemirror.getValue());
+	onChangeHandler();
 }());

@@ -11,7 +11,7 @@
 		const $rightPane = $(`#${rightPaneId}`);
 		const $leftCollapseButton = $(`#${leftCollapseButtonId}`);
 		const $rightCollapseButton = $(`#${rightCollapseButtonId}`);
-
+		const $viewer = $rightPane.find("#viewer");
 
 		// Whether the user is draggin the drag bar.
 		let dragging = false;
@@ -27,10 +27,26 @@
 		function resizePanesToPercentage(newLeftPanePercentage, newRightPanePercentage) {
 			// Find the pixel width of a single percentage.
 			const unit = $paneContainer.width() / (newLeftPanePercentage + newRightPanePercentage);
+			// Set the panes to the new widths.
 			$leftPane.width(unit * newLeftPanePercentage);
 			$rightPane.width(unit * newRightPanePercentage);
 			leftPanePercentage = newLeftPanePercentage;
 			rightPanePercentage = newRightPanePercentage;
+		}
+
+		// Set the positions, specifically the horizontal positions, of the two collapse buttons.
+		// This is done so they won't overlap with the scrollbars.
+		function setCollapseButtonPositions() {
+			const editorScrollbar = $leftPane.find(".CodeMirror-vscrollbar > div").eq(0);
+			const leftPaneHasScrollbar = editorScrollbar.height() > 0;
+			let rightOffset = 34;
+			if (leftPanePercentage === 100) {
+				rightOffset -= 5;
+			}
+			if (leftPaneHasScrollbar) {
+				rightOffset += 13;
+			}
+			$leftCollapseButton.css("left", `calc(100% - ${rightOffset}px)`);
 		}
 
 		$(document).ready(function() {
@@ -41,6 +57,12 @@
 			resizePanesToPercentage(50, 50);
 		});
 
+		// When the HTML of the viewer changes
+		$viewer.bind("DOMSubtreeModified", function() {
+			setCollapseButtonPositions();
+		});
+
+
 		// On window resize, scale the sizes of the panes so they keep the same relative size.
 		$(window).on("resize", function() {
 			resizePanesToPercentage(leftPanePercentage, rightPanePercentage);
@@ -50,30 +72,28 @@
 			// If the right pane is completely closed, open the right pane, restoring it to it's former size.
 			if (leftPanePercentage === 100) {
 				$dragbar.show();
-				$leftCollapseButton.css("left", "calc(100% - 37px)");
 				resizePanesToPercentage(oldLeftPanePercentage, oldRightPanePercentage);
-			// Save the panes current size and close the left pane.
 			} else {
+				// Save the panes current size and close the left pane.
 				oldLeftPanePercentage = leftPanePercentage;
 				oldRightPanePercentage = rightPanePercentage;
-				$rightCollapseButton.css("left", "5px");
 				resizePanesToPercentage(0, 100);
 			}
+			setCollapseButtonPositions();
 		});
 
 		$rightCollapseButton.on("click", function() {
 			// If the left pane is completely closed, open the left pane, restoring it to it's former size.
 			if (rightPanePercentage === 100) {
-				$rightCollapseButton.css("left", "initial");
 				resizePanesToPercentage(oldLeftPanePercentage, oldRightPanePercentage);
-			// Save the panes current size and close the right pane.
 			} else {
+				// Save the panes current size and close the right pane.
 				oldLeftPanePercentage = leftPanePercentage;
 				oldRightPanePercentage = rightPanePercentage;
 				$dragbar.hide();
-				$leftCollapseButton.css("left", "calc(100% - 30px)");
 				resizePanesToPercentage(100, 0);
 			}
+			setCollapseButtonPositions();
 		});
 
 		$dragbar.on("mousedown", function(mousedownEvent) {

@@ -8,9 +8,9 @@ const eslint = require("gulp-eslint");
 const csslint = require("gulp-csslint");
 const gutil = require("gulp-util");
 
-gulp.task("default", ["clean", "browserify", "font-awesome"]);
+gulp.task("default", [/*"clean",*/ "browserify", "font-awesome"]);
 
-gulp.task("browserify", ["clean"], function() {
+gulp.task("browserify", /*["clean"],*/ function() {
 	const destDir = "./build";
 
 	const entryPoints = function(files) {
@@ -31,7 +31,7 @@ gulp.task("browserify", ["clean"], function() {
 	return entryPoints(["app"]);
 });
 
-gulp.task("font-awesome", ["clean", "browserify"], function() {
+gulp.task("font-awesome", [/*"clean",*/ "browserify"], function() {
 	const destDir = "./build/lib/font-awesome";
 	gulp.src(["node_modules/font-awesome/{css,fonts}/**/*"])
 		.pipe(gulp.dest(destDir));
