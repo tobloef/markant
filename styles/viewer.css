@@ -8,17 +8,18 @@
 	position: absolute;
 	top: 0;
 	background-color: #fff;
-    overflow-y: auto;
+    overflow: hidden;
 }
 
 #viewer {
 	max-width: 850px;
 	margin: 0 auto;
 	padding: 0 10px 100px 10px;
-    overflow-x: hidden;
+    overflow-y: scroll;
     word-wrap: break-word;
 	box-sizing: border-box;
 	font-family: sans-serif;
+	height: 100%;
 }
 
 #viewer * {
