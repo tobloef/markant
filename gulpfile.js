@@ -6,6 +6,7 @@ const browserifyCss = require("browserify-css");
 const del = require("del");
 const eslint = require("gulp-eslint");
 const csslint = require("gulp-csslint");
+const gutil = require("gulp-util");
 
 gulp.task("default", ["clean", "browserify", "font-awesome"]);
 
