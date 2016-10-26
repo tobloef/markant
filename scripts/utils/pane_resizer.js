@@ -46,6 +46,7 @@
 			if (leftPaneHasScrollbar) {
 				rightOffset += 13;
 			}
+			console.log(rightOffset);
 			$leftCollapseButton.css("left", `calc(100% - ${rightOffset}px)`);
 		}
 
@@ -55,6 +56,7 @@
 			$rightCollapseButton.css("visibility", "visible");
 			// Todo: Load these from previous session.
 			resizePanesToPercentage(50, 50);
+			setCollapseButtonPositions();
 		});
 
 		// When the HTML of the viewer changes

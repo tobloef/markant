@@ -44,7 +44,3 @@
 .collapse-pane-button > div:active {
 	opacity: 1;
 }
-
-#right-pane-collapse-button {
-	left: 2px;
-}
