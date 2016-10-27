@@ -86,3 +86,9 @@
 #viewer li {
 	line-height: 1.4em;
 }
+
+#viewer blockquote {
+	padding: 0 1em;
+	color: #777;
+	border-left: 0.25em solid #ddd;
+}
