@@ -92,3 +92,37 @@
 	color: #777;
 	border-left: 0.25em solid #ddd;
 }
+
+#viewer table {
+	display: block;
+	width: 100%;
+	overflow: auto;
+	border-spacing: 0;
+	border-collapse: collapse;
+    border-color: grey;
+}
+
+#viewer table thead {
+	display: table-header-group;
+    vertical-align: middle;
+    border-color: inherit;
+}
+
+#viewer table th {
+    font-weight: bold;
+}
+
+#viewer table tr {
+	background-color: #fff;
+    border-top: 1px solid #ccc;
+}
+
+#viewer table tr:nth-child(2n) {
+	background-color: #f8f8f8;
+}
+
+#viewer table td,
+#viewer table th {
+    padding: 6px 13px;
+    border: 1px solid #ddd;
+}
