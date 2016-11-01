@@ -1,12 +1,15 @@
 /* eslint-disable import/no-extraneous-dependencies */
 const gulp = require("gulp");
 const source = require("vinyl-source-stream");
+const buffer = require("vinyl-buffer");
 const browserify = require("browserify");
 const browserifyCss = require("browserify-css");
 const del = require("del");
 const eslint = require("gulp-eslint");
 const csslint = require("gulp-csslint");
 const gutil = require("gulp-util");
+const uglify = require("gulp-uglify");
+const babel = require("gulp-babel");
 
 gulp.task("default", [/*"clean",*/ "browserify", "font-awesome"]);
 
@@ -24,6 +27,11 @@ gulp.task("browserify", /*["clean"],*/ function() {
 
 			return b.bundle()
 				.pipe(source(`${file}-bundle.js`))
+				.pipe(buffer())
+				.pipe(babel({
+					presets: ["es2015"]
+				}))
+				.pipe(uglify())
 				.pipe(gulp.dest(destDir));
 		});
 	};
