@@ -35,6 +35,7 @@
 		}, config.renderDelay);
 	}
 
+	// Load and setup MathJax with the config.
 	function loadMathJax() {
 		MathJax.Hub.Config(config.MathJax);
 		mathjaxReady = true;
