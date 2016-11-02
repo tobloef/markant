@@ -21,6 +21,6 @@
 	background-color: inherit;
 }
 
-#editor .CodeMirror-scroll {
-	padding: 30px 20px;
+#editor .CodeMirror-lines {
+	margin: 25px 20px 90% 20px;
 }
