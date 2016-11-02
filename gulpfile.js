@@ -10,36 +10,44 @@ const csslint = require("gulp-csslint");
 const gutil = require("gulp-util");
 const uglify = require("gulp-uglify");
 const babel = require("gulp-babel");
+const rename = require("gulp-rename");
 
-gulp.task("default", [/*"clean",*/ "browserify", "font-awesome"]);
+const destDir = "./build";
+const entryPoints = ["app"];
 
-gulp.task("browserify", /*["clean"],*/ function() {
-	const destDir = "./build";
+gulp.task("default", ["browserify", "font-awesome"]);
 
-	const entryPoints = function(files) {
-		files.forEach(function(file) {
-			const b = browserify({
-				entries: [`./scripts/${file}.js`],
-				debug: true,
-			});
-
-			b.transform(browserifyCss);
-
-			return b.bundle()
-				.pipe(source(`${file}-bundle.js`))
-				.pipe(buffer())
-				.pipe(babel({
-					presets: ["es2015"]
-				}))
-				.pipe(uglify())
-				.pipe(gulp.dest(destDir));
+gulp.task("browserify", function() {
+	entryPoints.forEach(function(file) {
+		const b = browserify({
+			entries: [`./scripts/${file}.js`],
+			debug: true,
 		});
-	};
 
-	return entryPoints(["app"]);
+		b.transform(browserifyCss);
+
+		return b.bundle()
+			.pipe(source(`${file}-bundle.js`))
+			.pipe(gulp.dest(destDir));
+	});
 });
 
-gulp.task("font-awesome", [/*"clean",*/ "browserify"], function() {
+gulp.task("minify", ["browserify", "font-awesome"], function() {
+	entryPoints.forEach(function(file) {
+		gulp.src([`build/${file}-bundle.js`])
+			.pipe(buffer())
+			.pipe(babel({
+				presets: ["es2015"]
+			}))
+			.pipe(uglify())
+			.pipe(rename({suffix: ".min"}))
+			.pipe(gulp.dest(function(filename) {
+				return filename.base;
+			}));
+	});
+});
+
+gulp.task("font-awesome", function() {
 	const destDir = "./build/lib/font-awesome";
 	gulp.src(["node_modules/font-awesome/{css,fonts}/**/*"])
 		.pipe(gulp.dest(destDir));

@@ -46,7 +46,6 @@
 			if (leftPaneHasScrollbar) {
 				rightOffset += 13;
 			}
-			console.log(rightOffset);
 			$leftCollapseButton.css("left", `calc(100% - ${rightOffset}px)`);
 		}
 
