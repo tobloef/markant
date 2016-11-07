@@ -1,4 +1,6 @@
 ;(function() {
+	const hljs = require("highlight.js");
+
 	const config = {
 		// Id of the viewer element.
 		viewerElementId: "viewer",
@@ -8,6 +10,21 @@
 
 		// The minimum delay between keystrokes before the user is deemed done typing.
 		renderDelay: 200,
+
+		markdownit: {
+			html: true,
+			highlight: function(str, lang) {
+				if (lang && hljs.getLanguage(lang)) {
+					try {
+						return hljs.highlight(lang, str).value;
+					} catch (exception) {
+						console.log("Couldn't highlight code with language " + lang, exception);
+					}
+				}
+
+				return "";
+			}
+		},
 
 		// Which math renderer to use. The valid options are:
 		//    "KaTex"

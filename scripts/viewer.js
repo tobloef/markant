@@ -5,7 +5,7 @@
 	const $ = require("jquery");
 	const scriptLoader = require("./utils/script_loader");
 
-	const md = require("markdown-it")();
+	const md = require("markdown-it")(config.markdownit);
 	md.use(require("markdown-it-lazy-headers"));
 	if (config.mathRenderer == "MathJax") {
 		md.use(require("markdown-it-mathjax"));
