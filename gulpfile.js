@@ -56,13 +56,17 @@ gulp.task("font-awesome", function() {
 
 gulp.task("codemirror-themes", function() {
 	const destDir = "./build/lib/codemirror/theme";
-	gulp.src(["node_modules/codemirror/theme/**/*"])
+	gulp.src([
+			"node_modules/codemirror/theme/*.css",
+			"styles/editor/themes/*.css",
+			"styles/editor/*.css"
+		])
 		.pipe(gulp.dest(destDir));
 });
 
 gulp.task("highlight.js-styles", function() {
 	const destDir = "./build/lib/highlight.js/styles";
-	gulp.src(["node_modules/highlight.js/styles/**/*"])
+	gulp.src(["node_modules/highlight.js/styles/*.css"])
 		.pipe(gulp.dest(destDir));
 });
 

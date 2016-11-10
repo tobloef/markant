@@ -1,0 +1,24 @@
+@import url("node_modules/codemirror/lib/codemirror.css");
+@import url("node_modules/codemirror/addon/dialog/dialog.css");
+
+#editor-pane {
+	height: 100%;
+	width: 50%;
+	display: inline-block;
+}
+
+#editor-pane {
+	float: left;
+}
+
+#editor {
+	height: 100%;
+}
+
+#editor > .CodeMirror {
+	height: 100%;
+}
+
+#editor .CodeMirror-lines {
+	margin: 25px 20px 90% 20px;
+}

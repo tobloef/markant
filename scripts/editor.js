@@ -17,11 +17,24 @@
 	);
 
 	// Todo: Load this from the user's settings
-	if (config.codemirror.theme) {
+	if (config.codemirror.theme && config.themeDirectory) {
+		let directory = config.themeDirectory;
+		if (directory.substr(-1) !== "/") {
+			directory += "/";
+		}
+		let path = `${directory}${config.codemirror.theme}.css`;
 		try {
-			fileLoader.getStyle(`build/lib/codemirror/theme/${config.codemirror.theme}.css`, "");
+			fileLoader.getStyle(path);
 		} catch (e) {
-			console.error(`Could not load the editor theme ${config.codemirror.theme}.\nException: ${e}`);
+			console.error(`Could not load the editor theme from path ${path}.\nException: ${e}`);
+		}
+		if (config.useBigHeaders) {
+			path = `${directory}big_headers.css`;
+			try {
+				fileLoader.getStyle(path);
+			} catch (e) {
+				console.error(`Could not load the editor theme from path ${path}.\nException: ${e}`);
+			}
 		}
 	}
 

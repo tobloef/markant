@@ -7,7 +7,7 @@
 			lineNumbers: false,
 			autofocus: true,
 			value: "",
-			theme: "monokai"
+			theme: "light"
 		},
 		// Id of the drag bar element, used for resizing the editor and viewer panes.
 		dragbarId: "dragbar",
@@ -25,6 +25,10 @@
 		leftCollapseButtonId: "left-pane-collapse-button",
 		// Id of the rightmost button to collapse the viewer pane.
 		rightCollapseButtonId: "right-pane-collapse-button",
+		// Paths to directory the editor themes can be found in.
+		themeDirectory: "build/lib/codemirror/theme",
+		//
+		useBigHeaders: true,
 	};
 
 	module.exports = config;

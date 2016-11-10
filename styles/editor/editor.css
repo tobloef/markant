@@ -9,7 +9,6 @@
 
 #editor-pane {
 	float: left;
-    /*background-color: #f0f0f0;*/
 }
 
 #editor {
@@ -18,7 +17,6 @@
 
 #editor > .CodeMirror {
 	height: 100%;
-	/*background-color: inherit;*/
 }
 
 #editor .CodeMirror-lines {
