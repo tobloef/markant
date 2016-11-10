@@ -1,15 +1,18 @@
 ;(function() {
-	require("../styles/viewer.css");
+	require("../styles/viewer/viewer.css");
+	require("../styles/viewer/themes/default.css");
 
 	const config = require("./config/viewer");
 	const $ = require("jquery");
-	const scriptLoader = require("./utils/script_loader");
-
+	const fileLoader = require("./utils/file_loader");
 	const md = require("markdown-it")(config.markdownit);
+	if (config.highlightjsStyle) {
+		fileLoader.getStyle(`build/lib/highlight.js/styles/${config.highlightjsStyle}.css`, "");
+	}
 	md.use(require("markdown-it-lazy-headers"));
 	if (config.mathRenderer == "MathJax") {
 		md.use(require("markdown-it-mathjax"));
-		scriptLoader.getScript(config.mathjaxUrl, loadMathJax);
+		fileLoader.getScript(config.mathjaxUrl, loadMathJax);
 	} else if (config.mathRenderer == "KaTex") {
 		md.use(require("markdown-it-katex"), config.KaTex);
 	}

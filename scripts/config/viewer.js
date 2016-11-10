@@ -16,15 +16,19 @@
 			highlight: function(str, lang) {
 				if (lang && hljs.getLanguage(lang)) {
 					try {
-						return hljs.highlight(lang, str).value;
+						return "<pre class='hljs'><code>" +
+               				   hljs.highlight(lang, str, true).value +
+               				   "</code></pre>";
 					} catch (exception) {
 						console.log("Couldn't highlight code with language " + lang, exception);
 					}
 				}
 
-				return "";
+				return "<pre class='hljs'><code>" + md.utils.escapeHtml(str) + "</code></pre>";
 			}
 		},
+
+		highlightjsStyle: "monokai",
 
 		// Which math renderer to use. The valid options are:
 		//    "KaTex"

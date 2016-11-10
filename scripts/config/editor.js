@@ -1,12 +1,13 @@
 ;(function() {
 	const config = {
 		// Configuration for CodeMirror.
-		CodeMirror: {
-			mode: "text/plain",
+		codemirror: {
+			mode: "gfm",
 			lineWrapping: true,
 			lineNumbers: false,
 			autofocus: true,
-			value: ``,
+			value: "",
+			theme: "monokai"
 		},
 		// Id of the drag bar element, used for resizing the editor and viewer panes.
 		dragbarId: "dragbar",
