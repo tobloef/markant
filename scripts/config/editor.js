@@ -2,12 +2,15 @@
 	const config = {
 		// Configuration for CodeMirror.
 		codemirror: {
-			mode: "gfm",
+			mode: {
+				name: "gfm",
+				allowAtxHeaderWithoutSpace: true,
+			},
 			lineWrapping: true,
 			lineNumbers: false,
 			autofocus: true,
 			value: "",
-			theme: "light"
+			theme: "light",
 		},
 		// Id of the drag bar element, used for resizing the editor and viewer panes.
 		dragbarId: "dragbar",
@@ -27,8 +30,8 @@
 		rightCollapseButtonId: "right-pane-collapse-button",
 		// Paths to directory the editor themes can be found in.
 		themeDirectory: "build/lib/codemirror/theme",
-		//
-		useBigHeaders: true,
+		// Give headers a bigger font-size.
+		useBigHeaders: false,
 	};
 
 	module.exports = config;

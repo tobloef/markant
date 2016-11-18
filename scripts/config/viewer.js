@@ -1,5 +1,6 @@
 ;(function() {
 	const hljs = require("highlight.js");
+	const markdown = require("markdown-it")();
 
 	const config = {
 		// Id of the viewer element.
@@ -13,21 +14,10 @@
 
 		markdownit: {
 			html: true,
-			highlight: function(str, lang) {
-				if (lang && hljs.getLanguage(lang)) {
-					try {
-						return "<pre class='hljs'><code>" +
-               				   hljs.highlight(lang, str, true).value +
-               				   "</code></pre>";
-					} catch (exception) {
-						console.log("Couldn't highlight code with language " + lang, exception);
-					}
-				}
-
-				return "<pre class='hljs'><code>" + md.utils.escapeHtml(str) + "</code></pre>";
-			}
+			highlight: highlight
 		},
 
+		// The style to use with highlight.js for code snippets in the viewer.
 		highlightjsStyle: "monokai",
 
 		// Which math renderer to use. The valid options are:
@@ -48,6 +38,20 @@
 			messageStyle: "none"
 		}
 	};
+
+	function highlight(str, lang) {
+		console.log("highlight");
+		if (lang && hljs.getLanguage(lang)) {
+			try {
+				return "<pre class='hljs'><code>" +
+       				   hljs.highlight(lang, str, true).value +
+       				   "</code></pre>";
+			} catch (exception) {
+				console.log("Couldn't highlight code with language " + lang, exception);
+			}
+		}
+		return "<pre class='hljs'><code>" + markdown.utils.escapeHtml(str) + "</code></pre>";
+	}
 
 	module.exports = config;
 }());

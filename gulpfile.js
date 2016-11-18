@@ -10,8 +10,7 @@ const csslint = require("gulp-csslint");
 const uglify = require("gulp-uglify");
 const babel = require("gulp-babel");
 const rename = require("gulp-rename");
-
-require("stackup");
+const sourcemaps = require('gulp-sourcemaps');
 
 const destDir = "./build";
 const entryPoints = ["app"];
@@ -29,6 +28,9 @@ gulp.task("browserify", function() {
 
 		return b.bundle()
 			.pipe(source(`${file}-bundle.js`))
+			.pipe(buffer())
+			.pipe(sourcemaps.init({loadMaps: true}))
+			.pipe(sourcemaps.write("./"))
 			.pipe(gulp.dest(destDir));
 	});
 });

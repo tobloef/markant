@@ -41,16 +41,13 @@
 	line-height: 1em;
 }
 
-#viewer *:not(pre) > code,
-#viewer pre {
+#viewer *:not(pre) > code {
 	word-wrap: break-word;
 	white-space: pre-wrap;
 	font-family: monospace;
 	border: 1px solid #ccc;
 	border-radius: 3px;
-}
-
-#viewer *:not(pre) > code {
+	background-color: #f0f0f0;
 	padding: 3px;
 }
 
@@ -83,25 +80,25 @@
 	overflow: auto;
 	border-spacing: 0;
 	border-collapse: collapse;
-    border-color: grey;
-    margin-top: 10px;
+	border-color: grey;
+	margin-top: 10px;
 }
 
 #viewer table thead {
 	display: table-header-group;
-    vertical-align: middle;
-    border-color: inherit;
+	vertical-align: middle;
+	border-color: inherit;
 }
 
 #viewer table td,
 #viewer table th {
-    padding: 6px 13px;
-    border: 1px solid #ddd;
+	padding: 6px 13px;
+	border: 1px solid #ddd;
 }
 
 #viewer table th {
-    font-weight: bold;
-    border-bottom-width: 2px;
+	font-weight: bold;
+	border-bottom-width: 2px;
 }
 
 #viewer table tr {
