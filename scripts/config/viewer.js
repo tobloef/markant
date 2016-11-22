@@ -3,9 +3,6 @@
 	const markdown = require("markdown-it")();
 
 	const config = {
-		// Id of the viewer element.
-		viewerElementId: "viewer",
-
 		// Wait for the user to stop typing before the Markdown is rendered.
 		useDelayedRendering: true,
 
@@ -39,6 +36,7 @@
 		}
 	};
 
+	// Highlight code snippets with highlight.js
 	function highlight(str, lang) {
 		console.log("highlight");
 		if (lang && hljs.getLanguage(lang)) {

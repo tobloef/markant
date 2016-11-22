@@ -7,14 +7,6 @@
 	const CodeMirror = require("codemirror");
 	require("codemirror/mode/markdown/markdown");
 	require("codemirror/mode/gfm/gfm");
-	require("./utils/pane_resizer")(
-		config.dragbarId,
-		config.editorPaneId,
-		config.viewerPaneId,
-		config.paneContainerId,
-		config.leftCollapseButtonId,
-		config.rightCollapseButtonId
-	);
 
 	// Load the stylesheets for the CodeMirror editor.
 	function loadEditorThemes() {
@@ -71,15 +63,10 @@
 		}
 	}
 
-	function fixSetextHeaderStyle() {
-
-	}
-
-	module.exports = function() {
+	module.exports = function(editorElement) {
 		const module = {};
 
 		// Set up the CodeMirror editor.
-		const editorElement = $(`#${config.editorId}`).get(0);
 		if (editorElement) {
 			module.codemirror = new CodeMirror(editorElement, config.codemirror);
 			module.codemirror.on("change", updateSectionHeaderStyles);

@@ -22,35 +22,26 @@
 	let mathjaxReady;
 
 	// Render the specified Markdown and insert the resulting HTML into the viewer.
-	function render(markdownString) {
+	function render(markdownString, callback) {
 		const result = markdown.render(markdownString || "");
 		viewer.innerHTML = result;
 		if (mathjaxReady) {
 			MathJax.Hub.Queue(["Typeset", MathJax.Hub, viewer]);
 		}
+		if (callback) {
+			callback();
+		}
 	}
 
 	// Wait for the user to stop typing before rendering the Markdown.
-	function delayedRender(markdownString) {
+	function delayedRender(markdownString, callback) {
 		clearTimeout(renderTimeout);
 		renderTimeout = setTimeout(function() {
 			render(markdownString);
-		}, config.renderDelay);
-	}
-
-	// Highlight code snippets with highlight.js
-	function highlight(str, lang) {
-		console.log("highlight");
-		if (lang && hljs.getLanguage(lang)) {
-			try {
-				return "<pre class='hljs'><code>" +
-       				   hljs.highlight(lang, str, true).value +
-       				   "</code></pre>";
-			} catch (exception) {
-				console.log("Couldn't highlight code with language " + lang, exception);
+			if (callback) {
+				callback();
 			}
-		}
-		return "<pre class='hljs'><code>" + markdown.utils.escapeHtml(str) + "</code></pre>";
+		}, config.renderDelay);
 	}
 
 	// Load and setup MathJax with the config.
@@ -59,12 +50,8 @@
 		mathjaxReady = true;
 	}
 
-	module.exports = function() {
-		viewer = $(`#${config.viewerElementId}`).get(0);
-
-		const module = {
-			highlight
-		};
+	module.exports = function(viewerElement) {
+		viewer = viewerElement;
 
 		if (config.useDelayedRendering) {
 			module.render = delayedRender;
