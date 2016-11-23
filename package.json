@@ -1,6 +1,6 @@
 {
   "name": "markant.io",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A Markdown editor",
   "main": "main.js",
   "repository": {
@@ -17,12 +17,15 @@
     "codemirror": "^5.19.0",
     "font-awesome": "^4.6.3",
     "gulp-util": "^3.0.7",
+    "highlight.js": "^9.8.0",
     "jquery": "^3.1.1",
     "markdown-it": "^8.0.0",
     "markdown-it-katex": "^2.0.3",
     "markdown-it-lazy-headers": "^0.1.3",
     "markdown-it-mathjax": "^1.0.3",
-    "mathjax": "^2.7.0"
+    "markdown-it-sanitizer": "^0.4.3",
+    "mathjax": "^2.7.0",
+    "stackup": "^1.0.1"
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.18.0",
@@ -40,6 +43,7 @@
     "gulp-csslint": "^1.0.0",
     "gulp-eslint": "^3.0.1",
     "gulp-rename": "^1.2.2",
+    "gulp-sourcemaps": "^2.2.0",
     "gulp-uglify": "^2.0.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"

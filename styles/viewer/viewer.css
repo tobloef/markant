@@ -1,0 +1,25 @@
+@import url("node_modules/katex/dist/katex.min.css");
+
+#viewer-pane {
+	height: 100%;
+	width: 50%;
+	display: inline-block;
+	position: absolute;
+	top: 0;
+	background-color: #fff;
+    overflow: hidden;
+}
+
+#viewer-container {
+    overflow-y: auto;
+	height: 100%;
+}
+
+#viewer {
+	max-width: 850px;
+	margin: 0 auto;
+	padding: 13px 10px 100px 10px;
+    word-wrap: break-word;
+	box-sizing: border-box;
+	font-family: sans-serif;
+}

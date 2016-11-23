@@ -1,29 +1,3 @@
-@import url("node_modules/katex/dist/katex.min.css");
-
-#viewer-pane {
-	height: 100%;
-	width: 50%;
-	display: inline-block;
-	position: absolute;
-	top: 0;
-	background-color: #fff;
-    overflow: hidden;
-}
-
-#viewer-container {
-    overflow-y: auto;
-	height: 100%;
-}
-
-#viewer {
-	max-width: 850px;
-	margin: 0 auto;
-	padding: 13px 10px 100px 10px;
-    word-wrap: break-word;
-	box-sizing: border-box;
-	font-family: sans-serif;
-}
-
 #viewer * {
 	font-size: 16px;
 }
@@ -61,22 +35,19 @@
 	font-size: 1.0em;
 }
 
-#viewer code {
+#viewer code,
+#viewer code * {
 	font-size: 14px;
 	line-height: 1em;
 }
 
-#viewer *:not(pre) > code,
-#viewer pre {
-	background-color: #f0f0f0;
+#viewer *:not(pre) > code {
 	word-wrap: break-word;
 	white-space: pre-wrap;
 	font-family: monospace;
 	border: 1px solid #ccc;
 	border-radius: 3px;
-}
-
-#viewer *:not(pre) > code {
+	background-color: #f0f0f0;
 	padding: 3px;
 }
 
@@ -109,25 +80,25 @@
 	overflow: auto;
 	border-spacing: 0;
 	border-collapse: collapse;
-    border-color: grey;
-    margin-top: 10px;
+	border-color: grey;
+	margin-top: 10px;
 }
 
 #viewer table thead {
 	display: table-header-group;
-    vertical-align: middle;
-    border-color: inherit;
+	vertical-align: middle;
+	border-color: inherit;
 }
 
 #viewer table td,
 #viewer table th {
-    padding: 6px 13px;
-    border: 1px solid #ddd;
+	padding: 6px 13px;
+	border: 1px solid #ddd;
 }
 
 #viewer table th {
-    font-weight: bold;
-    border-bottom-width: 2px;
+	font-weight: bold;
+	border-bottom-width: 2px;
 }
 
 #viewer table tr {

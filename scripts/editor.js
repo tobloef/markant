@@ -1,27 +1,46 @@
 ;(function() {
-	require("../styles/editor.css");
+	require("../styles/editor/editor.css");
 
 	const config = require("./config/editor");
 	const $ = require("jquery");
+	const fileLoader = require("./utils/file_loader");
 	const CodeMirror = require("codemirror");
 	require("codemirror/mode/markdown/markdown");
 	require("codemirror/mode/gfm/gfm");
-	require("./utils/pane_resizer")(
-		config.dragbarId,
-		config.editorPaneId,
-		config.viewerPaneId,
-		config.paneContainerId,
-		config.leftCollapseButtonId,
-		config.rightCollapseButtonId
-	);
+	require("codemirror/addon/edit/continuelist");
 
-	module.exports = function() {
+	// Load the stylesheets for the CodeMirror editor.
+	function loadEditorThemes() {
+		// Todo: Load this from the user's settings
+		if (config.codemirror.theme && config.themeDirectory) {
+			let directory = config.themeDirectory;
+			if (directory.substr(-1) !== "/") {
+				directory += "/";
+			}
+			let path = `${directory}${config.codemirror.theme}.css`;
+			try {
+				fileLoader.getStyle(path);
+			} catch (e) {
+				console.error(`Could not load the editor theme from path ${path}.\nException: ${e}`);
+			}
+			if (config.useBigHeaders) {
+				path = `${directory}big_headers.css`;
+				try {
+					fileLoader.getStyle(path);
+				} catch (e) {
+					console.error(`Could not load the editor theme from path ${path}.\nException: ${e}`);
+				}
+			}
+		}
+	}
+
+	module.exports = function(editorElement) {
 		const module = {};
 
 		// Set up the CodeMirror editor.
-		const editorElement = $(`#${config.editorId}`).get(0);
 		if (editorElement) {
-			module.codemirror = new CodeMirror(editorElement, config.CodeMirror);
+			module.codemirror = new CodeMirror(editorElement, config.codemirror);
+			loadEditorThemes();
 		}
 
 		return module;
