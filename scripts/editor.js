@@ -7,6 +7,7 @@
 	const CodeMirror = require("codemirror");
 	require("codemirror/mode/markdown/markdown");
 	require("codemirror/mode/gfm/gfm");
+	require("codemirror/addon/edit/continuelist");
 
 	// Load the stylesheets for the CodeMirror editor.
 	function loadEditorThemes() {
