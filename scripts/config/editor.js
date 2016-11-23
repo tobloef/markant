@@ -1,4 +1,6 @@
 ;(function() {
+	const emphasis = require("../utils/markdown_emphasis");
+
 	const config = {
 		// Configuration for CodeMirror.
 		codemirror: {
@@ -11,6 +13,17 @@
 			autofocus: true,
 			value: "",
 			theme: "light",
+			extraKeys: {
+				"Ctrl-B": function(codemirror) {
+					emphasis.handleEmphasis(codemirror, "**");
+				},
+				"Ctrl-I": function(codemirror) {
+					emphasis.handleEmphasis(codemirror, "*");
+				},
+				"Ctrl-U": function(codemirror) {
+					emphasis.handleEmphasis(codemirror, "~~");
+				}
+			},
 		},
 		// Paths to directory the editor themes can be found in.
 		themeDirectory: "build/lib/codemirror/theme",
