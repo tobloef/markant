@@ -79,6 +79,59 @@ module.exports = {
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
+(function(mod) {
+  if (typeof exports == "object" && typeof module == "object") // CommonJS
+    mod(require("../../lib/codemirror"));
+  else if (typeof define == "function" && define.amd) // AMD
+    define(["../../lib/codemirror"], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
+  "use strict";
+
+  var listRE = /^(\s*)(>[> ]*|[*+-]\s|(\d+)([.)]))(\s*)/,
+      emptyListRE = /^(\s*)(>[> ]*|[*+-]|(\d+)[.)])(\s*)$/,
+      unorderedListRE = /[*+-]\s/;
+
+  CodeMirror.commands.newlineAndIndentContinueMarkdownList = function(cm) {
+    if (cm.getOption("disableInput")) return CodeMirror.Pass;
+    var ranges = cm.listSelections(), replacements = [];
+    for (var i = 0; i < ranges.length; i++) {
+      var pos = ranges[i].head;
+      var eolState = cm.getStateAfter(pos.line);
+      var inList = eolState.list !== false;
+      var inQuote = eolState.quote !== 0;
+
+      var line = cm.getLine(pos.line), match = listRE.exec(line);
+      if (!ranges[i].empty() || (!inList && !inQuote) || !match) {
+        cm.execCommand("newlineAndIndent");
+        return;
+      }
+      if (emptyListRE.test(line)) {
+        cm.replaceRange("", {
+          line: pos.line, ch: 0
+        }, {
+          line: pos.line, ch: pos.ch + 1
+        });
+        replacements[i] = "\n";
+      } else {
+        var indent = match[1], after = match[5];
+        var bullet = unorderedListRE.test(match[2]) || match[2].indexOf(">") >= 0
+          ? match[2]
+          : (parseInt(match[3], 10) + 1) + match[4];
+
+        replacements[i] = "\n" + indent + bullet + after;
+      }
+    }
+
+    cm.replaceSelections(replacements);
+  };
+});
+
+},{"../../lib/codemirror":4}],3:[function(require,module,exports){
+// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
 // Utility function that allows modes to be combined. The mode given
 // as the base argument takes care of most of the normal mode
 // functionality, but a second (typically simple) mode is used, which
@@ -162,7 +215,7 @@ CodeMirror.overlayMode = function(base, overlay, combine) {
 
 });
 
-},{"../../lib/codemirror":3}],3:[function(require,module,exports){
+},{"../../lib/codemirror":4}],4:[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -9128,7 +9181,7 @@ CodeMirror.overlayMode = function(base, overlay, combine) {
   return CodeMirror;
 });
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -9260,7 +9313,7 @@ CodeMirror.defineMode("gfm", function(config, modeConfig) {
   CodeMirror.defineMIME("text/x-gfm", "gfm");
 });
 
-},{"../../addon/mode/overlay":2,"../../lib/codemirror":3,"../markdown/markdown":5}],5:[function(require,module,exports){
+},{"../../addon/mode/overlay":3,"../../lib/codemirror":4,"../markdown/markdown":6}],6:[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -10081,7 +10134,7 @@ CodeMirror.defineMIME("text/x-markdown", "markdown");
 
 });
 
-},{"../../lib/codemirror":3,"../meta":6,"../xml/xml":7}],6:[function(require,module,exports){
+},{"../../lib/codemirror":4,"../meta":7,"../xml/xml":8}],7:[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -10291,7 +10344,7 @@ CodeMirror.defineMIME("text/x-markdown", "markdown");
   };
 });
 
-},{"../lib/codemirror":3}],7:[function(require,module,exports){
+},{"../lib/codemirror":4}],8:[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -10687,9 +10740,9 @@ if (!CodeMirror.mimeModes.hasOwnProperty("text/html"))
 
 });
 
-},{"../../lib/codemirror":3}],8:[function(require,module,exports){
+},{"../../lib/codemirror":4}],9:[function(require,module,exports){
 module.exports={"Aacute":"\u00C1","aacute":"\u00E1","Abreve":"\u0102","abreve":"\u0103","ac":"\u223E","acd":"\u223F","acE":"\u223E\u0333","Acirc":"\u00C2","acirc":"\u00E2","acute":"\u00B4","Acy":"\u0410","acy":"\u0430","AElig":"\u00C6","aelig":"\u00E6","af":"\u2061","Afr":"\uD835\uDD04","afr":"\uD835\uDD1E","Agrave":"\u00C0","agrave":"\u00E0","alefsym":"\u2135","aleph":"\u2135","Alpha":"\u0391","alpha":"\u03B1","Amacr":"\u0100","amacr":"\u0101","amalg":"\u2A3F","amp":"&","AMP":"&","andand":"\u2A55","And":"\u2A53","and":"\u2227","andd":"\u2A5C","andslope":"\u2A58","andv":"\u2A5A","ang":"\u2220","ange":"\u29A4","angle":"\u2220","angmsdaa":"\u29A8","angmsdab":"\u29A9","angmsdac":"\u29AA","angmsdad":"\u29AB","angmsdae":"\u29AC","angmsdaf":"\u29AD","angmsdag":"\u29AE","angmsdah":"\u29AF","angmsd":"\u2221","angrt":"\u221F","angrtvb":"\u22BE","angrtvbd":"\u299D","angsph":"\u2222","angst":"\u00C5","angzarr":"\u237C","Aogon":"\u0104","aogon":"\u0105","Aopf":"\uD835\uDD38","aopf":"\uD835\uDD52","apacir":"\u2A6F","ap":"\u2248","apE":"\u2A70","ape":"\u224A","apid":"\u224B","apos":"'","ApplyFunction":"\u2061","approx":"\u2248","approxeq":"\u224A","Aring":"\u00C5","aring":"\u00E5","Ascr":"\uD835\uDC9C","ascr":"\uD835\uDCB6","Assign":"\u2254","ast":"*","asymp":"\u2248","asympeq":"\u224D","Atilde":"\u00C3","atilde":"\u00E3","Auml":"\u00C4","auml":"\u00E4","awconint":"\u2233","awint":"\u2A11","backcong":"\u224C","backepsilon":"\u03F6","backprime":"\u2035","backsim":"\u223D","backsimeq":"\u22CD","Backslash":"\u2216","Barv":"\u2AE7","barvee":"\u22BD","barwed":"\u2305","Barwed":"\u2306","barwedge":"\u2305","bbrk":"\u23B5","bbrktbrk":"\u23B6","bcong":"\u224C","Bcy":"\u0411","bcy":"\u0431","bdquo":"\u201E","becaus":"\u2235","because":"\u2235","Because":"\u2235","bemptyv":"\u29B0","bepsi":"\u03F6","bernou":"\u212C","Bernoullis":"\u212C","Beta":"\u0392","beta":"\u03B2","beth":"\u2136","between":"\u226C","Bfr":"\uD835\uDD05","bfr":"\uD835\uDD1F","bigcap":"\u22C2","bigcirc":"\u25EF","bigcup":"\u22C3","bigodot":"\u2A00","bigoplus":"\u2A01","bigotimes":"\u2A02","bigsqcup":"\u2A06","bigstar":"\u2605","bigtriangledown":"\u25BD","bigtriangleup":"\u25B3","biguplus":"\u2A04","bigvee":"\u22C1","bigwedge":"\u22C0","bkarow":"\u290D","blacklozenge":"\u29EB","blacksquare":"\u25AA","blacktriangle":"\u25B4","blacktriangledown":"\u25BE","blacktriangleleft":"\u25C2","blacktriangleright":"\u25B8","blank":"\u2423","blk12":"\u2592","blk14":"\u2591","blk34":"\u2593","block":"\u2588","bne":"=\u20E5","bnequiv":"\u2261\u20E5","bNot":"\u2AED","bnot":"\u2310","Bopf":"\uD835\uDD39","bopf":"\uD835\uDD53","bot":"\u22A5","bottom":"\u22A5","bowtie":"\u22C8","boxbox":"\u29C9","boxdl":"\u2510","boxdL":"\u2555","boxDl":"\u2556","boxDL":"\u2557","boxdr":"\u250C","boxdR":"\u2552","boxDr":"\u2553","boxDR":"\u2554","boxh":"\u2500","boxH":"\u2550","boxhd":"\u252C","boxHd":"\u2564","boxhD":"\u2565","boxHD":"\u2566","boxhu":"\u2534","boxHu":"\u2567","boxhU":"\u2568","boxHU":"\u2569","boxminus":"\u229F","boxplus":"\u229E","boxtimes":"\u22A0","boxul":"\u2518","boxuL":"\u255B","boxUl":"\u255C","boxUL":"\u255D","boxur":"\u2514","boxuR":"\u2558","boxUr":"\u2559","boxUR":"\u255A","boxv":"\u2502","boxV":"\u2551","boxvh":"\u253C","boxvH":"\u256A","boxVh":"\u256B","boxVH":"\u256C","boxvl":"\u2524","boxvL":"\u2561","boxVl":"\u2562","boxVL":"\u2563","boxvr":"\u251C","boxvR":"\u255E","boxVr":"\u255F","boxVR":"\u2560","bprime":"\u2035","breve":"\u02D8","Breve":"\u02D8","brvbar":"\u00A6","bscr":"\uD835\uDCB7","Bscr":"\u212C","bsemi":"\u204F","bsim":"\u223D","bsime":"\u22CD","bsolb":"\u29C5","bsol":"\\","bsolhsub":"\u27C8","bull":"\u2022","bullet":"\u2022","bump":"\u224E","bumpE":"\u2AAE","bumpe":"\u224F","Bumpeq":"\u224E","bumpeq":"\u224F","Cacute":"\u0106","cacute":"\u0107","capand":"\u2A44","capbrcup":"\u2A49","capcap":"\u2A4B","cap":"\u2229","Cap":"\u22D2","capcup":"\u2A47","capdot":"\u2A40","CapitalDifferentialD":"\u2145","caps":"\u2229\uFE00","caret":"\u2041","caron":"\u02C7","Cayleys":"\u212D","ccaps":"\u2A4D","Ccaron":"\u010C","ccaron":"\u010D","Ccedil":"\u00C7","ccedil":"\u00E7","Ccirc":"\u0108","ccirc":"\u0109","Cconint":"\u2230","ccups":"\u2A4C","ccupssm":"\u2A50","Cdot":"\u010A","cdot":"\u010B","cedil":"\u00B8","Cedilla":"\u00B8","cemptyv":"\u29B2","cent":"\u00A2","centerdot":"\u00B7","CenterDot":"\u00B7","cfr":"\uD835\uDD20","Cfr":"\u212D","CHcy":"\u0427","chcy":"\u0447","check":"\u2713","checkmark":"\u2713","Chi":"\u03A7","chi":"\u03C7","circ":"\u02C6","circeq":"\u2257","circlearrowleft":"\u21BA","circlearrowright":"\u21BB","circledast":"\u229B","circledcirc":"\u229A","circleddash":"\u229D","CircleDot":"\u2299","circledR":"\u00AE","circledS":"\u24C8","CircleMinus":"\u2296","CirclePlus":"\u2295","CircleTimes":"\u2297","cir":"\u25CB","cirE":"\u29C3","cire":"\u2257","cirfnint":"\u2A10","cirmid":"\u2AEF","cirscir":"\u29C2","ClockwiseContourIntegral":"\u2232","CloseCurlyDoubleQuote":"\u201D","CloseCurlyQuote":"\u2019","clubs":"\u2663","clubsuit":"\u2663","colon":":","Colon":"\u2237","Colone":"\u2A74","colone":"\u2254","coloneq":"\u2254","comma":",","commat":"@","comp":"\u2201","compfn":"\u2218","complement":"\u2201","complexes":"\u2102","cong":"\u2245","congdot":"\u2A6D","Congruent":"\u2261","conint":"\u222E","Conint":"\u222F","ContourIntegral":"\u222E","copf":"\uD835\uDD54","Copf":"\u2102","coprod":"\u2210","Coproduct":"\u2210","copy":"\u00A9","COPY":"\u00A9","copysr":"\u2117","CounterClockwiseContourIntegral":"\u2233","crarr":"\u21B5","cross":"\u2717","Cross":"\u2A2F","Cscr":"\uD835\uDC9E","cscr":"\uD835\uDCB8","csub":"\u2ACF","csube":"\u2AD1","csup":"\u2AD0","csupe":"\u2AD2","ctdot":"\u22EF","cudarrl":"\u2938","cudarrr":"\u2935","cuepr":"\u22DE","cuesc":"\u22DF","cularr":"\u21B6","cularrp":"\u293D","cupbrcap":"\u2A48","cupcap":"\u2A46","CupCap":"\u224D","cup":"\u222A","Cup":"\u22D3","cupcup":"\u2A4A","cupdot":"\u228D","cupor":"\u2A45","cups":"\u222A\uFE00","curarr":"\u21B7","curarrm":"\u293C","curlyeqprec":"\u22DE","curlyeqsucc":"\u22DF","curlyvee":"\u22CE","curlywedge":"\u22CF","curren":"\u00A4","curvearrowleft":"\u21B6","curvearrowright":"\u21B7","cuvee":"\u22CE","cuwed":"\u22CF","cwconint":"\u2232","cwint":"\u2231","cylcty":"\u232D","dagger":"\u2020","Dagger":"\u2021","daleth":"\u2138","darr":"\u2193","Darr":"\u21A1","dArr":"\u21D3","dash":"\u2010","Dashv":"\u2AE4","dashv":"\u22A3","dbkarow":"\u290F","dblac":"\u02DD","Dcaron":"\u010E","dcaron":"\u010F","Dcy":"\u0414","dcy":"\u0434","ddagger":"\u2021","ddarr":"\u21CA","DD":"\u2145","dd":"\u2146","DDotrahd":"\u2911","ddotseq":"\u2A77","deg":"\u00B0","Del":"\u2207","Delta":"\u0394","delta":"\u03B4","demptyv":"\u29B1","dfisht":"\u297F","Dfr":"\uD835\uDD07","dfr":"\uD835\uDD21","dHar":"\u2965","dharl":"\u21C3","dharr":"\u21C2","DiacriticalAcute":"\u00B4","DiacriticalDot":"\u02D9","DiacriticalDoubleAcute":"\u02DD","DiacriticalGrave":"`","DiacriticalTilde":"\u02DC","diam":"\u22C4","diamond":"\u22C4","Diamond":"\u22C4","diamondsuit":"\u2666","diams":"\u2666","die":"\u00A8","DifferentialD":"\u2146","digamma":"\u03DD","disin":"\u22F2","div":"\u00F7","divide":"\u00F7","divideontimes":"\u22C7","divonx":"\u22C7","DJcy":"\u0402","djcy":"\u0452","dlcorn":"\u231E","dlcrop":"\u230D","dollar":"$","Dopf":"\uD835\uDD3B","dopf":"\uD835\uDD55","Dot":"\u00A8","dot":"\u02D9","DotDot":"\u20DC","doteq":"\u2250","doteqdot":"\u2251","DotEqual":"\u2250","dotminus":"\u2238","dotplus":"\u2214","dotsquare":"\u22A1","doublebarwedge":"\u2306","DoubleContourIntegral":"\u222F","DoubleDot":"\u00A8","DoubleDownArrow":"\u21D3","DoubleLeftArrow":"\u21D0","DoubleLeftRightArrow":"\u21D4","DoubleLeftTee":"\u2AE4","DoubleLongLeftArrow":"\u27F8","DoubleLongLeftRightArrow":"\u27FA","DoubleLongRightArrow":"\u27F9","DoubleRightArrow":"\u21D2","DoubleRightTee":"\u22A8","DoubleUpArrow":"\u21D1","DoubleUpDownArrow":"\u21D5","DoubleVerticalBar":"\u2225","DownArrowBar":"\u2913","downarrow":"\u2193","DownArrow":"\u2193","Downarrow":"\u21D3","DownArrowUpArrow":"\u21F5","DownBreve":"\u0311","downdownarrows":"\u21CA","downharpoonleft":"\u21C3","downharpoonright":"\u21C2","DownLeftRightVector":"\u2950","DownLeftTeeVector":"\u295E","DownLeftVectorBar":"\u2956","DownLeftVector":"\u21BD","DownRightTeeVector":"\u295F","DownRightVectorBar":"\u2957","DownRightVector":"\u21C1","DownTeeArrow":"\u21A7","DownTee":"\u22A4","drbkarow":"\u2910","drcorn":"\u231F","drcrop":"\u230C","Dscr":"\uD835\uDC9F","dscr":"\uD835\uDCB9","DScy":"\u0405","dscy":"\u0455","dsol":"\u29F6","Dstrok":"\u0110","dstrok":"\u0111","dtdot":"\u22F1","dtri":"\u25BF","dtrif":"\u25BE","duarr":"\u21F5","duhar":"\u296F","dwangle":"\u29A6","DZcy":"\u040F","dzcy":"\u045F","dzigrarr":"\u27FF","Eacute":"\u00C9","eacute":"\u00E9","easter":"\u2A6E","Ecaron":"\u011A","ecaron":"\u011B","Ecirc":"\u00CA","ecirc":"\u00EA","ecir":"\u2256","ecolon":"\u2255","Ecy":"\u042D","ecy":"\u044D","eDDot":"\u2A77","Edot":"\u0116","edot":"\u0117","eDot":"\u2251","ee":"\u2147","efDot":"\u2252","Efr":"\uD835\uDD08","efr":"\uD835\uDD22","eg":"\u2A9A","Egrave":"\u00C8","egrave":"\u00E8","egs":"\u2A96","egsdot":"\u2A98","el":"\u2A99","Element":"\u2208","elinters":"\u23E7","ell":"\u2113","els":"\u2A95","elsdot":"\u2A97","Emacr":"\u0112","emacr":"\u0113","empty":"\u2205","emptyset":"\u2205","EmptySmallSquare":"\u25FB","emptyv":"\u2205","EmptyVerySmallSquare":"\u25AB","emsp13":"\u2004","emsp14":"\u2005","emsp":"\u2003","ENG":"\u014A","eng":"\u014B","ensp":"\u2002","Eogon":"\u0118","eogon":"\u0119","Eopf":"\uD835\uDD3C","eopf":"\uD835\uDD56","epar":"\u22D5","eparsl":"\u29E3","eplus":"\u2A71","epsi":"\u03B5","Epsilon":"\u0395","epsilon":"\u03B5","epsiv":"\u03F5","eqcirc":"\u2256","eqcolon":"\u2255","eqsim":"\u2242","eqslantgtr":"\u2A96","eqslantless":"\u2A95","Equal":"\u2A75","equals":"=","EqualTilde":"\u2242","equest":"\u225F","Equilibrium":"\u21CC","equiv":"\u2261","equivDD":"\u2A78","eqvparsl":"\u29E5","erarr":"\u2971","erDot":"\u2253","escr":"\u212F","Escr":"\u2130","esdot":"\u2250","Esim":"\u2A73","esim":"\u2242","Eta":"\u0397","eta":"\u03B7","ETH":"\u00D0","eth":"\u00F0","Euml":"\u00CB","euml":"\u00EB","euro":"\u20AC","excl":"!","exist":"\u2203","Exists":"\u2203","expectation":"\u2130","exponentiale":"\u2147","ExponentialE":"\u2147","fallingdotseq":"\u2252","Fcy":"\u0424","fcy":"\u0444","female":"\u2640","ffilig":"\uFB03","fflig":"\uFB00","ffllig":"\uFB04","Ffr":"\uD835\uDD09","ffr":"\uD835\uDD23","filig":"\uFB01","FilledSmallSquare":"\u25FC","FilledVerySmallSquare":"\u25AA","fjlig":"fj","flat":"\u266D","fllig":"\uFB02","fltns":"\u25B1","fnof":"\u0192","Fopf":"\uD835\uDD3D","fopf":"\uD835\uDD57","forall":"\u2200","ForAll":"\u2200","fork":"\u22D4","forkv":"\u2AD9","Fouriertrf":"\u2131","fpartint":"\u2A0D","frac12":"\u00BD","frac13":"\u2153","frac14":"\u00BC","frac15":"\u2155","frac16":"\u2159","frac18":"\u215B","frac23":"\u2154","frac25":"\u2156","frac34":"\u00BE","frac35":"\u2157","frac38":"\u215C","frac45":"\u2158","frac56":"\u215A","frac58":"\u215D","frac78":"\u215E","frasl":"\u2044","frown":"\u2322","fscr":"\uD835\uDCBB","Fscr":"\u2131","gacute":"\u01F5","Gamma":"\u0393","gamma":"\u03B3","Gammad":"\u03DC","gammad":"\u03DD","gap":"\u2A86","Gbreve":"\u011E","gbreve":"\u011F","Gcedil":"\u0122","Gcirc":"\u011C","gcirc":"\u011D","Gcy":"\u0413","gcy":"\u0433","Gdot":"\u0120","gdot":"\u0121","ge":"\u2265","gE":"\u2267","gEl":"\u2A8C","gel":"\u22DB","geq":"\u2265","geqq":"\u2267","geqslant":"\u2A7E","gescc":"\u2AA9","ges":"\u2A7E","gesdot":"\u2A80","gesdoto":"\u2A82","gesdotol":"\u2A84","gesl":"\u22DB\uFE00","gesles":"\u2A94","Gfr":"\uD835\uDD0A","gfr":"\uD835\uDD24","gg":"\u226B","Gg":"\u22D9","ggg":"\u22D9","gimel":"\u2137","GJcy":"\u0403","gjcy":"\u0453","gla":"\u2AA5","gl":"\u2277","glE":"\u2A92","glj":"\u2AA4","gnap":"\u2A8A","gnapprox":"\u2A8A","gne":"\u2A88","gnE":"\u2269","gneq":"\u2A88","gneqq":"\u2269","gnsim":"\u22E7","Gopf":"\uD835\uDD3E","gopf":"\uD835\uDD58","grave":"`","GreaterEqual":"\u2265","GreaterEqualLess":"\u22DB","GreaterFullEqual":"\u2267","GreaterGreater":"\u2AA2","GreaterLess":"\u2277","GreaterSlantEqual":"\u2A7E","GreaterTilde":"\u2273","Gscr":"\uD835\uDCA2","gscr":"\u210A","gsim":"\u2273","gsime":"\u2A8E","gsiml":"\u2A90","gtcc":"\u2AA7","gtcir":"\u2A7A","gt":">","GT":">","Gt":"\u226B","gtdot":"\u22D7","gtlPar":"\u2995","gtquest":"\u2A7C","gtrapprox":"\u2A86","gtrarr":"\u2978","gtrdot":"\u22D7","gtreqless":"\u22DB","gtreqqless":"\u2A8C","gtrless":"\u2277","gtrsim":"\u2273","gvertneqq":"\u2269\uFE00","gvnE":"\u2269\uFE00","Hacek":"\u02C7","hairsp":"\u200A","half":"\u00BD","hamilt":"\u210B","HARDcy":"\u042A","hardcy":"\u044A","harrcir":"\u2948","harr":"\u2194","hArr":"\u21D4","harrw":"\u21AD","Hat":"^","hbar":"\u210F","Hcirc":"\u0124","hcirc":"\u0125","hearts":"\u2665","heartsuit":"\u2665","hellip":"\u2026","hercon":"\u22B9","hfr":"\uD835\uDD25","Hfr":"\u210C","HilbertSpace":"\u210B","hksearow":"\u2925","hkswarow":"\u2926","hoarr":"\u21FF","homtht":"\u223B","hookleftarrow":"\u21A9","hookrightarrow":"\u21AA","hopf":"\uD835\uDD59","Hopf":"\u210D","horbar":"\u2015","HorizontalLine":"\u2500","hscr":"\uD835\uDCBD","Hscr":"\u210B","hslash":"\u210F","Hstrok":"\u0126","hstrok":"\u0127","HumpDownHump":"\u224E","HumpEqual":"\u224F","hybull":"\u2043","hyphen":"\u2010","Iacute":"\u00CD","iacute":"\u00ED","ic":"\u2063","Icirc":"\u00CE","icirc":"\u00EE","Icy":"\u0418","icy":"\u0438","Idot":"\u0130","IEcy":"\u0415","iecy":"\u0435","iexcl":"\u00A1","iff":"\u21D4","ifr":"\uD835\uDD26","Ifr":"\u2111","Igrave":"\u00CC","igrave":"\u00EC","ii":"\u2148","iiiint":"\u2A0C","iiint":"\u222D","iinfin":"\u29DC","iiota":"\u2129","IJlig":"\u0132","ijlig":"\u0133","Imacr":"\u012A","imacr":"\u012B","image":"\u2111","ImaginaryI":"\u2148","imagline":"\u2110","imagpart":"\u2111","imath":"\u0131","Im":"\u2111","imof":"\u22B7","imped":"\u01B5","Implies":"\u21D2","incare":"\u2105","in":"\u2208","infin":"\u221E","infintie":"\u29DD","inodot":"\u0131","intcal":"\u22BA","int":"\u222B","Int":"\u222C","integers":"\u2124","Integral":"\u222B","intercal":"\u22BA","Intersection":"\u22C2","intlarhk":"\u2A17","intprod":"\u2A3C","InvisibleComma":"\u2063","InvisibleTimes":"\u2062","IOcy":"\u0401","iocy":"\u0451","Iogon":"\u012E","iogon":"\u012F","Iopf":"\uD835\uDD40","iopf":"\uD835\uDD5A","Iota":"\u0399","iota":"\u03B9","iprod":"\u2A3C","iquest":"\u00BF","iscr":"\uD835\uDCBE","Iscr":"\u2110","isin":"\u2208","isindot":"\u22F5","isinE":"\u22F9","isins":"\u22F4","isinsv":"\u22F3","isinv":"\u2208","it":"\u2062","Itilde":"\u0128","itilde":"\u0129","Iukcy":"\u0406","iukcy":"\u0456","Iuml":"\u00CF","iuml":"\u00EF","Jcirc":"\u0134","jcirc":"\u0135","Jcy":"\u0419","jcy":"\u0439","Jfr":"\uD835\uDD0D","jfr":"\uD835\uDD27","jmath":"\u0237","Jopf":"\uD835\uDD41","jopf":"\uD835\uDD5B","Jscr":"\uD835\uDCA5","jscr":"\uD835\uDCBF","Jsercy":"\u0408","jsercy":"\u0458","Jukcy":"\u0404","jukcy":"\u0454","Kappa":"\u039A","kappa":"\u03BA","kappav":"\u03F0","Kcedil":"\u0136","kcedil":"\u0137","Kcy":"\u041A","kcy":"\u043A","Kfr":"\uD835\uDD0E","kfr":"\uD835\uDD28","kgreen":"\u0138","KHcy":"\u0425","khcy":"\u0445","KJcy":"\u040C","kjcy":"\u045C","Kopf":"\uD835\uDD42","kopf":"\uD835\uDD5C","Kscr":"\uD835\uDCA6","kscr":"\uD835\uDCC0","lAarr":"\u21DA","Lacute":"\u0139","lacute":"\u013A","laemptyv":"\u29B4","lagran":"\u2112","Lambda":"\u039B","lambda":"\u03BB","lang":"\u27E8","Lang":"\u27EA","langd":"\u2991","langle":"\u27E8","lap":"\u2A85","Laplacetrf":"\u2112","laquo":"\u00AB","larrb":"\u21E4","larrbfs":"\u291F","larr":"\u2190","Larr":"\u219E","lArr":"\u21D0","larrfs":"\u291D","larrhk":"\u21A9","larrlp":"\u21AB","larrpl":"\u2939","larrsim":"\u2973","larrtl":"\u21A2","latail":"\u2919","lAtail":"\u291B","lat":"\u2AAB","late":"\u2AAD","lates":"\u2AAD\uFE00","lbarr":"\u290C","lBarr":"\u290E","lbbrk":"\u2772","lbrace":"{","lbrack":"[","lbrke":"\u298B","lbrksld":"\u298F","lbrkslu":"\u298D","Lcaron":"\u013D","lcaron":"\u013E","Lcedil":"\u013B","lcedil":"\u013C","lceil":"\u2308","lcub":"{","Lcy":"\u041B","lcy":"\u043B","ldca":"\u2936","ldquo":"\u201C","ldquor":"\u201E","ldrdhar":"\u2967","ldrushar":"\u294B","ldsh":"\u21B2","le":"\u2264","lE":"\u2266","LeftAngleBracket":"\u27E8","LeftArrowBar":"\u21E4","leftarrow":"\u2190","LeftArrow":"\u2190","Leftarrow":"\u21D0","LeftArrowRightArrow":"\u21C6","leftarrowtail":"\u21A2","LeftCeiling":"\u2308","LeftDoubleBracket":"\u27E6","LeftDownTeeVector":"\u2961","LeftDownVectorBar":"\u2959","LeftDownVector":"\u21C3","LeftFloor":"\u230A","leftharpoondown":"\u21BD","leftharpoonup":"\u21BC","leftleftarrows":"\u21C7","leftrightarrow":"\u2194","LeftRightArrow":"\u2194","Leftrightarrow":"\u21D4","leftrightarrows":"\u21C6","leftrightharpoons":"\u21CB","leftrightsquigarrow":"\u21AD","LeftRightVector":"\u294E","LeftTeeArrow":"\u21A4","LeftTee":"\u22A3","LeftTeeVector":"\u295A","leftthreetimes":"\u22CB","LeftTriangleBar":"\u29CF","LeftTriangle":"\u22B2","LeftTriangleEqual":"\u22B4","LeftUpDownVector":"\u2951","LeftUpTeeVector":"\u2960","LeftUpVectorBar":"\u2958","LeftUpVector":"\u21BF","LeftVectorBar":"\u2952","LeftVector":"\u21BC","lEg":"\u2A8B","leg":"\u22DA","leq":"\u2264","leqq":"\u2266","leqslant":"\u2A7D","lescc":"\u2AA8","les":"\u2A7D","lesdot":"\u2A7F","lesdoto":"\u2A81","lesdotor":"\u2A83","lesg":"\u22DA\uFE00","lesges":"\u2A93","lessapprox":"\u2A85","lessdot":"\u22D6","lesseqgtr":"\u22DA","lesseqqgtr":"\u2A8B","LessEqualGreater":"\u22DA","LessFullEqual":"\u2266","LessGreater":"\u2276","lessgtr":"\u2276","LessLess":"\u2AA1","lesssim":"\u2272","LessSlantEqual":"\u2A7D","LessTilde":"\u2272","lfisht":"\u297C","lfloor":"\u230A","Lfr":"\uD835\uDD0F","lfr":"\uD835\uDD29","lg":"\u2276","lgE":"\u2A91","lHar":"\u2962","lhard":"\u21BD","lharu":"\u21BC","lharul":"\u296A","lhblk":"\u2584","LJcy":"\u0409","ljcy":"\u0459","llarr":"\u21C7","ll":"\u226A","Ll":"\u22D8","llcorner":"\u231E","Lleftarrow":"\u21DA","llhard":"\u296B","lltri":"\u25FA","Lmidot":"\u013F","lmidot":"\u0140","lmoustache":"\u23B0","lmoust":"\u23B0","lnap":"\u2A89","lnapprox":"\u2A89","lne":"\u2A87","lnE":"\u2268","lneq":"\u2A87","lneqq":"\u2268","lnsim":"\u22E6","loang":"\u27EC","loarr":"\u21FD","lobrk":"\u27E6","longleftarrow":"\u27F5","LongLeftArrow":"\u27F5","Longleftarrow":"\u27F8","longleftrightarrow":"\u27F7","LongLeftRightArrow":"\u27F7","Longleftrightarrow":"\u27FA","longmapsto":"\u27FC","longrightarrow":"\u27F6","LongRightArrow":"\u27F6","Longrightarrow":"\u27F9","looparrowleft":"\u21AB","looparrowright":"\u21AC","lopar":"\u2985","Lopf":"\uD835\uDD43","lopf":"\uD835\uDD5D","loplus":"\u2A2D","lotimes":"\u2A34","lowast":"\u2217","lowbar":"_","LowerLeftArrow":"\u2199","LowerRightArrow":"\u2198","loz":"\u25CA","lozenge":"\u25CA","lozf":"\u29EB","lpar":"(","lparlt":"\u2993","lrarr":"\u21C6","lrcorner":"\u231F","lrhar":"\u21CB","lrhard":"\u296D","lrm":"\u200E","lrtri":"\u22BF","lsaquo":"\u2039","lscr":"\uD835\uDCC1","Lscr":"\u2112","lsh":"\u21B0","Lsh":"\u21B0","lsim":"\u2272","lsime":"\u2A8D","lsimg":"\u2A8F","lsqb":"[","lsquo":"\u2018","lsquor":"\u201A","Lstrok":"\u0141","lstrok":"\u0142","ltcc":"\u2AA6","ltcir":"\u2A79","lt":"<","LT":"<","Lt":"\u226A","ltdot":"\u22D6","lthree":"\u22CB","ltimes":"\u22C9","ltlarr":"\u2976","ltquest":"\u2A7B","ltri":"\u25C3","ltrie":"\u22B4","ltrif":"\u25C2","ltrPar":"\u2996","lurdshar":"\u294A","luruhar":"\u2966","lvertneqq":"\u2268\uFE00","lvnE":"\u2268\uFE00","macr":"\u00AF","male":"\u2642","malt":"\u2720","maltese":"\u2720","Map":"\u2905","map":"\u21A6","mapsto":"\u21A6","mapstodown":"\u21A7","mapstoleft":"\u21A4","mapstoup":"\u21A5","marker":"\u25AE","mcomma":"\u2A29","Mcy":"\u041C","mcy":"\u043C","mdash":"\u2014","mDDot":"\u223A","measuredangle":"\u2221","MediumSpace":"\u205F","Mellintrf":"\u2133","Mfr":"\uD835\uDD10","mfr":"\uD835\uDD2A","mho":"\u2127","micro":"\u00B5","midast":"*","midcir":"\u2AF0","mid":"\u2223","middot":"\u00B7","minusb":"\u229F","minus":"\u2212","minusd":"\u2238","minusdu":"\u2A2A","MinusPlus":"\u2213","mlcp":"\u2ADB","mldr":"\u2026","mnplus":"\u2213","models":"\u22A7","Mopf":"\uD835\uDD44","mopf":"\uD835\uDD5E","mp":"\u2213","mscr":"\uD835\uDCC2","Mscr":"\u2133","mstpos":"\u223E","Mu":"\u039C","mu":"\u03BC","multimap":"\u22B8","mumap":"\u22B8","nabla":"\u2207","Nacute":"\u0143","nacute":"\u0144","nang":"\u2220\u20D2","nap":"\u2249","napE":"\u2A70\u0338","napid":"\u224B\u0338","napos":"\u0149","napprox":"\u2249","natural":"\u266E","naturals":"\u2115","natur":"\u266E","nbsp":"\u00A0","nbump":"\u224E\u0338","nbumpe":"\u224F\u0338","ncap":"\u2A43","Ncaron":"\u0147","ncaron":"\u0148","Ncedil":"\u0145","ncedil":"\u0146","ncong":"\u2247","ncongdot":"\u2A6D\u0338","ncup":"\u2A42","Ncy":"\u041D","ncy":"\u043D","ndash":"\u2013","nearhk":"\u2924","nearr":"\u2197","neArr":"\u21D7","nearrow":"\u2197","ne":"\u2260","nedot":"\u2250\u0338","NegativeMediumSpace":"\u200B","NegativeThickSpace":"\u200B","NegativeThinSpace":"\u200B","NegativeVeryThinSpace":"\u200B","nequiv":"\u2262","nesear":"\u2928","nesim":"\u2242\u0338","NestedGreaterGreater":"\u226B","NestedLessLess":"\u226A","NewLine":"\n","nexist":"\u2204","nexists":"\u2204","Nfr":"\uD835\uDD11","nfr":"\uD835\uDD2B","ngE":"\u2267\u0338","nge":"\u2271","ngeq":"\u2271","ngeqq":"\u2267\u0338","ngeqslant":"\u2A7E\u0338","nges":"\u2A7E\u0338","nGg":"\u22D9\u0338","ngsim":"\u2275","nGt":"\u226B\u20D2","ngt":"\u226F","ngtr":"\u226F","nGtv":"\u226B\u0338","nharr":"\u21AE","nhArr":"\u21CE","nhpar":"\u2AF2","ni":"\u220B","nis":"\u22FC","nisd":"\u22FA","niv":"\u220B","NJcy":"\u040A","njcy":"\u045A","nlarr":"\u219A","nlArr":"\u21CD","nldr":"\u2025","nlE":"\u2266\u0338","nle":"\u2270","nleftarrow":"\u219A","nLeftarrow":"\u21CD","nleftrightarrow":"\u21AE","nLeftrightarrow":"\u21CE","nleq":"\u2270","nleqq":"\u2266\u0338","nleqslant":"\u2A7D\u0338","nles":"\u2A7D\u0338","nless":"\u226E","nLl":"\u22D8\u0338","nlsim":"\u2274","nLt":"\u226A\u20D2","nlt":"\u226E","nltri":"\u22EA","nltrie":"\u22EC","nLtv":"\u226A\u0338","nmid":"\u2224","NoBreak":"\u2060","NonBreakingSpace":"\u00A0","nopf":"\uD835\uDD5F","Nopf":"\u2115","Not":"\u2AEC","not":"\u00AC","NotCongruent":"\u2262","NotCupCap":"\u226D","NotDoubleVerticalBar":"\u2226","NotElement":"\u2209","NotEqual":"\u2260","NotEqualTilde":"\u2242\u0338","NotExists":"\u2204","NotGreater":"\u226F","NotGreaterEqual":"\u2271","NotGreaterFullEqual":"\u2267\u0338","NotGreaterGreater":"\u226B\u0338","NotGreaterLess":"\u2279","NotGreaterSlantEqual":"\u2A7E\u0338","NotGreaterTilde":"\u2275","NotHumpDownHump":"\u224E\u0338","NotHumpEqual":"\u224F\u0338","notin":"\u2209","notindot":"\u22F5\u0338","notinE":"\u22F9\u0338","notinva":"\u2209","notinvb":"\u22F7","notinvc":"\u22F6","NotLeftTriangleBar":"\u29CF\u0338","NotLeftTriangle":"\u22EA","NotLeftTriangleEqual":"\u22EC","NotLess":"\u226E","NotLessEqual":"\u2270","NotLessGreater":"\u2278","NotLessLess":"\u226A\u0338","NotLessSlantEqual":"\u2A7D\u0338","NotLessTilde":"\u2274","NotNestedGreaterGreater":"\u2AA2\u0338","NotNestedLessLess":"\u2AA1\u0338","notni":"\u220C","notniva":"\u220C","notnivb":"\u22FE","notnivc":"\u22FD","NotPrecedes":"\u2280","NotPrecedesEqual":"\u2AAF\u0338","NotPrecedesSlantEqual":"\u22E0","NotReverseElement":"\u220C","NotRightTriangleBar":"\u29D0\u0338","NotRightTriangle":"\u22EB","NotRightTriangleEqual":"\u22ED","NotSquareSubset":"\u228F\u0338","NotSquareSubsetEqual":"\u22E2","NotSquareSuperset":"\u2290\u0338","NotSquareSupersetEqual":"\u22E3","NotSubset":"\u2282\u20D2","NotSubsetEqual":"\u2288","NotSucceeds":"\u2281","NotSucceedsEqual":"\u2AB0\u0338","NotSucceedsSlantEqual":"\u22E1","NotSucceedsTilde":"\u227F\u0338","NotSuperset":"\u2283\u20D2","NotSupersetEqual":"\u2289","NotTilde":"\u2241","NotTildeEqual":"\u2244","NotTildeFullEqual":"\u2247","NotTildeTilde":"\u2249","NotVerticalBar":"\u2224","nparallel":"\u2226","npar":"\u2226","nparsl":"\u2AFD\u20E5","npart":"\u2202\u0338","npolint":"\u2A14","npr":"\u2280","nprcue":"\u22E0","nprec":"\u2280","npreceq":"\u2AAF\u0338","npre":"\u2AAF\u0338","nrarrc":"\u2933\u0338","nrarr":"\u219B","nrArr":"\u21CF","nrarrw":"\u219D\u0338","nrightarrow":"\u219B","nRightarrow":"\u21CF","nrtri":"\u22EB","nrtrie":"\u22ED","nsc":"\u2281","nsccue":"\u22E1","nsce":"\u2AB0\u0338","Nscr":"\uD835\uDCA9","nscr":"\uD835\uDCC3","nshortmid":"\u2224","nshortparallel":"\u2226","nsim":"\u2241","nsime":"\u2244","nsimeq":"\u2244","nsmid":"\u2224","nspar":"\u2226","nsqsube":"\u22E2","nsqsupe":"\u22E3","nsub":"\u2284","nsubE":"\u2AC5\u0338","nsube":"\u2288","nsubset":"\u2282\u20D2","nsubseteq":"\u2288","nsubseteqq":"\u2AC5\u0338","nsucc":"\u2281","nsucceq":"\u2AB0\u0338","nsup":"\u2285","nsupE":"\u2AC6\u0338","nsupe":"\u2289","nsupset":"\u2283\u20D2","nsupseteq":"\u2289","nsupseteqq":"\u2AC6\u0338","ntgl":"\u2279","Ntilde":"\u00D1","ntilde":"\u00F1","ntlg":"\u2278","ntriangleleft":"\u22EA","ntrianglelefteq":"\u22EC","ntriangleright":"\u22EB","ntrianglerighteq":"\u22ED","Nu":"\u039D","nu":"\u03BD","num":"#","numero":"\u2116","numsp":"\u2007","nvap":"\u224D\u20D2","nvdash":"\u22AC","nvDash":"\u22AD","nVdash":"\u22AE","nVDash":"\u22AF","nvge":"\u2265\u20D2","nvgt":">\u20D2","nvHarr":"\u2904","nvinfin":"\u29DE","nvlArr":"\u2902","nvle":"\u2264\u20D2","nvlt":"<\u20D2","nvltrie":"\u22B4\u20D2","nvrArr":"\u2903","nvrtrie":"\u22B5\u20D2","nvsim":"\u223C\u20D2","nwarhk":"\u2923","nwarr":"\u2196","nwArr":"\u21D6","nwarrow":"\u2196","nwnear":"\u2927","Oacute":"\u00D3","oacute":"\u00F3","oast":"\u229B","Ocirc":"\u00D4","ocirc":"\u00F4","ocir":"\u229A","Ocy":"\u041E","ocy":"\u043E","odash":"\u229D","Odblac":"\u0150","odblac":"\u0151","odiv":"\u2A38","odot":"\u2299","odsold":"\u29BC","OElig":"\u0152","oelig":"\u0153","ofcir":"\u29BF","Ofr":"\uD835\uDD12","ofr":"\uD835\uDD2C","ogon":"\u02DB","Ograve":"\u00D2","ograve":"\u00F2","ogt":"\u29C1","ohbar":"\u29B5","ohm":"\u03A9","oint":"\u222E","olarr":"\u21BA","olcir":"\u29BE","olcross":"\u29BB","oline":"\u203E","olt":"\u29C0","Omacr":"\u014C","omacr":"\u014D","Omega":"\u03A9","omega":"\u03C9","Omicron":"\u039F","omicron":"\u03BF","omid":"\u29B6","ominus":"\u2296","Oopf":"\uD835\uDD46","oopf":"\uD835\uDD60","opar":"\u29B7","OpenCurlyDoubleQuote":"\u201C","OpenCurlyQuote":"\u2018","operp":"\u29B9","oplus":"\u2295","orarr":"\u21BB","Or":"\u2A54","or":"\u2228","ord":"\u2A5D","order":"\u2134","orderof":"\u2134","ordf":"\u00AA","ordm":"\u00BA","origof":"\u22B6","oror":"\u2A56","orslope":"\u2A57","orv":"\u2A5B","oS":"\u24C8","Oscr":"\uD835\uDCAA","oscr":"\u2134","Oslash":"\u00D8","oslash":"\u00F8","osol":"\u2298","Otilde":"\u00D5","otilde":"\u00F5","otimesas":"\u2A36","Otimes":"\u2A37","otimes":"\u2297","Ouml":"\u00D6","ouml":"\u00F6","ovbar":"\u233D","OverBar":"\u203E","OverBrace":"\u23DE","OverBracket":"\u23B4","OverParenthesis":"\u23DC","para":"\u00B6","parallel":"\u2225","par":"\u2225","parsim":"\u2AF3","parsl":"\u2AFD","part":"\u2202","PartialD":"\u2202","Pcy":"\u041F","pcy":"\u043F","percnt":"%","period":".","permil":"\u2030","perp":"\u22A5","pertenk":"\u2031","Pfr":"\uD835\uDD13","pfr":"\uD835\uDD2D","Phi":"\u03A6","phi":"\u03C6","phiv":"\u03D5","phmmat":"\u2133","phone":"\u260E","Pi":"\u03A0","pi":"\u03C0","pitchfork":"\u22D4","piv":"\u03D6","planck":"\u210F","planckh":"\u210E","plankv":"\u210F","plusacir":"\u2A23","plusb":"\u229E","pluscir":"\u2A22","plus":"+","plusdo":"\u2214","plusdu":"\u2A25","pluse":"\u2A72","PlusMinus":"\u00B1","plusmn":"\u00B1","plussim":"\u2A26","plustwo":"\u2A27","pm":"\u00B1","Poincareplane":"\u210C","pointint":"\u2A15","popf":"\uD835\uDD61","Popf":"\u2119","pound":"\u00A3","prap":"\u2AB7","Pr":"\u2ABB","pr":"\u227A","prcue":"\u227C","precapprox":"\u2AB7","prec":"\u227A","preccurlyeq":"\u227C","Precedes":"\u227A","PrecedesEqual":"\u2AAF","PrecedesSlantEqual":"\u227C","PrecedesTilde":"\u227E","preceq":"\u2AAF","precnapprox":"\u2AB9","precneqq":"\u2AB5","precnsim":"\u22E8","pre":"\u2AAF","prE":"\u2AB3","precsim":"\u227E","prime":"\u2032","Prime":"\u2033","primes":"\u2119","prnap":"\u2AB9","prnE":"\u2AB5","prnsim":"\u22E8","prod":"\u220F","Product":"\u220F","profalar":"\u232E","profline":"\u2312","profsurf":"\u2313","prop":"\u221D","Proportional":"\u221D","Proportion":"\u2237","propto":"\u221D","prsim":"\u227E","prurel":"\u22B0","Pscr":"\uD835\uDCAB","pscr":"\uD835\uDCC5","Psi":"\u03A8","psi":"\u03C8","puncsp":"\u2008","Qfr":"\uD835\uDD14","qfr":"\uD835\uDD2E","qint":"\u2A0C","qopf":"\uD835\uDD62","Qopf":"\u211A","qprime":"\u2057","Qscr":"\uD835\uDCAC","qscr":"\uD835\uDCC6","quaternions":"\u210D","quatint":"\u2A16","quest":"?","questeq":"\u225F","quot":"\"","QUOT":"\"","rAarr":"\u21DB","race":"\u223D\u0331","Racute":"\u0154","racute":"\u0155","radic":"\u221A","raemptyv":"\u29B3","rang":"\u27E9","Rang":"\u27EB","rangd":"\u2992","range":"\u29A5","rangle":"\u27E9","raquo":"\u00BB","rarrap":"\u2975","rarrb":"\u21E5","rarrbfs":"\u2920","rarrc":"\u2933","rarr":"\u2192","Rarr":"\u21A0","rArr":"\u21D2","rarrfs":"\u291E","rarrhk":"\u21AA","rarrlp":"\u21AC","rarrpl":"\u2945","rarrsim":"\u2974","Rarrtl":"\u2916","rarrtl":"\u21A3","rarrw":"\u219D","ratail":"\u291A","rAtail":"\u291C","ratio":"\u2236","rationals":"\u211A","rbarr":"\u290D","rBarr":"\u290F","RBarr":"\u2910","rbbrk":"\u2773","rbrace":"}","rbrack":"]","rbrke":"\u298C","rbrksld":"\u298E","rbrkslu":"\u2990","Rcaron":"\u0158","rcaron":"\u0159","Rcedil":"\u0156","rcedil":"\u0157","rceil":"\u2309","rcub":"}","Rcy":"\u0420","rcy":"\u0440","rdca":"\u2937","rdldhar":"\u2969","rdquo":"\u201D","rdquor":"\u201D","rdsh":"\u21B3","real":"\u211C","realine":"\u211B","realpart":"\u211C","reals":"\u211D","Re":"\u211C","rect":"\u25AD","reg":"\u00AE","REG":"\u00AE","ReverseElement":"\u220B","ReverseEquilibrium":"\u21CB","ReverseUpEquilibrium":"\u296F","rfisht":"\u297D","rfloor":"\u230B","rfr":"\uD835\uDD2F","Rfr":"\u211C","rHar":"\u2964","rhard":"\u21C1","rharu":"\u21C0","rharul":"\u296C","Rho":"\u03A1","rho":"\u03C1","rhov":"\u03F1","RightAngleBracket":"\u27E9","RightArrowBar":"\u21E5","rightarrow":"\u2192","RightArrow":"\u2192","Rightarrow":"\u21D2","RightArrowLeftArrow":"\u21C4","rightarrowtail":"\u21A3","RightCeiling":"\u2309","RightDoubleBracket":"\u27E7","RightDownTeeVector":"\u295D","RightDownVectorBar":"\u2955","RightDownVector":"\u21C2","RightFloor":"\u230B","rightharpoondown":"\u21C1","rightharpoonup":"\u21C0","rightleftarrows":"\u21C4","rightleftharpoons":"\u21CC","rightrightarrows":"\u21C9","rightsquigarrow":"\u219D","RightTeeArrow":"\u21A6","RightTee":"\u22A2","RightTeeVector":"\u295B","rightthreetimes":"\u22CC","RightTriangleBar":"\u29D0","RightTriangle":"\u22B3","RightTriangleEqual":"\u22B5","RightUpDownVector":"\u294F","RightUpTeeVector":"\u295C","RightUpVectorBar":"\u2954","RightUpVector":"\u21BE","RightVectorBar":"\u2953","RightVector":"\u21C0","ring":"\u02DA","risingdotseq":"\u2253","rlarr":"\u21C4","rlhar":"\u21CC","rlm":"\u200F","rmoustache":"\u23B1","rmoust":"\u23B1","rnmid":"\u2AEE","roang":"\u27ED","roarr":"\u21FE","robrk":"\u27E7","ropar":"\u2986","ropf":"\uD835\uDD63","Ropf":"\u211D","roplus":"\u2A2E","rotimes":"\u2A35","RoundImplies":"\u2970","rpar":")","rpargt":"\u2994","rppolint":"\u2A12","rrarr":"\u21C9","Rrightarrow":"\u21DB","rsaquo":"\u203A","rscr":"\uD835\uDCC7","Rscr":"\u211B","rsh":"\u21B1","Rsh":"\u21B1","rsqb":"]","rsquo":"\u2019","rsquor":"\u2019","rthree":"\u22CC","rtimes":"\u22CA","rtri":"\u25B9","rtrie":"\u22B5","rtrif":"\u25B8","rtriltri":"\u29CE","RuleDelayed":"\u29F4","ruluhar":"\u2968","rx":"\u211E","Sacute":"\u015A","sacute":"\u015B","sbquo":"\u201A","scap":"\u2AB8","Scaron":"\u0160","scaron":"\u0161","Sc":"\u2ABC","sc":"\u227B","sccue":"\u227D","sce":"\u2AB0","scE":"\u2AB4","Scedil":"\u015E","scedil":"\u015F","Scirc":"\u015C","scirc":"\u015D","scnap":"\u2ABA","scnE":"\u2AB6","scnsim":"\u22E9","scpolint":"\u2A13","scsim":"\u227F","Scy":"\u0421","scy":"\u0441","sdotb":"\u22A1","sdot":"\u22C5","sdote":"\u2A66","searhk":"\u2925","searr":"\u2198","seArr":"\u21D8","searrow":"\u2198","sect":"\u00A7","semi":";","seswar":"\u2929","setminus":"\u2216","setmn":"\u2216","sext":"\u2736","Sfr":"\uD835\uDD16","sfr":"\uD835\uDD30","sfrown":"\u2322","sharp":"\u266F","SHCHcy":"\u0429","shchcy":"\u0449","SHcy":"\u0428","shcy":"\u0448","ShortDownArrow":"\u2193","ShortLeftArrow":"\u2190","shortmid":"\u2223","shortparallel":"\u2225","ShortRightArrow":"\u2192","ShortUpArrow":"\u2191","shy":"\u00AD","Sigma":"\u03A3","sigma":"\u03C3","sigmaf":"\u03C2","sigmav":"\u03C2","sim":"\u223C","simdot":"\u2A6A","sime":"\u2243","simeq":"\u2243","simg":"\u2A9E","simgE":"\u2AA0","siml":"\u2A9D","simlE":"\u2A9F","simne":"\u2246","simplus":"\u2A24","simrarr":"\u2972","slarr":"\u2190","SmallCircle":"\u2218","smallsetminus":"\u2216","smashp":"\u2A33","smeparsl":"\u29E4","smid":"\u2223","smile":"\u2323","smt":"\u2AAA","smte":"\u2AAC","smtes":"\u2AAC\uFE00","SOFTcy":"\u042C","softcy":"\u044C","solbar":"\u233F","solb":"\u29C4","sol":"/","Sopf":"\uD835\uDD4A","sopf":"\uD835\uDD64","spades":"\u2660","spadesuit":"\u2660","spar":"\u2225","sqcap":"\u2293","sqcaps":"\u2293\uFE00","sqcup":"\u2294","sqcups":"\u2294\uFE00","Sqrt":"\u221A","sqsub":"\u228F","sqsube":"\u2291","sqsubset":"\u228F","sqsubseteq":"\u2291","sqsup":"\u2290","sqsupe":"\u2292","sqsupset":"\u2290","sqsupseteq":"\u2292","square":"\u25A1","Square":"\u25A1","SquareIntersection":"\u2293","SquareSubset":"\u228F","SquareSubsetEqual":"\u2291","SquareSuperset":"\u2290","SquareSupersetEqual":"\u2292","SquareUnion":"\u2294","squarf":"\u25AA","squ":"\u25A1","squf":"\u25AA","srarr":"\u2192","Sscr":"\uD835\uDCAE","sscr":"\uD835\uDCC8","ssetmn":"\u2216","ssmile":"\u2323","sstarf":"\u22C6","Star":"\u22C6","star":"\u2606","starf":"\u2605","straightepsilon":"\u03F5","straightphi":"\u03D5","strns":"\u00AF","sub":"\u2282","Sub":"\u22D0","subdot":"\u2ABD","subE":"\u2AC5","sube":"\u2286","subedot":"\u2AC3","submult":"\u2AC1","subnE":"\u2ACB","subne":"\u228A","subplus":"\u2ABF","subrarr":"\u2979","subset":"\u2282","Subset":"\u22D0","subseteq":"\u2286","subseteqq":"\u2AC5","SubsetEqual":"\u2286","subsetneq":"\u228A","subsetneqq":"\u2ACB","subsim":"\u2AC7","subsub":"\u2AD5","subsup":"\u2AD3","succapprox":"\u2AB8","succ":"\u227B","succcurlyeq":"\u227D","Succeeds":"\u227B","SucceedsEqual":"\u2AB0","SucceedsSlantEqual":"\u227D","SucceedsTilde":"\u227F","succeq":"\u2AB0","succnapprox":"\u2ABA","succneqq":"\u2AB6","succnsim":"\u22E9","succsim":"\u227F","SuchThat":"\u220B","sum":"\u2211","Sum":"\u2211","sung":"\u266A","sup1":"\u00B9","sup2":"\u00B2","sup3":"\u00B3","sup":"\u2283","Sup":"\u22D1","supdot":"\u2ABE","supdsub":"\u2AD8","supE":"\u2AC6","supe":"\u2287","supedot":"\u2AC4","Superset":"\u2283","SupersetEqual":"\u2287","suphsol":"\u27C9","suphsub":"\u2AD7","suplarr":"\u297B","supmult":"\u2AC2","supnE":"\u2ACC","supne":"\u228B","supplus":"\u2AC0","supset":"\u2283","Supset":"\u22D1","supseteq":"\u2287","supseteqq":"\u2AC6","supsetneq":"\u228B","supsetneqq":"\u2ACC","supsim":"\u2AC8","supsub":"\u2AD4","supsup":"\u2AD6","swarhk":"\u2926","swarr":"\u2199","swArr":"\u21D9","swarrow":"\u2199","swnwar":"\u292A","szlig":"\u00DF","Tab":"\t","target":"\u2316","Tau":"\u03A4","tau":"\u03C4","tbrk":"\u23B4","Tcaron":"\u0164","tcaron":"\u0165","Tcedil":"\u0162","tcedil":"\u0163","Tcy":"\u0422","tcy":"\u0442","tdot":"\u20DB","telrec":"\u2315","Tfr":"\uD835\uDD17","tfr":"\uD835\uDD31","there4":"\u2234","therefore":"\u2234","Therefore":"\u2234","Theta":"\u0398","theta":"\u03B8","thetasym":"\u03D1","thetav":"\u03D1","thickapprox":"\u2248","thicksim":"\u223C","ThickSpace":"\u205F\u200A","ThinSpace":"\u2009","thinsp":"\u2009","thkap":"\u2248","thksim":"\u223C","THORN":"\u00DE","thorn":"\u00FE","tilde":"\u02DC","Tilde":"\u223C","TildeEqual":"\u2243","TildeFullEqual":"\u2245","TildeTilde":"\u2248","timesbar":"\u2A31","timesb":"\u22A0","times":"\u00D7","timesd":"\u2A30","tint":"\u222D","toea":"\u2928","topbot":"\u2336","topcir":"\u2AF1","top":"\u22A4","Topf":"\uD835\uDD4B","topf":"\uD835\uDD65","topfork":"\u2ADA","tosa":"\u2929","tprime":"\u2034","trade":"\u2122","TRADE":"\u2122","triangle":"\u25B5","triangledown":"\u25BF","triangleleft":"\u25C3","trianglelefteq":"\u22B4","triangleq":"\u225C","triangleright":"\u25B9","trianglerighteq":"\u22B5","tridot":"\u25EC","trie":"\u225C","triminus":"\u2A3A","TripleDot":"\u20DB","triplus":"\u2A39","trisb":"\u29CD","tritime":"\u2A3B","trpezium":"\u23E2","Tscr":"\uD835\uDCAF","tscr":"\uD835\uDCC9","TScy":"\u0426","tscy":"\u0446","TSHcy":"\u040B","tshcy":"\u045B","Tstrok":"\u0166","tstrok":"\u0167","twixt":"\u226C","twoheadleftarrow":"\u219E","twoheadrightarrow":"\u21A0","Uacute":"\u00DA","uacute":"\u00FA","uarr":"\u2191","Uarr":"\u219F","uArr":"\u21D1","Uarrocir":"\u2949","Ubrcy":"\u040E","ubrcy":"\u045E","Ubreve":"\u016C","ubreve":"\u016D","Ucirc":"\u00DB","ucirc":"\u00FB","Ucy":"\u0423","ucy":"\u0443","udarr":"\u21C5","Udblac":"\u0170","udblac":"\u0171","udhar":"\u296E","ufisht":"\u297E","Ufr":"\uD835\uDD18","ufr":"\uD835\uDD32","Ugrave":"\u00D9","ugrave":"\u00F9","uHar":"\u2963","uharl":"\u21BF","uharr":"\u21BE","uhblk":"\u2580","ulcorn":"\u231C","ulcorner":"\u231C","ulcrop":"\u230F","ultri":"\u25F8","Umacr":"\u016A","umacr":"\u016B","uml":"\u00A8","UnderBar":"_","UnderBrace":"\u23DF","UnderBracket":"\u23B5","UnderParenthesis":"\u23DD","Union":"\u22C3","UnionPlus":"\u228E","Uogon":"\u0172","uogon":"\u0173","Uopf":"\uD835\uDD4C","uopf":"\uD835\uDD66","UpArrowBar":"\u2912","uparrow":"\u2191","UpArrow":"\u2191","Uparrow":"\u21D1","UpArrowDownArrow":"\u21C5","updownarrow":"\u2195","UpDownArrow":"\u2195","Updownarrow":"\u21D5","UpEquilibrium":"\u296E","upharpoonleft":"\u21BF","upharpoonright":"\u21BE","uplus":"\u228E","UpperLeftArrow":"\u2196","UpperRightArrow":"\u2197","upsi":"\u03C5","Upsi":"\u03D2","upsih":"\u03D2","Upsilon":"\u03A5","upsilon":"\u03C5","UpTeeArrow":"\u21A5","UpTee":"\u22A5","upuparrows":"\u21C8","urcorn":"\u231D","urcorner":"\u231D","urcrop":"\u230E","Uring":"\u016E","uring":"\u016F","urtri":"\u25F9","Uscr":"\uD835\uDCB0","uscr":"\uD835\uDCCA","utdot":"\u22F0","Utilde":"\u0168","utilde":"\u0169","utri":"\u25B5","utrif":"\u25B4","uuarr":"\u21C8","Uuml":"\u00DC","uuml":"\u00FC","uwangle":"\u29A7","vangrt":"\u299C","varepsilon":"\u03F5","varkappa":"\u03F0","varnothing":"\u2205","varphi":"\u03D5","varpi":"\u03D6","varpropto":"\u221D","varr":"\u2195","vArr":"\u21D5","varrho":"\u03F1","varsigma":"\u03C2","varsubsetneq":"\u228A\uFE00","varsubsetneqq":"\u2ACB\uFE00","varsupsetneq":"\u228B\uFE00","varsupsetneqq":"\u2ACC\uFE00","vartheta":"\u03D1","vartriangleleft":"\u22B2","vartriangleright":"\u22B3","vBar":"\u2AE8","Vbar":"\u2AEB","vBarv":"\u2AE9","Vcy":"\u0412","vcy":"\u0432","vdash":"\u22A2","vDash":"\u22A8","Vdash":"\u22A9","VDash":"\u22AB","Vdashl":"\u2AE6","veebar":"\u22BB","vee":"\u2228","Vee":"\u22C1","veeeq":"\u225A","vellip":"\u22EE","verbar":"|","Verbar":"\u2016","vert":"|","Vert":"\u2016","VerticalBar":"\u2223","VerticalLine":"|","VerticalSeparator":"\u2758","VerticalTilde":"\u2240","VeryThinSpace":"\u200A","Vfr":"\uD835\uDD19","vfr":"\uD835\uDD33","vltri":"\u22B2","vnsub":"\u2282\u20D2","vnsup":"\u2283\u20D2","Vopf":"\uD835\uDD4D","vopf":"\uD835\uDD67","vprop":"\u221D","vrtri":"\u22B3","Vscr":"\uD835\uDCB1","vscr":"\uD835\uDCCB","vsubnE":"\u2ACB\uFE00","vsubne":"\u228A\uFE00","vsupnE":"\u2ACC\uFE00","vsupne":"\u228B\uFE00","Vvdash":"\u22AA","vzigzag":"\u299A","Wcirc":"\u0174","wcirc":"\u0175","wedbar":"\u2A5F","wedge":"\u2227","Wedge":"\u22C0","wedgeq":"\u2259","weierp":"\u2118","Wfr":"\uD835\uDD1A","wfr":"\uD835\uDD34","Wopf":"\uD835\uDD4E","wopf":"\uD835\uDD68","wp":"\u2118","wr":"\u2240","wreath":"\u2240","Wscr":"\uD835\uDCB2","wscr":"\uD835\uDCCC","xcap":"\u22C2","xcirc":"\u25EF","xcup":"\u22C3","xdtri":"\u25BD","Xfr":"\uD835\uDD1B","xfr":"\uD835\uDD35","xharr":"\u27F7","xhArr":"\u27FA","Xi":"\u039E","xi":"\u03BE","xlarr":"\u27F5","xlArr":"\u27F8","xmap":"\u27FC","xnis":"\u22FB","xodot":"\u2A00","Xopf":"\uD835\uDD4F","xopf":"\uD835\uDD69","xoplus":"\u2A01","xotime":"\u2A02","xrarr":"\u27F6","xrArr":"\u27F9","Xscr":"\uD835\uDCB3","xscr":"\uD835\uDCCD","xsqcup":"\u2A06","xuplus":"\u2A04","xutri":"\u25B3","xvee":"\u22C1","xwedge":"\u22C0","Yacute":"\u00DD","yacute":"\u00FD","YAcy":"\u042F","yacy":"\u044F","Ycirc":"\u0176","ycirc":"\u0177","Ycy":"\u042B","ycy":"\u044B","yen":"\u00A5","Yfr":"\uD835\uDD1C","yfr":"\uD835\uDD36","YIcy":"\u0407","yicy":"\u0457","Yopf":"\uD835\uDD50","yopf":"\uD835\uDD6A","Yscr":"\uD835\uDCB4","yscr":"\uD835\uDCCE","YUcy":"\u042E","yucy":"\u044E","yuml":"\u00FF","Yuml":"\u0178","Zacute":"\u0179","zacute":"\u017A","Zcaron":"\u017D","zcaron":"\u017E","Zcy":"\u0417","zcy":"\u0437","Zdot":"\u017B","zdot":"\u017C","zeetrf":"\u2128","ZeroWidthSpace":"\u200B","Zeta":"\u0396","zeta":"\u03B6","zfr":"\uD835\uDD37","Zfr":"\u2128","ZHcy":"\u0416","zhcy":"\u0436","zigrarr":"\u21DD","zopf":"\uD835\uDD6B","Zopf":"\u2124","Zscr":"\uD835\uDCB5","zscr":"\uD835\uDCCF","zwj":"\u200D","zwnj":"\u200C"}
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 /*
 Syntax highlighting with language autodetection.
 https://highlightjs.org/
@@ -11509,7 +11562,7 @@ https://highlightjs.org/
   return hljs;
 }));
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var hljs = require('./highlight');
 
 hljs.registerLanguage('1c', require('./languages/1c'));
@@ -11682,7 +11735,7 @@ hljs.registerLanguage('xquery', require('./languages/xquery'));
 hljs.registerLanguage('zephir', require('./languages/zephir'));
 
 module.exports = hljs;
-},{"./highlight":9,"./languages/1c":11,"./languages/abnf":12,"./languages/accesslog":13,"./languages/actionscript":14,"./languages/ada":15,"./languages/apache":16,"./languages/applescript":17,"./languages/arduino":18,"./languages/armasm":19,"./languages/asciidoc":20,"./languages/aspectj":21,"./languages/autohotkey":22,"./languages/autoit":23,"./languages/avrasm":24,"./languages/awk":25,"./languages/axapta":26,"./languages/bash":27,"./languages/basic":28,"./languages/bnf":29,"./languages/brainfuck":30,"./languages/cal":31,"./languages/capnproto":32,"./languages/ceylon":33,"./languages/clean":34,"./languages/clojure":36,"./languages/clojure-repl":35,"./languages/cmake":37,"./languages/coffeescript":38,"./languages/coq":39,"./languages/cos":40,"./languages/cpp":41,"./languages/crmsh":42,"./languages/crystal":43,"./languages/cs":44,"./languages/csp":45,"./languages/css":46,"./languages/d":47,"./languages/dart":48,"./languages/delphi":49,"./languages/diff":50,"./languages/django":51,"./languages/dns":52,"./languages/dockerfile":53,"./languages/dos":54,"./languages/dsconfig":55,"./languages/dts":56,"./languages/dust":57,"./languages/ebnf":58,"./languages/elixir":59,"./languages/elm":60,"./languages/erb":61,"./languages/erlang":63,"./languages/erlang-repl":62,"./languages/excel":64,"./languages/fix":65,"./languages/flix":66,"./languages/fortran":67,"./languages/fsharp":68,"./languages/gams":69,"./languages/gauss":70,"./languages/gcode":71,"./languages/gherkin":72,"./languages/glsl":73,"./languages/go":74,"./languages/golo":75,"./languages/gradle":76,"./languages/groovy":77,"./languages/haml":78,"./languages/handlebars":79,"./languages/haskell":80,"./languages/haxe":81,"./languages/hsp":82,"./languages/htmlbars":83,"./languages/http":84,"./languages/inform7":85,"./languages/ini":86,"./languages/irpf90":87,"./languages/java":88,"./languages/javascript":89,"./languages/json":90,"./languages/julia":91,"./languages/kotlin":92,"./languages/lasso":93,"./languages/ldif":94,"./languages/less":95,"./languages/lisp":96,"./languages/livecodeserver":97,"./languages/livescript":98,"./languages/lsl":99,"./languages/lua":100,"./languages/makefile":101,"./languages/markdown":102,"./languages/mathematica":103,"./languages/matlab":104,"./languages/maxima":105,"./languages/mel":106,"./languages/mercury":107,"./languages/mipsasm":108,"./languages/mizar":109,"./languages/mojolicious":110,"./languages/monkey":111,"./languages/moonscript":112,"./languages/nginx":113,"./languages/nimrod":114,"./languages/nix":115,"./languages/nsis":116,"./languages/objectivec":117,"./languages/ocaml":118,"./languages/openscad":119,"./languages/oxygene":120,"./languages/parser3":121,"./languages/perl":122,"./languages/pf":123,"./languages/php":124,"./languages/pony":125,"./languages/powershell":126,"./languages/processing":127,"./languages/profile":128,"./languages/prolog":129,"./languages/protobuf":130,"./languages/puppet":131,"./languages/purebasic":132,"./languages/python":133,"./languages/q":134,"./languages/qml":135,"./languages/r":136,"./languages/rib":137,"./languages/roboconf":138,"./languages/rsl":139,"./languages/ruby":140,"./languages/ruleslanguage":141,"./languages/rust":142,"./languages/scala":143,"./languages/scheme":144,"./languages/scilab":145,"./languages/scss":146,"./languages/smali":147,"./languages/smalltalk":148,"./languages/sml":149,"./languages/sqf":150,"./languages/sql":151,"./languages/stan":152,"./languages/stata":153,"./languages/step21":154,"./languages/stylus":155,"./languages/subunit":156,"./languages/swift":157,"./languages/taggerscript":158,"./languages/tap":159,"./languages/tcl":160,"./languages/tex":161,"./languages/thrift":162,"./languages/tp":163,"./languages/twig":164,"./languages/typescript":165,"./languages/vala":166,"./languages/vbnet":167,"./languages/vbscript":169,"./languages/vbscript-html":168,"./languages/verilog":170,"./languages/vhdl":171,"./languages/vim":172,"./languages/x86asm":173,"./languages/xl":174,"./languages/xml":175,"./languages/xquery":176,"./languages/yaml":177,"./languages/zephir":178}],11:[function(require,module,exports){
+},{"./highlight":10,"./languages/1c":12,"./languages/abnf":13,"./languages/accesslog":14,"./languages/actionscript":15,"./languages/ada":16,"./languages/apache":17,"./languages/applescript":18,"./languages/arduino":19,"./languages/armasm":20,"./languages/asciidoc":21,"./languages/aspectj":22,"./languages/autohotkey":23,"./languages/autoit":24,"./languages/avrasm":25,"./languages/awk":26,"./languages/axapta":27,"./languages/bash":28,"./languages/basic":29,"./languages/bnf":30,"./languages/brainfuck":31,"./languages/cal":32,"./languages/capnproto":33,"./languages/ceylon":34,"./languages/clean":35,"./languages/clojure":37,"./languages/clojure-repl":36,"./languages/cmake":38,"./languages/coffeescript":39,"./languages/coq":40,"./languages/cos":41,"./languages/cpp":42,"./languages/crmsh":43,"./languages/crystal":44,"./languages/cs":45,"./languages/csp":46,"./languages/css":47,"./languages/d":48,"./languages/dart":49,"./languages/delphi":50,"./languages/diff":51,"./languages/django":52,"./languages/dns":53,"./languages/dockerfile":54,"./languages/dos":55,"./languages/dsconfig":56,"./languages/dts":57,"./languages/dust":58,"./languages/ebnf":59,"./languages/elixir":60,"./languages/elm":61,"./languages/erb":62,"./languages/erlang":64,"./languages/erlang-repl":63,"./languages/excel":65,"./languages/fix":66,"./languages/flix":67,"./languages/fortran":68,"./languages/fsharp":69,"./languages/gams":70,"./languages/gauss":71,"./languages/gcode":72,"./languages/gherkin":73,"./languages/glsl":74,"./languages/go":75,"./languages/golo":76,"./languages/gradle":77,"./languages/groovy":78,"./languages/haml":79,"./languages/handlebars":80,"./languages/haskell":81,"./languages/haxe":82,"./languages/hsp":83,"./languages/htmlbars":84,"./languages/http":85,"./languages/inform7":86,"./languages/ini":87,"./languages/irpf90":88,"./languages/java":89,"./languages/javascript":90,"./languages/json":91,"./languages/julia":92,"./languages/kotlin":93,"./languages/lasso":94,"./languages/ldif":95,"./languages/less":96,"./languages/lisp":97,"./languages/livecodeserver":98,"./languages/livescript":99,"./languages/lsl":100,"./languages/lua":101,"./languages/makefile":102,"./languages/markdown":103,"./languages/mathematica":104,"./languages/matlab":105,"./languages/maxima":106,"./languages/mel":107,"./languages/mercury":108,"./languages/mipsasm":109,"./languages/mizar":110,"./languages/mojolicious":111,"./languages/monkey":112,"./languages/moonscript":113,"./languages/nginx":114,"./languages/nimrod":115,"./languages/nix":116,"./languages/nsis":117,"./languages/objectivec":118,"./languages/ocaml":119,"./languages/openscad":120,"./languages/oxygene":121,"./languages/parser3":122,"./languages/perl":123,"./languages/pf":124,"./languages/php":125,"./languages/pony":126,"./languages/powershell":127,"./languages/processing":128,"./languages/profile":129,"./languages/prolog":130,"./languages/protobuf":131,"./languages/puppet":132,"./languages/purebasic":133,"./languages/python":134,"./languages/q":135,"./languages/qml":136,"./languages/r":137,"./languages/rib":138,"./languages/roboconf":139,"./languages/rsl":140,"./languages/ruby":141,"./languages/ruleslanguage":142,"./languages/rust":143,"./languages/scala":144,"./languages/scheme":145,"./languages/scilab":146,"./languages/scss":147,"./languages/smali":148,"./languages/smalltalk":149,"./languages/sml":150,"./languages/sqf":151,"./languages/sql":152,"./languages/stan":153,"./languages/stata":154,"./languages/step21":155,"./languages/stylus":156,"./languages/subunit":157,"./languages/swift":158,"./languages/taggerscript":159,"./languages/tap":160,"./languages/tcl":161,"./languages/tex":162,"./languages/thrift":163,"./languages/tp":164,"./languages/twig":165,"./languages/typescript":166,"./languages/vala":167,"./languages/vbnet":168,"./languages/vbscript":170,"./languages/vbscript-html":169,"./languages/verilog":171,"./languages/vhdl":172,"./languages/vim":173,"./languages/x86asm":174,"./languages/xl":175,"./languages/xml":176,"./languages/xquery":177,"./languages/yaml":178,"./languages/zephir":179}],12:[function(require,module,exports){
 module.exports = function(hljs){
   var IDENT_RE_RU = '[a-zA-Zа-яА-Я][a-zA-Z0-9_а-яА-Я]*';
   var OneS_KEYWORDS = 'возврат дата для если и или иначе иначеесли исключение конецесли ' +
@@ -11761,7 +11814,7 @@ module.exports = function(hljs){
     ]
   };
 };
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 module.exports = function(hljs) {
     var regexes = {
         ruleDeclaration: "^[a-zA-Z][a-zA-Z0-9-]*",
@@ -11832,7 +11885,7 @@ module.exports = function(hljs) {
       ]
     };
 };
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     contains: [
@@ -11870,7 +11923,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 module.exports = function(hljs) {
   var IDENT_RE = '[a-zA-Z_$][a-zA-Z0-9_$]*';
   var IDENT_FUNC_RETURN_TYPE_RE = '([*]|[a-zA-Z_$][a-zA-Z0-9_$]*)';
@@ -11944,7 +11997,7 @@ module.exports = function(hljs) {
     illegal: /#/
   };
 };
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 module.exports = // We try to support full Ada2012
 //
 // We highlight all appearances of types, keywords, literals (string, char, number, bool)
@@ -12117,7 +12170,7 @@ function(hljs) {
         ]
     };
 };
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 module.exports = function(hljs) {
   var NUMBER = {className: 'number', begin: '[\\$%]\\d+'};
   return {
@@ -12163,7 +12216,7 @@ module.exports = function(hljs) {
     illegal: /\S/
   };
 };
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 module.exports = function(hljs) {
   var STRING = hljs.inherit(hljs.QUOTE_STRING_MODE, {illegal: ''});
   var PARAMS = {
@@ -12249,7 +12302,7 @@ module.exports = function(hljs) {
     illegal: '//|->|=>|\\[\\['
   };
 };
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 module.exports = function(hljs) {
   var CPP = hljs.getLanguage('cpp').exports;
 	return {
@@ -12349,7 +12402,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 module.exports = function(hljs) {
     //local labels: %?[FB]?[AT]?\d{1,2}\w+
   return {
@@ -12441,7 +12494,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['adoc'],
@@ -12629,7 +12682,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 module.exports = function (hljs) {
   var KEYWORDS =
     'false synchronized int abstract float private char boolean static null if const ' +
@@ -12773,7 +12826,7 @@ module.exports = function (hljs) {
     ]
   };
 };
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 module.exports = function(hljs) {
   var BACKTICK_ESCAPE = {
     begin: /`[\s\S]/
@@ -12821,7 +12874,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 module.exports = function(hljs) {
     var KEYWORDS = 'ByRef Case Const ContinueCase ContinueLoop ' +
         'Default Dim Do Else ElseIf EndFunc EndIf EndSelect ' +
@@ -12957,7 +13010,7 @@ module.exports = function(hljs) {
         ]
     }
 };
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     case_insensitive: true,
@@ -13019,7 +13072,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 module.exports = function(hljs) {
   var VARIABLE = {
     className: 'variable',
@@ -13072,7 +13125,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords: 'false int abstract private char boolean static null if for true ' +
@@ -13103,7 +13156,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 module.exports = function(hljs) {
   var VAR = {
     className: 'variable',
@@ -13178,7 +13231,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     case_insensitive: true,
@@ -13229,7 +13282,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 module.exports = function(hljs){
   return {
     contains: [
@@ -13258,7 +13311,7 @@ module.exports = function(hljs){
     ]
   };
 };
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 module.exports = function(hljs){
   var LITERAL = {
     className: 'literal',
@@ -13295,7 +13348,7 @@ module.exports = function(hljs){
     ]
   };
 };
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS =
     'div mod in and or not xor asserterror begin case do downto else end exit for if of repeat then to ' +
@@ -13375,7 +13428,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['capnp'],
@@ -13424,7 +13477,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 module.exports = function(hljs) {
   // 2.3. Identifiers and keywords
   var KEYWORDS =
@@ -13491,7 +13544,7 @@ module.exports = function(hljs) {
     ].concat(EXPRESSIONS)
   };
 };
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['clean','icl','dcl'],
@@ -13516,7 +13569,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],35:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     contains: [
@@ -13531,7 +13584,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 module.exports = function(hljs) {
   var keywords = {
     'builtin-name':
@@ -13626,7 +13679,7 @@ module.exports = function(hljs) {
     contains: [LIST, STRING, HINT, HINT_COL, COMMENT, KEY, COLLECTION, NUMBER, LITERAL]
   }
 };
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['cmake.in'],
@@ -13664,7 +13717,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],38:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
     keyword:
@@ -13803,7 +13856,7 @@ module.exports = function(hljs) {
     ])
   };
 };
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords: {
@@ -13870,7 +13923,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],40:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 module.exports = function cos (hljs) {
 
   var STRINGS = {
@@ -13994,7 +14047,7 @@ module.exports = function cos (hljs) {
     ]
   };
 };
-},{}],41:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 module.exports = function(hljs) {
   var CPP_PRIMITIVE_TYPES = {
     className: 'keyword',
@@ -14160,7 +14213,7 @@ module.exports = function(hljs) {
     }
   };
 };
-},{}],42:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 module.exports = function(hljs) {
   var RESOURCES = 'primitive rsc_template';
 
@@ -14254,7 +14307,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],43:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 module.exports = function(hljs) {
   var NUM_SUFFIX = '(_[uif](8|16|32|64))?';
   var CRYSTAL_IDENT_RE = '[a-zA-Z_]\\w*[!?=]?';
@@ -14431,7 +14484,7 @@ module.exports = function(hljs) {
     contains: CRYSTAL_DEFAULT_CONTAINS
   };
 };
-},{}],44:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
     keyword:
@@ -14598,7 +14651,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],45:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     case_insensitive: false,
@@ -14620,7 +14673,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 module.exports = function(hljs) {
   var IDENT_RE = '[a-zA-Z-][a-zA-Z0-9_-]*';
   var RULE = {
@@ -14725,7 +14778,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],47:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 module.exports = /**
  * Known issues:
  *
@@ -14983,7 +15036,7 @@ function(hljs) {
     ]
   };
 };
-},{}],48:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 module.exports = function (hljs) {
   var SUBST = {
     className: 'subst',
@@ -15084,7 +15137,7 @@ module.exports = function (hljs) {
     ]
   }
 };
-},{}],49:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS =
     'exports register file shl array record property for mod while set ally label uses raise not ' +
@@ -15156,7 +15209,7 @@ module.exports = function(hljs) {
     ].concat(COMMENT_MODES)
   };
 };
-},{}],50:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['patch'],
@@ -15196,7 +15249,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],51:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 module.exports = function(hljs) {
   var FILTER = {
     begin: /\|[A-Za-z]+:?/,
@@ -15260,7 +15313,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],52:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['bind', 'zone'],
@@ -15289,7 +15342,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],53:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['docker'],
@@ -15311,7 +15364,7 @@ module.exports = function(hljs) {
     illegal: '</'
   }
 };
-},{}],54:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 module.exports = function(hljs) {
   var COMMENT = hljs.COMMENT(
     /^\s*@?rem\b/, /$/,
@@ -15363,7 +15416,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],55:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 module.exports = function(hljs) {
   var QUOTED_PROPERTY = {
     className: 'string',
@@ -15410,7 +15463,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],56:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 module.exports = function(hljs) {
   var STRINGS = {
     className: 'string',
@@ -15534,7 +15587,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],57:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 module.exports = function(hljs) {
   var EXPRESSION_KEYWORDS = 'if eq ne lt lte gt gte select default math sep';
   return {
@@ -15566,7 +15619,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],58:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 module.exports = function(hljs) {
     var commentMode = hljs.COMMENT(/\(\*/, /\*\)/);
 
@@ -15599,7 +15652,7 @@ module.exports = function(hljs) {
         ]
     };
 };
-},{}],59:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 module.exports = function(hljs) {
   var ELIXIR_IDENT_RE = '[a-zA-Z_][a-zA-Z0-9_]*(\\!|\\?)?';
   var ELIXIR_METHOD_RE = '[a-zA-Z_]\\w*[!?=]?|[-+~]\\@|<<|>>|=~|===?|<=>|[<>]=?|\\*\\*|[-/+%^&*~`|]|\\[\\]=?';
@@ -15696,7 +15749,7 @@ module.exports = function(hljs) {
     contains: ELIXIR_DEFAULT_CONTAINS
   };
 };
-},{}],60:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 module.exports = function(hljs) {
   var COMMENT = {
     variants: [
@@ -15779,7 +15832,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],61:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     subLanguage: 'xml',
@@ -15794,7 +15847,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],62:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords: {
@@ -15840,7 +15893,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],63:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 module.exports = function(hljs) {
   var BASIC_ATOM_RE = '[a-z\'][a-zA-Z0-9_\']*';
   var FUNCTION_NAME_RE = '(' + BASIC_ATOM_RE + ':' + BASIC_ATOM_RE + '|' + BASIC_ATOM_RE + ')';
@@ -15986,7 +16039,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],64:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['xlsx', 'xls'],
@@ -16034,7 +16087,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],65:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     contains: [
@@ -16063,7 +16116,7 @@ module.exports = function(hljs) {
     case_insensitive: true
   };
 };
-},{}],66:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 module.exports = function (hljs) {
 
     var CHAR = {
@@ -16108,7 +16161,7 @@ module.exports = function (hljs) {
         ]
     };
 };
-},{}],67:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 module.exports = function(hljs) {
   var PARAMS = {
     className: 'params',
@@ -16179,7 +16232,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],68:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 module.exports = function(hljs) {
   var TYPEPARAM = {
     begin: '<', end: '>',
@@ -16238,7 +16291,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],69:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 module.exports = function (hljs) {
   var KEYWORDS = {
     'keyword':
@@ -16392,7 +16445,7 @@ module.exports = function (hljs) {
     ]
   };
 };
-},{}],70:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
     keyword: 'and bool break call callexe checkinterrupt clear clearg closeall cls comlog compile ' +
@@ -16614,7 +16667,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],71:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 module.exports = function(hljs) {
     var GCODE_IDENT_RE = '[A-Z_][A-Z0-9_.]*';
     var GCODE_CLOSE_RE = '\\%';
@@ -16681,7 +16734,7 @@ module.exports = function(hljs) {
         ].concat(GCODE_CODE)
     };
 };
-},{}],72:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 module.exports = function (hljs) {
   return {
     aliases: ['feature'],
@@ -16718,7 +16771,7 @@ module.exports = function (hljs) {
     ]
   };
 };
-},{}],73:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords: {
@@ -16835,7 +16888,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],74:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 module.exports = function(hljs) {
   var GO_KEYWORDS = {
     keyword:
@@ -16889,7 +16942,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],75:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 module.exports = function(hljs) {
     return {
       keywords: {
@@ -16912,7 +16965,7 @@ module.exports = function(hljs) {
       ]
     }
 };
-},{}],76:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     case_insensitive: true,
@@ -16947,7 +17000,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],77:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 module.exports = function(hljs) {
     return {
         keywords: {
@@ -17041,7 +17094,7 @@ module.exports = function(hljs) {
         illegal: /#|<\//
     }
 };
-},{}],78:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 module.exports = // TODO support filter tags like :javascript, support inline HTML
 function(hljs) {
   return {
@@ -17148,7 +17201,7 @@ function(hljs) {
     ]
   };
 };
-},{}],79:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 module.exports = function(hljs) {
   var BUILT_INS = {'builtin-name': 'each in with if else unless bindattr action collection debugger log outlet template unbound view yield'};
   return {
@@ -17182,7 +17235,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],80:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 module.exports = function(hljs) {
   var COMMENT = {
     variants: [
@@ -17304,7 +17357,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],81:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 module.exports = function(hljs) {
   var IDENT_RE = '[a-zA-Z_$][a-zA-Z0-9_$]*';
   var IDENT_FUNC_RETURN_TYPE_RE = '([*]|[a-zA-Z_$][a-zA-Z0-9_$]*)';
@@ -17416,7 +17469,7 @@ module.exports = function(hljs) {
     illegal: /<\//
   };
 };
-},{}],82:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     case_insensitive: true,
@@ -17462,7 +17515,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],83:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 module.exports = function(hljs) {
   var BUILT_INS = 'action collection component concat debugger each each-in else get hash if input link-to loc log mut outlet partial query-params render textarea unbound unless with yield view';
 
@@ -17533,7 +17586,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],84:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 module.exports = function(hljs) {
   var VERSION = 'HTTP/[0-9\\.]+';
   return {
@@ -17574,7 +17627,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],85:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 module.exports = function(hljs) {
   var START_BRACKET = '\\[';
   var END_BRACKET = '\\]';
@@ -17631,7 +17684,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],86:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 module.exports = function(hljs) {
   var STRING = {
     className: "string",
@@ -17697,7 +17750,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],87:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 module.exports = function(hljs) {
   var PARAMS = {
     className: 'params',
@@ -17773,7 +17826,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],88:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 module.exports = function(hljs) {
   var JAVA_IDENT_RE = '[\u00C0-\u02B8a-zA-Z_$][\u00C0-\u02B8a-zA-Z_$0-9]*';
   var GENERIC_IDENT_RE = JAVA_IDENT_RE + '(<' + JAVA_IDENT_RE + '(\\s*,\\s*' + JAVA_IDENT_RE + ')*>)?';
@@ -17881,7 +17934,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],89:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 module.exports = function(hljs) {
   var IDENT_RE = '[A-Za-z$_][0-9A-Za-z$_]*';
   var KEYWORDS = {
@@ -18052,7 +18105,7 @@ module.exports = function(hljs) {
     illegal: /#(?!!)/
   };
 };
-},{}],90:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
 module.exports = function(hljs) {
   var LITERALS = {literal: 'true false null'};
   var TYPES = [
@@ -18089,7 +18142,7 @@ module.exports = function(hljs) {
     illegal: '\\S'
   };
 };
-},{}],91:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 module.exports = function(hljs) {
   // Since there are numerous special names in Julia, it is too much trouble
   // to maintain them by hand. Hence these names (i.e. keywords, literals and
@@ -18267,7 +18320,7 @@ module.exports = function(hljs) {
 
   return DEFAULT;
 };
-},{}],92:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 module.exports = function (hljs) {
   var KEYWORDS = {
     keyword:
@@ -18441,7 +18494,7 @@ module.exports = function (hljs) {
     ]
   };
 };
-},{}],93:[function(require,module,exports){
+},{}],94:[function(require,module,exports){
 module.exports = function(hljs) {
   var LASSO_IDENT_RE = '[a-zA-Z_][\\w.]*';
   var LASSO_ANGLE_RE = '<\\?(lasso(script)?|=)';
@@ -18604,7 +18657,7 @@ module.exports = function(hljs) {
     ].concat(LASSO_CODE)
   };
 };
-},{}],94:[function(require,module,exports){
+},{}],95:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     contains: [
@@ -18627,7 +18680,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],95:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
 module.exports = function(hljs) {
   var IDENT_RE        = '[\\w-]+'; // yes, Less identifiers may begin with a digit
   var INTERP_IDENT_RE = '(' + IDENT_RE + '|@{' + IDENT_RE + '})';
@@ -18767,7 +18820,7 @@ module.exports = function(hljs) {
     contains: RULES
   };
 };
-},{}],96:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
 module.exports = function(hljs) {
   var LISP_IDENT_RE = '[a-zA-Z_\\-\\+\\*\\/\\<\\=\\>\\&\\#][a-zA-Z0-9_\\-\\+\\*\\/\\<\\=\\>\\&\\#!]*';
   var MEC_RE = '\\|[^]*?\\|';
@@ -18870,7 +18923,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],97:[function(require,module,exports){
+},{}],98:[function(require,module,exports){
 module.exports = function(hljs) {
   var VARIABLE = {
     begin: '\\b[gtps][A-Z]+[A-Za-z0-9_\\-]*\\b|\\$_[A-Z]+',
@@ -19027,7 +19080,7 @@ module.exports = function(hljs) {
     illegal: ';$|^\\[|^=|&|{'
   };
 };
-},{}],98:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
     keyword:
@@ -19176,7 +19229,7 @@ module.exports = function(hljs) {
     ])
   };
 };
-},{}],99:[function(require,module,exports){
+},{}],100:[function(require,module,exports){
 module.exports = function(hljs) {
 
     var LSL_STRING_ESCAPE_CHARS = {
@@ -19259,7 +19312,7 @@ module.exports = function(hljs) {
         ]
     };
 };
-},{}],100:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 module.exports = function(hljs) {
   var OPENING_LONG_BRACKET = '\\[=*\\[';
   var CLOSING_LONG_BRACKET = '\\]=*\\]';
@@ -19315,7 +19368,7 @@ module.exports = function(hljs) {
     ])
   };
 };
-},{}],101:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 module.exports = function(hljs) {
   var VARIABLE = {
     className: 'variable',
@@ -19360,7 +19413,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],102:[function(require,module,exports){
+},{}],103:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['md', 'mkdown', 'mkd'],
@@ -19468,7 +19521,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],103:[function(require,module,exports){
+},{}],104:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['mma'],
@@ -19526,7 +19579,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],104:[function(require,module,exports){
+},{}],105:[function(require,module,exports){
 module.exports = function(hljs) {
   var COMMON_CONTAINS = [
     hljs.C_NUMBER_MODE,
@@ -19614,7 +19667,7 @@ module.exports = function(hljs) {
     ].concat(COMMON_CONTAINS)
   };
 };
-},{}],105:[function(require,module,exports){
+},{}],106:[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = 'if then else elseif for thru do while unless step in and or not';
   var LITERALS = 'true false unknown inf minf ind und %e %i %pi %phi %gamma';
@@ -20020,7 +20073,7 @@ module.exports = function(hljs) {
     illegal: /@/
   }
 };
-},{}],106:[function(require,module,exports){
+},{}],107:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords:
@@ -20245,7 +20298,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],107:[function(require,module,exports){
+},{}],108:[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
     keyword:
@@ -20327,7 +20380,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],108:[function(require,module,exports){
+},{}],109:[function(require,module,exports){
 module.exports = function(hljs) {
     //local labels: %?[FB]?[AT]?\d{1,2}\w+
   return {
@@ -20413,7 +20466,7 @@ module.exports = function(hljs) {
     illegal: '\/'
   };
 };
-},{}],109:[function(require,module,exports){
+},{}],110:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords:
@@ -20432,7 +20485,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],110:[function(require,module,exports){
+},{}],111:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     subLanguage: 'xml',
@@ -20457,7 +20510,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],111:[function(require,module,exports){
+},{}],112:[function(require,module,exports){
 module.exports = function(hljs) {
   var NUMBER = {
     className: 'number', relevance: 0,
@@ -20532,7 +20585,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],112:[function(require,module,exports){
+},{}],113:[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
     keyword:
@@ -20644,7 +20697,7 @@ module.exports = function(hljs) {
     ])
   };
 };
-},{}],113:[function(require,module,exports){
+},{}],114:[function(require,module,exports){
 module.exports = function(hljs) {
   var VAR = {
     className: 'variable',
@@ -20737,7 +20790,7 @@ module.exports = function(hljs) {
     illegal: '[^\\s\\}]'
   };
 };
-},{}],114:[function(require,module,exports){
+},{}],115:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['nim'],
@@ -20792,7 +20845,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],115:[function(require,module,exports){
+},{}],116:[function(require,module,exports){
 module.exports = function(hljs) {
   var NIX_KEYWORDS = {
     keyword:
@@ -20841,7 +20894,7 @@ module.exports = function(hljs) {
     contains: EXPRESSIONS
   };
 };
-},{}],116:[function(require,module,exports){
+},{}],117:[function(require,module,exports){
 module.exports = function(hljs) {
   var CONSTANTS = {
     className: 'variable',
@@ -20947,7 +21000,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],117:[function(require,module,exports){
+},{}],118:[function(require,module,exports){
 module.exports = function(hljs) {
   var API_CLASS = {
     className: 'built_in',
@@ -21038,7 +21091,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],118:[function(require,module,exports){
+},{}],119:[function(require,module,exports){
 module.exports = function(hljs) {
   /* missing support for heredoc-like string (OCaml 4.0.2+) */
   return {
@@ -21109,7 +21162,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],119:[function(require,module,exports){
+},{}],120:[function(require,module,exports){
 module.exports = function(hljs) {
 	var SPECIAL_VARS = {
 		className: 'keyword',
@@ -21166,7 +21219,7 @@ module.exports = function(hljs) {
 		]
 	}
 };
-},{}],120:[function(require,module,exports){
+},{}],121:[function(require,module,exports){
 module.exports = function(hljs) {
   var OXYGENE_KEYWORDS = 'abstract add and array as asc aspect assembly async begin break block by case class concat const copy constructor continue '+
     'create default delegate desc distinct div do downto dynamic each else empty end ensure enum equals event except exit extension external false '+
@@ -21236,7 +21289,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],121:[function(require,module,exports){
+},{}],122:[function(require,module,exports){
 module.exports = function(hljs) {
   var CURLY_SUBCOMMENT = hljs.COMMENT(
     '{',
@@ -21284,7 +21337,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],122:[function(require,module,exports){
+},{}],123:[function(require,module,exports){
 module.exports = function(hljs) {
   var PERL_KEYWORDS = 'getpwent getservent quotemeta msgrcv scalar kill dbmclose undef lc ' +
     'ma syswrite tr send umask sysopen shmwrite vec qx utime local oct semctl localtime ' +
@@ -21441,7 +21494,7 @@ module.exports = function(hljs) {
     contains: PERL_DEFAULT_CONTAINS
   };
 };
-},{}],123:[function(require,module,exports){
+},{}],124:[function(require,module,exports){
 module.exports = function(hljs) {
   var MACRO = {
     className: 'variable',
@@ -21493,7 +21546,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],124:[function(require,module,exports){
+},{}],125:[function(require,module,exports){
 module.exports = function(hljs) {
   var VARIABLE = {
     begin: '\\$+[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*'
@@ -21620,7 +21673,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],125:[function(require,module,exports){
+},{}],126:[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
     keyword:
@@ -21711,7 +21764,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],126:[function(require,module,exports){
+},{}],127:[function(require,module,exports){
 module.exports = function(hljs) {
   var BACKTICK_ESCAPE = {
     begin: '`[\\s\\S]',
@@ -21792,7 +21845,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],127:[function(require,module,exports){
+},{}],128:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords: {
@@ -21840,7 +21893,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],128:[function(require,module,exports){
+},{}],129:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     contains: [
@@ -21870,7 +21923,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],129:[function(require,module,exports){
+},{}],130:[function(require,module,exports){
 module.exports = function(hljs) {
 
   var ATOM = {
@@ -21958,7 +22011,7 @@ module.exports = function(hljs) {
     ])
   };
 };
-},{}],130:[function(require,module,exports){
+},{}],131:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords: {
@@ -21994,7 +22047,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],131:[function(require,module,exports){
+},{}],132:[function(require,module,exports){
 module.exports = function(hljs) {
 
   var PUPPET_KEYWORDS = {
@@ -22109,7 +22162,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],132:[function(require,module,exports){
+},{}],133:[function(require,module,exports){
 module.exports = // Base deafult colors in PB IDE: background: #FFFFDF; foreground: #000000;
 
 function(hljs) {
@@ -22167,7 +22220,7 @@ function(hljs) {
     ]
   };
 };
-},{}],133:[function(require,module,exports){
+},{}],134:[function(require,module,exports){
 module.exports = function(hljs) {
   var PROMPT = {
     className: 'meta',  begin: /^(>>>|\.\.\.) /
@@ -22259,7 +22312,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],134:[function(require,module,exports){
+},{}],135:[function(require,module,exports){
 module.exports = function(hljs) {
   var Q_KEYWORDS = {
   keyword:
@@ -22282,7 +22335,7 @@ module.exports = function(hljs) {
      ]
   };
 };
-},{}],135:[function(require,module,exports){
+},{}],136:[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
       keyword:
@@ -22451,7 +22504,7 @@ module.exports = function(hljs) {
     illegal: /#/
   };
 };
-},{}],136:[function(require,module,exports){
+},{}],137:[function(require,module,exports){
 module.exports = function(hljs) {
   var IDENT_RE = '([a-zA-Z]|\\.[a-zA-Z.])[a-zA-Z0-9._]*';
 
@@ -22521,7 +22574,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],137:[function(require,module,exports){
+},{}],138:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords:
@@ -22548,7 +22601,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],138:[function(require,module,exports){
+},{}],139:[function(require,module,exports){
 module.exports = function(hljs) {
   var IDENTIFIER = '[a-zA-Z-_][^\\n{]+\\{';
 
@@ -22615,7 +22668,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],139:[function(require,module,exports){
+},{}],140:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords: {
@@ -22651,7 +22704,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],140:[function(require,module,exports){
+},{}],141:[function(require,module,exports){
 module.exports = function(hljs) {
   var RUBY_METHOD_RE = '[a-zA-Z_]\\w*[!?=]?|[-+~]\\@|<<|>>|=~|===?|<=>|[<>]=?|\\*\\*|[-/+%^&*~`|]|\\[\\]=?';
   var RUBY_KEYWORDS = {
@@ -22827,7 +22880,7 @@ module.exports = function(hljs) {
     contains: COMMENT_MODES.concat(IRB_DEFAULT).concat(RUBY_DEFAULT_CONTAINS)
   };
 };
-},{}],141:[function(require,module,exports){
+},{}],142:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords: {
@@ -22888,7 +22941,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],142:[function(require,module,exports){
+},{}],143:[function(require,module,exports){
 module.exports = function(hljs) {
   var NUM_SUFFIX = '([uif](8|16|32|64|size))\?';
   var KEYWORDS =
@@ -22992,7 +23045,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],143:[function(require,module,exports){
+},{}],144:[function(require,module,exports){
 module.exports = function(hljs) {
 
   var ANNOTATION = { className: 'meta', begin: '@[A-Za-z]+' };
@@ -23107,7 +23160,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],144:[function(require,module,exports){
+},{}],145:[function(require,module,exports){
 module.exports = function(hljs) {
   var SCHEME_IDENT_RE = '[^\\(\\)\\[\\]\\{\\}",\'`;#|\\\\\\s]+';
   var SCHEME_SIMPLE_NUMBER_RE = '(\\-|\\+)?\\d+([./]\\d+)?';
@@ -23248,7 +23301,7 @@ module.exports = function(hljs) {
     contains: [SHEBANG, NUMBER, STRING, QUOTED_IDENT, QUOTED_LIST, LIST].concat(COMMENT_MODES)
   };
 };
-},{}],145:[function(require,module,exports){
+},{}],146:[function(require,module,exports){
 module.exports = function(hljs) {
 
   var COMMON_CONTAINS = [
@@ -23302,7 +23355,7 @@ module.exports = function(hljs) {
     ].concat(COMMON_CONTAINS)
   };
 };
-},{}],146:[function(require,module,exports){
+},{}],147:[function(require,module,exports){
 module.exports = function(hljs) {
   var IDENT_RE = '[a-zA-Z-][a-zA-Z0-9_-]*';
   var VARIABLE = {
@@ -23400,7 +23453,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],147:[function(require,module,exports){
+},{}],148:[function(require,module,exports){
 module.exports = function(hljs) {
   var smali_instr_low_prio = ['add', 'and', 'cmp', 'cmpg', 'cmpl', 'const', 'div', 'double', 'float', 'goto', 'if', 'int', 'long', 'move', 'mul', 'neg', 'new', 'nop', 'not', 'or', 'rem', 'return', 'shl', 'shr', 'sput', 'sub', 'throw', 'ushr', 'xor'];
   var smali_instr_high_prio = ['aget', 'aput', 'array', 'check', 'execute', 'fill', 'filled', 'goto/16', 'goto/32', 'iget', 'instance', 'invoke', 'iput', 'monitor', 'packed', 'sget', 'sparse'];
@@ -23456,7 +23509,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],148:[function(require,module,exports){
+},{}],149:[function(require,module,exports){
 module.exports = function(hljs) {
   var VAR_IDENT_RE = '[a-z][a-zA-Z0-9_]*';
   var CHAR = {
@@ -23506,7 +23559,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],149:[function(require,module,exports){
+},{}],150:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['ml'],
@@ -23572,7 +23625,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],150:[function(require,module,exports){
+},{}],151:[function(require,module,exports){
 module.exports = function(hljs) {
   var CPP = hljs.getLanguage('cpp').exports;
 
@@ -24033,7 +24086,7 @@ module.exports = function(hljs) {
     illegal: /#/
   };
 };
-},{}],151:[function(require,module,exports){
+},{}],152:[function(require,module,exports){
 module.exports = function(hljs) {
   var COMMENT_MODE = hljs.COMMENT('--', '$');
   return {
@@ -24193,7 +24246,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],152:[function(require,module,exports){
+},{}],153:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     contains: [
@@ -24276,7 +24329,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],153:[function(require,module,exports){
+},{}],154:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['do', 'ado'],
@@ -24314,7 +24367,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],154:[function(require,module,exports){
+},{}],155:[function(require,module,exports){
 module.exports = function(hljs) {
   var STEP21_IDENT_RE = '[A-Z_][A-Z0-9_.]*';
   var STEP21_KEYWORDS = {
@@ -24361,7 +24414,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],155:[function(require,module,exports){
+},{}],156:[function(require,module,exports){
 module.exports = function(hljs) {
 
   var VARIABLE = {
@@ -24815,7 +24868,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],156:[function(require,module,exports){
+},{}],157:[function(require,module,exports){
 module.exports = function(hljs) {
   var DETAILS = {
     className: 'string',
@@ -24849,7 +24902,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],157:[function(require,module,exports){
+},{}],158:[function(require,module,exports){
 module.exports = function(hljs) {
   var SWIFT_KEYWORDS = {
       keyword: '__COLUMN__ __FILE__ __FUNCTION__ __LINE__ as as! as? associativity ' +
@@ -24966,7 +25019,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],158:[function(require,module,exports){
+},{}],159:[function(require,module,exports){
 module.exports = function(hljs) {
 
   var COMMENT = {
@@ -25010,7 +25063,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],159:[function(require,module,exports){
+},{}],160:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     case_insensitive: true,
@@ -25046,7 +25099,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],160:[function(require,module,exports){
+},{}],161:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['tk'],
@@ -25107,7 +25160,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],161:[function(require,module,exports){
+},{}],162:[function(require,module,exports){
 module.exports = function(hljs) {
   var COMMAND = {
     className: 'tag',
@@ -25169,7 +25222,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],162:[function(require,module,exports){
+},{}],163:[function(require,module,exports){
 module.exports = function(hljs) {
   var BUILT_IN_TYPES = 'bool byte i16 i32 i64 double string binary';
   return {
@@ -25204,7 +25257,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],163:[function(require,module,exports){
+},{}],164:[function(require,module,exports){
 module.exports = function(hljs) {
   var TPID = {
     className: 'number',
@@ -25288,7 +25341,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],164:[function(require,module,exports){
+},{}],165:[function(require,module,exports){
 module.exports = function(hljs) {
   var PARAMS = {
     className: 'params',
@@ -25354,7 +25407,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],165:[function(require,module,exports){
+},{}],166:[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
     keyword:
@@ -25463,7 +25516,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],166:[function(require,module,exports){
+},{}],167:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords: {
@@ -25513,7 +25566,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],167:[function(require,module,exports){
+},{}],168:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['vb'],
@@ -25569,7 +25622,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],168:[function(require,module,exports){
+},{}],169:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     subLanguage: 'xml',
@@ -25581,7 +25634,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],169:[function(require,module,exports){
+},{}],170:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['vbs'],
@@ -25620,7 +25673,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],170:[function(require,module,exports){
+},{}],171:[function(require,module,exports){
 module.exports = function(hljs) {
   var SV_KEYWORDS = {
     keyword:
@@ -25719,7 +25772,7 @@ module.exports = function(hljs) {
     ]
   }; // return
 };
-},{}],171:[function(require,module,exports){
+},{}],172:[function(require,module,exports){
 module.exports = function(hljs) {
   // Regular expression for VHDL numeric literals.
 
@@ -25780,7 +25833,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],172:[function(require,module,exports){
+},{}],173:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     lexemes: /[!#@\w]+/,
@@ -25886,7 +25939,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],173:[function(require,module,exports){
+},{}],174:[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     case_insensitive: true,
@@ -26022,7 +26075,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],174:[function(require,module,exports){
+},{}],175:[function(require,module,exports){
 module.exports = function(hljs) {
   var BUILTIN_MODULES =
     'ObjectLoader Animate MovieCredits Slides Filters Shading Materials LensFlare Mapping VLCAudioVideo ' +
@@ -26095,7 +26148,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],175:[function(require,module,exports){
+},{}],176:[function(require,module,exports){
 module.exports = function(hljs) {
   var XML_IDENT_RE = '[A-Za-z0-9\\._:-]+';
   var TAG_INTERNALS = {
@@ -26198,7 +26251,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],176:[function(require,module,exports){
+},{}],177:[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = 'for let if while then else return where group by xquery encoding version' +
     'module namespace boundary-space preserve strip default collation base-uri ordering' +
@@ -26269,7 +26322,7 @@ module.exports = function(hljs) {
     contains: CONTAINS
   };
 };
-},{}],177:[function(require,module,exports){
+},{}],178:[function(require,module,exports){
 module.exports = function(hljs) {
   var LITERALS = {literal: '{ } true false yes no Yes No True False null'};
 
@@ -26353,7 +26406,7 @@ module.exports = function(hljs) {
     keywords: LITERALS
   };
 };
-},{}],178:[function(require,module,exports){
+},{}],179:[function(require,module,exports){
 module.exports = function(hljs) {
   var STRING = {
     className: 'string',
@@ -26460,7 +26513,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],179:[function(require,module,exports){
+},{}],180:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v3.1.1
  * https://jquery.com/
@@ -36682,7 +36735,7 @@ if ( !noGlobal ) {
 return jQuery;
 } );
 
-},{}],180:[function(require,module,exports){
+},{}],181:[function(require,module,exports){
 /* eslint no-console:0 */
 /**
  * This is the main entry point for KaTeX. Here, we expose functions for
@@ -36758,7 +36811,7 @@ module.exports = {
     ParseError: ParseError,
 };
 
-},{"./src/ParseError":183,"./src/Settings":185,"./src/buildTree":190,"./src/parseTree":199,"./src/utils":201}],181:[function(require,module,exports){
+},{"./src/ParseError":184,"./src/Settings":186,"./src/buildTree":191,"./src/parseTree":200,"./src/utils":202}],182:[function(require,module,exports){
 /**
  * The Lexer class handles tokenizing the input in various ways. Since our
  * parser expects us to be able to backtrack, the lexer allows lexing from any
@@ -36922,7 +36975,7 @@ Lexer.prototype.lex = function(pos, mode) {
 
 module.exports = Lexer;
 
-},{"./ParseError":183,"match-at":259}],182:[function(require,module,exports){
+},{"./ParseError":184,"match-at":261}],183:[function(require,module,exports){
 /**
  * This file contains information about the options that the Parser carries
  * around with it while parsing. Data is held in an `Options` object, and when
@@ -37113,7 +37166,7 @@ Options.prototype.getColor = function() {
 
 module.exports = Options;
 
-},{}],183:[function(require,module,exports){
+},{}],184:[function(require,module,exports){
 /**
  * This is the ParseError class, which is the main error thrown by KaTeX
  * functions when something has gone wrong. This is used to distinguish internal
@@ -37155,7 +37208,7 @@ ParseError.prototype.__proto__ = Error.prototype;
 
 module.exports = ParseError;
 
-},{}],184:[function(require,module,exports){
+},{}],185:[function(require,module,exports){
 /* eslint no-constant-condition:0 */
 var functions = require("./functions");
 var environments = require("./environments");
@@ -37894,7 +37947,7 @@ Parser.prototype.ParseNode = ParseNode;
 
 module.exports = Parser;
 
-},{"./Lexer":181,"./ParseError":183,"./environments":193,"./functions":196,"./parseData":198,"./symbols":200,"./utils":201}],185:[function(require,module,exports){
+},{"./Lexer":182,"./ParseError":184,"./environments":194,"./functions":197,"./parseData":199,"./symbols":201,"./utils":202}],186:[function(require,module,exports){
 /**
  * This is a module for storing settings passed into KaTeX. It correctly handles
  * default settings.
@@ -37924,7 +37977,7 @@ function Settings(options) {
 
 module.exports = Settings;
 
-},{}],186:[function(require,module,exports){
+},{}],187:[function(require,module,exports){
 /**
  * This file contains information and classes for the various kinds of styles
  * used in TeX. It provides a generic `Style` class, which holds information
@@ -38052,7 +38105,7 @@ module.exports = {
     SCRIPTSCRIPT: styles[SS],
 };
 
-},{}],187:[function(require,module,exports){
+},{}],188:[function(require,module,exports){
 /* eslint no-console:0 */
 /**
  * This module contains general functions that can be used for building
@@ -38504,7 +38557,7 @@ module.exports = {
     spacingFunctions: spacingFunctions,
 };
 
-},{"./domTree":192,"./fontMetrics":194,"./symbols":200,"./utils":201}],188:[function(require,module,exports){
+},{"./domTree":193,"./fontMetrics":195,"./symbols":201,"./utils":202}],189:[function(require,module,exports){
 /* eslint no-console:0 */
 /**
  * This file does the main work of building a domTree structure from a parse
@@ -39908,7 +39961,7 @@ var buildHTML = function(tree, options) {
 
 module.exports = buildHTML;
 
-},{"./ParseError":183,"./Style":186,"./buildCommon":187,"./delimiter":191,"./domTree":192,"./fontMetrics":194,"./utils":201}],189:[function(require,module,exports){
+},{"./ParseError":184,"./Style":187,"./buildCommon":188,"./delimiter":192,"./domTree":193,"./fontMetrics":195,"./utils":202}],190:[function(require,module,exports){
 /**
  * This file converts a parse tree into a cooresponding MathML tree. The main
  * entry point is the `buildMathML` function, which takes a parse tree from the
@@ -40443,7 +40496,7 @@ var buildMathML = function(tree, texExpression, options) {
 
 module.exports = buildMathML;
 
-},{"./ParseError":183,"./buildCommon":187,"./fontMetrics":194,"./mathMLTree":197,"./symbols":200,"./utils":201}],190:[function(require,module,exports){
+},{"./ParseError":184,"./buildCommon":188,"./fontMetrics":195,"./mathMLTree":198,"./symbols":201,"./utils":202}],191:[function(require,module,exports){
 var buildHTML = require("./buildHTML");
 var buildMathML = require("./buildMathML");
 var buildCommon = require("./buildCommon");
@@ -40485,7 +40538,7 @@ var buildTree = function(tree, expression, settings) {
 
 module.exports = buildTree;
 
-},{"./Options":182,"./Settings":185,"./Style":186,"./buildCommon":187,"./buildHTML":188,"./buildMathML":189}],191:[function(require,module,exports){
+},{"./Options":183,"./Settings":186,"./Style":187,"./buildCommon":188,"./buildHTML":189,"./buildMathML":190}],192:[function(require,module,exports){
 /**
  * This file deals with creating delimiters of various sizes. The TeXbook
  * discusses these routines on page 441-442, in the "Another subroutine sets box
@@ -41029,7 +41082,7 @@ module.exports = {
     leftRightDelim: makeLeftRightDelim,
 };
 
-},{"./ParseError":183,"./Style":186,"./buildCommon":187,"./fontMetrics":194,"./symbols":200,"./utils":201}],192:[function(require,module,exports){
+},{"./ParseError":184,"./Style":187,"./buildCommon":188,"./fontMetrics":195,"./symbols":201,"./utils":202}],193:[function(require,module,exports){
 /**
  * These objects store the data about the DOM nodes we create, as well as some
  * extra data. They can then be transformed into real DOM nodes with the
@@ -41300,7 +41353,7 @@ module.exports = {
     symbolNode: symbolNode,
 };
 
-},{"./utils":201}],193:[function(require,module,exports){
+},{"./utils":202}],194:[function(require,module,exports){
 /* eslint no-constant-condition:0 */
 var fontMetrics = require("./fontMetrics");
 var parseData = require("./parseData");
@@ -41523,7 +41576,7 @@ defineEnvironment("aligned", {
     return res;
 });
 
-},{"./ParseError":183,"./fontMetrics":194,"./parseData":198}],194:[function(require,module,exports){
+},{"./ParseError":184,"./fontMetrics":195,"./parseData":199}],195:[function(require,module,exports){
 /* eslint no-unused-vars:0 */
 
 var Style = require("./Style");
@@ -41672,7 +41725,7 @@ module.exports = {
     getCharacterMetrics: getCharacterMetrics,
 };
 
-},{"./Style":186,"./fontMetricsData":195}],195:[function(require,module,exports){
+},{"./Style":187,"./fontMetricsData":196}],196:[function(require,module,exports){
 module.exports = {
     "AMS-Regular": {
         "65": [0, 0.68889, 0, 0],
@@ -43426,7 +43479,7 @@ module.exports = {
     },
 };
 
-},{}],196:[function(require,module,exports){
+},{}],197:[function(require,module,exports){
 var utils = require("./utils");
 var ParseError = require("./ParseError");
 
@@ -44008,7 +44061,7 @@ defineFunction(["\\begin", "\\end"], {
     };
 });
 
-},{"./ParseError":183,"./utils":201}],197:[function(require,module,exports){
+},{"./ParseError":184,"./utils":202}],198:[function(require,module,exports){
 /**
  * These objects store data about MathML nodes. This is the MathML equivalent
  * of the types in domTree.js. Since MathML handles its own rendering, and
@@ -44112,7 +44165,7 @@ module.exports = {
     TextNode: TextNode,
 };
 
-},{"./utils":201}],198:[function(require,module,exports){
+},{"./utils":202}],199:[function(require,module,exports){
 /**
  * The resulting parse tree nodes of the parse tree.
  */
@@ -44127,7 +44180,7 @@ module.exports = {
 };
 
 
-},{}],199:[function(require,module,exports){
+},{}],200:[function(require,module,exports){
 /**
  * Provides a single function for parsing an expression using a Parser
  * TODO(emily): Remove this
@@ -44146,7 +44199,7 @@ var parseTree = function(toParse, settings) {
 
 module.exports = parseTree;
 
-},{"./Parser":184}],200:[function(require,module,exports){
+},{"./Parser":185}],201:[function(require,module,exports){
 /**
  * This file holds a list of all no-argument functions and single-character
  * symbols (like 'a' or ';').
@@ -44768,7 +44821,7 @@ for (i = 0; i < letters.length; i++) {
     defineSymbol(text, main, textord, ch, ch);
 }
 
-},{}],201:[function(require,module,exports){
+},{}],202:[function(require,module,exports){
 /**
  * This file contains a list of utility functions which are useful in other
  * files.
@@ -44876,7 +44929,7 @@ module.exports = {
     clearNode: clearNode,
 };
 
-},{}],202:[function(require,module,exports){
+},{}],203:[function(require,module,exports){
 'use strict';
 
 
@@ -45515,7 +45568,7 @@ LinkifyIt.prototype.onCompile = function onCompile() {
 
 module.exports = LinkifyIt;
 
-},{"./lib/re":203}],203:[function(require,module,exports){
+},{"./lib/re":204}],204:[function(require,module,exports){
 'use strict';
 
 
@@ -45690,7 +45743,7 @@ module.exports = function (opts) {
   return re;
 };
 
-},{"uc.micro/categories/Cc/regex":266,"uc.micro/categories/P/regex":268,"uc.micro/categories/Z/regex":269,"uc.micro/properties/Any/regex":271}],204:[function(require,module,exports){
+},{"uc.micro/categories/Cc/regex":268,"uc.micro/categories/P/regex":270,"uc.micro/categories/Z/regex":271,"uc.micro/properties/Any/regex":273}],205:[function(require,module,exports){
 /* Process inline math */
 /*
 Like markdown-it-simplemath, this is a stripped down, simplified version of:
@@ -45889,7 +45942,7 @@ module.exports = function math_plugin(md, options) {
     md.renderer.rules.math_block = blockRenderer;
 };
 
-},{"katex":180}],205:[function(require,module,exports){
+},{"katex":181}],206:[function(require,module,exports){
 // heading (#, ##, ...)
 
 'use strict';
@@ -45946,7 +45999,7 @@ module.exports = function lazy_headers_plugin(md) {
   });
 };
 
-},{}],206:[function(require,module,exports){
+},{}],207:[function(require,module,exports){
 ;(function (root, factory) {
   if (typeof exports === 'object') {
     module.exports = factory()
@@ -46060,13 +46113,239 @@ module.exports = function lazy_headers_plugin(md) {
   }
 })
 
-},{}],207:[function(require,module,exports){
+},{}],208:[function(require,module,exports){
+// Sanitizer
+
+'use strict';
+
+module.exports = function sanitizer_plugin(md, options) {
+
+  var linkify = md.linkify,
+      escapeHtml = md.utils.escapeHtml,
+      // <a href="url" title="(optional)"></a>
+      patternLinkOpen = '<a\\s([^<>]*href="[^"<>]*"[^<>]*)\\s?>',
+      regexpLinkOpen = RegExp(patternLinkOpen, 'i'),
+      // <img src="url" alt=""(optional) title=""(optional)>
+      patternImage = '<img\\s([^<>]*src="[^"<>]*"[^<>]*)\\s?\\/?>',
+      regexpImage = RegExp(patternImage, 'i'),
+      regexpImageProtocols = /^(?:https?:)?\/\//i,
+      regexpLinkProtocols = /^(?:https?:\/\/|ftp:\/\/|\/\/|mailto:|xmpp:)/i;
+
+  options = options ? options : {};
+  var removeUnknown = (typeof options.removeUnknown !== 'undefined') ? options.removeUnknown : false;
+  var removeUnbalanced = (typeof options.removeUnbalanced !== 'undefined') ? options.removeUnbalanced : false;
+  var imageClass = (typeof options.imageClass !== 'undefined') ? options.imageClass : '';
+  var runBalancer = false;
+  var j;
+
+
+  var allowedTags = [ 'a', 'b', 'blockquote', 'code', 'em', 'h1', 'h2', 'h3', 'h4', 'h5',
+                     'h6', 'li', 'ol', 'p', 'pre', 's', 'sub', 'sup', 'strong', 'ul' ];
+  var openTagCount = new Array(allowedTags.length);
+  var removeTag = new Array(allowedTags.length);
+  for (j = 0; j < allowedTags.length; j++) { openTagCount[j] = 0; }
+  for (j = 0; j < allowedTags.length; j++) { removeTag[j] = false; }
+
+  function getUrl(link) {
+    var match = linkify.match(link);
+    if (match && match.length === 1 && match[0].index === 0 && match[0].lastIndex === link.length) {
+      return match[0].url;
+    }
+    return null;
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  //          REPLACE UNKNOWN TAGS
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+
+  function replaceUnknownTags(str) {
+    /*
+     * it starts with '<' and maybe ends with '>',
+     * maybe has a '<' on the right
+     * it doesnt have '<' or '>' in between
+     * -> it's a tag!
+     */
+    str = str.replace(/<[^<>]*>?/gi, function (tag) {
+      var match, attrs, url, alt, title, tagnameIndex;
+
+      // '<->', '<- ' and '<3 ' look nice, they are harmless
+      if (/(^<->|^<-\s|^<3\s)/.test(tag)) { return tag; }
+
+      // images
+      match = tag.match(regexpImage);
+      if (match) {
+        attrs = match[1];
+        url   = getUrl(attrs.match(/src="([^"<>]*)"/i)[1]);
+        alt   = attrs.match(/alt="([^"<>]*)"/i);
+        alt   = (alt && typeof alt[1] !== 'undefined') ? alt[1] : '';
+        title = attrs.match(/title="([^"<>]*)"/i);
+        title = (title && typeof title[1] !== 'undefined') ? title[1] : '';
+
+        // only http and https are allowed for images
+        if (url && regexpImageProtocols.test(url)) {
+          if (imageClass !== '') {
+            return '<img src="' + url + '" alt="' + alt + '" title="' + title + '" class="' + imageClass + '">';
+          }
+          return '<img src="' + url + '" alt="' + alt + '" title="' + title + '">';
+        }
+      }
+
+      // links
+      tagnameIndex = allowedTags.indexOf('a');
+      match = tag.match(regexpLinkOpen);
+      if (match) {
+        attrs = match[1];
+        url   = getUrl(attrs.match(/href="([^"<>]*)"/i)[1]);
+        title = attrs.match(/title="([^"<>]*)"/i);
+        title = (title && typeof title[1] !== 'undefined') ? title[1] : '';
+        // only http, https, ftp, mailto and xmpp are allowed for links
+        if (url && regexpLinkProtocols.test(url)) {
+          runBalancer = true;
+          openTagCount[tagnameIndex] += 1;
+          return '<a href="' + url + '" title="' + title + '" target="_blank">';
+        }
+      }
+      match = /<\/a>/i.test(tag);
+      if (match) {
+        runBalancer = true;
+        openTagCount[tagnameIndex] -= 1;
+        if (openTagCount[tagnameIndex] < 0) {
+          removeTag[tagnameIndex] = true;
+        }
+        return '</a>';
+      }
+
+      // standalone tags
+      match = tag.match(/<(br|hr)\s?\/?>/i);
+      if (match) {
+        return '<' + match[1].toLowerCase() + '>';
+      }
+
+      // whitelisted tags
+      match = tag.match(/<(\/?)(b|blockquote|code|em|h[1-6]|li|ol(?: start="\d+")?|p|pre|s|sub|sup|strong|ul)>/i);
+      if (match && !/<\/ol start="\d+"/i.test(tag)) {
+        runBalancer = true;
+        tagnameIndex = allowedTags.indexOf(match[2].toLowerCase().split(' ')[0]);
+        if (match[1] === '/') {
+          openTagCount[tagnameIndex] -= 1;
+        } else {
+          openTagCount[tagnameIndex] += 1;
+        }
+        if (openTagCount[tagnameIndex] < 0) {
+          removeTag[tagnameIndex] = true;
+        }
+        return '<' + match[1] + match[2].toLowerCase() + '>';
+      }
+
+      // other tags we don't recognize
+      if (removeUnknown === true) {
+        return '';
+      }
+      return escapeHtml(tag);
+    });
+
+    return str;
+  }
+
+
+  function sanitizeInlineAndBlock(state) {
+    var i, blkIdx, inlineTokens;
+    // reset counts
+    for (j = 0; j < allowedTags.length; j++) { openTagCount[j] = 0; }
+    for (j = 0; j < allowedTags.length; j++) { removeTag[j] = false; }
+    runBalancer = false;
+
+
+    for (blkIdx = 0; blkIdx < state.tokens.length; blkIdx++) {
+      if (state.tokens[blkIdx].type === 'html_block') {
+        state.tokens[blkIdx].content = replaceUnknownTags(state.tokens[blkIdx].content);
+      }
+      if (state.tokens[blkIdx].type !== 'inline') {
+        continue;
+      }
+
+      inlineTokens = state.tokens[blkIdx].children;
+      for (i = 0; i < inlineTokens.length; i++) {
+        if (inlineTokens[i].type === 'html_inline') {
+          inlineTokens[i].content = replaceUnknownTags(inlineTokens[i].content);
+        }
+      }
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  //          REPLACE UNBALANCED TAGS
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+
+  function balance(state) {
+    if (runBalancer === false) { return; }
+    var blkIdx, inlineTokens;
+
+    function replaceUnbalancedTag(str, tagname) {
+      var openingRegexp, closingRegexp;
+      if (tagname === 'a') {
+        openingRegexp = RegExp('<a href="[^"<>]*" title="[^"<>]*" target="_blank">', 'g');
+      } else if (tagname === 'ol') {
+        openingRegexp = /<ol(?: start="\d+")?>/g;
+      } else {
+        openingRegexp = RegExp('<' + tagname + '>', 'g');
+      }
+      closingRegexp = RegExp('</' + tagname + '>', 'g');
+      if (removeUnbalanced === true) {
+        str = str.replace(openingRegexp, '');
+        str = str.replace(closingRegexp, '');
+      } else {
+        str = str.replace(openingRegexp, function (m) { return escapeHtml(m); });
+        str = str.replace(closingRegexp, function (m) { return escapeHtml(m); });
+      }
+      return str;
+    }
+
+    function replaceAllUnbalancedTags(str) {
+      var i;
+      for (i = 0; i < allowedTags.length; i++) {
+        if (removeTag[i] === true) {
+          str = replaceUnbalancedTag(str, allowedTags[i]);
+        }
+      }
+      return str;
+    }
+
+    for (j = 0; j < allowedTags.length; j++) {
+      if (openTagCount[j] !== 0) {
+        removeTag[j] = true;
+      }
+    }
+
+    // replace unbalanced tags
+    for (blkIdx = 0; blkIdx < state.tokens.length; blkIdx++) {
+      if (state.tokens[blkIdx].type === 'html_block') {
+        state.tokens[blkIdx].content = replaceAllUnbalancedTags(state.tokens[blkIdx].content);
+        continue;
+      }
+      if (state.tokens[blkIdx].type !== 'inline') {
+        continue;
+      }
+      inlineTokens = state.tokens[blkIdx].children;
+      for (j = 0; j < inlineTokens.length; j++) {
+        if (inlineTokens[j].type === 'html_inline') {
+          inlineTokens[j].content = replaceAllUnbalancedTags(inlineTokens[j].content);
+        }
+      }
+    }
+  }
+
+  md.core.ruler.after('linkify', 'sanitize_inline', sanitizeInlineAndBlock);
+  md.core.ruler.after('sanitize_inline', 'sanitize_balance', balance);
+};
+
+},{}],209:[function(require,module,exports){
 'use strict';
 
 
 module.exports = require('./lib/');
 
-},{"./lib/":216}],208:[function(require,module,exports){
+},{"./lib/":218}],210:[function(require,module,exports){
 // HTML5 entities map: { name -> utf16string }
 //
 'use strict';
@@ -46074,7 +46353,7 @@ module.exports = require('./lib/');
 /*eslint quotes:0*/
 module.exports = require('entities/maps/entities.json');
 
-},{"entities/maps/entities.json":8}],209:[function(require,module,exports){
+},{"entities/maps/entities.json":9}],211:[function(require,module,exports){
 // List of valid html blocks names, accorting to commonmark spec
 // http://jgm.github.io/CommonMark/spec.html#html-blocks
 
@@ -46144,7 +46423,7 @@ module.exports = [
   'ul'
 ];
 
-},{}],210:[function(require,module,exports){
+},{}],212:[function(require,module,exports){
 // Regexps to match html elements
 
 'use strict';
@@ -46174,7 +46453,7 @@ var HTML_OPEN_CLOSE_TAG_RE = new RegExp('^(?:' + open_tag + '|' + close_tag + ')
 module.exports.HTML_TAG_RE = HTML_TAG_RE;
 module.exports.HTML_OPEN_CLOSE_TAG_RE = HTML_OPEN_CLOSE_TAG_RE;
 
-},{}],211:[function(require,module,exports){
+},{}],213:[function(require,module,exports){
 // Utilities
 //
 'use strict';
@@ -46451,7 +46730,7 @@ exports.isPunctChar         = isPunctChar;
 exports.escapeRE            = escapeRE;
 exports.normalizeReference  = normalizeReference;
 
-},{"./entities":208,"mdurl":263,"uc.micro":270,"uc.micro/categories/P/regex":268}],212:[function(require,module,exports){
+},{"./entities":210,"mdurl":265,"uc.micro":272,"uc.micro/categories/P/regex":270}],214:[function(require,module,exports){
 // Just a shortcut for bulk export
 'use strict';
 
@@ -46460,7 +46739,7 @@ exports.parseLinkLabel       = require('./parse_link_label');
 exports.parseLinkDestination = require('./parse_link_destination');
 exports.parseLinkTitle       = require('./parse_link_title');
 
-},{"./parse_link_destination":213,"./parse_link_label":214,"./parse_link_title":215}],213:[function(require,module,exports){
+},{"./parse_link_destination":215,"./parse_link_label":216,"./parse_link_title":217}],215:[function(require,module,exports){
 // Parse link destination
 //
 'use strict';
@@ -46542,7 +46821,7 @@ module.exports = function parseLinkDestination(str, pos, max) {
   return result;
 };
 
-},{"../common/utils":211}],214:[function(require,module,exports){
+},{"../common/utils":213}],216:[function(require,module,exports){
 // Parse link label
 //
 // this function assumes that first character ("[") already matches;
@@ -46592,7 +46871,7 @@ module.exports = function parseLinkLabel(state, start, disableNested) {
   return labelEnd;
 };
 
-},{}],215:[function(require,module,exports){
+},{}],217:[function(require,module,exports){
 // Parse link title
 //
 'use strict';
@@ -46647,7 +46926,7 @@ module.exports = function parseLinkTitle(str, pos, max) {
   return result;
 };
 
-},{"../common/utils":211}],216:[function(require,module,exports){
+},{"../common/utils":213}],218:[function(require,module,exports){
 // Main parser class
 
 'use strict';
@@ -47226,7 +47505,7 @@ MarkdownIt.prototype.renderInline = function (src, env) {
 
 module.exports = MarkdownIt;
 
-},{"./common/utils":211,"./helpers":212,"./parser_block":217,"./parser_core":218,"./parser_inline":219,"./presets/commonmark":220,"./presets/default":221,"./presets/zero":222,"./renderer":223,"linkify-it":202,"mdurl":263,"punycode":265}],217:[function(require,module,exports){
+},{"./common/utils":213,"./helpers":214,"./parser_block":219,"./parser_core":220,"./parser_inline":221,"./presets/commonmark":222,"./presets/default":223,"./presets/zero":224,"./renderer":225,"linkify-it":203,"mdurl":265,"punycode":267}],219:[function(require,module,exports){
 /** internal
  * class ParserBlock
  *
@@ -47350,7 +47629,7 @@ ParserBlock.prototype.State = require('./rules_block/state_block');
 
 module.exports = ParserBlock;
 
-},{"./ruler":224,"./rules_block/blockquote":225,"./rules_block/code":226,"./rules_block/fence":227,"./rules_block/heading":228,"./rules_block/hr":229,"./rules_block/html_block":230,"./rules_block/lheading":231,"./rules_block/list":232,"./rules_block/paragraph":233,"./rules_block/reference":234,"./rules_block/state_block":235,"./rules_block/table":236}],218:[function(require,module,exports){
+},{"./ruler":226,"./rules_block/blockquote":227,"./rules_block/code":228,"./rules_block/fence":229,"./rules_block/heading":230,"./rules_block/hr":231,"./rules_block/html_block":232,"./rules_block/lheading":233,"./rules_block/list":234,"./rules_block/paragraph":235,"./rules_block/reference":236,"./rules_block/state_block":237,"./rules_block/table":238}],220:[function(require,module,exports){
 /** internal
  * class Core
  *
@@ -47410,7 +47689,7 @@ Core.prototype.State = require('./rules_core/state_core');
 
 module.exports = Core;
 
-},{"./ruler":224,"./rules_core/block":237,"./rules_core/inline":238,"./rules_core/linkify":239,"./rules_core/normalize":240,"./rules_core/replacements":241,"./rules_core/smartquotes":242,"./rules_core/state_core":243}],219:[function(require,module,exports){
+},{"./ruler":226,"./rules_core/block":239,"./rules_core/inline":240,"./rules_core/linkify":241,"./rules_core/normalize":242,"./rules_core/replacements":243,"./rules_core/smartquotes":244,"./rules_core/state_core":245}],221:[function(require,module,exports){
 /** internal
  * class ParserInline
  *
@@ -47589,7 +47868,7 @@ ParserInline.prototype.State = require('./rules_inline/state_inline');
 
 module.exports = ParserInline;
 
-},{"./ruler":224,"./rules_inline/autolink":244,"./rules_inline/backticks":245,"./rules_inline/balance_pairs":246,"./rules_inline/emphasis":247,"./rules_inline/entity":248,"./rules_inline/escape":249,"./rules_inline/html_inline":250,"./rules_inline/image":251,"./rules_inline/link":252,"./rules_inline/newline":253,"./rules_inline/state_inline":254,"./rules_inline/strikethrough":255,"./rules_inline/text":256,"./rules_inline/text_collapse":257}],220:[function(require,module,exports){
+},{"./ruler":226,"./rules_inline/autolink":246,"./rules_inline/backticks":247,"./rules_inline/balance_pairs":248,"./rules_inline/emphasis":249,"./rules_inline/entity":250,"./rules_inline/escape":251,"./rules_inline/html_inline":252,"./rules_inline/image":253,"./rules_inline/link":254,"./rules_inline/newline":255,"./rules_inline/state_inline":256,"./rules_inline/strikethrough":257,"./rules_inline/text":258,"./rules_inline/text_collapse":259}],222:[function(require,module,exports){
 // Commonmark default options
 
 'use strict';
@@ -47671,7 +47950,7 @@ module.exports = {
   }
 };
 
-},{}],221:[function(require,module,exports){
+},{}],223:[function(require,module,exports){
 // markdown-it default options
 
 'use strict';
@@ -47714,7 +47993,7 @@ module.exports = {
   }
 };
 
-},{}],222:[function(require,module,exports){
+},{}],224:[function(require,module,exports){
 // "Zero" preset, with nothing enabled. Useful for manual configuring of simple
 // modes. For example, to parse bold/italic only.
 
@@ -47778,7 +48057,7 @@ module.exports = {
   }
 };
 
-},{}],223:[function(require,module,exports){
+},{}],225:[function(require,module,exports){
 /**
  * class Renderer
  *
@@ -48115,7 +48394,7 @@ Renderer.prototype.render = function (tokens, options, env) {
 
 module.exports = Renderer;
 
-},{"./common/utils":211}],224:[function(require,module,exports){
+},{"./common/utils":213}],226:[function(require,module,exports){
 /**
  * class Ruler
  *
@@ -48469,7 +48748,7 @@ Ruler.prototype.getRules = function (chainName) {
 
 module.exports = Ruler;
 
-},{}],225:[function(require,module,exports){
+},{}],227:[function(require,module,exports){
 // Block quotes
 
 'use strict';
@@ -48721,7 +49000,7 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
   return true;
 };
 
-},{"../common/utils":211}],226:[function(require,module,exports){
+},{"../common/utils":213}],228:[function(require,module,exports){
 // Code block (4 spaces padded)
 
 'use strict';
@@ -48757,7 +49036,7 @@ module.exports = function code(state, startLine, endLine/*, silent*/) {
   return true;
 };
 
-},{}],227:[function(require,module,exports){
+},{}],229:[function(require,module,exports){
 // fences (``` lang, ~~~ lang)
 
 'use strict';
@@ -48850,7 +49129,7 @@ module.exports = function fence(state, startLine, endLine, silent) {
   return true;
 };
 
-},{}],228:[function(require,module,exports){
+},{}],230:[function(require,module,exports){
 // heading (#, ##, ...)
 
 'use strict';
@@ -48904,7 +49183,7 @@ module.exports = function heading(state, startLine, endLine, silent) {
   return true;
 };
 
-},{"../common/utils":211}],229:[function(require,module,exports){
+},{"../common/utils":213}],231:[function(require,module,exports){
 // Horizontal rule
 
 'use strict';
@@ -48948,7 +49227,7 @@ module.exports = function hr(state, startLine, endLine, silent) {
   return true;
 };
 
-},{"../common/utils":211}],230:[function(require,module,exports){
+},{"../common/utils":213}],232:[function(require,module,exports){
 // HTML block
 
 'use strict';
@@ -49021,7 +49300,7 @@ module.exports = function html_block(state, startLine, endLine, silent) {
   return true;
 };
 
-},{"../common/html_blocks":209,"../common/html_re":210}],231:[function(require,module,exports){
+},{"../common/html_blocks":211,"../common/html_re":212}],233:[function(require,module,exports){
 // lheading (---, ===)
 
 'use strict';
@@ -49103,7 +49382,7 @@ module.exports = function lheading(state, startLine, endLine/*, silent*/) {
   return true;
 };
 
-},{}],232:[function(require,module,exports){
+},{}],234:[function(require,module,exports){
 // Lists
 
 'use strict';
@@ -49440,7 +49719,7 @@ module.exports = function list(state, startLine, endLine, silent) {
   return true;
 };
 
-},{"../common/utils":211}],233:[function(require,module,exports){
+},{"../common/utils":213}],235:[function(require,module,exports){
 // Paragraph
 
 'use strict';
@@ -49494,7 +49773,7 @@ module.exports = function paragraph(state, startLine/*, endLine*/) {
   return true;
 };
 
-},{}],234:[function(require,module,exports){
+},{}],236:[function(require,module,exports){
 'use strict';
 
 
@@ -49693,7 +49972,7 @@ module.exports = function reference(state, startLine, _endLine, silent) {
   return true;
 };
 
-},{"../common/utils":211,"../helpers/parse_link_destination":213,"../helpers/parse_link_title":215}],235:[function(require,module,exports){
+},{"../common/utils":213,"../helpers/parse_link_destination":215,"../helpers/parse_link_title":217}],237:[function(require,module,exports){
 // Parser state class
 
 'use strict';
@@ -49925,7 +50204,7 @@ StateBlock.prototype.Token = Token;
 
 module.exports = StateBlock;
 
-},{"../common/utils":211,"../token":258}],236:[function(require,module,exports){
+},{"../common/utils":213,"../token":260}],238:[function(require,module,exports){
 // GFM table, non-standard
 
 'use strict';
@@ -50101,7 +50380,7 @@ module.exports = function table(state, startLine, endLine, silent) {
   return true;
 };
 
-},{}],237:[function(require,module,exports){
+},{}],239:[function(require,module,exports){
 'use strict';
 
 
@@ -50119,7 +50398,7 @@ module.exports = function block(state) {
   }
 };
 
-},{}],238:[function(require,module,exports){
+},{}],240:[function(require,module,exports){
 'use strict';
 
 module.exports = function inline(state) {
@@ -50134,7 +50413,7 @@ module.exports = function inline(state) {
   }
 };
 
-},{}],239:[function(require,module,exports){
+},{}],241:[function(require,module,exports){
 // Replace link-like texts with link nodes.
 //
 // Currently restricted by `md.validateLink()` to http/https/ftp
@@ -50269,7 +50548,7 @@ module.exports = function linkify(state) {
   }
 };
 
-},{"../common/utils":211}],240:[function(require,module,exports){
+},{"../common/utils":213}],242:[function(require,module,exports){
 // Normalize input string
 
 'use strict';
@@ -50291,7 +50570,7 @@ module.exports = function inline(state) {
   state.src = str;
 };
 
-},{}],241:[function(require,module,exports){
+},{}],243:[function(require,module,exports){
 // Simple typographyc replacements
 //
 // (c) (C) → ©
@@ -50400,7 +50679,7 @@ module.exports = function replace(state) {
   }
 };
 
-},{}],242:[function(require,module,exports){
+},{}],244:[function(require,module,exports){
 // Convert straight quotation marks to typographic ones
 //
 'use strict';
@@ -50595,7 +50874,7 @@ module.exports = function smartquotes(state) {
   }
 };
 
-},{"../common/utils":211}],243:[function(require,module,exports){
+},{"../common/utils":213}],245:[function(require,module,exports){
 // Core state object
 //
 'use strict';
@@ -50617,7 +50896,7 @@ StateCore.prototype.Token = Token;
 
 module.exports = StateCore;
 
-},{"../token":258}],244:[function(require,module,exports){
+},{"../token":260}],246:[function(require,module,exports){
 // Process autolinks '<protocol:...>'
 
 'use strict';
@@ -50691,7 +50970,7 @@ module.exports = function autolink(state, silent) {
   return false;
 };
 
-},{}],245:[function(require,module,exports){
+},{}],247:[function(require,module,exports){
 // Parse backticks
 
 'use strict';
@@ -50736,7 +51015,7 @@ module.exports = function backtick(state, silent) {
   return true;
 };
 
-},{}],246:[function(require,module,exports){
+},{}],248:[function(require,module,exports){
 // For each opening emphasis-like marker find a matching closing one
 //
 'use strict';
@@ -50782,7 +51061,7 @@ module.exports = function link_pairs(state) {
   }
 };
 
-},{}],247:[function(require,module,exports){
+},{}],249:[function(require,module,exports){
 // Process *this* and _that_
 //
 'use strict';
@@ -50911,7 +51190,7 @@ module.exports.postProcess = function emphasis(state) {
   }
 };
 
-},{}],248:[function(require,module,exports){
+},{}],250:[function(require,module,exports){
 // Process html entity - &#123;, &#xAF;, &quot;, ...
 
 'use strict';
@@ -50961,7 +51240,7 @@ module.exports = function entity(state, silent) {
   return true;
 };
 
-},{"../common/entities":208,"../common/utils":211}],249:[function(require,module,exports){
+},{"../common/entities":210,"../common/utils":213}],251:[function(require,module,exports){
 // Proceess escaped chars and hardbreaks
 
 'use strict';
@@ -51015,7 +51294,7 @@ module.exports = function escape(state, silent) {
   return true;
 };
 
-},{"../common/utils":211}],250:[function(require,module,exports){
+},{"../common/utils":213}],252:[function(require,module,exports){
 // Process html tags
 
 'use strict';
@@ -51064,7 +51343,7 @@ module.exports = function html_inline(state, silent) {
   return true;
 };
 
-},{"../common/html_re":210}],251:[function(require,module,exports){
+},{"../common/html_re":212}],253:[function(require,module,exports){
 // Process ![image](<src> "title")
 
 'use strict';
@@ -51221,7 +51500,7 @@ module.exports = function image(state, silent) {
   return true;
 };
 
-},{"../common/utils":211,"../helpers/parse_link_destination":213,"../helpers/parse_link_label":214,"../helpers/parse_link_title":215}],252:[function(require,module,exports){
+},{"../common/utils":213,"../helpers/parse_link_destination":215,"../helpers/parse_link_label":216,"../helpers/parse_link_title":217}],254:[function(require,module,exports){
 // Process [link](<to> "stuff")
 
 'use strict';
@@ -51370,7 +51649,7 @@ module.exports = function link(state, silent) {
   return true;
 };
 
-},{"../common/utils":211,"../helpers/parse_link_destination":213,"../helpers/parse_link_label":214,"../helpers/parse_link_title":215}],253:[function(require,module,exports){
+},{"../common/utils":213,"../helpers/parse_link_destination":215,"../helpers/parse_link_label":216,"../helpers/parse_link_title":217}],255:[function(require,module,exports){
 // Proceess '\n'
 
 'use strict';
@@ -51411,7 +51690,7 @@ module.exports = function newline(state, silent) {
   return true;
 };
 
-},{}],254:[function(require,module,exports){
+},{}],256:[function(require,module,exports){
 // Inline parser state
 
 'use strict';
@@ -51543,7 +51822,7 @@ StateInline.prototype.Token = Token;
 
 module.exports = StateInline;
 
-},{"../common/utils":211,"../token":258}],255:[function(require,module,exports){
+},{"../common/utils":213,"../token":260}],257:[function(require,module,exports){
 // ~~strike through~~
 //
 'use strict';
@@ -51662,7 +51941,7 @@ module.exports.postProcess = function strikethrough(state) {
   }
 };
 
-},{}],256:[function(require,module,exports){
+},{}],258:[function(require,module,exports){
 // Skip text characters for text token, place those to pending buffer
 // and increment current pos
 
@@ -51753,7 +52032,7 @@ module.exports = function text(state, silent) {
   return true;
 };*/
 
-},{}],257:[function(require,module,exports){
+},{}],259:[function(require,module,exports){
 // Merge adjacent text nodes into one, and re-calculate all token levels
 //
 'use strict';
@@ -51788,7 +52067,7 @@ module.exports = function text_collapse(state) {
   }
 };
 
-},{}],258:[function(require,module,exports){
+},{}],260:[function(require,module,exports){
 // Token class
 
 'use strict';
@@ -51987,7 +52266,7 @@ Token.prototype.attrJoin = function attrJoin(name, value) {
 
 module.exports = Token;
 
-},{}],259:[function(require,module,exports){
+},{}],261:[function(require,module,exports){
 /** @flow */
 
 "use strict";
@@ -52030,7 +52309,7 @@ function matchAt(re, str, pos) {
 }
 
 module.exports = matchAt;
-},{}],260:[function(require,module,exports){
+},{}],262:[function(require,module,exports){
 
 'use strict';
 
@@ -52154,7 +52433,7 @@ decode.componentChars = '';
 
 module.exports = decode;
 
-},{}],261:[function(require,module,exports){
+},{}],263:[function(require,module,exports){
 
 'use strict';
 
@@ -52254,7 +52533,7 @@ encode.componentChars = "-_.!~*'()";
 
 module.exports = encode;
 
-},{}],262:[function(require,module,exports){
+},{}],264:[function(require,module,exports){
 
 'use strict';
 
@@ -52281,7 +52560,7 @@ module.exports = function format(url) {
   return result;
 };
 
-},{}],263:[function(require,module,exports){
+},{}],265:[function(require,module,exports){
 'use strict';
 
 
@@ -52290,7 +52569,7 @@ module.exports.decode = require('./decode');
 module.exports.format = require('./format');
 module.exports.parse  = require('./parse');
 
-},{"./decode":260,"./encode":261,"./format":262,"./parse":264}],264:[function(require,module,exports){
+},{"./decode":262,"./encode":263,"./format":264,"./parse":266}],266:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -52604,7 +52883,7 @@ Url.prototype.parseHost = function(host) {
 
 module.exports = urlParse;
 
-},{}],265:[function(require,module,exports){
+},{}],267:[function(require,module,exports){
 (function (global){
 /*! https://mths.be/punycode v1.4.1 by @mathias */
 ;(function(root) {
@@ -53142,15 +53421,15 @@ module.exports = urlParse;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],266:[function(require,module,exports){
-module.exports=/[\0-\x1F\x7F-\x9F]/
-},{}],267:[function(require,module,exports){
-module.exports=/[\xAD\u0600-\u0605\u061C\u06DD\u070F\u08E2\u180E\u200B-\u200F\u202A-\u202E\u2060-\u2064\u2066-\u206F\uFEFF\uFFF9-\uFFFB]|\uD804\uDCBD|\uD82F[\uDCA0-\uDCA3]|\uD834[\uDD73-\uDD7A]|\uDB40[\uDC01\uDC20-\uDC7F]/
 },{}],268:[function(require,module,exports){
-module.exports=/[!-#%-\*,-/:;\?@\[-\]_\{\}\xA1\xA7\xAB\xB6\xB7\xBB\xBF\u037E\u0387\u055A-\u055F\u0589\u058A\u05BE\u05C0\u05C3\u05C6\u05F3\u05F4\u0609\u060A\u060C\u060D\u061B\u061E\u061F\u066A-\u066D\u06D4\u0700-\u070D\u07F7-\u07F9\u0830-\u083E\u085E\u0964\u0965\u0970\u0AF0\u0DF4\u0E4F\u0E5A\u0E5B\u0F04-\u0F12\u0F14\u0F3A-\u0F3D\u0F85\u0FD0-\u0FD4\u0FD9\u0FDA\u104A-\u104F\u10FB\u1360-\u1368\u1400\u166D\u166E\u169B\u169C\u16EB-\u16ED\u1735\u1736\u17D4-\u17D6\u17D8-\u17DA\u1800-\u180A\u1944\u1945\u1A1E\u1A1F\u1AA0-\u1AA6\u1AA8-\u1AAD\u1B5A-\u1B60\u1BFC-\u1BFF\u1C3B-\u1C3F\u1C7E\u1C7F\u1CC0-\u1CC7\u1CD3\u2010-\u2027\u2030-\u2043\u2045-\u2051\u2053-\u205E\u207D\u207E\u208D\u208E\u2308-\u230B\u2329\u232A\u2768-\u2775\u27C5\u27C6\u27E6-\u27EF\u2983-\u2998\u29D8-\u29DB\u29FC\u29FD\u2CF9-\u2CFC\u2CFE\u2CFF\u2D70\u2E00-\u2E2E\u2E30-\u2E44\u3001-\u3003\u3008-\u3011\u3014-\u301F\u3030\u303D\u30A0\u30FB\uA4FE\uA4FF\uA60D-\uA60F\uA673\uA67E\uA6F2-\uA6F7\uA874-\uA877\uA8CE\uA8CF\uA8F8-\uA8FA\uA8FC\uA92E\uA92F\uA95F\uA9C1-\uA9CD\uA9DE\uA9DF\uAA5C-\uAA5F\uAADE\uAADF\uAAF0\uAAF1\uABEB\uFD3E\uFD3F\uFE10-\uFE19\uFE30-\uFE52\uFE54-\uFE61\uFE63\uFE68\uFE6A\uFE6B\uFF01-\uFF03\uFF05-\uFF0A\uFF0C-\uFF0F\uFF1A\uFF1B\uFF1F\uFF20\uFF3B-\uFF3D\uFF3F\uFF5B\uFF5D\uFF5F-\uFF65]|\uD800[\uDD00-\uDD02\uDF9F\uDFD0]|\uD801\uDD6F|\uD802[\uDC57\uDD1F\uDD3F\uDE50-\uDE58\uDE7F\uDEF0-\uDEF6\uDF39-\uDF3F\uDF99-\uDF9C]|\uD804[\uDC47-\uDC4D\uDCBB\uDCBC\uDCBE-\uDCC1\uDD40-\uDD43\uDD74\uDD75\uDDC5-\uDDC9\uDDCD\uDDDB\uDDDD-\uDDDF\uDE38-\uDE3D\uDEA9]|\uD805[\uDC4B-\uDC4F\uDC5B\uDC5D\uDCC6\uDDC1-\uDDD7\uDE41-\uDE43\uDE60-\uDE6C\uDF3C-\uDF3E]|\uD807[\uDC41-\uDC45\uDC70\uDC71]|\uD809[\uDC70-\uDC74]|\uD81A[\uDE6E\uDE6F\uDEF5\uDF37-\uDF3B\uDF44]|\uD82F\uDC9F|\uD836[\uDE87-\uDE8B]|\uD83A[\uDD5E\uDD5F]/
+module.exports=/[\0-\x1F\x7F-\x9F]/
 },{}],269:[function(require,module,exports){
-module.exports=/[ \xA0\u1680\u2000-\u200A\u202F\u205F\u3000]/
+module.exports=/[\xAD\u0600-\u0605\u061C\u06DD\u070F\u08E2\u180E\u200B-\u200F\u202A-\u202E\u2060-\u2064\u2066-\u206F\uFEFF\uFFF9-\uFFFB]|\uD804\uDCBD|\uD82F[\uDCA0-\uDCA3]|\uD834[\uDD73-\uDD7A]|\uDB40[\uDC01\uDC20-\uDC7F]/
 },{}],270:[function(require,module,exports){
+module.exports=/[!-#%-\*,-/:;\?@\[-\]_\{\}\xA1\xA7\xAB\xB6\xB7\xBB\xBF\u037E\u0387\u055A-\u055F\u0589\u058A\u05BE\u05C0\u05C3\u05C6\u05F3\u05F4\u0609\u060A\u060C\u060D\u061B\u061E\u061F\u066A-\u066D\u06D4\u0700-\u070D\u07F7-\u07F9\u0830-\u083E\u085E\u0964\u0965\u0970\u0AF0\u0DF4\u0E4F\u0E5A\u0E5B\u0F04-\u0F12\u0F14\u0F3A-\u0F3D\u0F85\u0FD0-\u0FD4\u0FD9\u0FDA\u104A-\u104F\u10FB\u1360-\u1368\u1400\u166D\u166E\u169B\u169C\u16EB-\u16ED\u1735\u1736\u17D4-\u17D6\u17D8-\u17DA\u1800-\u180A\u1944\u1945\u1A1E\u1A1F\u1AA0-\u1AA6\u1AA8-\u1AAD\u1B5A-\u1B60\u1BFC-\u1BFF\u1C3B-\u1C3F\u1C7E\u1C7F\u1CC0-\u1CC7\u1CD3\u2010-\u2027\u2030-\u2043\u2045-\u2051\u2053-\u205E\u207D\u207E\u208D\u208E\u2308-\u230B\u2329\u232A\u2768-\u2775\u27C5\u27C6\u27E6-\u27EF\u2983-\u2998\u29D8-\u29DB\u29FC\u29FD\u2CF9-\u2CFC\u2CFE\u2CFF\u2D70\u2E00-\u2E2E\u2E30-\u2E44\u3001-\u3003\u3008-\u3011\u3014-\u301F\u3030\u303D\u30A0\u30FB\uA4FE\uA4FF\uA60D-\uA60F\uA673\uA67E\uA6F2-\uA6F7\uA874-\uA877\uA8CE\uA8CF\uA8F8-\uA8FA\uA8FC\uA92E\uA92F\uA95F\uA9C1-\uA9CD\uA9DE\uA9DF\uAA5C-\uAA5F\uAADE\uAADF\uAAF0\uAAF1\uABEB\uFD3E\uFD3F\uFE10-\uFE19\uFE30-\uFE52\uFE54-\uFE61\uFE63\uFE68\uFE6A\uFE6B\uFF01-\uFF03\uFF05-\uFF0A\uFF0C-\uFF0F\uFF1A\uFF1B\uFF1F\uFF20\uFF3B-\uFF3D\uFF3F\uFF5B\uFF5D\uFF5F-\uFF65]|\uD800[\uDD00-\uDD02\uDF9F\uDFD0]|\uD801\uDD6F|\uD802[\uDC57\uDD1F\uDD3F\uDE50-\uDE58\uDE7F\uDEF0-\uDEF6\uDF39-\uDF3F\uDF99-\uDF9C]|\uD804[\uDC47-\uDC4D\uDCBB\uDCBC\uDCBE-\uDCC1\uDD40-\uDD43\uDD74\uDD75\uDDC5-\uDDC9\uDDCD\uDDDB\uDDDD-\uDDDF\uDE38-\uDE3D\uDEA9]|\uD805[\uDC4B-\uDC4F\uDC5B\uDC5D\uDCC6\uDDC1-\uDDD7\uDE41-\uDE43\uDE60-\uDE6C\uDF3C-\uDF3E]|\uD807[\uDC41-\uDC45\uDC70\uDC71]|\uD809[\uDC70-\uDC74]|\uD81A[\uDE6E\uDE6F\uDEF5\uDF37-\uDF3B\uDF44]|\uD82F\uDC9F|\uD836[\uDE87-\uDE8B]|\uD83A[\uDD5E\uDD5F]/
+},{}],271:[function(require,module,exports){
+module.exports=/[ \xA0\u1680\u2000-\u200A\u202F\u205F\u3000]/
+},{}],272:[function(require,module,exports){
 'use strict';
 
 exports.Any = require('./properties/Any/regex');
@@ -53159,9 +53438,9 @@ exports.Cf  = require('./categories/Cf/regex');
 exports.P   = require('./categories/P/regex');
 exports.Z   = require('./categories/Z/regex');
 
-},{"./categories/Cc/regex":266,"./categories/Cf/regex":267,"./categories/P/regex":268,"./categories/Z/regex":269,"./properties/Any/regex":271}],271:[function(require,module,exports){
+},{"./categories/Cc/regex":268,"./categories/Cf/regex":269,"./categories/P/regex":270,"./categories/Z/regex":271,"./properties/Any/regex":273}],273:[function(require,module,exports){
 module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]/
-},{}],272:[function(require,module,exports){
+},{}],274:[function(require,module,exports){
 ;(function() {
 	require("../styles/app.css");
 
@@ -53205,7 +53484,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	onChangeHandler();
 }());
 
-},{"../styles/app.css":282,"./config/app":273,"./editor":276,"./utils/pane_resizer":279,"./utils/scroll_sync":280,"./viewer":281,"jquery":179}],273:[function(require,module,exports){
+},{"../styles/app.css":284,"./config/app":275,"./editor":278,"./utils/pane_resizer":281,"./utils/scroll_sync":282,"./viewer":283,"jquery":180}],275:[function(require,module,exports){
 ;(function() {
 	const config = {
 		// Id of the drag bar element, used for resizing the editor and viewer panes.
@@ -53229,7 +53508,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	module.exports = config;
 }());
 
-},{}],274:[function(require,module,exports){
+},{}],276:[function(require,module,exports){
 ;(function() {
 	const emphasis = require("../utils/markdown_emphasis");
 
@@ -53243,6 +53522,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			lineWrapping: true,
 			lineNumbers: false,
 			autofocus: true,
+			html: true,
 			value: "",
 			theme: "light",
 			extraKeys: {
@@ -53254,6 +53534,9 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 				},
 				"Ctrl-U": function(codemirror) {
 					emphasis.handleEmphasis(codemirror, "~~");
+				},
+				"Enter": function(codemirror) {
+					codemirror.execCommand("newlineAndIndentContinueMarkdownList");
 				}
 			},
 		},
@@ -53266,7 +53549,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	module.exports = config;
 }());
 
-},{"../utils/markdown_emphasis":278}],275:[function(require,module,exports){
+},{"../utils/markdown_emphasis":280}],277:[function(require,module,exports){
 ;(function() {
 	const hljs = require("highlight.js");
 	const markdown = require("markdown-it")();
@@ -53323,7 +53606,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	module.exports = config;
 }());
 
-},{"highlight.js":10,"markdown-it":207}],276:[function(require,module,exports){
+},{"highlight.js":11,"markdown-it":209}],278:[function(require,module,exports){
 ;(function() {
 	require("../styles/editor/editor.css");
 
@@ -53333,6 +53616,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	const CodeMirror = require("codemirror");
 	require("codemirror/mode/markdown/markdown");
 	require("codemirror/mode/gfm/gfm");
+	require("codemirror/addon/edit/continuelist");
 
 	// Load the stylesheets for the CodeMirror editor.
 	function loadEditorThemes() {
@@ -53372,7 +53656,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"../styles/editor/editor.css":283,"./config/editor":274,"./utils/file_loader":277,"codemirror":3,"codemirror/mode/gfm/gfm":4,"codemirror/mode/markdown/markdown":5,"jquery":179}],277:[function(require,module,exports){
+},{"../styles/editor/editor.css":285,"./config/editor":276,"./utils/file_loader":279,"codemirror":4,"codemirror/addon/edit/continuelist":2,"codemirror/mode/gfm/gfm":5,"codemirror/mode/markdown/markdown":6,"jquery":180}],279:[function(require,module,exports){
 ;(function() {
 	const $ = require("jquery");
 
@@ -53403,7 +53687,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"jquery":179}],278:[function(require,module,exports){
+},{"jquery":180}],280:[function(require,module,exports){
 ;(function() {
 	const $ = require("jquery");
 
@@ -53427,7 +53711,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"jquery":179}],279:[function(require,module,exports){
+},{"jquery":180}],281:[function(require,module,exports){
 ;(function() {
 	require("../../styles/utils/pane_resizer.css");
 
@@ -53554,7 +53838,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"../../styles/utils/pane_resizer.css":284,"jquery":179}],280:[function(require,module,exports){
+},{"../../styles/utils/pane_resizer.css":286,"jquery":180}],282:[function(require,module,exports){
 ;(function() {
 	const $ = require("jquery");
 
@@ -53582,7 +53866,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"jquery":179}],281:[function(require,module,exports){
+},{"jquery":180}],283:[function(require,module,exports){
 ;(function() {
 	require("../styles/viewer/viewer.css");
 	require("../styles/viewer/themes/default.css");
@@ -53600,6 +53884,9 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		fileLoader.getScript(config.mathjaxUrl, loadMathJax);
 	} else if (config.mathRenderer == "KaTex") {
 		markdown.use(require("markdown-it-katex"), config.KaTex);
+	}
+	if (config.markdownit.html) {
+		markdown.use(require("markdown-it-sanitizer"));
 	}
 
 	let renderTimeout;
@@ -53648,17 +53935,17 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"../styles/viewer/themes/default.css":285,"../styles/viewer/viewer.css":286,"./config/viewer":275,"./utils/file_loader":277,"jquery":179,"markdown-it":207,"markdown-it-katex":204,"markdown-it-lazy-headers":205,"markdown-it-mathjax":206}],282:[function(require,module,exports){
+},{"../styles/viewer/themes/default.css":287,"../styles/viewer/viewer.css":288,"./config/viewer":277,"./utils/file_loader":279,"jquery":180,"markdown-it":209,"markdown-it-katex":205,"markdown-it-lazy-headers":206,"markdown-it-mathjax":207,"markdown-it-sanitizer":208}],284:[function(require,module,exports){
 var css = "html,\nbody {\n  margin: 0;\n  height: 100%;\n  overflow: hidden;\n}\n.wrapper {\n  height: 100%;\n}\n#pane-container {\n  height: 100%;\n}\n"; (require("browserify-css").createStyle(css, { "href": "styles/app.css" }, { "insertAt": "bottom" })); module.exports = css;
-},{"browserify-css":1}],283:[function(require,module,exports){
-var css = "/* BASICS */\n.CodeMirror {\n  /* Set height, width, borders, and global font properties here */\n  font-family: monospace;\n  height: 300px;\n  color: black;\n}\n/* PADDING */\n.CodeMirror-lines {\n  padding: 4px 0;\n  /* Vertical padding around content */\n}\n.CodeMirror pre {\n  padding: 0 4px;\n  /* Horizontal padding of content */\n}\n.CodeMirror-scrollbar-filler,\n.CodeMirror-gutter-filler {\n  background-color: white;\n  /* The little square between H and V scrollbars */\n}\n/* GUTTER */\n.CodeMirror-gutters {\n  border-right: 1px solid #ddd;\n  background-color: #f7f7f7;\n  white-space: nowrap;\n}\n\n.CodeMirror-linenumber {\n  padding: 0 3px 0 5px;\n  min-width: 20px;\n  text-align: right;\n  color: #999;\n  white-space: nowrap;\n}\n.CodeMirror-guttermarker {\n  color: black;\n}\n.CodeMirror-guttermarker-subtle {\n  color: #999;\n}\n/* CURSOR */\n.CodeMirror-cursor {\n  border-left: 1px solid black;\n  border-right: none;\n  width: 0;\n}\n/* Shown when moving in bi-directional text */\n.CodeMirror div.CodeMirror-secondarycursor {\n  border-left: 1px solid silver;\n}\n.cm-fat-cursor .CodeMirror-cursor {\n  width: auto;\n  border: 0 !important;\n  background: #7e7;\n}\n.cm-fat-cursor div.CodeMirror-cursors {\n  z-index: 1;\n}\n.cm-animate-fat-cursor {\n  width: auto;\n  border: 0;\n  -webkit-animation: blink 1.06s steps(1) infinite;\n  -moz-animation: blink 1.06s steps(1) infinite;\n  animation: blink 1.06s steps(1) infinite;\n  background-color: #7e7;\n}\n@-moz-keyframes blink {\n  0% {\n\n  }\n\n  50% {\n    background-color: transparent;\n  }\n\n  100% {\n\n  }\n}\n@-webkit-keyframes blink {\n  0% {\n\n  }\n\n  50% {\n    background-color: transparent;\n  }\n\n  100% {\n\n  }\n}\n@keyframes blink {\n  0% {\n\n  }\n\n  50% {\n    background-color: transparent;\n  }\n\n  100% {\n\n  }\n}\n/* Can style cursor different in overwrite (non-insert) mode */\n\n.cm-tab {\n  display: inline-block;\n  text-decoration: inherit;\n}\n.CodeMirror-rulers {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: -50px;\n  bottom: -20px;\n  overflow: hidden;\n}\n.CodeMirror-ruler {\n  border-left: 1px solid #ccc;\n  top: 0;\n  bottom: 0;\n  position: absolute;\n}\n/* DEFAULT THEME */\n.cm-s-default .cm-header {\n  color: blue;\n}\n.cm-s-default .cm-quote {\n  color: #090;\n}\n.cm-negative {\n  color: #d44;\n}\n.cm-positive {\n  color: #292;\n}\n.cm-header,\n.cm-strong {\n  font-weight: bold;\n}\n.cm-em {\n  font-style: italic;\n}\n.cm-link {\n  text-decoration: underline;\n}\n.cm-strikethrough {\n  text-decoration: line-through;\n}\n.cm-s-default .cm-keyword {\n  color: #708;\n}\n.cm-s-default .cm-atom {\n  color: #219;\n}\n.cm-s-default .cm-number {\n  color: #164;\n}\n.cm-s-default .cm-def {\n  color: #00f;\n}\n\n.cm-s-default .cm-variable-2 {\n  color: #05a;\n}\n.cm-s-default .cm-variable-3 {\n  color: #085;\n}\n.cm-s-default .cm-comment {\n  color: #a50;\n}\n.cm-s-default .cm-string {\n  color: #a11;\n}\n.cm-s-default .cm-string-2 {\n  color: #f50;\n}\n.cm-s-default .cm-meta {\n  color: #555;\n}\n.cm-s-default .cm-qualifier {\n  color: #555;\n}\n.cm-s-default .cm-builtin {\n  color: #30a;\n}\n.cm-s-default .cm-bracket {\n  color: #997;\n}\n.cm-s-default .cm-tag {\n  color: #170;\n}\n.cm-s-default .cm-attribute {\n  color: #00c;\n}\n.cm-s-default .cm-hr {\n  color: #999;\n}\n.cm-s-default .cm-link {\n  color: #00c;\n}\n.cm-s-default .cm-error {\n  color: #f00;\n}\n.cm-invalidchar {\n  color: #f00;\n}\n.CodeMirror-composing {\n  border-bottom: 2px solid;\n}\n/* Default styles for common addons */\ndiv.CodeMirror span.CodeMirror-matchingbracket {\n  color: #0f0;\n}\ndiv.CodeMirror span.CodeMirror-nonmatchingbracket {\n  color: #f22;\n}\n.CodeMirror-matchingtag {\n  background: rgba(255, 150, 0, .3);\n}\n.CodeMirror-activeline-background {\n  background: #e8f2ff;\n}\n/* STOP */\n/* The rest of this file contains styles related to the mechanics of\n   the editor. You probably shouldn't touch them. */\n.CodeMirror {\n  position: relative;\n  overflow: hidden;\n  background: white;\n}\n.CodeMirror-scroll {\n  overflow: scroll !important;\n  /* Things will break if this is overridden */\n  /* 30px is the magic margin used to hide the element's real scrollbars */\n  /* See overflow: hidden in .CodeMirror */\n  margin-bottom: -30px;\n  margin-right: -30px;\n  padding-bottom: 30px;\n  height: 100%;\n  outline: none;\n  /* Prevent dragging from highlighting the element */\n  position: relative;\n}\n.CodeMirror-sizer {\n  position: relative;\n  border-right: 30px solid transparent;\n}\n/* The fake, visible scrollbars. Used to force redraw during scrolling\n   before actual scrolling happens, thus preventing shaking and\n   flickering artifacts. */\n.CodeMirror-vscrollbar,\n.CodeMirror-hscrollbar,\n.CodeMirror-scrollbar-filler,\n.CodeMirror-gutter-filler {\n  position: absolute;\n  z-index: 6;\n  display: none;\n}\n.CodeMirror-vscrollbar {\n  right: 0;\n  top: 0;\n  overflow-x: hidden;\n  overflow-y: scroll;\n}\n.CodeMirror-hscrollbar {\n  bottom: 0;\n  left: 0;\n  overflow-y: hidden;\n  overflow-x: scroll;\n}\n.CodeMirror-scrollbar-filler {\n  right: 0;\n  bottom: 0;\n}\n.CodeMirror-gutter-filler {\n  left: 0;\n  bottom: 0;\n}\n.CodeMirror-gutters {\n  position: absolute;\n  left: 0;\n  top: 0;\n  min-height: 100%;\n  z-index: 3;\n}\n.CodeMirror-gutter {\n  white-space: normal;\n  height: 100%;\n  display: inline-block;\n  vertical-align: top;\n  margin-bottom: -30px;\n  /* Hack to make IE7 behave */\n  *zoom: 1;\n  *display: inline;\n}\n.CodeMirror-gutter-wrapper {\n  position: absolute;\n  z-index: 4;\n  background: none !important;\n  border: none !important;\n}\n.CodeMirror-gutter-background {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  z-index: 4;\n}\n.CodeMirror-gutter-elt {\n  position: absolute;\n  cursor: default;\n  z-index: 4;\n}\n.CodeMirror-gutter-wrapper {\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  user-select: none;\n}\n.CodeMirror-lines {\n  cursor: text;\n  min-height: 1px;\n  /* prevents collapsing before first draw */\n}\n.CodeMirror pre {\n  /* Reset some styles that the rest of the page might have set */\n  -moz-border-radius: 0;\n  -webkit-border-radius: 0;\n  border-radius: 0;\n  border-width: 0;\n  background: transparent;\n  font-family: inherit;\n  font-size: inherit;\n  margin: 0;\n  white-space: pre;\n  word-wrap: normal;\n  line-height: inherit;\n  color: inherit;\n  z-index: 2;\n  position: relative;\n  overflow: visible;\n  -webkit-tap-highlight-color: transparent;\n  -webkit-font-variant-ligatures: none;\n  font-variant-ligatures: none;\n}\n.CodeMirror-wrap pre {\n  word-wrap: break-word;\n  white-space: pre-wrap;\n  word-break: normal;\n}\n.CodeMirror-linebackground {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  bottom: 0;\n  z-index: 0;\n}\n.CodeMirror-linewidget {\n  position: relative;\n  z-index: 2;\n  overflow: auto;\n}\n\n.CodeMirror-code {\n  outline: none;\n}\n/* Force content-box sizing for the elements where we expect it */\n.CodeMirror-scroll,\n.CodeMirror-sizer,\n.CodeMirror-gutter,\n.CodeMirror-gutters,\n.CodeMirror-linenumber {\n  -moz-box-sizing: content-box;\n  box-sizing: content-box;\n}\n.CodeMirror-measure {\n  position: absolute;\n  width: 100%;\n  height: 0;\n  overflow: hidden;\n  visibility: hidden;\n}\n.CodeMirror-cursor {\n  position: absolute;\n  pointer-events: none;\n}\n.CodeMirror-measure pre {\n  position: static;\n}\ndiv.CodeMirror-cursors {\n  visibility: hidden;\n  position: relative;\n  z-index: 3;\n}\ndiv.CodeMirror-dragcursors {\n  visibility: visible;\n}\n.CodeMirror-focused div.CodeMirror-cursors {\n  visibility: visible;\n}\n.CodeMirror-selected {\n  background: #d9d9d9;\n}\n.CodeMirror-focused .CodeMirror-selected {\n  background: #d7d4f0;\n}\n.CodeMirror-crosshair {\n  cursor: crosshair;\n}\n.CodeMirror-line::selection,\n.CodeMirror-line > span::selection,\n.CodeMirror-line > span > span::selection {\n  background: #d7d4f0;\n}\n.CodeMirror-line::-moz-selection,\n.CodeMirror-line > span::-moz-selection,\n.CodeMirror-line > span > span::-moz-selection {\n  background: #d7d4f0;\n}\n.cm-searching {\n  background: #ffa;\n  background: rgba(255, 255, 0, .4);\n}\n/* IE7 hack to prevent it from returning funny offsetTops on the spans */\n.CodeMirror span {\n  *vertical-align: text-bottom;\n}\n/* Used to force a border model for a node */\n.cm-force-border {\n  padding-right: .1px;\n}\n@media print {\n  /* Hide the cursor when printing */\n\n  .CodeMirror div.CodeMirror-cursors {\n    visibility: hidden;\n  }\n}\n/* See issue #2901 */\n.cm-tab-wrap-hack:after {\n  content: '';\n}\n/* Help users use markselection to safely style text background */\nspan.CodeMirror-selectedtext {\n  background: none;\n}\n.CodeMirror-dialog {\n  position: absolute;\n  left: 0;\n  right: 0;\n  background: inherit;\n  z-index: 15;\n  padding: .1em .8em;\n  overflow: hidden;\n  color: inherit;\n}\n.CodeMirror-dialog-top {\n  border-bottom: 1px solid #eee;\n  top: 0;\n}\n.CodeMirror-dialog-bottom {\n  border-top: 1px solid #eee;\n  bottom: 0;\n}\n.CodeMirror-dialog input {\n  border: none;\n  outline: none;\n  background: transparent;\n  width: 20em;\n  color: inherit;\n  font-family: monospace;\n}\n.CodeMirror-dialog button {\n  font-size: 70%;\n}\n#editor-pane {\n  height: 100%;\n  width: 50%;\n  display: inline-block;\n}\n#editor-pane {\n  float: left;\n}\n#editor {\n  height: 100%;\n}\n#editor > .CodeMirror {\n  height: 100%;\n}\n#editor .CodeMirror-lines {\n  margin: 10px 20px 10px 20px;\n}\n"; (require("browserify-css").createStyle(css, { "href": "styles/editor/editor.css" }, { "insertAt": "bottom" })); module.exports = css;
-},{"browserify-css":1}],284:[function(require,module,exports){
-var css = "#dragbar {\n  cursor: col-resize;\n  width: 6px;\n  float: right;\n  height: 100%;\n  background: #d3d3d3;\n  background: linear-gradient(to right, #d3d3d3, #fff);\n}\n#dragbar:hover,\n#dragbar:active {\n  background: #d3d3d3;\n}\n.collapse-pane-button {\n  position: relative;\n  width: 0;\n  height: 0;\n  top: 40%;\n}\n.collapse-pane-button > div {\n  position: absolute;\n  z-index: 10;\n  color: black;\n  width: 25px;\n  cursor: pointer;\n  padding: 20px 0;\n  border-radius: 3px;\n  opacity: 0.3;\n}\n.collapse-pane-button > div i {\n  vertical-align: middle;\n  text-align: center;\n  width: 100%;\n}\n.collapse-pane-button > div:hover {\n  background-color: #bbb;\n  opacity: 0.8;\n}\n.collapse-pane-button > div:active {\n  opacity: 1;\n}\n"; (require("browserify-css").createStyle(css, { "href": "styles/utils/pane_resizer.css" }, { "insertAt": "bottom" })); module.exports = css;
 },{"browserify-css":1}],285:[function(require,module,exports){
-var css = "#viewer * {\n  font-size: 16px;\n}\n#viewer h1,\n#viewer h2,\n#viewer h3,\n#viewer h4,\n#viewer h5,\n#viewer h6 {\n  margin-bottom: 0;\n}\n#viewer h1 {\n  font-size: 2.5em;\n}\n#viewer h2 {\n  font-size: 2.0em;\n}\n#viewer h3 {\n  font-size: 1.5em;\n}\n#viewer h4 {\n  font-size: 1.3em;\n}\n#viewer h5 {\n  font-size: 1.15em;\n}\n#viewer h6 {\n  font-size: 1.0em;\n}\n#viewer code,\n#viewer code * {\n  font-size: 14px;\n  line-height: 1em;\n}\n#viewer *:not(pre) > code {\n  word-wrap: break-word;\n  white-space: pre-wrap;\n  font-family: monospace;\n  border: 1px solid #ccc;\n  border-radius: 3px;\n  background-color: #f0f0f0;\n  padding: 3px;\n}\n#viewer pre {\n  padding: 5px;\n}\n#viewer a {\n  text-decoration: none;\n  color: #2a5db0;\n}\n#viewer a:hover {\n  text-decoration: underline;\n}\n#viewer li {\n  line-height: 1.4em;\n}\n#viewer blockquote {\n  padding: 0 1em;\n  color: #777;\n  border-left: 0.25em solid #ddd;\n}\n#viewer table {\n  display: block;\n  width: 100%;\n  overflow: auto;\n  border-spacing: 0;\n  border-collapse: collapse;\n  border-color: grey;\n  margin-top: 10px;\n}\n#viewer table thead {\n  display: table-header-group;\n  vertical-align: middle;\n  border-color: inherit;\n}\n#viewer table td,\n#viewer table th {\n  padding: 6px 13px;\n  border: 1px solid #ddd;\n}\n#viewer table th {\n  font-weight: bold;\n  border-bottom-width: 2px;\n}\n#viewer table tr {\n  background-color: #fff;\n}\n"; (require("browserify-css").createStyle(css, { "href": "styles/viewer/themes/default.css" }, { "insertAt": "bottom" })); module.exports = css;
+var css = "/* BASICS */\n.CodeMirror {\n  /* Set height, width, borders, and global font properties here */\n  font-family: monospace;\n  height: 300px;\n  color: black;\n}\n/* PADDING */\n.CodeMirror-lines {\n  padding: 4px 0;\n  /* Vertical padding around content */\n}\n.CodeMirror pre {\n  padding: 0 4px;\n  /* Horizontal padding of content */\n}\n.CodeMirror-scrollbar-filler,\n.CodeMirror-gutter-filler {\n  background-color: white;\n  /* The little square between H and V scrollbars */\n}\n/* GUTTER */\n.CodeMirror-gutters {\n  border-right: 1px solid #ddd;\n  background-color: #f7f7f7;\n  white-space: nowrap;\n}\n\n.CodeMirror-linenumber {\n  padding: 0 3px 0 5px;\n  min-width: 20px;\n  text-align: right;\n  color: #999;\n  white-space: nowrap;\n}\n.CodeMirror-guttermarker {\n  color: black;\n}\n.CodeMirror-guttermarker-subtle {\n  color: #999;\n}\n/* CURSOR */\n.CodeMirror-cursor {\n  border-left: 1px solid black;\n  border-right: none;\n  width: 0;\n}\n/* Shown when moving in bi-directional text */\n.CodeMirror div.CodeMirror-secondarycursor {\n  border-left: 1px solid silver;\n}\n.cm-fat-cursor .CodeMirror-cursor {\n  width: auto;\n  border: 0 !important;\n  background: #7e7;\n}\n.cm-fat-cursor div.CodeMirror-cursors {\n  z-index: 1;\n}\n.cm-animate-fat-cursor {\n  width: auto;\n  border: 0;\n  -webkit-animation: blink 1.06s steps(1) infinite;\n  -moz-animation: blink 1.06s steps(1) infinite;\n  animation: blink 1.06s steps(1) infinite;\n  background-color: #7e7;\n}\n@-moz-keyframes blink {\n  0% {\n\n  }\n\n  50% {\n    background-color: transparent;\n  }\n\n  100% {\n\n  }\n}\n@-webkit-keyframes blink {\n  0% {\n\n  }\n\n  50% {\n    background-color: transparent;\n  }\n\n  100% {\n\n  }\n}\n@keyframes blink {\n  0% {\n\n  }\n\n  50% {\n    background-color: transparent;\n  }\n\n  100% {\n\n  }\n}\n/* Can style cursor different in overwrite (non-insert) mode */\n\n.cm-tab {\n  display: inline-block;\n  text-decoration: inherit;\n}\n.CodeMirror-rulers {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: -50px;\n  bottom: -20px;\n  overflow: hidden;\n}\n.CodeMirror-ruler {\n  border-left: 1px solid #ccc;\n  top: 0;\n  bottom: 0;\n  position: absolute;\n}\n/* DEFAULT THEME */\n.cm-s-default .cm-header {\n  color: blue;\n}\n.cm-s-default .cm-quote {\n  color: #090;\n}\n.cm-negative {\n  color: #d44;\n}\n.cm-positive {\n  color: #292;\n}\n.cm-header,\n.cm-strong {\n  font-weight: bold;\n}\n.cm-em {\n  font-style: italic;\n}\n.cm-link {\n  text-decoration: underline;\n}\n.cm-strikethrough {\n  text-decoration: line-through;\n}\n.cm-s-default .cm-keyword {\n  color: #708;\n}\n.cm-s-default .cm-atom {\n  color: #219;\n}\n.cm-s-default .cm-number {\n  color: #164;\n}\n.cm-s-default .cm-def {\n  color: #00f;\n}\n\n.cm-s-default .cm-variable-2 {\n  color: #05a;\n}\n.cm-s-default .cm-variable-3 {\n  color: #085;\n}\n.cm-s-default .cm-comment {\n  color: #a50;\n}\n.cm-s-default .cm-string {\n  color: #a11;\n}\n.cm-s-default .cm-string-2 {\n  color: #f50;\n}\n.cm-s-default .cm-meta {\n  color: #555;\n}\n.cm-s-default .cm-qualifier {\n  color: #555;\n}\n.cm-s-default .cm-builtin {\n  color: #30a;\n}\n.cm-s-default .cm-bracket {\n  color: #997;\n}\n.cm-s-default .cm-tag {\n  color: #170;\n}\n.cm-s-default .cm-attribute {\n  color: #00c;\n}\n.cm-s-default .cm-hr {\n  color: #999;\n}\n.cm-s-default .cm-link {\n  color: #00c;\n}\n.cm-s-default .cm-error {\n  color: #f00;\n}\n.cm-invalidchar {\n  color: #f00;\n}\n.CodeMirror-composing {\n  border-bottom: 2px solid;\n}\n/* Default styles for common addons */\ndiv.CodeMirror span.CodeMirror-matchingbracket {\n  color: #0f0;\n}\ndiv.CodeMirror span.CodeMirror-nonmatchingbracket {\n  color: #f22;\n}\n.CodeMirror-matchingtag {\n  background: rgba(255, 150, 0, .3);\n}\n.CodeMirror-activeline-background {\n  background: #e8f2ff;\n}\n/* STOP */\n/* The rest of this file contains styles related to the mechanics of\n   the editor. You probably shouldn't touch them. */\n.CodeMirror {\n  position: relative;\n  overflow: hidden;\n  background: white;\n}\n.CodeMirror-scroll {\n  overflow: scroll !important;\n  /* Things will break if this is overridden */\n  /* 30px is the magic margin used to hide the element's real scrollbars */\n  /* See overflow: hidden in .CodeMirror */\n  margin-bottom: -30px;\n  margin-right: -30px;\n  padding-bottom: 30px;\n  height: 100%;\n  outline: none;\n  /* Prevent dragging from highlighting the element */\n  position: relative;\n}\n.CodeMirror-sizer {\n  position: relative;\n  border-right: 30px solid transparent;\n}\n/* The fake, visible scrollbars. Used to force redraw during scrolling\n   before actual scrolling happens, thus preventing shaking and\n   flickering artifacts. */\n.CodeMirror-vscrollbar,\n.CodeMirror-hscrollbar,\n.CodeMirror-scrollbar-filler,\n.CodeMirror-gutter-filler {\n  position: absolute;\n  z-index: 6;\n  display: none;\n}\n.CodeMirror-vscrollbar {\n  right: 0;\n  top: 0;\n  overflow-x: hidden;\n  overflow-y: scroll;\n}\n.CodeMirror-hscrollbar {\n  bottom: 0;\n  left: 0;\n  overflow-y: hidden;\n  overflow-x: scroll;\n}\n.CodeMirror-scrollbar-filler {\n  right: 0;\n  bottom: 0;\n}\n.CodeMirror-gutter-filler {\n  left: 0;\n  bottom: 0;\n}\n.CodeMirror-gutters {\n  position: absolute;\n  left: 0;\n  top: 0;\n  min-height: 100%;\n  z-index: 3;\n}\n.CodeMirror-gutter {\n  white-space: normal;\n  height: 100%;\n  display: inline-block;\n  vertical-align: top;\n  margin-bottom: -30px;\n  /* Hack to make IE7 behave */\n  *zoom: 1;\n  *display: inline;\n}\n.CodeMirror-gutter-wrapper {\n  position: absolute;\n  z-index: 4;\n  background: none !important;\n  border: none !important;\n}\n.CodeMirror-gutter-background {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  z-index: 4;\n}\n.CodeMirror-gutter-elt {\n  position: absolute;\n  cursor: default;\n  z-index: 4;\n}\n.CodeMirror-gutter-wrapper {\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  user-select: none;\n}\n.CodeMirror-lines {\n  cursor: text;\n  min-height: 1px;\n  /* prevents collapsing before first draw */\n}\n.CodeMirror pre {\n  /* Reset some styles that the rest of the page might have set */\n  -moz-border-radius: 0;\n  -webkit-border-radius: 0;\n  border-radius: 0;\n  border-width: 0;\n  background: transparent;\n  font-family: inherit;\n  font-size: inherit;\n  margin: 0;\n  white-space: pre;\n  word-wrap: normal;\n  line-height: inherit;\n  color: inherit;\n  z-index: 2;\n  position: relative;\n  overflow: visible;\n  -webkit-tap-highlight-color: transparent;\n  -webkit-font-variant-ligatures: none;\n  font-variant-ligatures: none;\n}\n.CodeMirror-wrap pre {\n  word-wrap: break-word;\n  white-space: pre-wrap;\n  word-break: normal;\n}\n.CodeMirror-linebackground {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  bottom: 0;\n  z-index: 0;\n}\n.CodeMirror-linewidget {\n  position: relative;\n  z-index: 2;\n  overflow: auto;\n}\n\n.CodeMirror-code {\n  outline: none;\n}\n/* Force content-box sizing for the elements where we expect it */\n.CodeMirror-scroll,\n.CodeMirror-sizer,\n.CodeMirror-gutter,\n.CodeMirror-gutters,\n.CodeMirror-linenumber {\n  -moz-box-sizing: content-box;\n  box-sizing: content-box;\n}\n.CodeMirror-measure {\n  position: absolute;\n  width: 100%;\n  height: 0;\n  overflow: hidden;\n  visibility: hidden;\n}\n.CodeMirror-cursor {\n  position: absolute;\n  pointer-events: none;\n}\n.CodeMirror-measure pre {\n  position: static;\n}\ndiv.CodeMirror-cursors {\n  visibility: hidden;\n  position: relative;\n  z-index: 3;\n}\ndiv.CodeMirror-dragcursors {\n  visibility: visible;\n}\n.CodeMirror-focused div.CodeMirror-cursors {\n  visibility: visible;\n}\n.CodeMirror-selected {\n  background: #d9d9d9;\n}\n.CodeMirror-focused .CodeMirror-selected {\n  background: #d7d4f0;\n}\n.CodeMirror-crosshair {\n  cursor: crosshair;\n}\n.CodeMirror-line::selection,\n.CodeMirror-line > span::selection,\n.CodeMirror-line > span > span::selection {\n  background: #d7d4f0;\n}\n.CodeMirror-line::-moz-selection,\n.CodeMirror-line > span::-moz-selection,\n.CodeMirror-line > span > span::-moz-selection {\n  background: #d7d4f0;\n}\n.cm-searching {\n  background: #ffa;\n  background: rgba(255, 255, 0, .4);\n}\n/* IE7 hack to prevent it from returning funny offsetTops on the spans */\n.CodeMirror span {\n  *vertical-align: text-bottom;\n}\n/* Used to force a border model for a node */\n.cm-force-border {\n  padding-right: .1px;\n}\n@media print {\n  /* Hide the cursor when printing */\n\n  .CodeMirror div.CodeMirror-cursors {\n    visibility: hidden;\n  }\n}\n/* See issue #2901 */\n.cm-tab-wrap-hack:after {\n  content: '';\n}\n/* Help users use markselection to safely style text background */\nspan.CodeMirror-selectedtext {\n  background: none;\n}\n.CodeMirror-dialog {\n  position: absolute;\n  left: 0;\n  right: 0;\n  background: inherit;\n  z-index: 15;\n  padding: .1em .8em;\n  overflow: hidden;\n  color: inherit;\n}\n.CodeMirror-dialog-top {\n  border-bottom: 1px solid #eee;\n  top: 0;\n}\n.CodeMirror-dialog-bottom {\n  border-top: 1px solid #eee;\n  bottom: 0;\n}\n.CodeMirror-dialog input {\n  border: none;\n  outline: none;\n  background: transparent;\n  width: 20em;\n  color: inherit;\n  font-family: monospace;\n}\n.CodeMirror-dialog button {\n  font-size: 70%;\n}\n#editor-pane {\n  height: 100%;\n  width: 50%;\n  display: inline-block;\n}\n#editor-pane {\n  float: left;\n}\n#editor {\n  height: 100%;\n}\n#editor > .CodeMirror {\n  height: 100%;\n}\n#editor .CodeMirror-lines {\n  margin: 10px 20px 10px 20px;\n}\n"; (require("browserify-css").createStyle(css, { "href": "styles/editor/editor.css" }, { "insertAt": "bottom" })); module.exports = css;
 },{"browserify-css":1}],286:[function(require,module,exports){
+var css = "#dragbar {\n  cursor: col-resize;\n  width: 6px;\n  float: right;\n  height: 100%;\n  background: #d3d3d3;\n  background: linear-gradient(to right, #d3d3d3, #fff);\n}\n#dragbar:hover,\n#dragbar:active {\n  background: #d3d3d3;\n}\n.collapse-pane-button {\n  position: relative;\n  width: 0;\n  height: 0;\n  top: 40%;\n}\n.collapse-pane-button > div {\n  position: absolute;\n  z-index: 10;\n  color: black;\n  width: 25px;\n  cursor: pointer;\n  padding: 20px 0;\n  border-radius: 3px;\n  opacity: 0.3;\n}\n.collapse-pane-button > div i {\n  vertical-align: middle;\n  text-align: center;\n  width: 100%;\n}\n.collapse-pane-button > div:hover {\n  background-color: #bbb;\n  opacity: 0.8;\n}\n.collapse-pane-button > div:active {\n  opacity: 1;\n}\n"; (require("browserify-css").createStyle(css, { "href": "styles/utils/pane_resizer.css" }, { "insertAt": "bottom" })); module.exports = css;
+},{"browserify-css":1}],287:[function(require,module,exports){
+var css = "#viewer * {\n  font-size: 16px;\n}\n#viewer h1,\n#viewer h2,\n#viewer h3,\n#viewer h4,\n#viewer h5,\n#viewer h6 {\n  margin-bottom: 0;\n}\n#viewer h1 {\n  font-size: 2.5em;\n}\n#viewer h2 {\n  font-size: 2.0em;\n}\n#viewer h3 {\n  font-size: 1.5em;\n}\n#viewer h4 {\n  font-size: 1.3em;\n}\n#viewer h5 {\n  font-size: 1.15em;\n}\n#viewer h6 {\n  font-size: 1.0em;\n}\n#viewer code,\n#viewer code * {\n  font-size: 14px;\n  line-height: 1em;\n}\n#viewer *:not(pre) > code {\n  word-wrap: break-word;\n  white-space: pre-wrap;\n  font-family: monospace;\n  border: 1px solid #ccc;\n  border-radius: 3px;\n  background-color: #f0f0f0;\n  padding: 3px;\n}\n#viewer pre {\n  padding: 5px;\n}\n#viewer a {\n  text-decoration: none;\n  color: #2a5db0;\n}\n#viewer a:hover {\n  text-decoration: underline;\n}\n#viewer li {\n  line-height: 1.4em;\n}\n#viewer blockquote {\n  padding: 0 1em;\n  color: #777;\n  border-left: 0.25em solid #ddd;\n}\n#viewer table {\n  display: block;\n  width: 100%;\n  overflow: auto;\n  border-spacing: 0;\n  border-collapse: collapse;\n  border-color: grey;\n  margin-top: 10px;\n}\n#viewer table thead {\n  display: table-header-group;\n  vertical-align: middle;\n  border-color: inherit;\n}\n#viewer table td,\n#viewer table th {\n  padding: 6px 13px;\n  border: 1px solid #ddd;\n}\n#viewer table th {\n  font-weight: bold;\n  border-bottom-width: 2px;\n}\n#viewer table tr {\n  background-color: #fff;\n}\n"; (require("browserify-css").createStyle(css, { "href": "styles/viewer/themes/default.css" }, { "insertAt": "bottom" })); module.exports = css;
+},{"browserify-css":1}],288:[function(require,module,exports){
 var css = "@font-face {\n  font-family: KaTeX_AMS;\n  src: url(node_modules/katex/dist/fonts/KaTeX_AMS-Regular.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_AMS-Regular.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_AMS-Regular.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_AMS-Regular.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_AMS-Regular.ttf) format('ttf');\n  font-weight: 400;\n  font-style: normal;\n}\n@font-face {\n  font-family: KaTeX_Caligraphic;\n  src: url(node_modules/katex/dist/fonts/KaTeX_Caligraphic-Bold.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_Caligraphic-Bold.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_Caligraphic-Bold.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_Caligraphic-Bold.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_Caligraphic-Bold.ttf) format('ttf');\n  font-weight: 700;\n  font-style: normal;\n}\n@font-face {\n  font-family: KaTeX_Caligraphic;\n  src: url(node_modules/katex/dist/fonts/KaTeX_Caligraphic-Regular.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_Caligraphic-Regular.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_Caligraphic-Regular.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_Caligraphic-Regular.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_Caligraphic-Regular.ttf) format('ttf');\n  font-weight: 400;\n  font-style: normal;\n}\n@font-face {\n  font-family: KaTeX_Fraktur;\n  src: url(node_modules/katex/dist/fonts/KaTeX_Fraktur-Bold.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_Fraktur-Bold.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_Fraktur-Bold.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_Fraktur-Bold.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_Fraktur-Bold.ttf) format('ttf');\n  font-weight: 700;\n  font-style: normal;\n}\n@font-face {\n  font-family: KaTeX_Fraktur;\n  src: url(node_modules/katex/dist/fonts/KaTeX_Fraktur-Regular.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_Fraktur-Regular.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_Fraktur-Regular.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_Fraktur-Regular.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_Fraktur-Regular.ttf) format('ttf');\n  font-weight: 400;\n  font-style: normal;\n}\n@font-face {\n  font-family: KaTeX_Main;\n  src: url(node_modules/katex/dist/fonts/KaTeX_Main-Bold.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_Main-Bold.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_Main-Bold.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_Main-Bold.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_Main-Bold.ttf) format('ttf');\n  font-weight: 700;\n  font-style: normal;\n}\n@font-face {\n  font-family: KaTeX_Main;\n  src: url(node_modules/katex/dist/fonts/KaTeX_Main-Italic.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_Main-Italic.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_Main-Italic.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_Main-Italic.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_Main-Italic.ttf) format('ttf');\n  font-weight: 400;\n  font-style: italic;\n}\n@font-face {\n  font-family: KaTeX_Main;\n  src: url(node_modules/katex/dist/fonts/KaTeX_Main-Regular.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_Main-Regular.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_Main-Regular.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_Main-Regular.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_Main-Regular.ttf) format('ttf');\n  font-weight: 400;\n  font-style: normal;\n}\n@font-face {\n  font-family: KaTeX_Math;\n  src: url(node_modules/katex/dist/fonts/KaTeX_Math-Italic.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_Math-Italic.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_Math-Italic.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_Math-Italic.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_Math-Italic.ttf) format('ttf');\n  font-weight: 400;\n  font-style: italic;\n}\n@font-face {\n  font-family: KaTeX_SansSerif;\n  src: url(node_modules/katex/dist/fonts/KaTeX_SansSerif-Regular.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_SansSerif-Regular.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_SansSerif-Regular.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_SansSerif-Regular.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_SansSerif-Regular.ttf) format('ttf');\n  font-weight: 400;\n  font-style: normal;\n}\n@font-face {\n  font-family: KaTeX_Script;\n  src: url(node_modules/katex/dist/fonts/KaTeX_Script-Regular.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_Script-Regular.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_Script-Regular.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_Script-Regular.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_Script-Regular.ttf) format('ttf');\n  font-weight: 400;\n  font-style: normal;\n}\n@font-face {\n  font-family: KaTeX_Size1;\n  src: url(node_modules/katex/dist/fonts/KaTeX_Size1-Regular.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_Size1-Regular.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_Size1-Regular.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_Size1-Regular.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_Size1-Regular.ttf) format('ttf');\n  font-weight: 400;\n  font-style: normal;\n}\n@font-face {\n  font-family: KaTeX_Size2;\n  src: url(node_modules/katex/dist/fonts/KaTeX_Size2-Regular.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_Size2-Regular.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_Size2-Regular.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_Size2-Regular.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_Size2-Regular.ttf) format('ttf');\n  font-weight: 400;\n  font-style: normal;\n}\n@font-face {\n  font-family: KaTeX_Size3;\n  src: url(node_modules/katex/dist/fonts/KaTeX_Size3-Regular.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_Size3-Regular.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_Size3-Regular.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_Size3-Regular.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_Size3-Regular.ttf) format('ttf');\n  font-weight: 400;\n  font-style: normal;\n}\n@font-face {\n  font-family: KaTeX_Size4;\n  src: url(node_modules/katex/dist/fonts/KaTeX_Size4-Regular.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_Size4-Regular.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_Size4-Regular.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_Size4-Regular.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_Size4-Regular.ttf) format('ttf');\n  font-weight: 400;\n  font-style: normal;\n}\n@font-face {\n  font-family: KaTeX_Typewriter;\n  src: url(node_modules/katex/dist/fonts/KaTeX_Typewriter-Regular.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_Typewriter-Regular.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_Typewriter-Regular.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_Typewriter-Regular.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_Typewriter-Regular.ttf) format('ttf');\n  font-weight: 400;\n  font-style: normal;\n}\n.katex-display {\n  display: block;\n  margin: 1em 0;\n  text-align: center;\n}\n.katex-display>.katex {\n  display: inline-block;\n  text-align: initial;\n}\n.katex {\n  font: 400 1.21em KaTeX_Main;\n  line-height: 1.2;\n  white-space: nowrap;\n  text-indent: 0;\n}\n.katex .katex-html {\n  display: inline-block;\n}\n.katex .katex-mathml {\n  position: absolute;\n  clip: rect(1px,1px,1px,1px);\n  padding: 0;\n  border: 0;\n  height: 1px;\n  width: 1px;\n  overflow: hidden;\n}\n.katex .base,\n.katex .strut {\n  display: inline-block;\n}\n.katex .mathit {\n  font-family: KaTeX_Math;\n  font-style: italic;\n}\n.katex .mathbf {\n  font-family: KaTeX_Main;\n  font-weight: 700;\n}\n.katex .amsrm,\n.katex .mathbb {\n  font-family: KaTeX_AMS;\n}\n.katex .mathcal {\n  font-family: KaTeX_Caligraphic;\n}\n.katex .mathfrak {\n  font-family: KaTeX_Fraktur;\n}\n.katex .mathtt {\n  font-family: KaTeX_Typewriter;\n}\n.katex .mathscr {\n  font-family: KaTeX_Script;\n}\n.katex .mathsf {\n  font-family: KaTeX_SansSerif;\n}\n.katex .mainit {\n  font-family: KaTeX_Main;\n  font-style: italic;\n}\n.katex .textstyle>.mord+.mop {\n  margin-left: .16667em;\n}\n.katex .textstyle>.mord+.mbin {\n  margin-left: .22222em;\n}\n.katex .textstyle>.mord+.mrel {\n  margin-left: .27778em;\n}\n.katex .textstyle>.mop+.mop,\n.katex .textstyle>.mop+.mord,\n.katex .textstyle>.mord+.minner {\n  margin-left: .16667em;\n}\n.katex .textstyle>.mop+.mrel {\n  margin-left: .27778em;\n}\n.katex .textstyle>.mop+.minner {\n  margin-left: .16667em;\n}\n.katex .textstyle>.mbin+.minner,\n.katex .textstyle>.mbin+.mop,\n.katex .textstyle>.mbin+.mopen,\n.katex .textstyle>.mbin+.mord {\n  margin-left: .22222em;\n}\n.katex .textstyle>.mrel+.minner,\n.katex .textstyle>.mrel+.mop,\n.katex .textstyle>.mrel+.mopen,\n.katex .textstyle>.mrel+.mord {\n  margin-left: .27778em;\n}\n.katex .textstyle>.mclose+.mop {\n  margin-left: .16667em;\n}\n.katex .textstyle>.mclose+.mbin {\n  margin-left: .22222em;\n}\n.katex .textstyle>.mclose+.mrel {\n  margin-left: .27778em;\n}\n.katex .textstyle>.mclose+.minner,\n.katex .textstyle>.minner+.mop,\n.katex .textstyle>.minner+.mord,\n.katex .textstyle>.mpunct+.mclose,\n.katex .textstyle>.mpunct+.minner,\n.katex .textstyle>.mpunct+.mop,\n.katex .textstyle>.mpunct+.mopen,\n.katex .textstyle>.mpunct+.mord,\n.katex .textstyle>.mpunct+.mpunct,\n.katex .textstyle>.mpunct+.mrel {\n  margin-left: .16667em;\n}\n.katex .textstyle>.minner+.mbin {\n  margin-left: .22222em;\n}\n.katex .textstyle>.minner+.mrel {\n  margin-left: .27778em;\n}\n.katex .mclose+.mop,\n.katex .minner+.mop,\n.katex .mop+.mop,\n.katex .mop+.mord,\n.katex .mord+.mop,\n.katex .textstyle>.minner+.minner,\n.katex .textstyle>.minner+.mopen,\n.katex .textstyle>.minner+.mpunct {\n  margin-left: .16667em;\n}\n.katex .reset-textstyle.textstyle {\n  font-size: 1em;\n}\n.katex .reset-textstyle.scriptstyle {\n  font-size: .7em;\n}\n.katex .reset-textstyle.scriptscriptstyle {\n  font-size: .5em;\n}\n.katex .reset-scriptstyle.textstyle {\n  font-size: 1.42857em;\n}\n.katex .reset-scriptstyle.scriptstyle {\n  font-size: 1em;\n}\n.katex .reset-scriptstyle.scriptscriptstyle {\n  font-size: .71429em;\n}\n.katex .reset-scriptscriptstyle.textstyle {\n  font-size: 2em;\n}\n.katex .reset-scriptscriptstyle.scriptstyle {\n  font-size: 1.4em;\n}\n.katex .reset-scriptscriptstyle.scriptscriptstyle {\n  font-size: 1em;\n}\n.katex .style-wrap {\n  position: relative;\n}\n.katex .vlist {\n  display: inline-block;\n}\n.katex .vlist>span {\n  display: block;\n  height: 0;\n  position: relative;\n}\n.katex .vlist>span>span {\n  display: inline-block;\n}\n.katex .vlist .baseline-fix {\n  display: inline-table;\n  table-layout: fixed;\n}\n.katex .msupsub {\n  text-align: left;\n}\n.katex .mfrac>span>span {\n  text-align: center;\n}\n.katex .mfrac .frac-line {\n  width: 100%;\n}\n.katex .mfrac .frac-line:before {\n  border-bottom-style: solid;\n  border-bottom-width: 1px;\n  content: \"\";\n  display: block;\n}\n.katex .mfrac .frac-line:after {\n  border-bottom-style: solid;\n  border-bottom-width: .04em;\n  content: \"\";\n  display: block;\n  margin-top: -1px;\n}\n.katex .mspace {\n  display: inline-block;\n}\n.katex .mspace.negativethinspace {\n  margin-left: -.16667em;\n}\n.katex .mspace.thinspace {\n  width: .16667em;\n}\n.katex .mspace.mediumspace {\n  width: .22222em;\n}\n.katex .mspace.thickspace {\n  width: .27778em;\n}\n.katex .mspace.enspace {\n  width: .5em;\n}\n.katex .mspace.quad {\n  width: 1em;\n}\n.katex .mspace.qquad {\n  width: 2em;\n}\n.katex .llap,\n.katex .rlap {\n  width: 0;\n  position: relative;\n}\n.katex .llap>.inner,\n.katex .rlap>.inner {\n  position: absolute;\n}\n.katex .llap>.fix,\n.katex .rlap>.fix {\n  display: inline-block;\n}\n.katex .llap>.inner {\n  right: 0;\n}\n.katex .rlap>.inner {\n  left: 0;\n}\n.katex .katex-logo .a {\n  font-size: .75em;\n  margin-left: -.32em;\n  position: relative;\n  top: -.2em;\n}\n.katex .katex-logo .t {\n  margin-left: -.23em;\n}\n.katex .katex-logo .e {\n  margin-left: -.1667em;\n  position: relative;\n  top: .2155em;\n}\n.katex .katex-logo .x {\n  margin-left: -.125em;\n}\n.katex .rule {\n  display: inline-block;\n  border: 0 solid;\n  position: relative;\n}\n.katex .overline .overline-line,\n.katex .underline .underline-line {\n  width: 100%;\n}\n.katex .overline .overline-line:before,\n.katex .underline .underline-line:before {\n  border-bottom-style: solid;\n  border-bottom-width: 1px;\n  content: \"\";\n  display: block;\n}\n.katex .overline .overline-line:after,\n.katex .underline .underline-line:after {\n  border-bottom-style: solid;\n  border-bottom-width: .04em;\n  content: \"\";\n  display: block;\n  margin-top: -1px;\n}\n.katex .sqrt>.sqrt-sign {\n  position: relative;\n}\n.katex .sqrt .sqrt-line {\n  width: 100%;\n}\n.katex .sqrt .sqrt-line:before {\n  border-bottom-style: solid;\n  border-bottom-width: 1px;\n  content: \"\";\n  display: block;\n}\n.katex .sqrt .sqrt-line:after {\n  border-bottom-style: solid;\n  border-bottom-width: .04em;\n  content: \"\";\n  display: block;\n  margin-top: -1px;\n}\n.katex .sqrt>.root {\n  margin-left: .27777778em;\n  margin-right: -.55555556em;\n}\n.katex .fontsize-ensurer,\n.katex .sizing {\n  display: inline-block;\n}\n.katex .fontsize-ensurer.reset-size1.size1,\n.katex .sizing.reset-size1.size1 {\n  font-size: 1em;\n}\n.katex .fontsize-ensurer.reset-size1.size2,\n.katex .sizing.reset-size1.size2 {\n  font-size: 1.4em;\n}\n.katex .fontsize-ensurer.reset-size1.size3,\n.katex .sizing.reset-size1.size3 {\n  font-size: 1.6em;\n}\n.katex .fontsize-ensurer.reset-size1.size4,\n.katex .sizing.reset-size1.size4 {\n  font-size: 1.8em;\n}\n.katex .fontsize-ensurer.reset-size1.size5,\n.katex .sizing.reset-size1.size5 {\n  font-size: 2em;\n}\n.katex .fontsize-ensurer.reset-size1.size6,\n.katex .sizing.reset-size1.size6 {\n  font-size: 2.4em;\n}\n.katex .fontsize-ensurer.reset-size1.size7,\n.katex .sizing.reset-size1.size7 {\n  font-size: 2.88em;\n}\n.katex .fontsize-ensurer.reset-size1.size8,\n.katex .sizing.reset-size1.size8 {\n  font-size: 3.46em;\n}\n.katex .fontsize-ensurer.reset-size1.size9,\n.katex .sizing.reset-size1.size9 {\n  font-size: 4.14em;\n}\n.katex .fontsize-ensurer.reset-size1.size10,\n.katex .sizing.reset-size1.size10 {\n  font-size: 4.98em;\n}\n.katex .fontsize-ensurer.reset-size2.size1,\n.katex .sizing.reset-size2.size1 {\n  font-size: .71428571em;\n}\n.katex .fontsize-ensurer.reset-size2.size2,\n.katex .sizing.reset-size2.size2 {\n  font-size: 1em;\n}\n.katex .fontsize-ensurer.reset-size2.size3,\n.katex .sizing.reset-size2.size3 {\n  font-size: 1.14285714em;\n}\n.katex .fontsize-ensurer.reset-size2.size4,\n.katex .sizing.reset-size2.size4 {\n  font-size: 1.28571429em;\n}\n.katex .fontsize-ensurer.reset-size2.size5,\n.katex .sizing.reset-size2.size5 {\n  font-size: 1.42857143em;\n}\n.katex .fontsize-ensurer.reset-size2.size6,\n.katex .sizing.reset-size2.size6 {\n  font-size: 1.71428571em;\n}\n.katex .fontsize-ensurer.reset-size2.size7,\n.katex .sizing.reset-size2.size7 {\n  font-size: 2.05714286em;\n}\n.katex .fontsize-ensurer.reset-size2.size8,\n.katex .sizing.reset-size2.size8 {\n  font-size: 2.47142857em;\n}\n.katex .fontsize-ensurer.reset-size2.size9,\n.katex .sizing.reset-size2.size9 {\n  font-size: 2.95714286em;\n}\n.katex .fontsize-ensurer.reset-size2.size10,\n.katex .sizing.reset-size2.size10 {\n  font-size: 3.55714286em;\n}\n.katex .fontsize-ensurer.reset-size3.size1,\n.katex .sizing.reset-size3.size1 {\n  font-size: .625em;\n}\n.katex .fontsize-ensurer.reset-size3.size2,\n.katex .sizing.reset-size3.size2 {\n  font-size: .875em;\n}\n.katex .fontsize-ensurer.reset-size3.size3,\n.katex .sizing.reset-size3.size3 {\n  font-size: 1em;\n}\n.katex .fontsize-ensurer.reset-size3.size4,\n.katex .sizing.reset-size3.size4 {\n  font-size: 1.125em;\n}\n.katex .fontsize-ensurer.reset-size3.size5,\n.katex .sizing.reset-size3.size5 {\n  font-size: 1.25em;\n}\n.katex .fontsize-ensurer.reset-size3.size6,\n.katex .sizing.reset-size3.size6 {\n  font-size: 1.5em;\n}\n.katex .fontsize-ensurer.reset-size3.size7,\n.katex .sizing.reset-size3.size7 {\n  font-size: 1.8em;\n}\n.katex .fontsize-ensurer.reset-size3.size8,\n.katex .sizing.reset-size3.size8 {\n  font-size: 2.1625em;\n}\n.katex .fontsize-ensurer.reset-size3.size9,\n.katex .sizing.reset-size3.size9 {\n  font-size: 2.5875em;\n}\n.katex .fontsize-ensurer.reset-size3.size10,\n.katex .sizing.reset-size3.size10 {\n  font-size: 3.1125em;\n}\n.katex .fontsize-ensurer.reset-size4.size1,\n.katex .sizing.reset-size4.size1 {\n  font-size: .55555556em;\n}\n.katex .fontsize-ensurer.reset-size4.size2,\n.katex .sizing.reset-size4.size2 {\n  font-size: .77777778em;\n}\n.katex .fontsize-ensurer.reset-size4.size3,\n.katex .sizing.reset-size4.size3 {\n  font-size: .88888889em;\n}\n.katex .fontsize-ensurer.reset-size4.size4,\n.katex .sizing.reset-size4.size4 {\n  font-size: 1em;\n}\n.katex .fontsize-ensurer.reset-size4.size5,\n.katex .sizing.reset-size4.size5 {\n  font-size: 1.11111111em;\n}\n.katex .fontsize-ensurer.reset-size4.size6,\n.katex .sizing.reset-size4.size6 {\n  font-size: 1.33333333em;\n}\n.katex .fontsize-ensurer.reset-size4.size7,\n.katex .sizing.reset-size4.size7 {\n  font-size: 1.6em;\n}\n.katex .fontsize-ensurer.reset-size4.size8,\n.katex .sizing.reset-size4.size8 {\n  font-size: 1.92222222em;\n}\n.katex .fontsize-ensurer.reset-size4.size9,\n.katex .sizing.reset-size4.size9 {\n  font-size: 2.3em;\n}\n.katex .fontsize-ensurer.reset-size4.size10,\n.katex .sizing.reset-size4.size10 {\n  font-size: 2.76666667em;\n}\n.katex .fontsize-ensurer.reset-size5.size1,\n.katex .sizing.reset-size5.size1 {\n  font-size: .5em;\n}\n.katex .fontsize-ensurer.reset-size5.size2,\n.katex .sizing.reset-size5.size2 {\n  font-size: .7em;\n}\n.katex .fontsize-ensurer.reset-size5.size3,\n.katex .sizing.reset-size5.size3 {\n  font-size: .8em;\n}\n.katex .fontsize-ensurer.reset-size5.size4,\n.katex .sizing.reset-size5.size4 {\n  font-size: .9em;\n}\n.katex .fontsize-ensurer.reset-size5.size5,\n.katex .sizing.reset-size5.size5 {\n  font-size: 1em;\n}\n.katex .fontsize-ensurer.reset-size5.size6,\n.katex .sizing.reset-size5.size6 {\n  font-size: 1.2em;\n}\n.katex .fontsize-ensurer.reset-size5.size7,\n.katex .sizing.reset-size5.size7 {\n  font-size: 1.44em;\n}\n.katex .fontsize-ensurer.reset-size5.size8,\n.katex .sizing.reset-size5.size8 {\n  font-size: 1.73em;\n}\n.katex .fontsize-ensurer.reset-size5.size9,\n.katex .sizing.reset-size5.size9 {\n  font-size: 2.07em;\n}\n.katex .fontsize-ensurer.reset-size5.size10,\n.katex .sizing.reset-size5.size10 {\n  font-size: 2.49em;\n}\n.katex .fontsize-ensurer.reset-size6.size1,\n.katex .sizing.reset-size6.size1 {\n  font-size: .41666667em;\n}\n.katex .fontsize-ensurer.reset-size6.size2,\n.katex .sizing.reset-size6.size2 {\n  font-size: .58333333em;\n}\n.katex .fontsize-ensurer.reset-size6.size3,\n.katex .sizing.reset-size6.size3 {\n  font-size: .66666667em;\n}\n.katex .fontsize-ensurer.reset-size6.size4,\n.katex .sizing.reset-size6.size4 {\n  font-size: .75em;\n}\n.katex .fontsize-ensurer.reset-size6.size5,\n.katex .sizing.reset-size6.size5 {\n  font-size: .83333333em;\n}\n.katex .fontsize-ensurer.reset-size6.size6,\n.katex .sizing.reset-size6.size6 {\n  font-size: 1em;\n}\n.katex .fontsize-ensurer.reset-size6.size7,\n.katex .sizing.reset-size6.size7 {\n  font-size: 1.2em;\n}\n.katex .fontsize-ensurer.reset-size6.size8,\n.katex .sizing.reset-size6.size8 {\n  font-size: 1.44166667em;\n}\n.katex .fontsize-ensurer.reset-size6.size9,\n.katex .sizing.reset-size6.size9 {\n  font-size: 1.725em;\n}\n.katex .fontsize-ensurer.reset-size6.size10,\n.katex .sizing.reset-size6.size10 {\n  font-size: 2.075em;\n}\n.katex .fontsize-ensurer.reset-size7.size1,\n.katex .sizing.reset-size7.size1 {\n  font-size: .34722222em;\n}\n.katex .fontsize-ensurer.reset-size7.size2,\n.katex .sizing.reset-size7.size2 {\n  font-size: .48611111em;\n}\n.katex .fontsize-ensurer.reset-size7.size3,\n.katex .sizing.reset-size7.size3 {\n  font-size: .55555556em;\n}\n.katex .fontsize-ensurer.reset-size7.size4,\n.katex .sizing.reset-size7.size4 {\n  font-size: .625em;\n}\n.katex .fontsize-ensurer.reset-size7.size5,\n.katex .sizing.reset-size7.size5 {\n  font-size: .69444444em;\n}\n.katex .fontsize-ensurer.reset-size7.size6,\n.katex .sizing.reset-size7.size6 {\n  font-size: .83333333em;\n}\n.katex .fontsize-ensurer.reset-size7.size7,\n.katex .sizing.reset-size7.size7 {\n  font-size: 1em;\n}\n.katex .fontsize-ensurer.reset-size7.size8,\n.katex .sizing.reset-size7.size8 {\n  font-size: 1.20138889em;\n}\n.katex .fontsize-ensurer.reset-size7.size9,\n.katex .sizing.reset-size7.size9 {\n  font-size: 1.4375em;\n}\n.katex .fontsize-ensurer.reset-size7.size10,\n.katex .sizing.reset-size7.size10 {\n  font-size: 1.72916667em;\n}\n.katex .fontsize-ensurer.reset-size8.size1,\n.katex .sizing.reset-size8.size1 {\n  font-size: .28901734em;\n}\n.katex .fontsize-ensurer.reset-size8.size2,\n.katex .sizing.reset-size8.size2 {\n  font-size: .40462428em;\n}\n.katex .fontsize-ensurer.reset-size8.size3,\n.katex .sizing.reset-size8.size3 {\n  font-size: .46242775em;\n}\n.katex .fontsize-ensurer.reset-size8.size4,\n.katex .sizing.reset-size8.size4 {\n  font-size: .52023121em;\n}\n.katex .fontsize-ensurer.reset-size8.size5,\n.katex .sizing.reset-size8.size5 {\n  font-size: .57803468em;\n}\n.katex .fontsize-ensurer.reset-size8.size6,\n.katex .sizing.reset-size8.size6 {\n  font-size: .69364162em;\n}\n.katex .fontsize-ensurer.reset-size8.size7,\n.katex .sizing.reset-size8.size7 {\n  font-size: .83236994em;\n}\n.katex .fontsize-ensurer.reset-size8.size8,\n.katex .sizing.reset-size8.size8 {\n  font-size: 1em;\n}\n.katex .fontsize-ensurer.reset-size8.size9,\n.katex .sizing.reset-size8.size9 {\n  font-size: 1.19653179em;\n}\n.katex .fontsize-ensurer.reset-size8.size10,\n.katex .sizing.reset-size8.size10 {\n  font-size: 1.43930636em;\n}\n.katex .fontsize-ensurer.reset-size9.size1,\n.katex .sizing.reset-size9.size1 {\n  font-size: .24154589em;\n}\n.katex .fontsize-ensurer.reset-size9.size2,\n.katex .sizing.reset-size9.size2 {\n  font-size: .33816425em;\n}\n.katex .fontsize-ensurer.reset-size9.size3,\n.katex .sizing.reset-size9.size3 {\n  font-size: .38647343em;\n}\n.katex .fontsize-ensurer.reset-size9.size4,\n.katex .sizing.reset-size9.size4 {\n  font-size: .43478261em;\n}\n.katex .fontsize-ensurer.reset-size9.size5,\n.katex .sizing.reset-size9.size5 {\n  font-size: .48309179em;\n}\n.katex .fontsize-ensurer.reset-size9.size6,\n.katex .sizing.reset-size9.size6 {\n  font-size: .57971014em;\n}\n.katex .fontsize-ensurer.reset-size9.size7,\n.katex .sizing.reset-size9.size7 {\n  font-size: .69565217em;\n}\n.katex .fontsize-ensurer.reset-size9.size8,\n.katex .sizing.reset-size9.size8 {\n  font-size: .83574879em;\n}\n.katex .fontsize-ensurer.reset-size9.size9,\n.katex .sizing.reset-size9.size9 {\n  font-size: 1em;\n}\n.katex .fontsize-ensurer.reset-size9.size10,\n.katex .sizing.reset-size9.size10 {\n  font-size: 1.20289855em;\n}\n.katex .fontsize-ensurer.reset-size10.size1,\n.katex .sizing.reset-size10.size1 {\n  font-size: .20080321em;\n}\n.katex .fontsize-ensurer.reset-size10.size2,\n.katex .sizing.reset-size10.size2 {\n  font-size: .2811245em;\n}\n.katex .fontsize-ensurer.reset-size10.size3,\n.katex .sizing.reset-size10.size3 {\n  font-size: .32128514em;\n}\n.katex .fontsize-ensurer.reset-size10.size4,\n.katex .sizing.reset-size10.size4 {\n  font-size: .36144578em;\n}\n.katex .fontsize-ensurer.reset-size10.size5,\n.katex .sizing.reset-size10.size5 {\n  font-size: .40160643em;\n}\n.katex .fontsize-ensurer.reset-size10.size6,\n.katex .sizing.reset-size10.size6 {\n  font-size: .48192771em;\n}\n.katex .fontsize-ensurer.reset-size10.size7,\n.katex .sizing.reset-size10.size7 {\n  font-size: .57831325em;\n}\n.katex .fontsize-ensurer.reset-size10.size8,\n.katex .sizing.reset-size10.size8 {\n  font-size: .69477912em;\n}\n.katex .fontsize-ensurer.reset-size10.size9,\n.katex .sizing.reset-size10.size9 {\n  font-size: .8313253em;\n}\n.katex .fontsize-ensurer.reset-size10.size10,\n.katex .sizing.reset-size10.size10 {\n  font-size: 1em;\n}\n.katex .delimsizing.size1 {\n  font-family: KaTeX_Size1;\n}\n.katex .delimsizing.size2 {\n  font-family: KaTeX_Size2;\n}\n.katex .delimsizing.size3 {\n  font-family: KaTeX_Size3;\n}\n.katex .delimsizing.size4 {\n  font-family: KaTeX_Size4;\n}\n.katex .delimsizing.mult .delim-size1>span {\n  font-family: KaTeX_Size1;\n}\n.katex .delimsizing.mult .delim-size4>span {\n  font-family: KaTeX_Size4;\n}\n.katex .nulldelimiter {\n  display: inline-block;\n  width: .12em;\n}\n.katex .op-symbol {\n  position: relative;\n}\n.katex .op-symbol.small-op {\n  font-family: KaTeX_Size1;\n}\n.katex .op-symbol.large-op {\n  font-family: KaTeX_Size2;\n}\n.katex .accent>.vlist>span,\n.katex .op-limits>.vlist>span {\n  text-align: center;\n}\n.katex .accent .accent-body>span {\n  width: 0;\n}\n.katex .accent .accent-body.accent-vec>span {\n  position: relative;\n  left: .326em;\n}\n.katex .mtable .vertical-separator {\n  display: inline-block;\n  margin: 0 -.025em;\n  border-right: .05em solid #000;\n}\n.katex .mtable .arraycolsep {\n  display: inline-block;\n}\n.katex .mtable .col-align-c>.vlist {\n  text-align: center;\n}\n.katex .mtable .col-align-l>.vlist {\n  text-align: left;\n}\n.katex .mtable .col-align-r>.vlist {\n  text-align: right;\n}\n#viewer-pane {\n  height: 100%;\n  width: 50%;\n  display: inline-block;\n  position: absolute;\n  top: 0;\n  background-color: #fff;\n  overflow: hidden;\n}\n#viewer-container {\n  overflow-y: auto;\n  height: 100%;\n}\n#viewer {\n  max-width: 850px;\n  margin: 0 auto;\n  padding: 13px 10px 100px 10px;\n  word-wrap: break-word;\n  box-sizing: border-box;\n  font-family: sans-serif;\n}\n"; (require("browserify-css").createStyle(css, { "href": "styles/viewer/viewer.css" }, { "insertAt": "bottom" })); module.exports = css;
-},{"browserify-css":1}]},{},[272])
+},{"browserify-css":1}]},{},[274])
 
 
 //# sourceMappingURL=app-bundle.js.map

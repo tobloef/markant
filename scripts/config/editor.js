@@ -11,6 +11,7 @@
 			lineWrapping: true,
 			lineNumbers: false,
 			autofocus: true,
+			html: true,
 			value: "",
 			theme: "light",
 			extraKeys: {

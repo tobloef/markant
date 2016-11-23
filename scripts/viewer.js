@@ -16,6 +16,9 @@
 	} else if (config.mathRenderer == "KaTex") {
 		markdown.use(require("markdown-it-katex"), config.KaTex);
 	}
+	if (config.markdownit.html) {
+		markdown.use(require("markdown-it-sanitizer"));
+	}
 
 	let renderTimeout;
 	let viewer;
