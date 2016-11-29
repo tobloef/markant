@@ -3,19 +3,19 @@
 
 	function getScript(url, callback, options) {
 		options = $.extend(options || {}, {
-			dataType: type,
+			dataType: "application/javascript",
 			cache: true,
-			url: url,
-			success: callback
+			url,
+			success: callback,
 		});
 		return $.ajax(options);
 	}
 
-	function getStyle(url, callback, options) {
+	function getStyle(url, callback) {
 		$("<link/>", {
-		   rel: "stylesheet",
-		   type: "text/css",
-		   href: url
+			rel: "stylesheet",
+			type: "text/css",
+			href: url,
 		}).appendTo("head");
 		if (callback) {
 			callback();
@@ -24,6 +24,6 @@
 
 	module.exports = {
 		getScript,
-		getStyle
+		getStyle,
 	};
 }());

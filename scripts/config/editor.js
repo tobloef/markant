@@ -1,6 +1,7 @@
 ;(function() {
 	const emphasis = require("../utils/markdown_emphasis");
 
+	// Configuration for the editor component.
 	const config = {
 		// Configuration for CodeMirror.
 		codemirror: {
@@ -26,7 +27,7 @@
 				},
 				"Enter": function(codemirror) {
 					codemirror.execCommand("newlineAndIndentContinueMarkdownList");
-				}
+				},
 			},
 		},
 		// Paths to directory the editor themes can be found in.

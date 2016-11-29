@@ -10,9 +10,9 @@ const csslint = require("gulp-csslint");
 const uglify = require("gulp-uglify");
 const babel = require("gulp-babel");
 const rename = require("gulp-rename");
-const sourcemaps = require('gulp-sourcemaps');
+const sourcemaps = require("gulp-sourcemaps");
 
-const destDir = "./build";
+const parentDestDir = "./build";
 const entryPoints = ["app"];
 
 gulp.task("default", ["browserify", "font-awesome", "codemirror-themes", "highlight.js-styles"]);
@@ -29,9 +29,9 @@ gulp.task("browserify", function() {
 		return b.bundle()
 			.pipe(source(`${file}-bundle.js`))
 			.pipe(buffer())
-			.pipe(sourcemaps.init({loadMaps: true}))
+			.pipe(sourcemaps.init({ loadMaps: true }))
 			.pipe(sourcemaps.write("./"))
-			.pipe(gulp.dest(destDir));
+			.pipe(gulp.dest(parentDestDir));
 	});
 });
 
@@ -51,23 +51,23 @@ gulp.task("minify", ["browserify", "font-awesome"], function() {
 });
 
 gulp.task("font-awesome", function() {
-	const destDir = "./build/lib/font-awesome";
+	const destDir = `${parentDestDir}/lib/font-awesome`;
 	gulp.src(["node_modules/font-awesome/{css,fonts}/**/*"])
 		.pipe(gulp.dest(destDir));
 });
 
 gulp.task("codemirror-themes", function() {
-	const destDir = "./build/lib/codemirror/theme";
+	const destDir = `${parentDestDir}/lib/codemirror/theme`;
 	gulp.src([
-			"node_modules/codemirror/theme/*.css",
-			"styles/editor/themes/*.css",
-			"styles/editor/*.css"
-		])
-		.pipe(gulp.dest(destDir));
+		"node_modules/codemirror/theme/*.css",
+		"styles/editor/themes/*.css",
+		"styles/editor/*.css",
+	])
+	.pipe(gulp.dest(destDir));
 });
 
 gulp.task("highlight.js-styles", function() {
-	const destDir = "./build/lib/highlight.js/styles";
+	const destDir = `${parentDestDir}/lib/highlight.js/styles`;
 	gulp.src(["node_modules/highlight.js/styles/*.css"])
 		.pipe(gulp.dest(destDir));
 });

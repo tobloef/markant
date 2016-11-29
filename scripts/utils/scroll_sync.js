@@ -1,13 +1,6 @@
 ;(function() {
 	const $ = require("jquery");
 
-	// Takes a jQuery object of divs and links their scrolling.
-	function link($divs) {
-		$divs.on("scroll", function(event) {
-			sync($(event.currentTarget), $divs);
-		});
-	}
-
 	// Sync the scroll of a number of divs
 	function sync($sender, $divs, isManual) {
 		if ($sender.is(":hover") || isManual) {
@@ -19,8 +12,15 @@
 		}
 	}
 
+	// Takes a jQuery object of divs and links their scrolling.
+	function link($divs) {
+		$divs.on("scroll", function(event) {
+			sync($(event.currentTarget), $divs);
+		});
+	}
+
 	module.exports = {
 		link,
-		sync
+		sync,
 	};
 }());
