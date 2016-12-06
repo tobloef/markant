@@ -1,4 +1,5 @@
 ;(function() {
+	// Configuration file for the overall application.
 	const config = {
 		// Id of the drag bar element, used for resizing the editor and viewer panes.
 		dragbarId: "dragbar",

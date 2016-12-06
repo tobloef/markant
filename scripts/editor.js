@@ -2,7 +2,6 @@
 	require("../styles/editor/editor.css");
 
 	const config = require("./config/editor");
-	const $ = require("jquery");
 	const fileLoader = require("./utils/file_loader");
 	const CodeMirror = require("codemirror");
 	require("codemirror/mode/markdown/markdown");
@@ -11,7 +10,6 @@
 
 	// Load the stylesheets for the CodeMirror editor.
 	function loadEditorThemes() {
-		// Todo: Load this from the user's settings
 		if (config.codemirror.theme && config.themeDirectory) {
 			let directory = config.themeDirectory;
 			if (directory.substr(-1) !== "/") {

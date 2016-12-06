@@ -3,14 +3,14 @@
 
 	const $ = require("jquery");
 
-	module.exports = function(dragbarId, leftPaneId, rightPaneId, paneContainerId, leftCollapseButtonId, rightCollapseButtonId) {
+	module.exports = function(dragbarId, leftPaneId, rightPaneId, containerId, leftButtonId, rightButtonId) {
 		// jQuery elements
-		const $paneContainer = $(`#${paneContainerId}`);
+		const $paneContainer = $(`#${containerId}`);
 		const $dragbar = $(`#${dragbarId}`);
 		const $leftPane = $(`#${leftPaneId}`);
 		const $rightPane = $(`#${rightPaneId}`);
-		const $leftCollapseButton = $(`#${leftCollapseButtonId}`);
-		const $rightCollapseButton = $(`#${rightCollapseButtonId}`);
+		const $leftCollapseButton = $(`#${leftButtonId}`);
+		const $rightCollapseButton = $(`#${rightButtonId}`);
 		const $viewer = $rightPane.find("#viewer");
 
 		// Whether the user is draggin the drag bar.
@@ -70,7 +70,7 @@
 		});
 
 		$leftCollapseButton.on("click", function() {
-			// If the right pane is completely closed, open the right pane, restoring it to it's former size.
+			// If the right pane is completely closed, open it, restoring it to it's former size.
 			if (leftPanePercentage === 100) {
 				$dragbar.show();
 				resizePanesToPercentage(oldLeftPanePercentage, oldRightPanePercentage);
@@ -84,7 +84,7 @@
 		});
 
 		$rightCollapseButton.on("click", function() {
-			// If the left pane is completely closed, open the left pane, restoring it to it's former size.
+			// If the left pane is completely closed, open it pane, restoring it to it's former size.
 			if (rightPanePercentage === 100) {
 				resizePanesToPercentage(oldLeftPanePercentage, oldRightPanePercentage);
 			} else {
@@ -103,7 +103,8 @@
 			const initialLeftPaneWidth = $leftPane.width();
 			const initialRightPaneWidth = $rightPane.width();
 
-			// Resize the panes based on the current mouse position relative to the initial position of the click on the drag bar.
+			// Resize the panes based on the current mouse position relative to
+			// the position of the dragbar when it was clicked.
 			$(document).on("mousemove", function(mousemoveEvent) {
 				if (dragging) {
 					const deltaPageX = mousemoveEvent.pageX - mouseDownPos;

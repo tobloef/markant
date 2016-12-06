@@ -3,21 +3,21 @@
 	require("../styles/viewer/themes/default.css");
 
 	const config = require("./config/viewer");
-	const $ = require("jquery");
 	const fileLoader = require("./utils/file_loader");
 	const markdown = require("markdown-it")(config.markdownit);
-	if (config.highlightjsStyle) {
-		fileLoader.getStyle(`build/lib/highlight.js/styles/${config.highlightjsStyle}.css`, "");
-	}
+
 	markdown.use(require("markdown-it-lazy-headers"));
-	if (config.mathRenderer == "MathJax") {
+	if (config.mathRenderer === "MathJax") {
 		markdown.use(require("markdown-it-mathjax"));
 		fileLoader.getScript(config.mathjaxUrl, loadMathJax);
-	} else if (config.mathRenderer == "KaTex") {
+	} else if (config.mathRenderer === "KaTex") {
 		markdown.use(require("markdown-it-katex"), config.KaTex);
 	}
 	if (config.markdownit.html) {
-		markdown.use(require("markdown-it-sanitizer"));
+		markdown.use(require("markdown-it-sanitizer"), config.markdownitSanitizer);
+	}
+	if (config.highlightjsStyle) {
+		fileLoader.getStyle(`build/lib/highlight.js/styles/${config.highlightjsStyle}.css`, "");
 	}
 
 	let renderTimeout;

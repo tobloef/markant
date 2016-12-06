@@ -1,6 +1,18 @@
 ;(function() {
 	const hljs = require("highlight.js");
-	const markdown = require("markdown-it")();
+
+	// Highlight code snippets with highlight.js
+	function highlight(str, lang) {
+		if (lang && hljs.getLanguage(lang)) {
+			try {
+				const tag = `<pre class='hljs'><code>${hljs.highlight(lang, str, true).value}</code></pre>`;
+				return tag;
+			} catch (exception) {
+				console.warn(`Couldn't highlight code with language ${lang}`, exception);
+			}
+		}
+		return `<pre class='hljs'><code>${markdown.utils.escapeHtml(str)}</code></pre>`;
+	}
 
 	const config = {
 		// Wait for the user to stop typing before the Markdown is rendered.
@@ -11,7 +23,13 @@
 
 		markdownit: {
 			html: true,
-			highlight: highlight
+			highlight,
+		},
+
+		markdownitSanitizer: {
+			removeUnknown: true,
+			removeUnbalanced: true,
+			img: "",
 		},
 
 		// The style to use with highlight.js for code snippets in the viewer.
@@ -32,24 +50,9 @@
 
 		// MathJax configuration
 		MathJax: {
-			messageStyle: "none"
-		}
+			messageStyle: "none",
+		},
 	};
-
-	// Highlight code snippets with highlight.js
-	function highlight(str, lang) {
-		console.log("highlight");
-		if (lang && hljs.getLanguage(lang)) {
-			try {
-				return "<pre class='hljs'><code>" +
-       				   hljs.highlight(lang, str, true).value +
-       				   "</code></pre>";
-			} catch (exception) {
-				console.log("Couldn't highlight code with language " + lang, exception);
-			}
-		}
-		return "<pre class='hljs'><code>" + markdown.utils.escapeHtml(str) + "</code></pre>";
-	}
 
 	module.exports = config;
 }());

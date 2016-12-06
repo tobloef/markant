@@ -4,6 +4,11 @@
 
 	const $ = require("jquery");
 	const config = require("./config/app");
+	const scrollSync = require("./utils/scroll_sync");
+	const fileLoader = require("./utils/file_loader");
+
+	// Load styles
+	fileLoader.getStyle("build/lib/font-awesome/css/font-awesome.min.css");
 
 	require("./utils/document_title")();
 
@@ -20,13 +25,8 @@
 	// Set up the editor and the viewer.
 	const viewerElement = $(`#${config.viewerId}`).get(0);
 	const editorElement = $(`#${config.editorId}`).get(0);
-	const viewer = require("./viewer")(viewerElement);
+	const viewer =require("./viewer")(viewerElement);
 	const editor = require("./editor")(editorElement);
-
-	// Set up scroll synchronisation between the editor and the viewer.
-	const scrollSync = require("./utils/scroll_sync");
-	const linkedDivs = $("#viewer-container, .CodeMirror-scroll");
-	scrollSync.link(linkedDivs);
 
 	function onChangeHandler() {
 		// Render the Markdown based on the text in the editor.
@@ -36,6 +36,10 @@
 			scrollSync.sync($(".CodeMirror-scroll"), linkedDivs, true);
 		});
 	}
+
+	// Set up scroll synchronisation between the editor and the viewer.
+	const linkedDivs = $("#viewer-container, .CodeMirror-scroll");
+	scrollSync.link(linkedDivs);
 
 	// When the text in the editor is changed, render the markdown.
 	editor.codemirror.on("change", onChangeHandler);

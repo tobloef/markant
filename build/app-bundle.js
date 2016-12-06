@@ -53446,6 +53446,11 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 	const $ = require("jquery");
 	const config = require("./config/app");
+	const scrollSync = require("./utils/scroll_sync");
+	const fileLoader = require("./utils/file_loader");
+
+	// Load styles
+	fileLoader.getStyle("build/lib/font-awesome/css/font-awesome.min.css");
 
 	// Set up the pane resizer.
 	require("./utils/pane_resizer")(
@@ -53460,13 +53465,8 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	// Set up the editor and the viewer.
 	const viewerElement = $(`#${config.viewerId}`).get(0);
 	const editorElement = $(`#${config.editorId}`).get(0);
-	const viewer = require("./viewer")(viewerElement);
+	const viewer =require("./viewer")(viewerElement);
 	const editor = require("./editor")(editorElement);
-
-	// Set up scroll synchronisation between the editor and the viewer.
-	const scrollSync = require("./utils/scroll_sync");
-	const linkedDivs = $("#viewer-container, .CodeMirror-scroll");
-	scrollSync.link(linkedDivs);
 
 	function onChangeHandler() {
 		// Render the Markdown based on the text in the editor.
@@ -53477,6 +53477,10 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		});
 	}
 
+	// Set up scroll synchronisation between the editor and the viewer.
+	const linkedDivs = $("#viewer-container, .CodeMirror-scroll");
+	scrollSync.link(linkedDivs);
+
 	// When the text in the editor is changed, render the markdown.
 	editor.codemirror.on("change", onChangeHandler);
 
@@ -53484,8 +53488,9 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	onChangeHandler();
 }());
 
-},{"../styles/app.css":284,"./config/app":275,"./editor":278,"./utils/pane_resizer":281,"./utils/scroll_sync":282,"./viewer":283,"jquery":180}],275:[function(require,module,exports){
+},{"../styles/app.css":284,"./config/app":275,"./editor":278,"./utils/file_loader":279,"./utils/pane_resizer":281,"./utils/scroll_sync":282,"./viewer":283,"jquery":180}],275:[function(require,module,exports){
 ;(function() {
+	// Configuration file for the overall application.
 	const config = {
 		// Id of the drag bar element, used for resizing the editor and viewer panes.
 		dragbarId: "dragbar",
@@ -53512,6 +53517,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 ;(function() {
 	const emphasis = require("../utils/markdown_emphasis");
 
+	// Configuration for the editor component.
 	const config = {
 		// Configuration for CodeMirror.
 		codemirror: {
@@ -53537,7 +53543,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 				},
 				"Enter": function(codemirror) {
 					codemirror.execCommand("newlineAndIndentContinueMarkdownList");
-				}
+				},
 			},
 		},
 		// Paths to directory the editor themes can be found in.
@@ -53552,7 +53558,19 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 },{"../utils/markdown_emphasis":280}],277:[function(require,module,exports){
 ;(function() {
 	const hljs = require("highlight.js");
-	const markdown = require("markdown-it")();
+
+	// Highlight code snippets with highlight.js
+	function highlight(str, lang) {
+		if (lang && hljs.getLanguage(lang)) {
+			try {
+				const tag = `<pre class='hljs'><code>${hljs.highlight(lang, str, true).value}</code></pre>`;
+				return tag;
+			} catch (exception) {
+				console.warn(`Couldn't highlight code with language ${lang}`, exception);
+			}
+		}
+		return `<pre class='hljs'><code>${markdown.utils.escapeHtml(str)}</code></pre>`;
+	}
 
 	const config = {
 		// Wait for the user to stop typing before the Markdown is rendered.
@@ -53563,7 +53581,13 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 		markdownit: {
 			html: true,
-			highlight: highlight
+			highlight,
+		},
+
+		markdownitSanitizer: {
+			removeUnknown: true,
+			removeUnbalanced: true,
+			img: "",
 		},
 
 		// The style to use with highlight.js for code snippets in the viewer.
@@ -53584,34 +53608,18 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 		// MathJax configuration
 		MathJax: {
-			messageStyle: "none"
-		}
+			messageStyle: "none",
+		},
 	};
-
-	// Highlight code snippets with highlight.js
-	function highlight(str, lang) {
-		console.log("highlight");
-		if (lang && hljs.getLanguage(lang)) {
-			try {
-				return "<pre class='hljs'><code>" +
-       				   hljs.highlight(lang, str, true).value +
-       				   "</code></pre>";
-			} catch (exception) {
-				console.log("Couldn't highlight code with language " + lang, exception);
-			}
-		}
-		return "<pre class='hljs'><code>" + markdown.utils.escapeHtml(str) + "</code></pre>";
-	}
 
 	module.exports = config;
 }());
 
-},{"highlight.js":11,"markdown-it":209}],278:[function(require,module,exports){
+},{"highlight.js":11}],278:[function(require,module,exports){
 ;(function() {
 	require("../styles/editor/editor.css");
 
 	const config = require("./config/editor");
-	const $ = require("jquery");
 	const fileLoader = require("./utils/file_loader");
 	const CodeMirror = require("codemirror");
 	require("codemirror/mode/markdown/markdown");
@@ -53620,7 +53628,6 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 	// Load the stylesheets for the CodeMirror editor.
 	function loadEditorThemes() {
-		// Todo: Load this from the user's settings
 		if (config.codemirror.theme && config.themeDirectory) {
 			let directory = config.themeDirectory;
 			if (directory.substr(-1) !== "/") {
@@ -53656,25 +53663,25 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"../styles/editor/editor.css":285,"./config/editor":276,"./utils/file_loader":279,"codemirror":4,"codemirror/addon/edit/continuelist":2,"codemirror/mode/gfm/gfm":5,"codemirror/mode/markdown/markdown":6,"jquery":180}],279:[function(require,module,exports){
+},{"../styles/editor/editor.css":285,"./config/editor":276,"./utils/file_loader":279,"codemirror":4,"codemirror/addon/edit/continuelist":2,"codemirror/mode/gfm/gfm":5,"codemirror/mode/markdown/markdown":6}],279:[function(require,module,exports){
 ;(function() {
 	const $ = require("jquery");
 
 	function getScript(url, callback, options) {
 		options = $.extend(options || {}, {
-			dataType: type,
+			dataType: "application/javascript",
 			cache: true,
-			url: url,
-			success: callback
+			url,
+			success: callback,
 		});
 		return $.ajax(options);
 	}
 
-	function getStyle(url, callback, options) {
+	function getStyle(url, callback) {
 		$("<link/>", {
-		   rel: "stylesheet",
-		   type: "text/css",
-		   href: url
+			rel: "stylesheet",
+			type: "text/css",
+			href: url,
 		}).appendTo("head");
 		if (callback) {
 			callback();
@@ -53683,48 +53690,46 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 	module.exports = {
 		getScript,
-		getStyle
+		getStyle,
 	};
 }());
 
 },{"jquery":180}],280:[function(require,module,exports){
 ;(function() {
-	const $ = require("jquery");
-
 	// Add some emphasis, like bold (**) or underscore (~~) to the selected text.
 	// If no text is selected insert the emphasis affixes and move to cursor between them.
 	function handleEmphasis(codemirror, emphasisString) {
-		let newString = `${affixString}${codemirror.getSelection()}${affixString}`;
+		const newString = `${emphasisString}${codemirror.getSelection()}${emphasisString}`;
 		const somethingSelected = codemirror.somethingSelected();
 		codemirror.replaceSelection(newString);
 		if (!somethingSelected) {
 			const cursorPosition = codemirror.getCursor();
 			codemirror.setCursor({
 				line: cursorPosition.line,
-				ch: cursorPosition.ch - affixString.length
+				ch: cursorPosition.ch - emphasisString.length,
 			});
 		}
 	}
 
 	module.exports = {
-		handleEmphasis
+		handleEmphasis,
 	};
 }());
 
-},{"jquery":180}],281:[function(require,module,exports){
+},{}],281:[function(require,module,exports){
 ;(function() {
 	require("../../styles/utils/pane_resizer.css");
 
 	const $ = require("jquery");
 
-	module.exports = function(dragbarId, leftPaneId, rightPaneId, paneContainerId, leftCollapseButtonId, rightCollapseButtonId) {
+	module.exports = function(dragbarId, leftPaneId, rightPaneId, containerId, leftButtonId, rightButtonId) {
 		// jQuery elements
-		const $paneContainer = $(`#${paneContainerId}`);
+		const $paneContainer = $(`#${containerId}`);
 		const $dragbar = $(`#${dragbarId}`);
 		const $leftPane = $(`#${leftPaneId}`);
 		const $rightPane = $(`#${rightPaneId}`);
-		const $leftCollapseButton = $(`#${leftCollapseButtonId}`);
-		const $rightCollapseButton = $(`#${rightCollapseButtonId}`);
+		const $leftCollapseButton = $(`#${leftButtonId}`);
+		const $rightCollapseButton = $(`#${rightButtonId}`);
 		const $viewer = $rightPane.find("#viewer");
 
 		// Whether the user is draggin the drag bar.
@@ -53784,7 +53789,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		});
 
 		$leftCollapseButton.on("click", function() {
-			// If the right pane is completely closed, open the right pane, restoring it to it's former size.
+			// If the right pane is completely closed, open it, restoring it to it's former size.
 			if (leftPanePercentage === 100) {
 				$dragbar.show();
 				resizePanesToPercentage(oldLeftPanePercentage, oldRightPanePercentage);
@@ -53798,7 +53803,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		});
 
 		$rightCollapseButton.on("click", function() {
-			// If the left pane is completely closed, open the left pane, restoring it to it's former size.
+			// If the left pane is completely closed, open it pane, restoring it to it's former size.
 			if (rightPanePercentage === 100) {
 				resizePanesToPercentage(oldLeftPanePercentage, oldRightPanePercentage);
 			} else {
@@ -53817,7 +53822,8 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			const initialLeftPaneWidth = $leftPane.width();
 			const initialRightPaneWidth = $rightPane.width();
 
-			// Resize the panes based on the current mouse position relative to the initial position of the click on the drag bar.
+			// Resize the panes based on the current mouse position relative to
+			// the position of the dragbar when it was clicked.
 			$(document).on("mousemove", function(mousemoveEvent) {
 				if (dragging) {
 					const deltaPageX = mousemoveEvent.pageX - mouseDownPos;
@@ -53842,13 +53848,6 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 ;(function() {
 	const $ = require("jquery");
 
-	// Takes a jQuery object of divs and links their scrolling.
-	function link($divs) {
-		$divs.on("scroll", function(event) {
-			sync($(event.currentTarget), $divs);
-		});
-	}
-
 	// Sync the scroll of a number of divs
 	function sync($sender, $divs, isManual) {
 		if ($sender.is(":hover") || isManual) {
@@ -53860,9 +53859,16 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		}
 	}
 
+	// Takes a jQuery object of divs and links their scrolling.
+	function link($divs) {
+		$divs.on("scroll", function(event) {
+			sync($(event.currentTarget), $divs);
+		});
+	}
+
 	module.exports = {
 		link,
-		sync
+		sync,
 	};
 }());
 
@@ -53872,21 +53878,21 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	require("../styles/viewer/themes/default.css");
 
 	const config = require("./config/viewer");
-	const $ = require("jquery");
 	const fileLoader = require("./utils/file_loader");
 	const markdown = require("markdown-it")(config.markdownit);
-	if (config.highlightjsStyle) {
-		fileLoader.getStyle(`build/lib/highlight.js/styles/${config.highlightjsStyle}.css`, "");
-	}
+
 	markdown.use(require("markdown-it-lazy-headers"));
-	if (config.mathRenderer == "MathJax") {
+	if (config.mathRenderer === "MathJax") {
 		markdown.use(require("markdown-it-mathjax"));
 		fileLoader.getScript(config.mathjaxUrl, loadMathJax);
-	} else if (config.mathRenderer == "KaTex") {
+	} else if (config.mathRenderer === "KaTex") {
 		markdown.use(require("markdown-it-katex"), config.KaTex);
 	}
 	if (config.markdownit.html) {
-		markdown.use(require("markdown-it-sanitizer"));
+		markdown.use(require("markdown-it-sanitizer"), config.markdownitSanitizer);
+	}
+	if (config.highlightjsStyle) {
+		fileLoader.getStyle(`build/lib/highlight.js/styles/${config.highlightjsStyle}.css`, "");
 	}
 
 	let renderTimeout;
@@ -53935,8 +53941,8 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"../styles/viewer/themes/default.css":287,"../styles/viewer/viewer.css":288,"./config/viewer":277,"./utils/file_loader":279,"jquery":180,"markdown-it":209,"markdown-it-katex":205,"markdown-it-lazy-headers":206,"markdown-it-mathjax":207,"markdown-it-sanitizer":208}],284:[function(require,module,exports){
-var css = "html,\nbody {\n  margin: 0;\n  height: 100%;\n  overflow: hidden;\n}\n.wrapper {\n  height: 100%;\n}\n#pane-container {\n  height: 100%;\n}\n"; (require("browserify-css").createStyle(css, { "href": "styles/app.css" }, { "insertAt": "bottom" })); module.exports = css;
+},{"../styles/viewer/themes/default.css":287,"../styles/viewer/viewer.css":288,"./config/viewer":277,"./utils/file_loader":279,"markdown-it":209,"markdown-it-katex":205,"markdown-it-lazy-headers":206,"markdown-it-mathjax":207,"markdown-it-sanitizer":208}],284:[function(require,module,exports){
+var css = "@font-face {\n  font-family: KaTeX_AMS;\n  src: url(node_modules/katex/dist/fonts/KaTeX_AMS-Regular.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_AMS-Regular.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_AMS-Regular.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_AMS-Regular.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_AMS-Regular.ttf) format('ttf');\n  font-weight: 400;\n  font-style: normal;\n}\n@font-face {\n  font-family: KaTeX_Caligraphic;\n  src: url(node_modules/katex/dist/fonts/KaTeX_Caligraphic-Bold.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_Caligraphic-Bold.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_Caligraphic-Bold.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_Caligraphic-Bold.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_Caligraphic-Bold.ttf) format('ttf');\n  font-weight: 700;\n  font-style: normal;\n}\n@font-face {\n  font-family: KaTeX_Caligraphic;\n  src: url(node_modules/katex/dist/fonts/KaTeX_Caligraphic-Regular.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_Caligraphic-Regular.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_Caligraphic-Regular.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_Caligraphic-Regular.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_Caligraphic-Regular.ttf) format('ttf');\n  font-weight: 400;\n  font-style: normal;\n}\n@font-face {\n  font-family: KaTeX_Fraktur;\n  src: url(node_modules/katex/dist/fonts/KaTeX_Fraktur-Bold.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_Fraktur-Bold.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_Fraktur-Bold.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_Fraktur-Bold.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_Fraktur-Bold.ttf) format('ttf');\n  font-weight: 700;\n  font-style: normal;\n}\n@font-face {\n  font-family: KaTeX_Fraktur;\n  src: url(node_modules/katex/dist/fonts/KaTeX_Fraktur-Regular.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_Fraktur-Regular.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_Fraktur-Regular.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_Fraktur-Regular.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_Fraktur-Regular.ttf) format('ttf');\n  font-weight: 400;\n  font-style: normal;\n}\n@font-face {\n  font-family: KaTeX_Main;\n  src: url(node_modules/katex/dist/fonts/KaTeX_Main-Bold.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_Main-Bold.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_Main-Bold.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_Main-Bold.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_Main-Bold.ttf) format('ttf');\n  font-weight: 700;\n  font-style: normal;\n}\n@font-face {\n  font-family: KaTeX_Main;\n  src: url(node_modules/katex/dist/fonts/KaTeX_Main-Italic.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_Main-Italic.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_Main-Italic.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_Main-Italic.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_Main-Italic.ttf) format('ttf');\n  font-weight: 400;\n  font-style: italic;\n}\n@font-face {\n  font-family: KaTeX_Main;\n  src: url(node_modules/katex/dist/fonts/KaTeX_Main-Regular.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_Main-Regular.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_Main-Regular.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_Main-Regular.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_Main-Regular.ttf) format('ttf');\n  font-weight: 400;\n  font-style: normal;\n}\n@font-face {\n  font-family: KaTeX_Math;\n  src: url(node_modules/katex/dist/fonts/KaTeX_Math-Italic.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_Math-Italic.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_Math-Italic.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_Math-Italic.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_Math-Italic.ttf) format('ttf');\n  font-weight: 400;\n  font-style: italic;\n}\n@font-face {\n  font-family: KaTeX_SansSerif;\n  src: url(node_modules/katex/dist/fonts/KaTeX_SansSerif-Regular.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_SansSerif-Regular.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_SansSerif-Regular.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_SansSerif-Regular.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_SansSerif-Regular.ttf) format('ttf');\n  font-weight: 400;\n  font-style: normal;\n}\n@font-face {\n  font-family: KaTeX_Script;\n  src: url(node_modules/katex/dist/fonts/KaTeX_Script-Regular.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_Script-Regular.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_Script-Regular.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_Script-Regular.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_Script-Regular.ttf) format('ttf');\n  font-weight: 400;\n  font-style: normal;\n}\n@font-face {\n  font-family: KaTeX_Size1;\n  src: url(node_modules/katex/dist/fonts/KaTeX_Size1-Regular.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_Size1-Regular.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_Size1-Regular.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_Size1-Regular.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_Size1-Regular.ttf) format('ttf');\n  font-weight: 400;\n  font-style: normal;\n}\n@font-face {\n  font-family: KaTeX_Size2;\n  src: url(node_modules/katex/dist/fonts/KaTeX_Size2-Regular.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_Size2-Regular.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_Size2-Regular.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_Size2-Regular.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_Size2-Regular.ttf) format('ttf');\n  font-weight: 400;\n  font-style: normal;\n}\n@font-face {\n  font-family: KaTeX_Size3;\n  src: url(node_modules/katex/dist/fonts/KaTeX_Size3-Regular.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_Size3-Regular.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_Size3-Regular.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_Size3-Regular.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_Size3-Regular.ttf) format('ttf');\n  font-weight: 400;\n  font-style: normal;\n}\n@font-face {\n  font-family: KaTeX_Size4;\n  src: url(node_modules/katex/dist/fonts/KaTeX_Size4-Regular.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_Size4-Regular.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_Size4-Regular.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_Size4-Regular.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_Size4-Regular.ttf) format('ttf');\n  font-weight: 400;\n  font-style: normal;\n}\n@font-face {\n  font-family: KaTeX_Typewriter;\n  src: url(node_modules/katex/dist/fonts/KaTeX_Typewriter-Regular.eot);\n  src: url(node_modules/katex/dist/fonts/KaTeX_Typewriter-Regular.eot#iefix) format('embedded-opentype'),url(node_modules/katex/dist/fonts/KaTeX_Typewriter-Regular.woff2) format('woff2'),url(node_modules/katex/dist/fonts/KaTeX_Typewriter-Regular.woff) format('woff'),url(node_modules/katex/dist/fonts/KaTeX_Typewriter-Regular.ttf) format('ttf');\n  font-weight: 400;\n  font-style: normal;\n}\n.katex-display {\n  display: block;\n  margin: 1em 0;\n  text-align: center;\n}\n.katex-display>.katex {\n  display: inline-block;\n  text-align: initial;\n}\n.katex {\n  font: 400 1.21em KaTeX_Main;\n  line-height: 1.2;\n  white-space: nowrap;\n  text-indent: 0;\n}\n.katex .katex-html {\n  display: inline-block;\n}\n.katex .katex-mathml {\n  position: absolute;\n  clip: rect(1px,1px,1px,1px);\n  padding: 0;\n  border: 0;\n  height: 1px;\n  width: 1px;\n  overflow: hidden;\n}\n.katex .base,\n.katex .strut {\n  display: inline-block;\n}\n.katex .mathit {\n  font-family: KaTeX_Math;\n  font-style: italic;\n}\n.katex .mathbf {\n  font-family: KaTeX_Main;\n  font-weight: 700;\n}\n.katex .amsrm,\n.katex .mathbb {\n  font-family: KaTeX_AMS;\n}\n.katex .mathcal {\n  font-family: KaTeX_Caligraphic;\n}\n.katex .mathfrak {\n  font-family: KaTeX_Fraktur;\n}\n.katex .mathtt {\n  font-family: KaTeX_Typewriter;\n}\n.katex .mathscr {\n  font-family: KaTeX_Script;\n}\n.katex .mathsf {\n  font-family: KaTeX_SansSerif;\n}\n.katex .mainit {\n  font-family: KaTeX_Main;\n  font-style: italic;\n}\n.katex .textstyle>.mord+.mop {\n  margin-left: .16667em;\n}\n.katex .textstyle>.mord+.mbin {\n  margin-left: .22222em;\n}\n.katex .textstyle>.mord+.mrel {\n  margin-left: .27778em;\n}\n.katex .textstyle>.mop+.mop,\n.katex .textstyle>.mop+.mord,\n.katex .textstyle>.mord+.minner {\n  margin-left: .16667em;\n}\n.katex .textstyle>.mop+.mrel {\n  margin-left: .27778em;\n}\n.katex .textstyle>.mop+.minner {\n  margin-left: .16667em;\n}\n.katex .textstyle>.mbin+.minner,\n.katex .textstyle>.mbin+.mop,\n.katex .textstyle>.mbin+.mopen,\n.katex .textstyle>.mbin+.mord {\n  margin-left: .22222em;\n}\n.katex .textstyle>.mrel+.minner,\n.katex .textstyle>.mrel+.mop,\n.katex .textstyle>.mrel+.mopen,\n.katex .textstyle>.mrel+.mord {\n  margin-left: .27778em;\n}\n.katex .textstyle>.mclose+.mop {\n  margin-left: .16667em;\n}\n.katex .textstyle>.mclose+.mbin {\n  margin-left: .22222em;\n}\n.katex .textstyle>.mclose+.mrel {\n  margin-left: .27778em;\n}\n.katex .textstyle>.mclose+.minner,\n.katex .textstyle>.minner+.mop,\n.katex .textstyle>.minner+.mord,\n.katex .textstyle>.mpunct+.mclose,\n.katex .textstyle>.mpunct+.minner,\n.katex .textstyle>.mpunct+.mop,\n.katex .textstyle>.mpunct+.mopen,\n.katex .textstyle>.mpunct+.mord,\n.katex .textstyle>.mpunct+.mpunct,\n.katex .textstyle>.mpunct+.mrel {\n  margin-left: .16667em;\n}\n.katex .textstyle>.minner+.mbin {\n  margin-left: .22222em;\n}\n.katex .textstyle>.minner+.mrel {\n  margin-left: .27778em;\n}\n.katex .mclose+.mop,\n.katex .minner+.mop,\n.katex .mop+.mop,\n.katex .mop+.mord,\n.katex .mord+.mop,\n.katex .textstyle>.minner+.minner,\n.katex .textstyle>.minner+.mopen,\n.katex .textstyle>.minner+.mpunct {\n  margin-left: .16667em;\n}\n.katex .reset-textstyle.textstyle {\n  font-size: 1em;\n}\n.katex .reset-textstyle.scriptstyle {\n  font-size: .7em;\n}\n.katex .reset-textstyle.scriptscriptstyle {\n  font-size: .5em;\n}\n.katex .reset-scriptstyle.textstyle {\n  font-size: 1.42857em;\n}\n.katex .reset-scriptstyle.scriptstyle {\n  font-size: 1em;\n}\n.katex .reset-scriptstyle.scriptscriptstyle {\n  font-size: .71429em;\n}\n.katex .reset-scriptscriptstyle.textstyle {\n  font-size: 2em;\n}\n.katex .reset-scriptscriptstyle.scriptstyle {\n  font-size: 1.4em;\n}\n.katex .reset-scriptscriptstyle.scriptscriptstyle {\n  font-size: 1em;\n}\n.katex .style-wrap {\n  position: relative;\n}\n.katex .vlist {\n  display: inline-block;\n}\n.katex .vlist>span {\n  display: block;\n  height: 0;\n  position: relative;\n}\n.katex .vlist>span>span {\n  display: inline-block;\n}\n.katex .vlist .baseline-fix {\n  display: inline-table;\n  table-layout: fixed;\n}\n.katex .msupsub {\n  text-align: left;\n}\n.katex .mfrac>span>span {\n  text-align: center;\n}\n.katex .mfrac .frac-line {\n  width: 100%;\n}\n.katex .mfrac .frac-line:before {\n  border-bottom-style: solid;\n  border-bottom-width: 1px;\n  content: \"\";\n  display: block;\n}\n.katex .mfrac .frac-line:after {\n  border-bottom-style: solid;\n  border-bottom-width: .04em;\n  content: \"\";\n  display: block;\n  margin-top: -1px;\n}\n.katex .mspace {\n  display: inline-block;\n}\n.katex .mspace.negativethinspace {\n  margin-left: -.16667em;\n}\n.katex .mspace.thinspace {\n  width: .16667em;\n}\n.katex .mspace.mediumspace {\n  width: .22222em;\n}\n.katex .mspace.thickspace {\n  width: .27778em;\n}\n.katex .mspace.enspace {\n  width: .5em;\n}\n.katex .mspace.quad {\n  width: 1em;\n}\n.katex .mspace.qquad {\n  width: 2em;\n}\n.katex .llap,\n.katex .rlap {\n  width: 0;\n  position: relative;\n}\n.katex .llap>.inner,\n.katex .rlap>.inner {\n  position: absolute;\n}\n.katex .llap>.fix,\n.katex .rlap>.fix {\n  display: inline-block;\n}\n.katex .llap>.inner {\n  right: 0;\n}\n.katex .rlap>.inner {\n  left: 0;\n}\n.katex .katex-logo .a {\n  font-size: .75em;\n  margin-left: -.32em;\n  position: relative;\n  top: -.2em;\n}\n.katex .katex-logo .t {\n  margin-left: -.23em;\n}\n.katex .katex-logo .e {\n  margin-left: -.1667em;\n  position: relative;\n  top: .2155em;\n}\n.katex .katex-logo .x {\n  margin-left: -.125em;\n}\n.katex .rule {\n  display: inline-block;\n  border: 0 solid;\n  position: relative;\n}\n.katex .overline .overline-line,\n.katex .underline .underline-line {\n  width: 100%;\n}\n.katex .overline .overline-line:before,\n.katex .underline .underline-line:before {\n  border-bottom-style: solid;\n  border-bottom-width: 1px;\n  content: \"\";\n  display: block;\n}\n.katex .overline .overline-line:after,\n.katex .underline .underline-line:after {\n  border-bottom-style: solid;\n  border-bottom-width: .04em;\n  content: \"\";\n  display: block;\n  margin-top: -1px;\n}\n.katex .sqrt>.sqrt-sign {\n  position: relative;\n}\n.katex .sqrt .sqrt-line {\n  width: 100%;\n}\n.katex .sqrt .sqrt-line:before {\n  border-bottom-style: solid;\n  border-bottom-width: 1px;\n  content: \"\";\n  display: block;\n}\n.katex .sqrt .sqrt-line:after {\n  border-bottom-style: solid;\n  border-bottom-width: .04em;\n  content: \"\";\n  display: block;\n  margin-top: -1px;\n}\n.katex .sqrt>.root {\n  margin-left: .27777778em;\n  margin-right: -.55555556em;\n}\n.katex .fontsize-ensurer,\n.katex .sizing {\n  display: inline-block;\n}\n.katex .fontsize-ensurer.reset-size1.size1,\n.katex .sizing.reset-size1.size1 {\n  font-size: 1em;\n}\n.katex .fontsize-ensurer.reset-size1.size2,\n.katex .sizing.reset-size1.size2 {\n  font-size: 1.4em;\n}\n.katex .fontsize-ensurer.reset-size1.size3,\n.katex .sizing.reset-size1.size3 {\n  font-size: 1.6em;\n}\n.katex .fontsize-ensurer.reset-size1.size4,\n.katex .sizing.reset-size1.size4 {\n  font-size: 1.8em;\n}\n.katex .fontsize-ensurer.reset-size1.size5,\n.katex .sizing.reset-size1.size5 {\n  font-size: 2em;\n}\n.katex .fontsize-ensurer.reset-size1.size6,\n.katex .sizing.reset-size1.size6 {\n  font-size: 2.4em;\n}\n.katex .fontsize-ensurer.reset-size1.size7,\n.katex .sizing.reset-size1.size7 {\n  font-size: 2.88em;\n}\n.katex .fontsize-ensurer.reset-size1.size8,\n.katex .sizing.reset-size1.size8 {\n  font-size: 3.46em;\n}\n.katex .fontsize-ensurer.reset-size1.size9,\n.katex .sizing.reset-size1.size9 {\n  font-size: 4.14em;\n}\n.katex .fontsize-ensurer.reset-size1.size10,\n.katex .sizing.reset-size1.size10 {\n  font-size: 4.98em;\n}\n.katex .fontsize-ensurer.reset-size2.size1,\n.katex .sizing.reset-size2.size1 {\n  font-size: .71428571em;\n}\n.katex .fontsize-ensurer.reset-size2.size2,\n.katex .sizing.reset-size2.size2 {\n  font-size: 1em;\n}\n.katex .fontsize-ensurer.reset-size2.size3,\n.katex .sizing.reset-size2.size3 {\n  font-size: 1.14285714em;\n}\n.katex .fontsize-ensurer.reset-size2.size4,\n.katex .sizing.reset-size2.size4 {\n  font-size: 1.28571429em;\n}\n.katex .fontsize-ensurer.reset-size2.size5,\n.katex .sizing.reset-size2.size5 {\n  font-size: 1.42857143em;\n}\n.katex .fontsize-ensurer.reset-size2.size6,\n.katex .sizing.reset-size2.size6 {\n  font-size: 1.71428571em;\n}\n.katex .fontsize-ensurer.reset-size2.size7,\n.katex .sizing.reset-size2.size7 {\n  font-size: 2.05714286em;\n}\n.katex .fontsize-ensurer.reset-size2.size8,\n.katex .sizing.reset-size2.size8 {\n  font-size: 2.47142857em;\n}\n.katex .fontsize-ensurer.reset-size2.size9,\n.katex .sizing.reset-size2.size9 {\n  font-size: 2.95714286em;\n}\n.katex .fontsize-ensurer.reset-size2.size10,\n.katex .sizing.reset-size2.size10 {\n  font-size: 3.55714286em;\n}\n.katex .fontsize-ensurer.reset-size3.size1,\n.katex .sizing.reset-size3.size1 {\n  font-size: .625em;\n}\n.katex .fontsize-ensurer.reset-size3.size2,\n.katex .sizing.reset-size3.size2 {\n  font-size: .875em;\n}\n.katex .fontsize-ensurer.reset-size3.size3,\n.katex .sizing.reset-size3.size3 {\n  font-size: 1em;\n}\n.katex .fontsize-ensurer.reset-size3.size4,\n.katex .sizing.reset-size3.size4 {\n  font-size: 1.125em;\n}\n.katex .fontsize-ensurer.reset-size3.size5,\n.katex .sizing.reset-size3.size5 {\n  font-size: 1.25em;\n}\n.katex .fontsize-ensurer.reset-size3.size6,\n.katex .sizing.reset-size3.size6 {\n  font-size: 1.5em;\n}\n.katex .fontsize-ensurer.reset-size3.size7,\n.katex .sizing.reset-size3.size7 {\n  font-size: 1.8em;\n}\n.katex .fontsize-ensurer.reset-size3.size8,\n.katex .sizing.reset-size3.size8 {\n  font-size: 2.1625em;\n}\n.katex .fontsize-ensurer.reset-size3.size9,\n.katex .sizing.reset-size3.size9 {\n  font-size: 2.5875em;\n}\n.katex .fontsize-ensurer.reset-size3.size10,\n.katex .sizing.reset-size3.size10 {\n  font-size: 3.1125em;\n}\n.katex .fontsize-ensurer.reset-size4.size1,\n.katex .sizing.reset-size4.size1 {\n  font-size: .55555556em;\n}\n.katex .fontsize-ensurer.reset-size4.size2,\n.katex .sizing.reset-size4.size2 {\n  font-size: .77777778em;\n}\n.katex .fontsize-ensurer.reset-size4.size3,\n.katex .sizing.reset-size4.size3 {\n  font-size: .88888889em;\n}\n.katex .fontsize-ensurer.reset-size4.size4,\n.katex .sizing.reset-size4.size4 {\n  font-size: 1em;\n}\n.katex .fontsize-ensurer.reset-size4.size5,\n.katex .sizing.reset-size4.size5 {\n  font-size: 1.11111111em;\n}\n.katex .fontsize-ensurer.reset-size4.size6,\n.katex .sizing.reset-size4.size6 {\n  font-size: 1.33333333em;\n}\n.katex .fontsize-ensurer.reset-size4.size7,\n.katex .sizing.reset-size4.size7 {\n  font-size: 1.6em;\n}\n.katex .fontsize-ensurer.reset-size4.size8,\n.katex .sizing.reset-size4.size8 {\n  font-size: 1.92222222em;\n}\n.katex .fontsize-ensurer.reset-size4.size9,\n.katex .sizing.reset-size4.size9 {\n  font-size: 2.3em;\n}\n.katex .fontsize-ensurer.reset-size4.size10,\n.katex .sizing.reset-size4.size10 {\n  font-size: 2.76666667em;\n}\n.katex .fontsize-ensurer.reset-size5.size1,\n.katex .sizing.reset-size5.size1 {\n  font-size: .5em;\n}\n.katex .fontsize-ensurer.reset-size5.size2,\n.katex .sizing.reset-size5.size2 {\n  font-size: .7em;\n}\n.katex .fontsize-ensurer.reset-size5.size3,\n.katex .sizing.reset-size5.size3 {\n  font-size: .8em;\n}\n.katex .fontsize-ensurer.reset-size5.size4,\n.katex .sizing.reset-size5.size4 {\n  font-size: .9em;\n}\n.katex .fontsize-ensurer.reset-size5.size5,\n.katex .sizing.reset-size5.size5 {\n  font-size: 1em;\n}\n.katex .fontsize-ensurer.reset-size5.size6,\n.katex .sizing.reset-size5.size6 {\n  font-size: 1.2em;\n}\n.katex .fontsize-ensurer.reset-size5.size7,\n.katex .sizing.reset-size5.size7 {\n  font-size: 1.44em;\n}\n.katex .fontsize-ensurer.reset-size5.size8,\n.katex .sizing.reset-size5.size8 {\n  font-size: 1.73em;\n}\n.katex .fontsize-ensurer.reset-size5.size9,\n.katex .sizing.reset-size5.size9 {\n  font-size: 2.07em;\n}\n.katex .fontsize-ensurer.reset-size5.size10,\n.katex .sizing.reset-size5.size10 {\n  font-size: 2.49em;\n}\n.katex .fontsize-ensurer.reset-size6.size1,\n.katex .sizing.reset-size6.size1 {\n  font-size: .41666667em;\n}\n.katex .fontsize-ensurer.reset-size6.size2,\n.katex .sizing.reset-size6.size2 {\n  font-size: .58333333em;\n}\n.katex .fontsize-ensurer.reset-size6.size3,\n.katex .sizing.reset-size6.size3 {\n  font-size: .66666667em;\n}\n.katex .fontsize-ensurer.reset-size6.size4,\n.katex .sizing.reset-size6.size4 {\n  font-size: .75em;\n}\n.katex .fontsize-ensurer.reset-size6.size5,\n.katex .sizing.reset-size6.size5 {\n  font-size: .83333333em;\n}\n.katex .fontsize-ensurer.reset-size6.size6,\n.katex .sizing.reset-size6.size6 {\n  font-size: 1em;\n}\n.katex .fontsize-ensurer.reset-size6.size7,\n.katex .sizing.reset-size6.size7 {\n  font-size: 1.2em;\n}\n.katex .fontsize-ensurer.reset-size6.size8,\n.katex .sizing.reset-size6.size8 {\n  font-size: 1.44166667em;\n}\n.katex .fontsize-ensurer.reset-size6.size9,\n.katex .sizing.reset-size6.size9 {\n  font-size: 1.725em;\n}\n.katex .fontsize-ensurer.reset-size6.size10,\n.katex .sizing.reset-size6.size10 {\n  font-size: 2.075em;\n}\n.katex .fontsize-ensurer.reset-size7.size1,\n.katex .sizing.reset-size7.size1 {\n  font-size: .34722222em;\n}\n.katex .fontsize-ensurer.reset-size7.size2,\n.katex .sizing.reset-size7.size2 {\n  font-size: .48611111em;\n}\n.katex .fontsize-ensurer.reset-size7.size3,\n.katex .sizing.reset-size7.size3 {\n  font-size: .55555556em;\n}\n.katex .fontsize-ensurer.reset-size7.size4,\n.katex .sizing.reset-size7.size4 {\n  font-size: .625em;\n}\n.katex .fontsize-ensurer.reset-size7.size5,\n.katex .sizing.reset-size7.size5 {\n  font-size: .69444444em;\n}\n.katex .fontsize-ensurer.reset-size7.size6,\n.katex .sizing.reset-size7.size6 {\n  font-size: .83333333em;\n}\n.katex .fontsize-ensurer.reset-size7.size7,\n.katex .sizing.reset-size7.size7 {\n  font-size: 1em;\n}\n.katex .fontsize-ensurer.reset-size7.size8,\n.katex .sizing.reset-size7.size8 {\n  font-size: 1.20138889em;\n}\n.katex .fontsize-ensurer.reset-size7.size9,\n.katex .sizing.reset-size7.size9 {\n  font-size: 1.4375em;\n}\n.katex .fontsize-ensurer.reset-size7.size10,\n.katex .sizing.reset-size7.size10 {\n  font-size: 1.72916667em;\n}\n.katex .fontsize-ensurer.reset-size8.size1,\n.katex .sizing.reset-size8.size1 {\n  font-size: .28901734em;\n}\n.katex .fontsize-ensurer.reset-size8.size2,\n.katex .sizing.reset-size8.size2 {\n  font-size: .40462428em;\n}\n.katex .fontsize-ensurer.reset-size8.size3,\n.katex .sizing.reset-size8.size3 {\n  font-size: .46242775em;\n}\n.katex .fontsize-ensurer.reset-size8.size4,\n.katex .sizing.reset-size8.size4 {\n  font-size: .52023121em;\n}\n.katex .fontsize-ensurer.reset-size8.size5,\n.katex .sizing.reset-size8.size5 {\n  font-size: .57803468em;\n}\n.katex .fontsize-ensurer.reset-size8.size6,\n.katex .sizing.reset-size8.size6 {\n  font-size: .69364162em;\n}\n.katex .fontsize-ensurer.reset-size8.size7,\n.katex .sizing.reset-size8.size7 {\n  font-size: .83236994em;\n}\n.katex .fontsize-ensurer.reset-size8.size8,\n.katex .sizing.reset-size8.size8 {\n  font-size: 1em;\n}\n.katex .fontsize-ensurer.reset-size8.size9,\n.katex .sizing.reset-size8.size9 {\n  font-size: 1.19653179em;\n}\n.katex .fontsize-ensurer.reset-size8.size10,\n.katex .sizing.reset-size8.size10 {\n  font-size: 1.43930636em;\n}\n.katex .fontsize-ensurer.reset-size9.size1,\n.katex .sizing.reset-size9.size1 {\n  font-size: .24154589em;\n}\n.katex .fontsize-ensurer.reset-size9.size2,\n.katex .sizing.reset-size9.size2 {\n  font-size: .33816425em;\n}\n.katex .fontsize-ensurer.reset-size9.size3,\n.katex .sizing.reset-size9.size3 {\n  font-size: .38647343em;\n}\n.katex .fontsize-ensurer.reset-size9.size4,\n.katex .sizing.reset-size9.size4 {\n  font-size: .43478261em;\n}\n.katex .fontsize-ensurer.reset-size9.size5,\n.katex .sizing.reset-size9.size5 {\n  font-size: .48309179em;\n}\n.katex .fontsize-ensurer.reset-size9.size6,\n.katex .sizing.reset-size9.size6 {\n  font-size: .57971014em;\n}\n.katex .fontsize-ensurer.reset-size9.size7,\n.katex .sizing.reset-size9.size7 {\n  font-size: .69565217em;\n}\n.katex .fontsize-ensurer.reset-size9.size8,\n.katex .sizing.reset-size9.size8 {\n  font-size: .83574879em;\n}\n.katex .fontsize-ensurer.reset-size9.size9,\n.katex .sizing.reset-size9.size9 {\n  font-size: 1em;\n}\n.katex .fontsize-ensurer.reset-size9.size10,\n.katex .sizing.reset-size9.size10 {\n  font-size: 1.20289855em;\n}\n.katex .fontsize-ensurer.reset-size10.size1,\n.katex .sizing.reset-size10.size1 {\n  font-size: .20080321em;\n}\n.katex .fontsize-ensurer.reset-size10.size2,\n.katex .sizing.reset-size10.size2 {\n  font-size: .2811245em;\n}\n.katex .fontsize-ensurer.reset-size10.size3,\n.katex .sizing.reset-size10.size3 {\n  font-size: .32128514em;\n}\n.katex .fontsize-ensurer.reset-size10.size4,\n.katex .sizing.reset-size10.size4 {\n  font-size: .36144578em;\n}\n.katex .fontsize-ensurer.reset-size10.size5,\n.katex .sizing.reset-size10.size5 {\n  font-size: .40160643em;\n}\n.katex .fontsize-ensurer.reset-size10.size6,\n.katex .sizing.reset-size10.size6 {\n  font-size: .48192771em;\n}\n.katex .fontsize-ensurer.reset-size10.size7,\n.katex .sizing.reset-size10.size7 {\n  font-size: .57831325em;\n}\n.katex .fontsize-ensurer.reset-size10.size8,\n.katex .sizing.reset-size10.size8 {\n  font-size: .69477912em;\n}\n.katex .fontsize-ensurer.reset-size10.size9,\n.katex .sizing.reset-size10.size9 {\n  font-size: .8313253em;\n}\n.katex .fontsize-ensurer.reset-size10.size10,\n.katex .sizing.reset-size10.size10 {\n  font-size: 1em;\n}\n.katex .delimsizing.size1 {\n  font-family: KaTeX_Size1;\n}\n.katex .delimsizing.size2 {\n  font-family: KaTeX_Size2;\n}\n.katex .delimsizing.size3 {\n  font-family: KaTeX_Size3;\n}\n.katex .delimsizing.size4 {\n  font-family: KaTeX_Size4;\n}\n.katex .delimsizing.mult .delim-size1>span {\n  font-family: KaTeX_Size1;\n}\n.katex .delimsizing.mult .delim-size4>span {\n  font-family: KaTeX_Size4;\n}\n.katex .nulldelimiter {\n  display: inline-block;\n  width: .12em;\n}\n.katex .op-symbol {\n  position: relative;\n}\n.katex .op-symbol.small-op {\n  font-family: KaTeX_Size1;\n}\n.katex .op-symbol.large-op {\n  font-family: KaTeX_Size2;\n}\n.katex .accent>.vlist>span,\n.katex .op-limits>.vlist>span {\n  text-align: center;\n}\n.katex .accent .accent-body>span {\n  width: 0;\n}\n.katex .accent .accent-body.accent-vec>span {\n  position: relative;\n  left: .326em;\n}\n.katex .mtable .vertical-separator {\n  display: inline-block;\n  margin: 0 -.025em;\n  border-right: .05em solid #000;\n}\n.katex .mtable .arraycolsep {\n  display: inline-block;\n}\n.katex .mtable .col-align-c>.vlist {\n  text-align: center;\n}\n.katex .mtable .col-align-l>.vlist {\n  text-align: left;\n}\n.katex .mtable .col-align-r>.vlist {\n  text-align: right;\n}\nhtml,\nbody {\n  margin: 0;\n  height: 100%;\n  overflow: hidden;\n}\n.wrapper {\n  height: 100%;\n}\n#pane-container {\n  height: 100%;\n}\n"; (require("browserify-css").createStyle(css, { "href": "styles/app.css" }, { "insertAt": "bottom" })); module.exports = css;
 },{"browserify-css":1}],285:[function(require,module,exports){
 var css = "/* BASICS */\n.CodeMirror {\n  /* Set height, width, borders, and global font properties here */\n  font-family: monospace;\n  height: 300px;\n  color: black;\n}\n/* PADDING */\n.CodeMirror-lines {\n  padding: 4px 0;\n  /* Vertical padding around content */\n}\n.CodeMirror pre {\n  padding: 0 4px;\n  /* Horizontal padding of content */\n}\n.CodeMirror-scrollbar-filler,\n.CodeMirror-gutter-filler {\n  background-color: white;\n  /* The little square between H and V scrollbars */\n}\n/* GUTTER */\n.CodeMirror-gutters {\n  border-right: 1px solid #ddd;\n  background-color: #f7f7f7;\n  white-space: nowrap;\n}\n\n.CodeMirror-linenumber {\n  padding: 0 3px 0 5px;\n  min-width: 20px;\n  text-align: right;\n  color: #999;\n  white-space: nowrap;\n}\n.CodeMirror-guttermarker {\n  color: black;\n}\n.CodeMirror-guttermarker-subtle {\n  color: #999;\n}\n/* CURSOR */\n.CodeMirror-cursor {\n  border-left: 1px solid black;\n  border-right: none;\n  width: 0;\n}\n/* Shown when moving in bi-directional text */\n.CodeMirror div.CodeMirror-secondarycursor {\n  border-left: 1px solid silver;\n}\n.cm-fat-cursor .CodeMirror-cursor {\n  width: auto;\n  border: 0 !important;\n  background: #7e7;\n}\n.cm-fat-cursor div.CodeMirror-cursors {\n  z-index: 1;\n}\n.cm-animate-fat-cursor {\n  width: auto;\n  border: 0;\n  -webkit-animation: blink 1.06s steps(1) infinite;\n  -moz-animation: blink 1.06s steps(1) infinite;\n  animation: blink 1.06s steps(1) infinite;\n  background-color: #7e7;\n}\n@-moz-keyframes blink {\n  0% {\n\n  }\n\n  50% {\n    background-color: transparent;\n  }\n\n  100% {\n\n  }\n}\n@-webkit-keyframes blink {\n  0% {\n\n  }\n\n  50% {\n    background-color: transparent;\n  }\n\n  100% {\n\n  }\n}\n@keyframes blink {\n  0% {\n\n  }\n\n  50% {\n    background-color: transparent;\n  }\n\n  100% {\n\n  }\n}\n/* Can style cursor different in overwrite (non-insert) mode */\n\n.cm-tab {\n  display: inline-block;\n  text-decoration: inherit;\n}\n.CodeMirror-rulers {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: -50px;\n  bottom: -20px;\n  overflow: hidden;\n}\n.CodeMirror-ruler {\n  border-left: 1px solid #ccc;\n  top: 0;\n  bottom: 0;\n  position: absolute;\n}\n/* DEFAULT THEME */\n.cm-s-default .cm-header {\n  color: blue;\n}\n.cm-s-default .cm-quote {\n  color: #090;\n}\n.cm-negative {\n  color: #d44;\n}\n.cm-positive {\n  color: #292;\n}\n.cm-header,\n.cm-strong {\n  font-weight: bold;\n}\n.cm-em {\n  font-style: italic;\n}\n.cm-link {\n  text-decoration: underline;\n}\n.cm-strikethrough {\n  text-decoration: line-through;\n}\n.cm-s-default .cm-keyword {\n  color: #708;\n}\n.cm-s-default .cm-atom {\n  color: #219;\n}\n.cm-s-default .cm-number {\n  color: #164;\n}\n.cm-s-default .cm-def {\n  color: #00f;\n}\n\n.cm-s-default .cm-variable-2 {\n  color: #05a;\n}\n.cm-s-default .cm-variable-3 {\n  color: #085;\n}\n.cm-s-default .cm-comment {\n  color: #a50;\n}\n.cm-s-default .cm-string {\n  color: #a11;\n}\n.cm-s-default .cm-string-2 {\n  color: #f50;\n}\n.cm-s-default .cm-meta {\n  color: #555;\n}\n.cm-s-default .cm-qualifier {\n  color: #555;\n}\n.cm-s-default .cm-builtin {\n  color: #30a;\n}\n.cm-s-default .cm-bracket {\n  color: #997;\n}\n.cm-s-default .cm-tag {\n  color: #170;\n}\n.cm-s-default .cm-attribute {\n  color: #00c;\n}\n.cm-s-default .cm-hr {\n  color: #999;\n}\n.cm-s-default .cm-link {\n  color: #00c;\n}\n.cm-s-default .cm-error {\n  color: #f00;\n}\n.cm-invalidchar {\n  color: #f00;\n}\n.CodeMirror-composing {\n  border-bottom: 2px solid;\n}\n/* Default styles for common addons */\ndiv.CodeMirror span.CodeMirror-matchingbracket {\n  color: #0f0;\n}\ndiv.CodeMirror span.CodeMirror-nonmatchingbracket {\n  color: #f22;\n}\n.CodeMirror-matchingtag {\n  background: rgba(255, 150, 0, .3);\n}\n.CodeMirror-activeline-background {\n  background: #e8f2ff;\n}\n/* STOP */\n/* The rest of this file contains styles related to the mechanics of\n   the editor. You probably shouldn't touch them. */\n.CodeMirror {\n  position: relative;\n  overflow: hidden;\n  background: white;\n}\n.CodeMirror-scroll {\n  overflow: scroll !important;\n  /* Things will break if this is overridden */\n  /* 30px is the magic margin used to hide the element's real scrollbars */\n  /* See overflow: hidden in .CodeMirror */\n  margin-bottom: -30px;\n  margin-right: -30px;\n  padding-bottom: 30px;\n  height: 100%;\n  outline: none;\n  /* Prevent dragging from highlighting the element */\n  position: relative;\n}\n.CodeMirror-sizer {\n  position: relative;\n  border-right: 30px solid transparent;\n}\n/* The fake, visible scrollbars. Used to force redraw during scrolling\n   before actual scrolling happens, thus preventing shaking and\n   flickering artifacts. */\n.CodeMirror-vscrollbar,\n.CodeMirror-hscrollbar,\n.CodeMirror-scrollbar-filler,\n.CodeMirror-gutter-filler {\n  position: absolute;\n  z-index: 6;\n  display: none;\n}\n.CodeMirror-vscrollbar {\n  right: 0;\n  top: 0;\n  overflow-x: hidden;\n  overflow-y: scroll;\n}\n.CodeMirror-hscrollbar {\n  bottom: 0;\n  left: 0;\n  overflow-y: hidden;\n  overflow-x: scroll;\n}\n.CodeMirror-scrollbar-filler {\n  right: 0;\n  bottom: 0;\n}\n.CodeMirror-gutter-filler {\n  left: 0;\n  bottom: 0;\n}\n.CodeMirror-gutters {\n  position: absolute;\n  left: 0;\n  top: 0;\n  min-height: 100%;\n  z-index: 3;\n}\n.CodeMirror-gutter {\n  white-space: normal;\n  height: 100%;\n  display: inline-block;\n  vertical-align: top;\n  margin-bottom: -30px;\n  /* Hack to make IE7 behave */\n  *zoom: 1;\n  *display: inline;\n}\n.CodeMirror-gutter-wrapper {\n  position: absolute;\n  z-index: 4;\n  background: none !important;\n  border: none !important;\n}\n.CodeMirror-gutter-background {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  z-index: 4;\n}\n.CodeMirror-gutter-elt {\n  position: absolute;\n  cursor: default;\n  z-index: 4;\n}\n.CodeMirror-gutter-wrapper {\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  user-select: none;\n}\n.CodeMirror-lines {\n  cursor: text;\n  min-height: 1px;\n  /* prevents collapsing before first draw */\n}\n.CodeMirror pre {\n  /* Reset some styles that the rest of the page might have set */\n  -moz-border-radius: 0;\n  -webkit-border-radius: 0;\n  border-radius: 0;\n  border-width: 0;\n  background: transparent;\n  font-family: inherit;\n  font-size: inherit;\n  margin: 0;\n  white-space: pre;\n  word-wrap: normal;\n  line-height: inherit;\n  color: inherit;\n  z-index: 2;\n  position: relative;\n  overflow: visible;\n  -webkit-tap-highlight-color: transparent;\n  -webkit-font-variant-ligatures: none;\n  font-variant-ligatures: none;\n}\n.CodeMirror-wrap pre {\n  word-wrap: break-word;\n  white-space: pre-wrap;\n  word-break: normal;\n}\n.CodeMirror-linebackground {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  bottom: 0;\n  z-index: 0;\n}\n.CodeMirror-linewidget {\n  position: relative;\n  z-index: 2;\n  overflow: auto;\n}\n\n.CodeMirror-code {\n  outline: none;\n}\n/* Force content-box sizing for the elements where we expect it */\n.CodeMirror-scroll,\n.CodeMirror-sizer,\n.CodeMirror-gutter,\n.CodeMirror-gutters,\n.CodeMirror-linenumber {\n  -moz-box-sizing: content-box;\n  box-sizing: content-box;\n}\n.CodeMirror-measure {\n  position: absolute;\n  width: 100%;\n  height: 0;\n  overflow: hidden;\n  visibility: hidden;\n}\n.CodeMirror-cursor {\n  position: absolute;\n  pointer-events: none;\n}\n.CodeMirror-measure pre {\n  position: static;\n}\ndiv.CodeMirror-cursors {\n  visibility: hidden;\n  position: relative;\n  z-index: 3;\n}\ndiv.CodeMirror-dragcursors {\n  visibility: visible;\n}\n.CodeMirror-focused div.CodeMirror-cursors {\n  visibility: visible;\n}\n.CodeMirror-selected {\n  background: #d9d9d9;\n}\n.CodeMirror-focused .CodeMirror-selected {\n  background: #d7d4f0;\n}\n.CodeMirror-crosshair {\n  cursor: crosshair;\n}\n.CodeMirror-line::selection,\n.CodeMirror-line > span::selection,\n.CodeMirror-line > span > span::selection {\n  background: #d7d4f0;\n}\n.CodeMirror-line::-moz-selection,\n.CodeMirror-line > span::-moz-selection,\n.CodeMirror-line > span > span::-moz-selection {\n  background: #d7d4f0;\n}\n.cm-searching {\n  background: #ffa;\n  background: rgba(255, 255, 0, .4);\n}\n/* IE7 hack to prevent it from returning funny offsetTops on the spans */\n.CodeMirror span {\n  *vertical-align: text-bottom;\n}\n/* Used to force a border model for a node */\n.cm-force-border {\n  padding-right: .1px;\n}\n@media print {\n  /* Hide the cursor when printing */\n\n  .CodeMirror div.CodeMirror-cursors {\n    visibility: hidden;\n  }\n}\n/* See issue #2901 */\n.cm-tab-wrap-hack:after {\n  content: '';\n}\n/* Help users use markselection to safely style text background */\nspan.CodeMirror-selectedtext {\n  background: none;\n}\n.CodeMirror-dialog {\n  position: absolute;\n  left: 0;\n  right: 0;\n  background: inherit;\n  z-index: 15;\n  padding: .1em .8em;\n  overflow: hidden;\n  color: inherit;\n}\n.CodeMirror-dialog-top {\n  border-bottom: 1px solid #eee;\n  top: 0;\n}\n.CodeMirror-dialog-bottom {\n  border-top: 1px solid #eee;\n  bottom: 0;\n}\n.CodeMirror-dialog input {\n  border: none;\n  outline: none;\n  background: transparent;\n  width: 20em;\n  color: inherit;\n  font-family: monospace;\n}\n.CodeMirror-dialog button {\n  font-size: 70%;\n}\n#editor-pane {\n  height: 100%;\n  width: 50%;\n  display: inline-block;\n}\n#editor-pane {\n  float: left;\n}\n#editor {\n  height: 100%;\n}\n#editor > .CodeMirror {\n  height: 100%;\n}\n#editor .CodeMirror-lines {\n  margin: 10px 20px 10px 20px;\n}\n"; (require("browserify-css").createStyle(css, { "href": "styles/editor/editor.css" }, { "insertAt": "bottom" })); module.exports = css;
 },{"browserify-css":1}],286:[function(require,module,exports){
