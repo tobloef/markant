@@ -1,8 +1,11 @@
 ;(function() {
 	require("../styles/app.css");
+	require("../styles/navbar.css");
 
 	const $ = require("jquery");
 	const config = require("./config/app");
+
+	require("./utils/document_title")();
 
 	// Set up the pane resizer.
 	require("./utils/pane_resizer")(

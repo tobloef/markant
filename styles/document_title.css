@@ -1,0 +1,36 @@
+.document-title-container {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding-left: 10px;
+  padding-right: 3px;
+}
+
+.document-title-container .document-title-input {
+  text-overflow: ellipsis;
+}
+
+.document-title-container .document-title-mirror {
+  display: none;
+  white-space: pre;
+}
+
+.document-title-container .document-title-input,
+.document-title-container .document-title-mirror {
+  background-color: inherit;
+  border: none;
+  font-size: 1.15em;
+  color: white;
+  padding: 2px 5px 2px 7px;
+  outline: none;
+}
+
+.document-title-input:hover {
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  margin-bottom: -1px;
+}
+
+.document-title-input:focus {
+  border-bottom: 2px solid rgba(255, 255, 255, 0.8);
+  margin-bottom: -1px;
+}
