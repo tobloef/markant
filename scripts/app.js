@@ -1,9 +1,5 @@
 ;(function() {
-	require("../styles/app.css");
-	require("../styles/navbar.css");
-
 	const $ = require("jquery");
-	const config = require("./config/app");
 	const scrollSync = require("./utils/scroll_sync");
 	const fileLoader = require("./utils/file_loader");
 
@@ -13,19 +9,12 @@
 	require("./utils/document_title")();
 
 	// Set up the pane resizer.
-	require("./utils/pane_resizer")(
-		config.dragbarId,
-		config.editorPaneId,
-		config.viewerPaneId,
-		config.paneContainerId,
-		config.leftCollapseButtonId,
-		config.rightCollapseButtonId
-	);
+	require("./utils/pane_resizer")();
 
 	// Set up the editor and the viewer.
-	const viewerElement = $(`#${config.viewerId}`).get(0);
-	const editorElement = $(`#${config.editorId}`).get(0);
-	const viewer =require("./viewer")(viewerElement);
+	const viewerElement = $("#viewer").get(0);
+	const editorElement = $("#editor").get(0);
+	const viewer = require("./viewer")(viewerElement);
 	const editor = require("./editor")(editorElement);
 
 	function onChangeHandler() {

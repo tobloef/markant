@@ -1,18 +1,17 @@
 ;(function() {
-	require("../../styles/utils/pane_resizer.css");
-
 	const $ = require("jquery");
 
-	module.exports = function(dragbarId, leftPaneId, rightPaneId, containerId, leftButtonId, rightButtonId) {
-		// jQuery elements
-		const $paneContainer = $(`#${containerId}`);
-		const $dragbar = $(`#${dragbarId}`);
-		const $leftPane = $(`#${leftPaneId}`);
-		const $rightPane = $(`#${rightPaneId}`);
-		const $leftCollapseButton = $(`#${leftButtonId}`);
-		const $rightCollapseButton = $(`#${rightButtonId}`);
-		const $viewer = $rightPane.find("#viewer");
+	// jQuery elements
+	const $paneContainer = $("#pane-container");
+	const $dragbar = $("#dragbar");
+	const $leftPane = $("#editor-pane");
+	const $rightPane = $("#viewer-pane");
+	const $leftCollapseButton = $("#left-collapse-button");
+	const $rightCollapseButton = $("#right-collapse-button");
+	const $viewer = $rightPane.find("#viewer");
+	const $editorScrollbar = $leftPane.find(".CodeMirror-vscrollbar > div").eq(0);
 
+	module.exports = function() {
 		// Whether the user is draggin the drag bar.
 		let dragging = false;
 
@@ -37,8 +36,7 @@
 		// Set the positions, specifically the horizontal positions, of the two collapse buttons.
 		// This is done so they won't overlap with the scrollbars.
 		function setCollapseButtonPositions() {
-			const editorScrollbar = $leftPane.find(".CodeMirror-vscrollbar > div").eq(0);
-			const leftPaneHasScrollbar = editorScrollbar.height() > 0;
+			const leftPaneHasScrollbar = $editorScrollbar.height() > 0;
 			let rightOffset = 34;
 			if (leftPanePercentage === 100) {
 				rightOffset -= 5;

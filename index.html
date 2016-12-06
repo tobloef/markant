@@ -1,73 +1,78 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Markant.io</title>
-    </head>
-    <body>
-        <div class="wrapper">
-            <div class="navbar">
-                <ul>
-                    <li class="navbar-item">
-                    <div class="document-title-container">
-                        <input class="document-title-input">
-                        <div class="document-title-mirror"></div>
-                    </div>
-                    </li>
-                    <li class="navbar-item navbar-button navbar-dropdown">
-                    <a href="#">Dropdown</a>
-                    <div class="dropdown-arrow"></div>
-                    <ul class="dropdown-content">
-                        <li>
-                        <a href="#">Dropdown Item</a>
-                        </li>
-                        <li>
-                        <a href="#">Dropdown Item</a>
-                        </li>
-                    </ul>
-                    </li>
-                    <li class="navbar-item navbar-button navbar-dropdown">
-                    <a href="#">Dropdown</a>
-                    <div class="dropdown-arrow"></div>
-                    <ul class="dropdown-content">
-                        <li>
-                        <a href="#">Dropdown Item</a>
-                        </li>
-                        <li>
-                        <a href="#">Dropdown Item</a>
-                        </li>
-                    </ul>
-                    </li>
-                    <li class="navbar-item navbar-logo">
-                    <a href="#">Markant.io</a>
-                    </li>
-                </ul>
-            </div>
-            
-            <div id="pane-container">
-                <div id="editor-pane">
-                    <div id="editor">
-                        <div class="collapse-pane-button" id="left-pane-collapse-button" style="visibility: hidden;">
-                            <div>
-                                <i class="fa fa-fw fa-chevron-left"></i>
-                            </div>
-                        </div>
-                        <div id="dragbar"></div>
-                    </div>
-                </div>
-                <div id="viewer-pane">
-                    <div class="collapse-pane-button" id="right-pane-collapse-button" style="visibility: hidden;">
-                        <div>
-                            <i class="fa fa-fw fa-chevron-right"></i>
-                        </div>
-                    </div>
-                    <div id="viewer-container">
-                    	<div id="viewer"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <script type="text/javascript" src="build/app-bundle.js" charset="utf-8"></script>
-    </body>
+<head>
+	<meta charset="utf-8">
+	<title>Markant.io</title>
+	<link rel="stylesheet" type="text/css" href="build/app-bundle.css">
+</head>
+
+<body>
+	<div class="wrapper">
+		<div class="navbar">
+			<ul>
+				<li class="navbar-item">
+					<div class="document-title-container">
+						<input class="document-title-input">
+						<div class="document-title-mirror"></div>
+					</div>
+				</li>
+				<li class="navbar-item navbar-button navbar-dropdown">
+					<a href="#">Dropdown</a>
+					<div class="dropdown-arrow"></div>
+					<ul class="dropdown-content">
+						<li>
+							<a href="#">Dropdown Item</a>
+						</li>
+						<li>
+							<a href="#">Dropdown Item</a>
+						</li>
+					</ul>
+				</li>
+				<li class="navbar-item navbar-button navbar-dropdown">
+					<a href="#">Dropdown</a>
+					<div class="dropdown-arrow"></div>
+					<ul class="dropdown-content">
+						<li>
+							<a href="#">Dropdown Item</a>
+						</li>
+						<li>
+							<a href="#">Dropdown Item</a>
+						</li>
+					</ul>
+				</li>
+				<li class="navbar-item navbar-logo">
+					<a href="#">Markant.io</a>
+				</li>
+			</ul>
+		</div>
+
+		<div id="pane-container">
+			<div id="editor-pane">
+				<div id="editor">
+					<div class="collapse-button" id="left-collapse-button" style="visibility: hidden;">
+						<div>
+							<i class="fa fa-fw fa-chevron-left"></i>
+						</div>
+					</div>
+					<div id="dragbar"></div>
+				</div>
+			</div>
+			<div id="viewer-pane">
+				<div class="collapse-button" id="right-collapse-button" style="visibility: hidden;">
+					<div>
+						<i class="fa fa-fw fa-chevron-right"></i>
+					</div>
+				</div>
+				<div id="viewer-container">
+					<div id="viewer"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript" src="build/app-bundle.css" charset="utf-8"></script>
+	<script type="text/javascript" src="build/app-bundle.js" charset="utf-8"></script>
+</body>
+
 </html>

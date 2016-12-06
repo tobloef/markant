@@ -13,18 +13,17 @@ const rename = require("gulp-rename");
 const sourcemaps = require("gulp-sourcemaps");
 
 const parentDestDir = "./build";
-const entryPoints = ["app"];
+const scriptEntryPoints = ["app"];
+const styleEntryPoints = ["app"];
 
-gulp.task("default", ["browserify", "font-awesome", "codemirror-themes", "highlight.js-styles"]);
+gulp.task("default", ["browserify-scripts", "browserify-styles", "font-awesome", "codemirror-themes", "hljs-styles"]);
 
-gulp.task("browserify", function() {
-	entryPoints.forEach(function(file) {
+gulp.task("browserify-scripts", function() {
+	scriptEntryPoints.forEach(function(file) {
 		const b = browserify({
 			entries: [`./scripts/${file}.js`],
-			debug: true,
+			debug: true
 		});
-
-		b.transform(browserifyCss);
 
 		return b.bundle()
 			.pipe(source(`${file}-bundle.js`))
@@ -35,8 +34,24 @@ gulp.task("browserify", function() {
 	});
 });
 
-gulp.task("minify", ["browserify", "font-awesome"], function() {
-	entryPoints.forEach(function(file) {
+gulp.task("browserify-styles", function() {
+	styleEntryPoints.forEach(function(file) {
+		const b = browserify({
+			entries: [`./styles/${file}.css`],
+			debug: true,
+		});
+
+		b.transform(browserifyCss);
+
+		return b.bundle()
+			.pipe(source(`${file}-bundle.css`))
+			.pipe(buffer())
+			.pipe(gulp.dest(parentDestDir));
+	});
+});
+
+gulp.task("uglify", function() {
+	scriptEntryPoints.forEach(function(file) {
 		gulp.src([`build/${file}-bundle.js`])
 			.pipe(buffer())
 			.pipe(babel({
@@ -61,14 +76,13 @@ gulp.task("codemirror-themes", function() {
 	gulp.src([
 		"node_modules/codemirror/theme/*.css",
 		"styles/editor/themes/*.css",
-		"styles/editor/*.css",
 	])
 	.pipe(gulp.dest(destDir));
 });
 
-gulp.task("highlight.js-styles", function() {
+gulp.task("hljs-styles", function() {
 	const destDir = `${parentDestDir}/lib/highlight.js/styles`;
-	gulp.src(["node_modules/highlight.js/styles/*.css"])
+	gulp.src("node_modules/highlight.js/styles/*.css")
 		.pipe(gulp.dest(destDir));
 });
 

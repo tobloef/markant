@@ -7,18 +7,26 @@
 			cache: true,
 			url,
 			success: callback,
+			fail: function() {
+				console.error(`Error loading script from url ${url}.\nException: ${e}`);
+			},
 		});
 		return $.ajax(options);
 	}
 
 	function getStyle(url, callback) {
-		$("<link/>", {
-			rel: "stylesheet",
-			type: "text/css",
-			href: url,
-		}).appendTo("head");
-		if (callback) {
-			callback();
+		try {
+			$("<link/>", {
+				rel: "stylesheet",
+				type: "text/css",
+				href: url,
+			}).appendTo("head");
+			if (callback) {
+				callback();
+			}
+		} catch (e) {
+			console.error(`Error loading style from url ${url}.\nException: ${e}`);
+			return;
 		}
 	}
 

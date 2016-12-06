@@ -1,4 +1,8 @@
-@import url("node_modules/katex/dist/katex.min.css");
+@import url("navbar.css");
+@import url("utils/document_title.css");
+@import url("utils/pane_resizer.css");
+@import url("viewer/viewer.css");
+@import url("editor/editor.css");
 
 html, body {
     margin: 0;

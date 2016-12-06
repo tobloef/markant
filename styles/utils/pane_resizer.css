@@ -12,14 +12,14 @@
 	background: #d3d3d3;
 }
 
-.collapse-pane-button {
+.collapse-button {
 	position: relative;
 	width: 0;
 	height: 0;
 	top: 40%;
 }
 
-.collapse-pane-button > div {
+.collapse-button > div {
 	position: absolute;
 	z-index: 10;
 	color: black;
@@ -30,17 +30,17 @@
 	opacity: 0.3;
 }
 
-.collapse-pane-button > div i {
+.collapse-button > div i {
 	vertical-align: middle;
     text-align: center;
 	width: 100%;
 }
 
-.collapse-pane-button > div:hover {
+.collapse-button > div:hover {
 	background-color: #bbb;
 	opacity: 0.8;
 }
 
-.collapse-pane-button > div:active {
+.collapse-button > div:active {
 	opacity: 1;
 }
