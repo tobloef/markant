@@ -11,14 +11,15 @@ const uglify = require("gulp-uglify");
 const babel = require("gulp-babel");
 const rename = require("gulp-rename");
 const sourcemaps = require("gulp-sourcemaps");
+const importCss = require('gulp-import-css');
 
 const parentDestDir = "./build";
 const scriptEntryPoints = ["app"];
 const styleEntryPoints = ["app"];
 
-gulp.task("default", ["browserify-scripts", "browserify-styles", "font-awesome", "codemirror-themes", "hljs-styles"]);
+gulp.task("default", ["browserify", "bundle-styles", "font-awesome", "codemirror-themes", "hljs-styles"]);
 
-gulp.task("browserify-scripts", function() {
+gulp.task("browserify", function() {
 	scriptEntryPoints.forEach(function(file) {
 		const b = browserify({
 			entries: [`./scripts/${file}.js`],
@@ -34,18 +35,11 @@ gulp.task("browserify-scripts", function() {
 	});
 });
 
-gulp.task("browserify-styles", function() {
+gulp.task("bundle-styles", function() {
 	styleEntryPoints.forEach(function(file) {
-		const b = browserify({
-			entries: [`./styles/${file}.css`],
-			debug: true,
-		});
-
-		b.transform(browserifyCss);
-
-		return b.bundle()
-			.pipe(source(`${file}-bundle.css`))
-			.pipe(buffer())
+		gulp.src(`./styles/${file}.css`)
+			.pipe(importCss())
+			.pipe(rename(`${file}-bundle.css`))
 			.pipe(gulp.dest(parentDestDir));
 	});
 });
