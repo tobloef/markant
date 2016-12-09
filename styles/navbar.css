@@ -3,6 +3,8 @@
 	height: 50px;
 	background-color: #424242;
 	font-size: 15px;
+	width: 100%;
+	position: relative;
 }
 
 .navbar > ul {

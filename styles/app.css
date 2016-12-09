@@ -12,8 +12,12 @@ html, body {
 
 .wrapper {
     height: 100%;
+	overflow: hidden;
 }
 
 #pane-container {
-	height: 100%;
+	/* 100% minus the height of the navbar */
+	height: calc(100% - 50px);
+	width: 100%;
+	overflow: hidden;
 }

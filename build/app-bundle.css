@@ -3,6 +3,8 @@
   height: 50px;
   background-color: #424242;
   font-size: 15px;
+  width: 100%;
+  position: relative;
 }
 
 .navbar > ul {
@@ -146,7 +148,7 @@
   position: relative;
   width: 0;
   height: 0;
-  top: 40%;
+  top: 45%;
 }
 
 .collapse-button > div {
@@ -1899,7 +1901,7 @@ span.CodeMirror-selectedtext {
 }
 
 #editor .CodeMirror-lines {
-  margin: 10px 20px 10px 20px;
+  /*margin: 10px 20px 10px 20px;*/
 }
 
 html,
@@ -1911,8 +1913,12 @@ body {
 
 .wrapper {
   height: 100%;
+  overflow: hidden;
 }
 
 #pane-container {
-  height: 100%;
+  /* 100% minus the height of the navbar */
+  height: calc(100% - 50px);
+  width: 100%;
+  overflow: hidden;
 }

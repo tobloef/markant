@@ -85,6 +85,11 @@ gulp.task("watch", function() {
 	gulp.watch(["scripts/**/*", "styles/**/*"], ["default"]);
 });
 
+gulp.task("watch-css", function() {
+	gulp.start(["bundle-styles"]);
+	gulp.watch(["styles/**/*"], ["bundle-styles"]);
+});
+
 gulp.task("clean", function() {
 	return del(["build"]);
 });

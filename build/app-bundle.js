@@ -53487,15 +53487,15 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 		setup($input, $mirror);
 
-		$input.on("input change load focusout", function() {
-			mirrorWidth($input, $mirror);
-		});
-
 		$input.on("focusout", function(event) {
 			if ($input.val() === "") {
 				$input.val(defaultTitle);
 			}
 			oldTitle = $input.val();
+		});
+
+		$input.on("input change load focusout", function() {
+			mirrorWidth($input, $mirror);
 		});
 
 		$input.on("focus", function(event) {
