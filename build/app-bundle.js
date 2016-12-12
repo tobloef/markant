@@ -53373,6 +53373,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	fileLoader.getStyle("build/lib/font-awesome/css/font-awesome.min.css");
 
 	require("./utils/document_title")();
+	require("./utils/google_analytics")();
 
 	// Set up the pane resizer.
 	require("./utils/pane_resizer")();
@@ -53403,7 +53404,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	onChangeHandler();
 }());
 
-},{"./editor":274,"./utils/document_title":275,"./utils/file_loader":276,"./utils/pane_resizer":278,"./utils/scroll_sync":279,"./viewer":280,"jquery":179}],274:[function(require,module,exports){
+},{"./editor":274,"./utils/document_title":275,"./utils/file_loader":276,"./utils/google_analytics":277,"./utils/pane_resizer":279,"./utils/scroll_sync":280,"./viewer":281,"jquery":179}],274:[function(require,module,exports){
 ;(function() {
 	const fileLoader = require("./utils/file_loader");
 	const CodeMirror = require("codemirror");
@@ -53464,7 +53465,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"./utils/file_loader":276,"./utils/markdown_emphasis":277,"codemirror":3,"codemirror/addon/edit/continuelist":1,"codemirror/mode/gfm/gfm":4,"codemirror/mode/markdown/markdown":5}],275:[function(require,module,exports){
+},{"./utils/file_loader":276,"./utils/markdown_emphasis":278,"codemirror":3,"codemirror/addon/edit/continuelist":1,"codemirror/mode/gfm/gfm":4,"codemirror/mode/markdown/markdown":5}],275:[function(require,module,exports){
 ;(function() {
 	const $ = require("jquery");
 
@@ -53574,6 +53575,25 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 },{"jquery":179}],277:[function(require,module,exports){
 ;(function() {
+	module.exports = function() {
+		(function(i, s, o, g, r, a, m) {
+			i['GoogleAnalyticsObject'] = r;
+			i[r] = i[r] || function() {
+				(i[r].q = i[r].q || []).push(arguments)
+			}, i[r].l = 1 * new Date();
+			a = s.createElement(o),
+				m = s.getElementsByTagName(o)[0];
+			a.async = 1;
+			a.src = g;
+			m.parentNode.insertBefore(a, m)
+		})(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+		ga('create', 'UA-73558830-6', 'auto');
+		ga('send', 'pageview');
+	}
+}());
+},{}],278:[function(require,module,exports){
+;(function() {
 	// Add some emphasis, like bold (**) or underscore (~~) to the selected text.
 	// If no text is selected insert the emphasis affixes and move to cursor between them.
 	function handleEmphasis(codemirror, emphasisString) {
@@ -53594,7 +53614,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{}],278:[function(require,module,exports){
+},{}],279:[function(require,module,exports){
 ;(function() {
 	const $ = require("jquery");
 
@@ -53720,7 +53740,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"jquery":179}],279:[function(require,module,exports){
+},{"jquery":179}],280:[function(require,module,exports){
 ;(function() {
 	const $ = require("jquery");
 
@@ -53748,7 +53768,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"jquery":179}],280:[function(require,module,exports){
+},{"jquery":179}],281:[function(require,module,exports){
 ;(function() {
 	const fileLoader = require("./utils/file_loader");
 	const hljs = require("highlight.js");

@@ -7,6 +7,7 @@
 	fileLoader.getStyle("build/lib/font-awesome/css/font-awesome.min.css");
 
 	require("./utils/document_title")();
+	require("./utils/google_analytics")();
 
 	// Set up the pane resizer.
 	require("./utils/pane_resizer")();
