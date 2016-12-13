@@ -4,7 +4,7 @@
 	module.exports = function() {
 		const $tabs = $(".modal-tabs > li");
 		const $contents = $(".tab-content");
-		const $close = $(".close-button");
+		const $close = $(".close-button, .modal-backdrop");
 
 		$close.on("click", function() {
 			$(this).closest(".modal").removeClass("active");

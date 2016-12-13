@@ -53620,7 +53620,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	module.exports = function() {
 		const $tabs = $(".modal-tabs > li");
 		const $contents = $(".tab-content");
-		const $close = $(".close-button");
+		const $close = $(".close-button, .modal-backdrop");
 
 		$close.on("click", function() {
 			$(this).closest(".modal").removeClass("active");
@@ -53647,23 +53647,14 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	}
 
 	module.exports = function() {
-		const $dropdownLinks = $(".dropdown-content a");
-		const $dropdowns = $(".navbar-dropdown");
+		const $links = $(".navbar a");
 
-		$dropdowns.on("mouseover", function() {
-			$(this).addClass("active");
-		});
-
-		$dropdowns.on("mouseleave", function() {
-			$(this).removeClass("active");
-		});
-
-		$dropdownLinks.on("click", function() {
+		$links.on("click", function(event) {
 			const id = $(this).attr("id");
 			if (id in idFunctionMap) {
 				idFunctionMap[id]();
+				event.preventDefault();
 			}
-			$(this).closest(".navbar-dropdown").removeClass("active");;
 		});
 	};
 }());

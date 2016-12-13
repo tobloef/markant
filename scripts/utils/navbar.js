@@ -10,23 +10,14 @@
 	}
 
 	module.exports = function() {
-		const $dropdownLinks = $(".dropdown-content a");
-		const $dropdowns = $(".navbar-dropdown");
+		const $links = $(".navbar a");
 
-		$dropdowns.on("mouseover", function() {
-			$(this).addClass("active");
-		});
-
-		$dropdowns.on("mouseleave", function() {
-			$(this).removeClass("active");
-		});
-
-		$dropdownLinks.on("click", function() {
+		$links.on("click", function(event) {
 			const id = $(this).attr("id");
 			if (id in idFunctionMap) {
 				idFunctionMap[id]();
+				event.preventDefault();
 			}
-			$(this).closest(".navbar-dropdown").removeClass("active");;
 		});
 	};
 }());
