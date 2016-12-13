@@ -22,7 +22,7 @@
 					<div class="dropdown-arrow"></div>
 					<ul class="dropdown-content">
 						<li>
-							<a href="#">Dropdown Item</a>
+							<a href="#" id="edit-settings">Preferences</a>
 						</li>
 						<li>
 							<a href="#">Dropdown Item</a>
@@ -68,6 +68,62 @@
 					<div id="viewer"></div>
 				</div>
 			</div>
+		</div>
+	</div>
+	<div class="modal-container">
+		<div class="modal" id="settings-modal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<span class="modal-title">Modal Title</span>
+						<button class="close-button">&times;</button>
+						<ul class="modal-tabs">
+							<li data-tab="tab1" class="active">Tab 1</li>
+							<li data-tab="tab2">Tab 2</li>
+							<li data-tab="tab3">Tab 3</li>
+						</ul>
+					</div>
+					<div class="modal-body">
+						<div class="tab-content active" id="tab1">
+							<form>
+								<div class="form-group">
+									<label class="control-label">Form input</label>
+									<input type="text">
+								</div>
+								<div class="form-group">
+									<label class="control-label">Another form input</label>
+									<input type="text">
+								</div>
+								<div class="form-group">
+									<label class="control-label">Selector input</label>
+									<select>
+										<option>Option 1</option>
+										<option>Option 2</option>
+										<option>Option 3</option>
+								</select>
+								</div>
+								<div class="form-group">
+									<label class="control-label">An input</label>
+									<input type="text">
+								</div>
+								<div class="form-group">
+									<label class="control-label">Checkbox input</label>
+									<input type="checkbox" id="something">
+									<label for="something">Yes, use something something</label>
+								</div>
+							</form>
+						</div>
+						<div id="tab2">
+						</div>
+						<div id="tab3">
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="button dark">Save</button>
+					</div>
+				</div>
+			</div>
+			<div class="modal-backdrop"></div>
 		</div>
 	</div>
 

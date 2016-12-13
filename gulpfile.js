@@ -23,7 +23,8 @@ gulp.task("browserify", function() {
 	scriptEntryPoints.forEach(function(file) {
 		const b = browserify({
 			entries: [`./scripts/${file}.js`],
-			debug: true
+			debug: true,
+			fullPaths: true
 		});
 
 		return b.bundle()

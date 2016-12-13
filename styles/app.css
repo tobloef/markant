@@ -1,6 +1,7 @@
-@import url("navbar.css");
+@import url("utils/navbar.css");
 @import url("utils/document_title.css");
 @import url("utils/pane_resizer.css");
+@import url("utils/modal.css");
 @import url("viewer/viewer.css");
 @import url("editor/editor.css");
 
@@ -20,4 +21,116 @@ html, body {
 	height: calc(100% - 50px);
 	width: 100%;
 	overflow: hidden;
+}
+
+.modal-container {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+/* Buttons */
+.button {
+	border: 1px solid #ccc;
+	background-color: white;
+	color: black;
+	width: 75px;
+	height: 2.5em;
+	border-radius: 3px;
+	outline: 0;
+	cursor: pointer;
+	font-size: 0.9em;
+}
+
+.button:hover {
+	background-color: #e6e6e6;
+}
+
+.button:active {
+	background-color: #d4d4d4;
+}
+
+.button.dark {
+	background-color: #424242;
+	color: white;
+	border: 1px solid #323232;
+}
+
+.button.dark:hover {
+	background-color: #323232;
+}
+
+.button.dark:active {
+	background-color: #222222;
+}
+
+/* Forms */
+form {
+	margin-top: 20px;
+}
+
+form .form-group + .form-group {
+	margin-top: 1em;
+}
+
+.form-group {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+}
+
+form .control-label {
+	padding: 0.5em 0;
+	font-weight: bold;
+	display: inline-block;
+	text-align: right;
+	margin-right: 1em;
+	width: 10em;
+	min-width: 5em;
+	color: #333;
+	flex: 0.5;
+}
+
+form label {
+	-webkit-user-select: none;
+	min-width: 0;
+}
+
+form input[type="text"] {
+	display: inline-block;
+	flex: 1;
+	margin-right: 3em;
+	border-radius: 3px;
+	border: 1px solid #ccc;
+	padding: 0.5em;
+	font-size: 1em;
+	height: 1em;
+	min-width: 0;
+}
+
+form input[type="checkbox"] {
+	display: inline-block;
+	height: 2em;
+	width: 1.2em;
+	margin: 0;
+	margin-top: 0.4em;
+	margin-right: 0.7em;
+}
+
+form input[type="checkbox"] + label {
+	padding-top: 0.4em;
+}
+
+form select {
+	min-width: 0;
+	display: inline-block;
+	flex: 1;
+	margin-right: 3em;
+	border-radius: 3px;
+	border: 1px solid #ccc;
+	padding: 0 0.5em;
+	font-size: 1em;
+	height: 2em;
+	background-color: white;
 }

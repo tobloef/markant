@@ -2,15 +2,14 @@
 	const $ = require("jquery");
 	const scrollSync = require("./utils/scroll_sync");
 	const fileLoader = require("./utils/file_loader");
+	require("./utils/document_title")();
+	require("./utils/google_analytics")();
+	require("./utils/modal")();
+	require("./utils/navbar")();
+	require("./utils/pane_resizer")();
 
 	// Load styles
 	fileLoader.getStyle("build/lib/font-awesome/css/font-awesome.min.css");
-
-	require("./utils/document_title")();
-	require("./utils/google_analytics")();
-
-	// Set up the pane resizer.
-	require("./utils/pane_resizer")();
 
 	// Set up the editor and the viewer.
 	const viewerElement = $("#viewer").get(0);
