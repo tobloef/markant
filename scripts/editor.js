@@ -62,7 +62,7 @@
 		}
 		const showLineNumbers = settingsHelper.getSetting("editorShowLineNumbers");
 		if (showLineNumbers != null) {
-			codemirrorConfig.lineNumbers = false;
+			codemirrorConfig.lineNumbers = showLineNumbers;
 		}
 		if (codemirrorConfig.theme != null) {
 			fileLoader.getStyle(`${themeDirectory}/${codemirrorConfig.theme}.css`);
