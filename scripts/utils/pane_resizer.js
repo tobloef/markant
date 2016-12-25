@@ -1,5 +1,6 @@
 ;(function() {
 	const $ = require("jquery");
+	const settingsHelper = require("./settings_helper");
 
 	// jQuery elements
 	const $paneContainer = $("#pane-container");
@@ -31,9 +32,9 @@
 			rightPanePercentage = newRightPanePercentage;
 			$leftPane.width(unit * newLeftPanePercentage);
 			$rightPane.width(unit * newRightPanePercentage);
-			localStorage.setItem("leftPanePercentage", leftPanePercentage);
-			localStorage.setItem("rightPanePercentage", rightPanePercentage);
-			if (codemirror !== null) {
+			settingsHelper.setSetting("leftPanePercentage", leftPanePercentage);
+			settingsHelper.setSetting("rightPanePercentage", rightPanePercentage);
+			if (codemirror != null) {
 				codemirror.refresh();
 			}
 		}
@@ -62,8 +63,8 @@
 			$leftCollapseButton.css("visibility", "visible");
 			$rightCollapseButton.css("visibility", "visible");
 
-			const newLeftPercentage = parseFloat(localStorage.getItem("leftPanePercentage"));
-			const newRightPercentage = parseFloat(localStorage.getItem("rightPanePercentage"));
+			const newLeftPercentage = parseFloat(settingsHelper.getSetting("leftPanePercentage"));
+			const newRightPercentage = parseFloat(settingsHelper.getSetting("rightPanePercentage"));
 			resizePanesToPercentage(newLeftPercentage, newRightPercentage);
 			setCollapseButtonPositions();
 		});

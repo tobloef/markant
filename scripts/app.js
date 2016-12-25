@@ -2,6 +2,7 @@
 	const $ = require("jquery");
 	const scrollSync = require("./utils/scroll_sync");
 	const fileLoader = require("./utils/file_loader");
+	const settingsHelper = require("./utils/settings_helper");
 	require("./utils/document_title")();
 	require("./utils/google_analytics")();
 	require("./utils/modals/modal")();
@@ -23,7 +24,7 @@
 	function onChangeHandler() {
 		const value = editor.codemirror.getValue();
 		// Save the markdown to localStorage.
-		localStorage.setItem("markdown", value);
+		settingsHelper.setSetting("markdown", value);
 
 		// Render the Markdown to the viewer.
 		viewer.render(value, function() {
@@ -39,7 +40,7 @@
 	// When the text in the editor is changed, render the markdown.
 	editor.codemirror.on("change", onChangeHandler);
 
-	const initialMarkdown = localStorage.getItem("markdown");
+	const initialMarkdown = settingsHelper.getSetting("markdown");
 	editor.codemirror.setValue(initialMarkdown);
 
 	// Render any intial Markdown in the editor.

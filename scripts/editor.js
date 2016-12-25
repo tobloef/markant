@@ -64,7 +64,7 @@
 		if (showLineNumbers != null) {
 			codemirrorConfig.lineNumbers = false;
 		}
-		if (codemirrorConfig.theme !== null) {
+		if (codemirrorConfig.theme != null) {
 			fileLoader.getStyle(`${themeDirectory}/${codemirrorConfig.theme}.css`);
 		}
 		const useBigHeaders = settingsHelper.getSetting("editorUseBigHeaders");

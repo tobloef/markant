@@ -1,8 +1,7 @@
 ;(function() {
 	const $ = require("jquery");
+	const settingsHelper = require("./settings_helper");
 
-	// The default title for unnamed documents.
-	const defaultTitle = "Untitled document";
 	// Max width for the input element.
 	const maxWidth = 300;
 	// The amount of extra width to add to the input element.
@@ -25,7 +24,7 @@
 				$input.val(defaultTitle);
 			}
 			oldTitle = $input.val();
-			localStorage.setItem("documentTitle", $input.val());
+			settingsHelper.setSetting("documentTitle", $input.val());
 		});
 
 		$input.on("input change load focusout", function() {
@@ -49,11 +48,9 @@
 	};
 
 	function setup($input, $mirror) {
-		if (localStorage.getItem("documentTitle") !== null) {
-			$input.val(localStorage.getItem("documentTitle"));
-		}
+		$input.val(settingsHelper.getSetting("documentTitle"));
 		if ($input.val() === "") {
-			$input.val(defaultTitle);
+			$input.val(settingsHelper.getDefaultValue("documentTitle"));
 		}
 		oldTitle = $input.val();
 		mirrorWidth($input, $mirror);

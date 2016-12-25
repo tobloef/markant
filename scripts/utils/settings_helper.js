@@ -7,6 +7,10 @@
 		"editorTheme": "light",
 		"editorShowLineNumbers": false,
 		"editorUseBigHeaders": false,
+		"markdown": "",
+		"documentTitle": "Untitled document",
+		"leftPanePercentage": 50,
+		"rightPanePercentage": 50,
 	};
 
 	function getSetting(key) {
@@ -17,20 +21,26 @@
 			console.error(`Error getting setting with key ${key}.`);
 		}
 		if (setting == null) {
-			setting = defaultValues[key];
+			setting = getDefaultValue(key);
 			setSetting(key, setting);
 		}
 		return setting;
 	}
 
 	function setSetting(key, value) {
-		if (value == null && key in defaultValues) {
-			value = defaultValues[key];
+		if (value == null) {
+			value = getDefaultValue(key);
 		}
 		try {
 			localStorage.setItem(key, JSON.stringify(value));
 		} catch (exception) {
 			console.error(`Error saving setting.\nKey: ${key}\nValue: ${value}\n`);
+		}
+	}
+
+	function getDefaultValue(key) {
+		if (key in defaultValues) {
+			return defaultValues[key];
 		}
 	}
 

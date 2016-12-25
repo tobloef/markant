@@ -53368,6 +53368,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	const $ = require("jquery");
 	const scrollSync = require("./utils/scroll_sync");
 	const fileLoader = require("./utils/file_loader");
+	const settingsHelper = require("./utils/settings_helper");
 	require("./utils/document_title")();
 	require("./utils/google_analytics")();
 	require("./utils/modals/modal")();
@@ -53389,7 +53390,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	function onChangeHandler() {
 		const value = editor.codemirror.getValue();
 		// Save the markdown to localStorage.
-		localStorage.setItem("markdown", value);
+		settingsHelper.setSetting("markdown", value);
 
 		// Render the Markdown to the viewer.
 		viewer.render(value, function() {
@@ -53405,14 +53406,14 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	// When the text in the editor is changed, render the markdown.
 	editor.codemirror.on("change", onChangeHandler);
 
-	const initialMarkdown = localStorage.getItem("markdown");
+	const initialMarkdown = settingsHelper.getSetting("markdown");
 	editor.codemirror.setValue(initialMarkdown);
 
 	// Render any intial Markdown in the editor.
 	onChangeHandler();
 }());
 
-},{"./editor":"/home/tobloef/Downloads/markant/scripts/editor.js","./utils/document_title":"/home/tobloef/Downloads/markant/scripts/utils/document_title.js","./utils/file_loader":"/home/tobloef/Downloads/markant/scripts/utils/file_loader.js","./utils/google_analytics":"/home/tobloef/Downloads/markant/scripts/utils/google_analytics.js","./utils/modals/modal":"/home/tobloef/Downloads/markant/scripts/utils/modals/modal.js","./utils/modals/settings_modal":"/home/tobloef/Downloads/markant/scripts/utils/modals/settings_modal.js","./utils/navbar":"/home/tobloef/Downloads/markant/scripts/utils/navbar.js","./utils/pane_resizer":"/home/tobloef/Downloads/markant/scripts/utils/pane_resizer.js","./utils/scroll_sync":"/home/tobloef/Downloads/markant/scripts/utils/scroll_sync.js","./viewer":"/home/tobloef/Downloads/markant/scripts/viewer.js","jquery":"/home/tobloef/Downloads/markant/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/markant/scripts/editor.js":[function(require,module,exports){
+},{"./editor":"/home/tobloef/Downloads/markant/scripts/editor.js","./utils/document_title":"/home/tobloef/Downloads/markant/scripts/utils/document_title.js","./utils/file_loader":"/home/tobloef/Downloads/markant/scripts/utils/file_loader.js","./utils/google_analytics":"/home/tobloef/Downloads/markant/scripts/utils/google_analytics.js","./utils/modals/modal":"/home/tobloef/Downloads/markant/scripts/utils/modals/modal.js","./utils/modals/settings_modal":"/home/tobloef/Downloads/markant/scripts/utils/modals/settings_modal.js","./utils/navbar":"/home/tobloef/Downloads/markant/scripts/utils/navbar.js","./utils/pane_resizer":"/home/tobloef/Downloads/markant/scripts/utils/pane_resizer.js","./utils/scroll_sync":"/home/tobloef/Downloads/markant/scripts/utils/scroll_sync.js","./utils/settings_helper":"/home/tobloef/Downloads/markant/scripts/utils/settings_helper.js","./viewer":"/home/tobloef/Downloads/markant/scripts/viewer.js","jquery":"/home/tobloef/Downloads/markant/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/markant/scripts/editor.js":[function(require,module,exports){
 ;(function() {
 	const fileLoader = require("./utils/file_loader");
 	const CodeMirror = require("codemirror");
@@ -53479,7 +53480,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		if (showLineNumbers != null) {
 			codemirrorConfig.lineNumbers = false;
 		}
-		if (codemirrorConfig.theme !== null) {
+		if (codemirrorConfig.theme != null) {
 			fileLoader.getStyle(`${themeDirectory}/${codemirrorConfig.theme}.css`);
 		}
 		const useBigHeaders = settingsHelper.getSetting("editorUseBigHeaders");
@@ -53517,9 +53518,8 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 },{"./utils/file_loader":"/home/tobloef/Downloads/markant/scripts/utils/file_loader.js","./utils/markdown_emphasis":"/home/tobloef/Downloads/markant/scripts/utils/markdown_emphasis.js","./utils/settings_helper":"/home/tobloef/Downloads/markant/scripts/utils/settings_helper.js","codemirror":"/home/tobloef/Downloads/markant/node_modules/codemirror/lib/codemirror.js","codemirror/addon/edit/continuelist":"/home/tobloef/Downloads/markant/node_modules/codemirror/addon/edit/continuelist.js","codemirror/mode/gfm/gfm":"/home/tobloef/Downloads/markant/node_modules/codemirror/mode/gfm/gfm.js","codemirror/mode/markdown/markdown":"/home/tobloef/Downloads/markant/node_modules/codemirror/mode/markdown/markdown.js","jquery":"/home/tobloef/Downloads/markant/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/markant/scripts/utils/document_title.js":[function(require,module,exports){
 ;(function() {
 	const $ = require("jquery");
+	const settingsHelper = require("./settings_helper");
 
-	// The default title for unnamed documents.
-	const defaultTitle = "Untitled document";
 	// Max width for the input element.
 	const maxWidth = 300;
 	// The amount of extra width to add to the input element.
@@ -53542,7 +53542,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 				$input.val(defaultTitle);
 			}
 			oldTitle = $input.val();
-			localStorage.setItem("documentTitle", $input.val());
+			settingsHelper.setSetting("documentTitle", $input.val());
 		});
 
 		$input.on("input change load focusout", function() {
@@ -53566,11 +53566,9 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 
 	function setup($input, $mirror) {
-		if (localStorage.getItem("documentTitle") !== null) {
-			$input.val(localStorage.getItem("documentTitle"));
-		}
+		$input.val(settingsHelper.getSetting("documentTitle"));
 		if ($input.val() === "") {
-			$input.val(defaultTitle);
+			$input.val(settingsHelper.getDefaultValue("documentTitle"));
 		}
 		oldTitle = $input.val();
 		mirrorWidth($input, $mirror);
@@ -53587,7 +53585,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	}
 }());
 
-},{"jquery":"/home/tobloef/Downloads/markant/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/markant/scripts/utils/file_loader.js":[function(require,module,exports){
+},{"./settings_helper":"/home/tobloef/Downloads/markant/scripts/utils/settings_helper.js","jquery":"/home/tobloef/Downloads/markant/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/markant/scripts/utils/file_loader.js":[function(require,module,exports){
 ;(function() {
 	const $ = require("jquery");
 
@@ -53750,6 +53748,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 },{"jquery":"/home/tobloef/Downloads/markant/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/markant/scripts/utils/pane_resizer.js":[function(require,module,exports){
 ;(function() {
 	const $ = require("jquery");
+	const settingsHelper = require("./settings_helper");
 
 	// jQuery elements
 	const $paneContainer = $("#pane-container");
@@ -53781,9 +53780,9 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			rightPanePercentage = newRightPanePercentage;
 			$leftPane.width(unit * newLeftPanePercentage);
 			$rightPane.width(unit * newRightPanePercentage);
-			localStorage.setItem("leftPanePercentage", leftPanePercentage);
-			localStorage.setItem("rightPanePercentage", rightPanePercentage);
-			if (codemirror !== null) {
+			settingsHelper.setSetting("leftPanePercentage", leftPanePercentage);
+			settingsHelper.setSetting("rightPanePercentage", rightPanePercentage);
+			if (codemirror != null) {
 				codemirror.refresh();
 			}
 		}
@@ -53812,8 +53811,8 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			$leftCollapseButton.css("visibility", "visible");
 			$rightCollapseButton.css("visibility", "visible");
 
-			const newLeftPercentage = parseFloat(localStorage.getItem("leftPanePercentage"));
-			const newRightPercentage = parseFloat(localStorage.getItem("rightPanePercentage"));
+			const newLeftPercentage = parseFloat(settingsHelper.getSetting("leftPanePercentage"));
+			const newRightPercentage = parseFloat(settingsHelper.getSetting("rightPanePercentage"));
 			resizePanesToPercentage(newLeftPercentage, newRightPercentage);
 			setCollapseButtonPositions();
 		});
@@ -53885,7 +53884,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"jquery":"/home/tobloef/Downloads/markant/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/markant/scripts/utils/scroll_sync.js":[function(require,module,exports){
+},{"./settings_helper":"/home/tobloef/Downloads/markant/scripts/utils/settings_helper.js","jquery":"/home/tobloef/Downloads/markant/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/markant/scripts/utils/scroll_sync.js":[function(require,module,exports){
 ;(function() {
 	const $ = require("jquery");
 
@@ -53923,6 +53922,10 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		"editorTheme": "light",
 		"editorShowLineNumbers": false,
 		"editorUseBigHeaders": false,
+		"markdown": "",
+		"documentTitle": "Untitled document",
+		"leftPanePercentage": 50,
+		"rightPanePercentage": 50,
 	};
 
 	function getSetting(key) {
@@ -53933,20 +53936,26 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			console.error(`Error getting setting with key ${key}.`);
 		}
 		if (setting == null) {
-			setting = defaultValues[key];
+			setting = getDefaultValue(key);
 			setSetting(key, setting);
 		}
 		return setting;
 	}
 
 	function setSetting(key, value) {
-		if (value == null && key in defaultValues) {
-			value = defaultValues[key];
+		if (value == null) {
+			value = getDefaultValue(key);
 		}
 		try {
 			localStorage.setItem(key, JSON.stringify(value));
 		} catch (exception) {
 			console.error(`Error saving setting.\nKey: ${key}\nValue: ${value}\n`);
+		}
+	}
+
+	function getDefaultValue(key) {
+		if (key in defaultValues) {
+			return defaultValues[key];
 		}
 	}
 
