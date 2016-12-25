@@ -25,6 +25,7 @@
 				$input.val(defaultTitle);
 			}
 			oldTitle = $input.val();
+			localStorage.setItem("documentTitle", $input.val());
 		});
 
 		$input.on("input change load focusout", function() {
@@ -48,9 +49,12 @@
 	};
 
 	function setup($input, $mirror) {
+		if (localStorage.getItem("documentTitle") !== null) {
+			$input.val(localStorage.getItem("documentTitle"));
+		}
 		if ($input.val() === "") {
-				$input.val(defaultTitle);
-			}
+			$input.val(defaultTitle);
+		}
 		oldTitle = $input.val();
 		mirrorWidth($input, $mirror);
 	}

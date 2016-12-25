@@ -97,7 +97,8 @@ form label {
 	min-width: 0;
 }
 
-form input[type="text"] {
+form input[type="text"],
+form input[type="number"] {
 	display: inline-block;
 	flex: 1;
 	margin-right: 3em;
@@ -118,8 +119,12 @@ form input[type="checkbox"] {
 	margin-right: 0.7em;
 }
 
+form .form-group.smaller-top-margin {
+	margin-top: 5px;
+}
+
 form input[type="checkbox"] + label {
-	padding-top: 0.4em;
+	padding-top: 0.45em;
 }
 
 form select {

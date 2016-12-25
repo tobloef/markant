@@ -4,9 +4,9 @@
 	const fileLoader = require("./utils/file_loader");
 	require("./utils/document_title")();
 	require("./utils/google_analytics")();
-	require("./utils/modal")();
+	require("./utils/modals/modal")();
+	require("./utils/modals/settings_modal")();
 	require("./utils/navbar")();
-	require("./utils/pane_resizer")();
 
 	// Load styles
 	fileLoader.getStyle("build/lib/font-awesome/css/font-awesome.min.css");
@@ -17,9 +17,15 @@
 	const viewer = require("./viewer")(viewerElement);
 	const editor = require("./editor")(editorElement);
 
+	// Set up the pane resizer.
+	require("./utils/pane_resizer")(editor.codemirror);
+
 	function onChangeHandler() {
-		// Render the Markdown based on the text in the editor.
 		const value = editor.codemirror.getValue();
+		// Save the markdown to localStorage.
+		localStorage.setItem("markdown", value);
+
+		// Render the Markdown to the viewer.
 		viewer.render(value, function() {
 			// Sync to the linked scrollbars to match the new content.
 			scrollSync.sync($(".CodeMirror-scroll"), linkedDivs, true);
@@ -32,6 +38,9 @@
 
 	// When the text in the editor is changed, render the markdown.
 	editor.codemirror.on("change", onChangeHandler);
+
+	const initialMarkdown = localStorage.getItem("markdown");
+	editor.codemirror.setValue(initialMarkdown);
 
 	// Render any intial Markdown in the editor.
 	onChangeHandler();

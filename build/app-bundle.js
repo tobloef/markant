@@ -53370,9 +53370,9 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	const fileLoader = require("./utils/file_loader");
 	require("./utils/document_title")();
 	require("./utils/google_analytics")();
-	require("./utils/modal")();
+	require("./utils/modals/modal")();
+	require("./utils/modals/settings_modal")();
 	require("./utils/navbar")();
-	require("./utils/pane_resizer")();
 
 	// Load styles
 	fileLoader.getStyle("build/lib/font-awesome/css/font-awesome.min.css");
@@ -53383,9 +53383,15 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	const viewer = require("./viewer")(viewerElement);
 	const editor = require("./editor")(editorElement);
 
+	// Set up the pane resizer.
+	require("./utils/pane_resizer")(editor.codemirror);
+
 	function onChangeHandler() {
-		// Render the Markdown based on the text in the editor.
 		const value = editor.codemirror.getValue();
+		// Save the markdown to localStorage.
+		localStorage.setItem("markdown", value);
+
+		// Render the Markdown to the viewer.
 		viewer.render(value, function() {
 			// Sync to the linked scrollbars to match the new content.
 			scrollSync.sync($(".CodeMirror-scroll"), linkedDivs, true);
@@ -53399,15 +53405,20 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	// When the text in the editor is changed, render the markdown.
 	editor.codemirror.on("change", onChangeHandler);
 
+	const initialMarkdown = localStorage.getItem("markdown");
+	editor.codemirror.setValue(initialMarkdown);
+
 	// Render any intial Markdown in the editor.
 	onChangeHandler();
 }());
 
-},{"./editor":"/home/tobloef/Downloads/markant/scripts/editor.js","./utils/document_title":"/home/tobloef/Downloads/markant/scripts/utils/document_title.js","./utils/file_loader":"/home/tobloef/Downloads/markant/scripts/utils/file_loader.js","./utils/google_analytics":"/home/tobloef/Downloads/markant/scripts/utils/google_analytics.js","./utils/modal":"/home/tobloef/Downloads/markant/scripts/utils/modal.js","./utils/navbar":"/home/tobloef/Downloads/markant/scripts/utils/navbar.js","./utils/pane_resizer":"/home/tobloef/Downloads/markant/scripts/utils/pane_resizer.js","./utils/scroll_sync":"/home/tobloef/Downloads/markant/scripts/utils/scroll_sync.js","./viewer":"/home/tobloef/Downloads/markant/scripts/viewer.js","jquery":"/home/tobloef/Downloads/markant/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/markant/scripts/editor.js":[function(require,module,exports){
+},{"./editor":"/home/tobloef/Downloads/markant/scripts/editor.js","./utils/document_title":"/home/tobloef/Downloads/markant/scripts/utils/document_title.js","./utils/file_loader":"/home/tobloef/Downloads/markant/scripts/utils/file_loader.js","./utils/google_analytics":"/home/tobloef/Downloads/markant/scripts/utils/google_analytics.js","./utils/modals/modal":"/home/tobloef/Downloads/markant/scripts/utils/modals/modal.js","./utils/modals/settings_modal":"/home/tobloef/Downloads/markant/scripts/utils/modals/settings_modal.js","./utils/navbar":"/home/tobloef/Downloads/markant/scripts/utils/navbar.js","./utils/pane_resizer":"/home/tobloef/Downloads/markant/scripts/utils/pane_resizer.js","./utils/scroll_sync":"/home/tobloef/Downloads/markant/scripts/utils/scroll_sync.js","./viewer":"/home/tobloef/Downloads/markant/scripts/viewer.js","jquery":"/home/tobloef/Downloads/markant/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/markant/scripts/editor.js":[function(require,module,exports){
 ;(function() {
 	const fileLoader = require("./utils/file_loader");
 	const CodeMirror = require("codemirror");
 	const emphasis = require("./utils/markdown_emphasis");
+	const settingsHelper = require("./utils/settings_helper");
+	const $ = require("jquery");
 
 	require("codemirror/mode/markdown/markdown");
 	require("codemirror/mode/gfm/gfm");
@@ -53419,11 +53430,10 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			allowAtxHeaderWithoutSpace: true,
 		},
 		lineWrapping: true,
-		lineNumbers: false,
 		autofocus: true,
 		html: true,
 		value: "",
-		theme: "light",
+		lineNumbers: false,
 		extraKeys: {
 			"Ctrl-B": function(codemirror) {
 				emphasis.handleEmphasis(codemirror, "**");
@@ -53443,11 +53453,50 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	const themeDirectory = "build/lib/codemirror/theme";
 	const useBigHeaders = false;
 
-	// Load the stylesheets for the CodeMirror editor.
-	function loadEditorThemes() {
-		fileLoader.getStyle(`${themeDirectory}/${codemirrorConfig.theme}.css`);
-		if (useBigHeaders) {
+	// Used for converting settings values to actual font-familys.
+	const fontFamilyMap = {
+		"monospace": "monospace",
+		"sans-serif": "sans-serif",
+		"serif": "serif",
+	};
+
+	// Load the user's preferences and apply them to the codemirror config.
+	function loadConfigSettings() {
+		const indentSize = settingsHelper.getSetting("editorIndentSize");
+		if (indentSize != null) {
+			codemirrorConfig.indentUnit = indentSize;
+			codemirrorConfig.tabSize = indentSize;
+		}
+		const theme = settingsHelper.getSetting("editorTheme");
+		if (theme != null) {
+			codemirrorConfig.theme = theme;
+		}
+		const useTabs = settingsHelper.getSetting("editorUseTabs");
+		if (useTabs != null) {
+			codemirrorConfig.indentWithTabs = useTabs;
+		}
+		const showLineNumbers = settingsHelper.getSetting("editorShowLineNumbers");
+		if (showLineNumbers != null) {
+			codemirrorConfig.lineNumbers = false;
+		}
+		if (codemirrorConfig.theme !== null) {
+			fileLoader.getStyle(`${themeDirectory}/${codemirrorConfig.theme}.css`);
+		}
+		const useBigHeaders = settingsHelper.getSetting("editorUseBigHeaders");
+		if (useBigHeaders != null && useBigHeaders) {
 			fileLoader.getStyle(`${themeDirectory}/big_headers.css`);
+		}
+	}
+
+	// Load the user's preferences and apply them to the existing editor object.
+	function loadStyleSettings() {
+		const fontFamily = settingsHelper.getSetting("editorFontFamily");
+		if (fontFamily != null && fontFamily in fontFamilyMap) {
+			$(".CodeMirror").css("font-family", `'${fontFamilyMap[fontFamily]}'`);
+		}
+		const fontSize = settingsHelper.getSetting("editorFontSize");
+		if (fontSize != null) {
+			$(".CodeMirror").css("font-size", fontSize);
 		}
 	}
 
@@ -53456,15 +53505,16 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 		// Set up the CodeMirror editor.
 		if (editorElement) {
+			loadConfigSettings();
 			module.codemirror = new CodeMirror(editorElement, codemirrorConfig);
-			loadEditorThemes();
+			loadStyleSettings();
 		}
 
 		return module;
 	};
 }());
 
-},{"./utils/file_loader":"/home/tobloef/Downloads/markant/scripts/utils/file_loader.js","./utils/markdown_emphasis":"/home/tobloef/Downloads/markant/scripts/utils/markdown_emphasis.js","codemirror":"/home/tobloef/Downloads/markant/node_modules/codemirror/lib/codemirror.js","codemirror/addon/edit/continuelist":"/home/tobloef/Downloads/markant/node_modules/codemirror/addon/edit/continuelist.js","codemirror/mode/gfm/gfm":"/home/tobloef/Downloads/markant/node_modules/codemirror/mode/gfm/gfm.js","codemirror/mode/markdown/markdown":"/home/tobloef/Downloads/markant/node_modules/codemirror/mode/markdown/markdown.js"}],"/home/tobloef/Downloads/markant/scripts/utils/document_title.js":[function(require,module,exports){
+},{"./utils/file_loader":"/home/tobloef/Downloads/markant/scripts/utils/file_loader.js","./utils/markdown_emphasis":"/home/tobloef/Downloads/markant/scripts/utils/markdown_emphasis.js","./utils/settings_helper":"/home/tobloef/Downloads/markant/scripts/utils/settings_helper.js","codemirror":"/home/tobloef/Downloads/markant/node_modules/codemirror/lib/codemirror.js","codemirror/addon/edit/continuelist":"/home/tobloef/Downloads/markant/node_modules/codemirror/addon/edit/continuelist.js","codemirror/mode/gfm/gfm":"/home/tobloef/Downloads/markant/node_modules/codemirror/mode/gfm/gfm.js","codemirror/mode/markdown/markdown":"/home/tobloef/Downloads/markant/node_modules/codemirror/mode/markdown/markdown.js","jquery":"/home/tobloef/Downloads/markant/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/markant/scripts/utils/document_title.js":[function(require,module,exports){
 ;(function() {
 	const $ = require("jquery");
 
@@ -53492,6 +53542,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 				$input.val(defaultTitle);
 			}
 			oldTitle = $input.val();
+			localStorage.setItem("documentTitle", $input.val());
 		});
 
 		$input.on("input change load focusout", function() {
@@ -53515,9 +53566,12 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 
 	function setup($input, $mirror) {
+		if (localStorage.getItem("documentTitle") !== null) {
+			$input.val(localStorage.getItem("documentTitle"));
+		}
 		if ($input.val() === "") {
-				$input.val(defaultTitle);
-			}
+			$input.val(defaultTitle);
+		}
 		oldTitle = $input.val();
 		mirrorWidth($input, $mirror);
 	}
@@ -53613,14 +53667,14 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{}],"/home/tobloef/Downloads/markant/scripts/utils/modal.js":[function(require,module,exports){
+},{}],"/home/tobloef/Downloads/markant/scripts/utils/modals/modal.js":[function(require,module,exports){
 ;(function() {
 	const $ = require("jquery");
 
 	module.exports = function() {
 		const $tabs = $(".modal-tabs > li");
 		const $contents = $(".tab-content");
-		const $close = $(".close-button, .modal-backdrop");
+		const $close = $(".close-modal");
 
 		$close.on("click", function() {
 			$(this).closest(".modal").removeClass("active");
@@ -53634,7 +53688,42 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		});
 	};
 }());
-},{"jquery":"/home/tobloef/Downloads/markant/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/markant/scripts/utils/navbar.js":[function(require,module,exports){
+},{"jquery":"/home/tobloef/Downloads/markant/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/markant/scripts/utils/modals/settings_modal.js":[function(require,module,exports){
+;(function() {
+	const $ = require("jquery");
+	const settingsHelper = require("../settings_helper");
+
+	// Load the settings and set the initial values of the modal items.
+	function loadSettings() {
+		$("#settings-editor-font-family").val(settingsHelper.getSetting("editorFontFamily"));
+		$("#settings-editor-font-size").val(settingsHelper.getSetting("editorFontSize"));
+		$("#settings-editor-indent-size").val(settingsHelper.getSetting("editorIndentSize"));
+		$("#settings-editor-use-tabs").val(settingsHelper.getSetting("editorUseTabs"));
+		$("#settings-editor-theme").val(settingsHelper.getSetting("editorTheme"));
+		$("#settings-editor-show-line-numbers").val(settingsHelper.getSetting("editorShowLineNumbers"));
+	}
+
+	// Save the settings specified in the modal.
+	function saveSettings() {
+		settingsHelper.setSetting("editorFontFamily", $("#settings-editor-font-family").val());
+		settingsHelper.setSetting("editorFontSize", parseInt($("#settings-editor-font-size").val()));
+		settingsHelper.setSetting("editorIndentSize", parseInt($("#settings-editor-indent-size").val()));
+		settingsHelper.setSetting("editorUseTabs", $("#settings-editor-use-tabs").val());
+		settingsHelper.setSetting("editorTheme", $("#settings-editor-theme").val());
+		settingsHelper.setSetting("editorShowLineNumbers", $("#settings-editor-show-line-numbers").val());
+
+	}
+
+	module.exports = function() {
+		loadSettings();
+		$("#modal-settings-save").on("click", function() {
+			saveSettings();
+			$(this).closest(".modal").removeClass("active");
+			window.location.reload();
+		});
+	};
+}());
+},{"../settings_helper":"/home/tobloef/Downloads/markant/scripts/utils/settings_helper.js","jquery":"/home/tobloef/Downloads/markant/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/markant/scripts/utils/navbar.js":[function(require,module,exports){
 ;(function() {
 	const $ = require("jquery");
 
@@ -53672,7 +53761,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	const $viewer = $rightPane.find("#viewer");
 	const $editorScrollbar = $leftPane.find(".CodeMirror-vscrollbar > div").eq(0);
 
-	module.exports = function() {
+	module.exports = function(codemirror) {
 		// Whether the user is draggin the drag bar.
 		let dragging = false;
 
@@ -53686,12 +53775,17 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		// Resize the two panes to percentage sizes.
 		function resizePanesToPercentage(newLeftPanePercentage, newRightPanePercentage) {
 			// Find the pixel width of a single percentage.
-			const unit = $paneContainer.width() / (newLeftPanePercentage + newRightPanePercentage);
+			const unit = $paneContainer.width() / ((newLeftPanePercentage) + (newRightPanePercentage));
 			// Set the panes to the new widths.
-			$leftPane.width(unit * newLeftPanePercentage);
-			$rightPane.width(unit * newRightPanePercentage);
 			leftPanePercentage = newLeftPanePercentage;
 			rightPanePercentage = newRightPanePercentage;
+			$leftPane.width(unit * newLeftPanePercentage);
+			$rightPane.width(unit * newRightPanePercentage);
+			localStorage.setItem("leftPanePercentage", leftPanePercentage);
+			localStorage.setItem("rightPanePercentage", rightPanePercentage);
+			if (codemirror !== null) {
+				codemirror.refresh();
+			}
 		}
 
 		// Set the positions, specifically the horizontal positions, of the two collapse buttons.
@@ -53706,14 +53800,21 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 				rightOffset += 13;
 			}
 			$leftCollapseButton.css("left", `calc(100% - ${rightOffset}px)`);
+			if (leftPanePercentage === 0) {
+				$rightCollapseButton.css("margin-left", "5px");
+			} else {
+				$rightCollapseButton.css("margin-left", "0");
+			}
 		}
 
 		$(document).ready(function() {
 			// Show the collapse buttons and set the panes to their initial size.
 			$leftCollapseButton.css("visibility", "visible");
 			$rightCollapseButton.css("visibility", "visible");
-			// Todo: Load these from previous session.
-			resizePanesToPercentage(50, 50);
+
+			const newLeftPercentage = parseFloat(localStorage.getItem("leftPanePercentage"));
+			const newRightPercentage = parseFloat(localStorage.getItem("rightPanePercentage"));
+			resizePanesToPercentage(newLeftPercentage, newRightPercentage);
 			setCollapseButtonPositions();
 		});
 
@@ -53812,7 +53913,49 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"jquery":"/home/tobloef/Downloads/markant/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/markant/scripts/viewer.js":[function(require,module,exports){
+},{"jquery":"/home/tobloef/Downloads/markant/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/markant/scripts/utils/settings_helper.js":[function(require,module,exports){
+;(function() {
+	const defaultValues = {
+		"editorFontFamily": "monospace",
+		"editorFontSize": 13,
+		"editorIndentSize": 4,
+		"editorUseTabs": true,
+		"editorTheme": "light",
+		"editorShowLineNumbers": false,
+		"editorUseBigHeaders": false,
+	};
+
+	function getSetting(key) {
+		let setting;
+		try {
+			setting = JSON.parse(localStorage.getItem(key));
+		} catch (exception) {
+			console.error(`Error getting setting with key ${key}.`);
+		}
+		if (setting == null) {
+			setting = defaultValues[key];
+			setSetting(key, setting);
+		}
+		return setting;
+	}
+
+	function setSetting(key, value) {
+		if (value == null && key in defaultValues) {
+			value = defaultValues[key];
+		}
+		try {
+			localStorage.setItem(key, JSON.stringify(value));
+		} catch (exception) {
+			console.error(`Error saving setting.\nKey: ${key}\nValue: ${value}\n`);
+		}
+	}
+
+	module.exports = {
+		getSetting,
+		setSetting
+	};
+}());
+},{}],"/home/tobloef/Downloads/markant/scripts/viewer.js":[function(require,module,exports){
 ;(function() {
 	const fileLoader = require("./utils/file_loader");
 	const hljs = require("highlight.js");

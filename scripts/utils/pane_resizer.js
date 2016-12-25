@@ -11,7 +11,7 @@
 	const $viewer = $rightPane.find("#viewer");
 	const $editorScrollbar = $leftPane.find(".CodeMirror-vscrollbar > div").eq(0);
 
-	module.exports = function() {
+	module.exports = function(codemirror) {
 		// Whether the user is draggin the drag bar.
 		let dragging = false;
 
@@ -25,12 +25,17 @@
 		// Resize the two panes to percentage sizes.
 		function resizePanesToPercentage(newLeftPanePercentage, newRightPanePercentage) {
 			// Find the pixel width of a single percentage.
-			const unit = $paneContainer.width() / (newLeftPanePercentage + newRightPanePercentage);
+			const unit = $paneContainer.width() / ((newLeftPanePercentage) + (newRightPanePercentage));
 			// Set the panes to the new widths.
-			$leftPane.width(unit * newLeftPanePercentage);
-			$rightPane.width(unit * newRightPanePercentage);
 			leftPanePercentage = newLeftPanePercentage;
 			rightPanePercentage = newRightPanePercentage;
+			$leftPane.width(unit * newLeftPanePercentage);
+			$rightPane.width(unit * newRightPanePercentage);
+			localStorage.setItem("leftPanePercentage", leftPanePercentage);
+			localStorage.setItem("rightPanePercentage", rightPanePercentage);
+			if (codemirror !== null) {
+				codemirror.refresh();
+			}
 		}
 
 		// Set the positions, specifically the horizontal positions, of the two collapse buttons.
@@ -45,14 +50,21 @@
 				rightOffset += 13;
 			}
 			$leftCollapseButton.css("left", `calc(100% - ${rightOffset}px)`);
+			if (leftPanePercentage === 0) {
+				$rightCollapseButton.css("margin-left", "5px");
+			} else {
+				$rightCollapseButton.css("margin-left", "0");
+			}
 		}
 
 		$(document).ready(function() {
 			// Show the collapse buttons and set the panes to their initial size.
 			$leftCollapseButton.css("visibility", "visible");
 			$rightCollapseButton.css("visibility", "visible");
-			// Todo: Load these from previous session.
-			resizePanesToPercentage(50, 50);
+
+			const newLeftPercentage = parseFloat(localStorage.getItem("leftPanePercentage"));
+			const newRightPercentage = parseFloat(localStorage.getItem("rightPanePercentage"));
+			resizePanesToPercentage(newLeftPercentage, newRightPercentage);
 			setCollapseButtonPositions();
 		});
 
