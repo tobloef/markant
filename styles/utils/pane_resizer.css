@@ -4,6 +4,7 @@
 	float: right;
 	height: 100%;
 	background: #d3d3d3;
+	background: -webkit-linear-gradient(left, #d3d3d3, #fff);
     background: linear-gradient(to right, #d3d3d3, #fff);
 }
 
@@ -28,6 +29,7 @@
 	padding: 20px 0;
 	border-radius: 3px;
 	opacity: 0.3;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
 }
 
 .collapse-button > div i {
@@ -39,8 +41,10 @@
 .collapse-button > div:hover {
 	background-color: #bbb;
 	opacity: 0.8;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
 }
 
 .collapse-button > div:active {
 	opacity: 1;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
 }
