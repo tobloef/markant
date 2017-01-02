@@ -36,17 +36,9 @@
 	};
 
 	const themeDirectory = "build/lib/codemirror/theme";
-	const useBigHeaders = false;
-
-	// Used for converting settings values to actual font-familys.
-	const fontFamilyMap = {
-		"monospace": "monospace",
-		"sans-serif": "sans-serif",
-		"serif": "serif",
-	};
 
 	// Load the user's preferences and apply them to the codemirror config.
-	function loadConfigSettings() {
+	function loadUserSettings() {
 		const indentSize = settingsHelper.getSetting("editorIndentSize");
 		if (indentSize != null) {
 			codemirrorConfig.indentUnit = indentSize;
@@ -67,17 +59,17 @@
 		if (codemirrorConfig.theme != null) {
 			fileLoader.getStyle(`${themeDirectory}/${codemirrorConfig.theme}.css`);
 		}
-		const useBigHeaders = settingsHelper.getSetting("editorUseBigHeaders");
+		const useBigHeaders = settingsHelper.getSetting("editorBigHeaders");
 		if (useBigHeaders != null && useBigHeaders) {
 			fileLoader.getStyle(`${themeDirectory}/big_headers.css`);
 		}
 	}
 
-	// Load the user's preferences and apply them to the existing editor object.
+	// Load the user's preferences and apply them to the existing editor element.
 	function loadStyleSettings() {
 		const fontFamily = settingsHelper.getSetting("editorFontFamily");
-		if (fontFamily != null && fontFamily in fontFamilyMap) {
-			$(".CodeMirror").css("font-family", `'${fontFamilyMap[fontFamily]}'`);
+		if (fontFamily != null && fontFamily in settingsHelper.fontFamilyMap) {
+			$(".CodeMirror").css("font-family", `'${settingsHelper.fontFamilyMap[fontFamily]}'`);
 		}
 		const fontSize = settingsHelper.getSetting("editorFontSize");
 		if (fontSize != null) {
@@ -90,7 +82,7 @@
 
 		// Set up the CodeMirror editor.
 		if (editorElement) {
-			loadConfigSettings();
+			loadUserSettings();
 			module.codemirror = new CodeMirror(editorElement, codemirrorConfig);
 			loadStyleSettings();
 		}

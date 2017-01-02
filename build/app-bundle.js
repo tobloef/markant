@@ -53452,17 +53452,9 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 
 	const themeDirectory = "build/lib/codemirror/theme";
-	const useBigHeaders = false;
-
-	// Used for converting settings values to actual font-familys.
-	const fontFamilyMap = {
-		"monospace": "monospace",
-		"sans-serif": "sans-serif",
-		"serif": "serif",
-	};
 
 	// Load the user's preferences and apply them to the codemirror config.
-	function loadConfigSettings() {
+	function loadUserSettings() {
 		const indentSize = settingsHelper.getSetting("editorIndentSize");
 		if (indentSize != null) {
 			codemirrorConfig.indentUnit = indentSize;
@@ -53483,17 +53475,17 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		if (codemirrorConfig.theme != null) {
 			fileLoader.getStyle(`${themeDirectory}/${codemirrorConfig.theme}.css`);
 		}
-		const useBigHeaders = settingsHelper.getSetting("editorUseBigHeaders");
+		const useBigHeaders = settingsHelper.getSetting("editorBigHeaders");
 		if (useBigHeaders != null && useBigHeaders) {
 			fileLoader.getStyle(`${themeDirectory}/big_headers.css`);
 		}
 	}
 
-	// Load the user's preferences and apply them to the existing editor object.
+	// Load the user's preferences and apply them to the existing editor element.
 	function loadStyleSettings() {
 		const fontFamily = settingsHelper.getSetting("editorFontFamily");
-		if (fontFamily != null && fontFamily in fontFamilyMap) {
-			$(".CodeMirror").css("font-family", `'${fontFamilyMap[fontFamily]}'`);
+		if (fontFamily != null && fontFamily in settingsHelper.fontFamilyMap) {
+			$(".CodeMirror").css("font-family", `'${settingsHelper.fontFamilyMap[fontFamily]}'`);
 		}
 		const fontSize = settingsHelper.getSetting("editorFontSize");
 		if (fontSize != null) {
@@ -53506,7 +53498,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 		// Set up the CodeMirror editor.
 		if (editorElement) {
-			loadConfigSettings();
+			loadUserSettings();
 			module.codemirror = new CodeMirror(editorElement, codemirrorConfig);
 			loadStyleSettings();
 		}
@@ -53693,22 +53685,58 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 	// Load the settings and set the initial values of the modal items.
 	function loadSettings() {
+		loadGeneralSettings();
+		loadEditorSettings();
+		loadViewerSettings();
+	}
+
+	function loadGeneralSettings() {
+
+	}
+
+	function loadEditorSettings() {
 		$("#settings-editor-font-family").val(settingsHelper.getSetting("editorFontFamily"));
 		$("#settings-editor-font-size").val(settingsHelper.getSetting("editorFontSize"));
 		$("#settings-editor-indent-size").val(settingsHelper.getSetting("editorIndentSize"));
 		$("#settings-editor-use-tabs").prop("checked", settingsHelper.getSetting("editorUseTabs"));
 		$("#settings-editor-theme").val(settingsHelper.getSetting("editorTheme"));
 		$("#settings-editor-show-line-numbers").prop("checked", settingsHelper.getSetting("editorShowLineNumbers"));
+		$("#settings-editor-show-big-headers").prop("checked", settingsHelper.getSetting("editorBigHeaders"));
+	}
+
+	function loadViewerSettings() {
+		$("#settings-viewer-font-family").val(settingsHelper.getSetting("viewerFontFamily"));
+		$("#settings-viewer-font-size").val(settingsHelper.getSetting("viewerFontSize"));
+		$("#settings-viewer-hljs-theme").val(settingsHelper.getSetting("viewerHljsTheme"));
+		$("#settings-viewer-math-renderer").val(settingsHelper.getSetting("viewerMathRenderer"));
 	}
 
 	// Save the settings specified in the modal.
 	function saveSettings() {
+		saveGeneralSettings();
+		saveEditorSettings();
+		saveViewerSettings();
+	}
+
+	function saveGeneralSettings() {
+
+	}
+
+	function saveEditorSettings() {
 		settingsHelper.setSetting("editorFontFamily", $("#settings-editor-font-family").val());
 		settingsHelper.setSetting("editorFontSize", parseInt($("#settings-editor-font-size").val()));
 		settingsHelper.setSetting("editorIndentSize", parseInt($("#settings-editor-indent-size").val()));
 		settingsHelper.setSetting("editorUseTabs", $("#settings-editor-use-tabs").prop("checked"));
 		settingsHelper.setSetting("editorTheme", $("#settings-editor-theme").val());
 		settingsHelper.setSetting("editorShowLineNumbers", $("#settings-editor-show-line-numbers").prop("checked"));
+		settingsHelper.setSetting("editorBigHeader", $("#settings-editor-big-headers").prop("checked"));
+	}
+
+	function saveViewerSettings() {
+		settingsHelper.setSetting("viewerFontFamily", $("#settings-viewer-font-family").val());
+		settingsHelper.setSetting("viewerFontSize", parseInt($("#settings-viewer-font-size").val()));
+		settingsHelper.setSetting("viewerHljsTheme", $("#settings-viewer-hljs-theme").val());
+		settingsHelper.setSetting("viewerMathRenderer", $("#settings-viewer-math-renderer").val());
 	}
 
 	module.exports = function() {
@@ -53921,10 +53949,22 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		"editorTheme": "light",
 		"editorShowLineNumbers": false,
 		"editorUseBigHeaders": false,
+		"editorBigHeaders": false,
+		"viewerFontFamily": "sans-serif",
+		"viewerFontSize": 16,
+		"viewerHljsTheme": "default",
+		"viewerMathRenderer": "katex",
 		"markdown": "",
 		"documentTitle": "Untitled document",
 		"leftPanePercentage": 50,
 		"rightPanePercentage": 50,
+	};
+
+	// Used for converting settings values to actual font-familys.
+	const fontFamilyMap = {
+		"monospace": "monospace",
+		"sans-serif": "sans-serif",
+		"serif": "serif",
 	};
 
 	function getSetting(key) {
@@ -53932,9 +53972,9 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		try {
 			setting = JSON.parse(localStorage.getItem(key));
 		} catch (exception) {
-			console.error(`Error getting setting with key ${key}.`);
+			// Ignored
 		}
-		if (setting == null) {
+		if (setting == null || settings == "") {
 			setting = getDefaultValue(key);
 			setSetting(key, setting);
 		}
@@ -53960,12 +54000,15 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 	module.exports = {
 		getSetting,
-		setSetting
+		setSetting,
+		fontFamilyMap
 	};
 }());
 },{}],"/home/tobloef/Downloads/markant/scripts/viewer.js":[function(require,module,exports){
 ;(function() {
 	const fileLoader = require("./utils/file_loader");
+	const settingsHelper = require("./utils/settings_helper");
+	const $ = require("jquery");
 	const hljs = require("highlight.js");
 	const markdown = require("markdown-it")({
 		html: true,
@@ -53998,20 +54041,6 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		removeUnbalanced: true,
 		img: "",
 	});
-	if (mathRenderer.toLowerCase() === "katex") {
-		markdown.use(katex);
-	} else if (mathRenderer.toLowerCase() === "mathjax") {
-		markdown.use(mathjax);
-		fileLoader.getScript(mathjaxUrl, function() {
-			MathJax.Hub.Config({
-				messageStyle: "none",
-			});
-			mathjaxReady = true;
-		});
-	}
-
-	// Get the required highlight.js style.
-	fileLoader.getStyle(`build/lib/highlight.js/styles/${hljsStyle}.css`);
 
 	// Render the specified Markdown and insert the resulting HTML into the viewer.
 	function render(markdownString, callback) {
@@ -54036,6 +54065,40 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		}, renderDelay);
 	}
 
+	// Load the user's preferences and apply them to markdown-it.
+	function loadUserSettings() {
+		const mathRenderer = settingsHelper.getSetting("editorMathRenderer");
+		if (mathRenderer != null) {
+			if (mathRenderer.toLowerCase() === "katex") {
+				markdown.use(katex);
+			} else if (mathRenderer.toLowerCase() === "mathjax") {
+				markdown.use(mathjax);
+				fileLoader.getScript(mathjaxUrl, function() {
+					MathJax.Hub.Config({
+						messageStyle: "none",
+					});
+					mathjaxReady = true;
+				});
+			}
+		}
+		const hljsTheme = settingsHelper.getSetting("viewerHljsTheme");
+		if (hljsTheme != null) {
+			fileLoader.getStyle(`build/lib/highlight.js/styles/${hljsTheme}.css`);
+		}
+	}
+
+	// Load the user's preferences and apply them to the existing viewer element.
+	function loadStyleSettings() {
+		const fontFamily = settingsHelper.getSetting("viewerFontFamily");
+		if (fontFamily != null && fontFamily in settingsHelper.fontFamilyMap) {
+			$(viewer).css("font-family", `'${settingsHelper.fontFamilyMap[fontFamily]}'`);
+		}
+		const fontSize = settingsHelper.getSetting("viewerFontSize");
+		if (fontSize != null) {
+			$(viewer).css("font-size", fontSize);
+		}
+	}
+
 	// Highlight code snippets with highlight.js
 	function highlight(str, lang) {
 		if (lang && hljs.getLanguage(lang)) {
@@ -54051,7 +54114,8 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 	module.exports = function(viewerElement) {
 		viewer = viewerElement;
-
+		loadUserSettings();
+		loadStyleSettings();
 		if (useDelayedRendering) {
 			module.render = delayedRender;
 		} else {
@@ -54062,7 +54126,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"./utils/file_loader":"/home/tobloef/Downloads/markant/scripts/utils/file_loader.js","highlight.js":"/home/tobloef/Downloads/markant/node_modules/highlight.js/lib/index.js","markdown-it":"/home/tobloef/Downloads/markant/node_modules/markdown-it/index.js","markdown-it-katex":"/home/tobloef/Downloads/markant/node_modules/markdown-it-katex/index.js","markdown-it-lazy-headers":"/home/tobloef/Downloads/markant/node_modules/markdown-it-lazy-headers/index.js","markdown-it-mathjax":"/home/tobloef/Downloads/markant/node_modules/markdown-it-mathjax/markdown-it-mathjax.js","markdown-it-sanitizer":"/home/tobloef/Downloads/markant/node_modules/markdown-it-sanitizer/index.js"}]},{},["/home/tobloef/Downloads/markant/scripts/app.js"])
+},{"./utils/file_loader":"/home/tobloef/Downloads/markant/scripts/utils/file_loader.js","./utils/settings_helper":"/home/tobloef/Downloads/markant/scripts/utils/settings_helper.js","highlight.js":"/home/tobloef/Downloads/markant/node_modules/highlight.js/lib/index.js","jquery":"/home/tobloef/Downloads/markant/node_modules/jquery/dist/jquery.js","markdown-it":"/home/tobloef/Downloads/markant/node_modules/markdown-it/index.js","markdown-it-katex":"/home/tobloef/Downloads/markant/node_modules/markdown-it-katex/index.js","markdown-it-lazy-headers":"/home/tobloef/Downloads/markant/node_modules/markdown-it-lazy-headers/index.js","markdown-it-mathjax":"/home/tobloef/Downloads/markant/node_modules/markdown-it-mathjax/markdown-it-mathjax.js","markdown-it-sanitizer":"/home/tobloef/Downloads/markant/node_modules/markdown-it-sanitizer/index.js"}]},{},["/home/tobloef/Downloads/markant/scripts/app.js"])
 
 
 //# sourceMappingURL=app-bundle.js.map

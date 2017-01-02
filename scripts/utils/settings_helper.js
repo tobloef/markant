@@ -7,10 +7,22 @@
 		"editorTheme": "light",
 		"editorShowLineNumbers": false,
 		"editorUseBigHeaders": false,
+		"editorBigHeaders": false,
+		"viewerFontFamily": "sans-serif",
+		"viewerFontSize": 16,
+		"viewerHljsTheme": "default",
+		"viewerMathRenderer": "katex",
 		"markdown": "",
 		"documentTitle": "Untitled document",
 		"leftPanePercentage": 50,
 		"rightPanePercentage": 50,
+	};
+
+	// Used for converting settings values to actual font-familys.
+	const fontFamilyMap = {
+		"monospace": "monospace",
+		"sans-serif": "sans-serif",
+		"serif": "serif",
 	};
 
 	function getSetting(key) {
@@ -18,9 +30,9 @@
 		try {
 			setting = JSON.parse(localStorage.getItem(key));
 		} catch (exception) {
-			console.error(`Error getting setting with key ${key}.`);
+			// Ignored
 		}
-		if (setting == null) {
+		if (setting == null || settings == "") {
 			setting = getDefaultValue(key);
 			setSetting(key, setting);
 		}
@@ -46,6 +58,7 @@
 
 	module.exports = {
 		getSetting,
-		setSetting
+		setSetting,
+		fontFamilyMap
 	};
 }());

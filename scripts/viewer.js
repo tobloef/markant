@@ -1,5 +1,7 @@
 ;(function() {
 	const fileLoader = require("./utils/file_loader");
+	const settingsHelper = require("./utils/settings_helper");
+	const $ = require("jquery");
 	const hljs = require("highlight.js");
 	const markdown = require("markdown-it")({
 		html: true,
@@ -32,20 +34,6 @@
 		removeUnbalanced: true,
 		img: "",
 	});
-	if (mathRenderer.toLowerCase() === "katex") {
-		markdown.use(katex);
-	} else if (mathRenderer.toLowerCase() === "mathjax") {
-		markdown.use(mathjax);
-		fileLoader.getScript(mathjaxUrl, function() {
-			MathJax.Hub.Config({
-				messageStyle: "none",
-			});
-			mathjaxReady = true;
-		});
-	}
-
-	// Get the required highlight.js style.
-	fileLoader.getStyle(`build/lib/highlight.js/styles/${hljsStyle}.css`);
 
 	// Render the specified Markdown and insert the resulting HTML into the viewer.
 	function render(markdownString, callback) {
@@ -70,6 +58,40 @@
 		}, renderDelay);
 	}
 
+	// Load the user's preferences and apply them to markdown-it.
+	function loadUserSettings() {
+		const mathRenderer = settingsHelper.getSetting("editorMathRenderer");
+		if (mathRenderer != null) {
+			if (mathRenderer.toLowerCase() === "katex") {
+				markdown.use(katex);
+			} else if (mathRenderer.toLowerCase() === "mathjax") {
+				markdown.use(mathjax);
+				fileLoader.getScript(mathjaxUrl, function() {
+					MathJax.Hub.Config({
+						messageStyle: "none",
+					});
+					mathjaxReady = true;
+				});
+			}
+		}
+		const hljsTheme = settingsHelper.getSetting("viewerHljsTheme");
+		if (hljsTheme != null) {
+			fileLoader.getStyle(`build/lib/highlight.js/styles/${hljsTheme}.css`);
+		}
+	}
+
+	// Load the user's preferences and apply them to the existing viewer element.
+	function loadStyleSettings() {
+		const fontFamily = settingsHelper.getSetting("viewerFontFamily");
+		if (fontFamily != null && fontFamily in settingsHelper.fontFamilyMap) {
+			$(viewer).css("font-family", `'${settingsHelper.fontFamilyMap[fontFamily]}'`);
+		}
+		const fontSize = settingsHelper.getSetting("viewerFontSize");
+		if (fontSize != null) {
+			$(viewer).css("font-size", fontSize);
+		}
+	}
+
 	// Highlight code snippets with highlight.js
 	function highlight(str, lang) {
 		if (lang && hljs.getLanguage(lang)) {
@@ -85,7 +107,8 @@
 
 	module.exports = function(viewerElement) {
 		viewer = viewerElement;
-
+		loadUserSettings();
+		loadStyleSettings();
 		if (useDelayedRendering) {
 			module.render = delayedRender;
 		} else {

@@ -32,8 +32,14 @@
 }
 
 .navbar-item a {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   text-decoration: none;
   height: 100%;
@@ -67,6 +73,8 @@
 
 .dropdown-content a {
   color: #333333;
+  -webkit-box-pack: start;
+  -ms-flex-pack: start;
   justify-content: flex-start;
   padding-left: 20px;
 }
@@ -93,7 +101,11 @@
 }
 
 .document-title-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   height: 100%;
   padding-left: 10px;
@@ -136,6 +148,7 @@
   float: right;
   height: 100%;
   background: #d3d3d3;
+  background: -webkit-linear-gradient(left, #d3d3d3, #fff);
   background: linear-gradient(to right, #d3d3d3, #fff);
 }
 
@@ -160,6 +173,7 @@
   padding: 20px 0;
   border-radius: 3px;
   opacity: 0.3;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
 }
 
 .collapse-button > div i {
@@ -171,10 +185,12 @@
 .collapse-button > div:hover {
   background-color: #bbb;
   opacity: 0.8;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
 }
 
 .collapse-button > div:active {
   opacity: 1;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
 }
 
 .modal {
@@ -240,6 +256,7 @@
 .modal-backdrop {
   background: #000;
   opacity: 0.5;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
   position: fixed;
   top: 0;
   right: 0;
@@ -2107,7 +2124,12 @@ form .form-group + .form-group {
 
 .form-group {
   width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
   flex-direction: row;
 }
 
@@ -2120,17 +2142,24 @@ form .control-label {
   width: 10em;
   min-width: 5em;
   color: #333;
+  -webkit-box-flex: 0.5;
+  -ms-flex: 0.5;
   flex: 0.5;
 }
 
 form label {
   -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   min-width: 0;
 }
 
 form input[type="text"],
 form input[type="number"] {
   display: inline-block;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
   flex: 1;
   margin-right: 3em;
   border-radius: 3px;
@@ -2161,6 +2190,8 @@ form input[type="checkbox"] + label {
 form select {
   min-width: 0;
   display: inline-block;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
   flex: 1;
   margin-right: 3em;
   border-radius: 3px;
