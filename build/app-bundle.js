@@ -53451,6 +53451,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		},
 	};
 
+	// Directory for CodeMirror CSS styles.
 	const themeDirectory = "build/lib/codemirror/theme";
 
 	// Load the user's preferences and apply them to the codemirror config.
@@ -53521,6 +53522,8 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	// Class for the title mirror element.
 	const mirrorClass = "document-title-mirror";
 
+	let documentTitle;
+
 	module.exports = function() {
 		const $input = $(`.${inputClass}`);
 		const $mirror = $(`.${mirrorClass}`);
@@ -53531,7 +53534,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 		$input.on("focusout", function(event) {
 			if ($input.val() === "") {
-				$input.val(defaultTitle);
+				$input.val(settingsHelper.getDefaultValue("documentTitle"));
 			}
 			oldTitle = $input.val();
 			settingsHelper.setSetting("documentTitle", $input.val());
@@ -53542,7 +53545,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		});
 
 		$input.on("focus", function(event) {
-			if ($input.val() === defaultTitle) {
+			if ($input.val() === settingsHelper.getDefaultValue("documentTitle")) {
 				$input.select();
 			}
 		});
@@ -53705,6 +53708,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	}
 
 	function loadViewerSettings() {
+		$("#settings-viewer-theme").val(settingsHelper.getSetting("viewerTheme"));
 		$("#settings-viewer-font-family").val(settingsHelper.getSetting("viewerFontFamily"));
 		$("#settings-viewer-font-size").val(settingsHelper.getSetting("viewerFontSize"));
 		$("#settings-viewer-hljs-theme").val(settingsHelper.getSetting("viewerHljsTheme"));
@@ -53733,6 +53737,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	}
 
 	function saveViewerSettings() {
+		settingsHelper.setSetting("viewerTheme", $("#settings-viewer-theme").val());
 		settingsHelper.setSetting("viewerFontFamily", $("#settings-viewer-font-family").val());
 		settingsHelper.setSetting("viewerFontSize", parseInt($("#settings-viewer-font-size").val()));
 		settingsHelper.setSetting("viewerHljsTheme", $("#settings-viewer-hljs-theme").val());
@@ -53954,6 +53959,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		"viewerFontSize": 16,
 		"viewerHljsTheme": "default",
 		"viewerMathRenderer": "katex",
+		"viewerTheme": "light",
 		"markdown": "",
 		"documentTitle": "Untitled document",
 		"leftPanePercentage": 50,
@@ -53974,7 +53980,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		} catch (exception) {
 			// Ignored
 		}
-		if (setting == null || settings == "") {
+		if (setting == null || setting == "") {
 			setting = getDefaultValue(key);
 			setSetting(key, setting);
 		}
@@ -54001,7 +54007,8 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	module.exports = {
 		getSetting,
 		setSetting,
-		fontFamilyMap
+		fontFamilyMap,
+		getDefaultValue
 	};
 }());
 },{}],"/home/tobloef/Downloads/markant/scripts/viewer.js":[function(require,module,exports){
@@ -54029,6 +54036,8 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	const hljsStyle = "monokai";
 	// Url for the MathJax CDN.
 	const mathjaxUrl = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+	// Directory for styles for the viewer.
+	const themeDirectory = "build/viewer/themes";
 
 	let renderTimeout;
 	let viewer;
@@ -54084,6 +54093,10 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		const hljsTheme = settingsHelper.getSetting("viewerHljsTheme");
 		if (hljsTheme != null) {
 			fileLoader.getStyle(`build/lib/highlight.js/styles/${hljsTheme}.css`);
+		}
+		const viewerTheme = settingsHelper.getSetting("viewerTheme");
+		if (viewerTheme != null) {
+			fileLoader.getStyle(`${themeDirectory}/${viewerTheme}.css`);
 		}
 	}
 

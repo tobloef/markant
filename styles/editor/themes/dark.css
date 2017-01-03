@@ -1,0 +1,9 @@
+#editor-pane {
+	background-color: #222;
+}
+
+#editor > .CodeMirror {
+	background-color: inherit;
+	color: white;
+}
+

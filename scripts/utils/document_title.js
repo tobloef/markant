@@ -11,6 +11,8 @@
 	// Class for the title mirror element.
 	const mirrorClass = "document-title-mirror";
 
+	let documentTitle;
+
 	module.exports = function() {
 		const $input = $(`.${inputClass}`);
 		const $mirror = $(`.${mirrorClass}`);
@@ -21,7 +23,7 @@
 
 		$input.on("focusout", function(event) {
 			if ($input.val() === "") {
-				$input.val(defaultTitle);
+				$input.val(settingsHelper.getDefaultValue("documentTitle"));
 			}
 			oldTitle = $input.val();
 			settingsHelper.setSetting("documentTitle", $input.val());
@@ -32,7 +34,7 @@
 		});
 
 		$input.on("focus", function(event) {
-			if ($input.val() === defaultTitle) {
+			if ($input.val() === settingsHelper.getDefaultValue("documentTitle")) {
 				$input.select();
 			}
 		});

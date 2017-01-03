@@ -4,5 +4,6 @@
 
 #editor > .CodeMirror {
 	background-color: inherit;
+	color: black;
 }
 

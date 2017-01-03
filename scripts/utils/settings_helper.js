@@ -12,6 +12,7 @@
 		"viewerFontSize": 16,
 		"viewerHljsTheme": "default",
 		"viewerMathRenderer": "katex",
+		"viewerTheme": "light",
 		"markdown": "",
 		"documentTitle": "Untitled document",
 		"leftPanePercentage": 50,
@@ -32,7 +33,7 @@
 		} catch (exception) {
 			// Ignored
 		}
-		if (setting == null || settings == "") {
+		if (setting == null || setting == "") {
 			setting = getDefaultValue(key);
 			setSetting(key, setting);
 		}
@@ -59,6 +60,7 @@
 	module.exports = {
 		getSetting,
 		setSetting,
-		fontFamilyMap
+		fontFamilyMap,
+		getDefaultValue
 	};
 }());

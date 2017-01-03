@@ -35,6 +35,7 @@
 		},
 	};
 
+	// Directory for CodeMirror CSS styles.
 	const themeDirectory = "build/lib/codemirror/theme";
 
 	// Load the user's preferences and apply them to the codemirror config.

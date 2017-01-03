@@ -22,6 +22,8 @@
 	const hljsStyle = "monokai";
 	// Url for the MathJax CDN.
 	const mathjaxUrl = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+	// Directory for styles for the viewer.
+	const themeDirectory = "build/viewer/themes";
 
 	let renderTimeout;
 	let viewer;
@@ -77,6 +79,10 @@
 		const hljsTheme = settingsHelper.getSetting("viewerHljsTheme");
 		if (hljsTheme != null) {
 			fileLoader.getStyle(`build/lib/highlight.js/styles/${hljsTheme}.css`);
+		}
+		const viewerTheme = settingsHelper.getSetting("viewerTheme");
+		if (viewerTheme != null) {
+			fileLoader.getStyle(`${themeDirectory}/${viewerTheme}.css`);
 		}
 	}
 

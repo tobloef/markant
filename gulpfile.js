@@ -17,7 +17,7 @@ const parentDestDir = "./build";
 const scriptEntryPoints = ["app"];
 const styleEntryPoints = ["app"];
 
-gulp.task("default", ["browserify", "bundle-styles", "font-awesome", "codemirror-themes", "hljs-styles"]);
+gulp.task("default", ["browserify", "bundle-styles", "font-awesome", "codemirror-themes", "hljs-styles", "viewer-themes"]);
 
 gulp.task("browserify", function() {
 	scriptEntryPoints.forEach(function(file) {
@@ -78,6 +78,12 @@ gulp.task("codemirror-themes", function() {
 gulp.task("hljs-styles", function() {
 	const destDir = `${parentDestDir}/lib/highlight.js/styles`;
 	gulp.src("node_modules/highlight.js/styles/*.css")
+		.pipe(gulp.dest(destDir));
+});
+
+gulp.task("viewer-themes", function() {
+	const destDir = `${parentDestDir}/viewer/themes/`;
+	gulp.src("styles/viewer/themes/*.css")
 		.pipe(gulp.dest(destDir));
 });
 
