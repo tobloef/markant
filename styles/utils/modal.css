@@ -53,9 +53,8 @@
 	border-top: 1px solid #e5e5e5;
 }
 
-.modal-footer button + button {
-	margin-left: 5px;
-	margin-bottom: 0;
+.modal-footer .button {
+	margin: 0 5px;
 }
 
 .modal-backdrop {

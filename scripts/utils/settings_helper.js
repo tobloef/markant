@@ -57,10 +57,17 @@
 		}
 	}
 
+	function reset() {
+		for (let key in defaultValues) {
+			setSetting(key, getDefaultValue(key));
+		}
+	}
+
 	module.exports = {
 		getSetting,
 		setSetting,
 		fontFamilyMap,
-		getDefaultValue
+		getDefaultValue,
+		reset
 	};
 }());

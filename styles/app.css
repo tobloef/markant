@@ -35,12 +35,12 @@ html, body {
 	border: 1px solid #ccc;
 	background-color: white;
 	color: black;
-	width: 75px;
-	height: 2.5em;
+	height: 3em;
 	border-radius: 3px;
 	outline: 0;
 	cursor: pointer;
 	font-size: 0.9em;
+	padding: 0 13px;
 }
 
 .button:hover {
@@ -63,6 +63,10 @@ html, body {
 
 .button.dark:active {
 	background-color: #222222;
+}
+
+.button .fa {
+	margin-right: 7px;
 }
 
 /* Forms */

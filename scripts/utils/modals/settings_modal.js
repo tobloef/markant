@@ -60,12 +60,23 @@
 		settingsHelper.setSetting("viewerMathRenderer", $("#settings-viewer-math-renderer").val());
 	}
 
+	function resetSettings() {
+		const response = confirm("Are you sure you want to reset your settings? This cannot be undone.");
+		if (response) {
+			settingsHelper.reset();
+		}
+	}
+
 	module.exports = function() {
 		loadSettings();
 		$("#modal-settings-save").on("click", function() {
 			saveSettings();
 			$(this).closest(".modal").removeClass("active");
 			window.location.reload();
+		});
+		$("#modal-settings-reset").on("click", function() {
+			resetSettings();
+			loadSettings();
 		});
 	};
 }());

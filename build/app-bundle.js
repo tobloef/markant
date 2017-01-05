@@ -53744,12 +53744,23 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		settingsHelper.setSetting("viewerMathRenderer", $("#settings-viewer-math-renderer").val());
 	}
 
+	function resetSettings() {
+		const response = confirm("Are you sure you want to reset your settings? This cannot be undone.");
+		if (response) {
+			settingsHelper.reset();
+		}
+	}
+
 	module.exports = function() {
 		loadSettings();
 		$("#modal-settings-save").on("click", function() {
 			saveSettings();
 			$(this).closest(".modal").removeClass("active");
 			window.location.reload();
+		});
+		$("#modal-settings-reset").on("click", function() {
+			resetSettings();
+			loadSettings();
 		});
 	};
 }());
@@ -54004,11 +54015,18 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		}
 	}
 
+	function reset() {
+		for (let key in defaultValues) {
+			setSetting(key, getDefaultValue(key));
+		}
+	}
+
 	module.exports = {
 		getSetting,
 		setSetting,
 		fontFamilyMap,
-		getDefaultValue
+		getDefaultValue,
+		reset
 	};
 }());
 },{}],"/home/tobloef/Downloads/markant/scripts/viewer.js":[function(require,module,exports){

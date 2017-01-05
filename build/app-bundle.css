@@ -248,9 +248,8 @@
   border-top: 1px solid #e5e5e5;
 }
 
-.modal-footer button + button {
-  margin-left: 5px;
-  margin-bottom: 0;
+.modal-footer .button {
+  margin: 0 5px;
 }
 
 .modal-backdrop {
@@ -2072,12 +2071,12 @@ body {
   border: 1px solid #ccc;
   background-color: white;
   color: black;
-  width: 75px;
-  height: 2.5em;
+  height: 3em;
   border-radius: 3px;
   outline: 0;
   cursor: pointer;
   font-size: 0.9em;
+  padding: 0 13px;
 }
 
 .button:hover {
@@ -2100,6 +2099,10 @@ body {
 
 .button.dark:active {
   background-color: #222222;
+}
+
+.button .fa {
+  margin-right: 7px;
 }
 
 /* Forms */
