@@ -9,12 +9,9 @@
     word-wrap: break-word;
 	box-sizing: border-box;
 	font-family: sans-serif;
+	font-size: 16px;
 	color: white;
 	min-height: 100%;
-}
-
-#viewer * {
-	font-size: 16px;
 }
 
 #viewer h1,
@@ -52,7 +49,7 @@
 
 #viewer code,
 #viewer code * {
-	font-size: 14px;
+	font-size: 0.9em;
 	line-height: 1em;
 }
 

@@ -9,10 +9,9 @@
     word-wrap: break-word;
 	box-sizing: border-box;
 	font-family: sans-serif;
-}
-
-#viewer * {
 	font-size: 16px;
+	color: black;
+	min-height: 100%;
 }
 
 #viewer h1,
