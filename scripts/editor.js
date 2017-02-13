@@ -26,9 +26,6 @@
 			"Ctrl-I": function(codemirror) {
 				emphasis.handleEmphasis(codemirror, "*");
 			},
-			"Ctrl-U": function(codemirror) {
-				emphasis.handleEmphasis(codemirror, "~~");
-			},
 			"Enter": function(codemirror) {
 				codemirror.execCommand("newlineAndIndentContinueMarkdownList");
 			},
