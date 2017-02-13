@@ -17,6 +17,7 @@
 		"documentTitle": "Untitled document",
 		"leftPanePercentage": 50,
 		"rightPanePercentage": 50,
+		"hljsTabSize": 4,
 	};
 
 	// Used for converting settings values to actual font-familys.

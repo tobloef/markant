@@ -28,6 +28,7 @@
 		$("#settings-viewer-font-family").val(settingsHelper.getSetting("viewerFontFamily"));
 		$("#settings-viewer-font-size").val(settingsHelper.getSetting("viewerFontSize"));
 		$("#settings-viewer-hljs-theme").val(settingsHelper.getSetting("viewerHljsTheme"));
+		$("#settings-viewer-hljs-tab-size").val(settingsHelper.getSetting("hljsTabSize"));
 		$("#settings-viewer-math-renderer").val(settingsHelper.getSetting("viewerMathRenderer"));
 	}
 
@@ -57,6 +58,7 @@
 		settingsHelper.setSetting("viewerFontFamily", $("#settings-viewer-font-family").val());
 		settingsHelper.setSetting("viewerFontSize", parseInt($("#settings-viewer-font-size").val()));
 		settingsHelper.setSetting("viewerHljsTheme", $("#settings-viewer-hljs-theme").val());
+		settingsHelper.setSetting("hljsTabSize", parseInt($("#settings-viewer-hljs-tab-size").val()));
 		settingsHelper.setSetting("viewerMathRenderer", $("#settings-viewer-math-renderer").val());
 	}
 

@@ -16,10 +16,6 @@
 	const useDelayedRendering = true;
 	// The minimum delay between keystrokes before the user is deemed done typing.
 	const renderDelay = 200;
-	// Which math renderer to use, either "KaTex" or "MathJax".
-	const mathRenderer = "KaTex";
-	// The style to use with highlight.js for code snippets in the viewer.
-	const hljsStyle = "monokai";
 	// Url for the MathJax CDN.
 	const mathjaxUrl = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML";
 	// Directory for styles for the viewer.
@@ -95,6 +91,11 @@
 		const fontSize = settingsHelper.getSetting("viewerFontSize");
 		if (fontSize != null) {
 			$(viewer).css("font-size", fontSize);
+		}
+		const hljsTabSize = settingsHelper.getSetting("hljsTabSize");
+		if (hljsTabSize != null) {
+			const style = $(`<style>.hljs { tab-size: ${hljsTabSize}; -moz-tab-size: ${hljsTabSize}; }</style>`);
+			$("head").append(style);
 		}
 	}
 
