@@ -53642,9 +53642,6 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			"Ctrl-I": function(codemirror) {
 				emphasis.handleEmphasis(codemirror, "*");
 			},
-			"Ctrl-U": function(codemirror) {
-				emphasis.handleEmphasis(codemirror, "~~");
-			},
 			"Enter": function(codemirror) {
 				codemirror.execCommand("newlineAndIndentContinueMarkdownList");
 			},

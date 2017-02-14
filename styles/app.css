@@ -134,11 +134,9 @@ form input[type="number"]
 	flex: 1;
 	margin-right: 3em;
 	min-width: 0;
-	line-height: 1.2em;
 }
 
 form input[type="checkbox"] {
-	/*display: inline-block;*/
 	height: 2em;
 	width: 1.2em;
 	margin: 0;
@@ -151,10 +149,7 @@ form .form-group.smaller-top-margin {
 }
 
 form input[type="checkbox"] + label {
-	/*padding-top: 0.45em;*/
-	display: inline-block;
-	line-height: 1.2px;
-	vertical-align: middle;
+	padding-top: 0.45em;
 }
 
 form select {
