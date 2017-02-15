@@ -54249,9 +54249,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	// The minimum delay between keystrokes before the user is deemed done typing.
 	const renderDelay = 200;
 	// Url for the MathJax CDN.
-	const mathjaxCnd = "https://cdn.mathjax.org/mathjax/latest/MathJax.js";
-	// Url for the local version of MathJax.js
-	const localMathjax = "build/lib/mathjax/MathJax.js";
+	const mathjaxCdn = "https://cdn.mathjax.org/mathjax/latest/MathJax.js";
 	// Configuration string used when loading Mathjax.js
 	const mathjaxConfigString = "?config=TeX-MML-AM_CHTML";
 	// Directory for styles for the viewer.
@@ -54303,14 +54301,8 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 				markdown.use(katex);
 			} else if (mathRenderer.toLowerCase() === "mathjax") {
 				markdown.use(mathjax);
-				let mathjaxPath;
-				if (location.protocol === "file:") {
-					mathjaxPath = mathjaxCnd;
-				} else {
-					mathjaxPath = localMathjax;
-				}
-				mathjaxPath += mathjaxConfigString;
-				fileLoader.getScript(mathjaxPath, function() {
+				const mathjaxUrl = mathjaxCdn + mathjaxConfigString;
+				fileLoader.getScript(mathjaxUrl, function() {
 					MathJax.Hub.Config({
 						messageStyle: "none",
 					});
