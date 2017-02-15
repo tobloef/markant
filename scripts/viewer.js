@@ -16,7 +16,9 @@
 	// The minimum delay between keystrokes before the user is deemed done typing.
 	const renderDelay = 200;
 	// Url for the MathJax CDN.
-	const mathjaxUrl = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+	const mathjaxUrl = "https://cdn.mathjax.org/mathjax/latest/MathJax.js";
+	// Configuration string used when loading Mathjax.js
+	const mathjaxConfigString = "?config=TeX-MML-AM_CHTML";
 	// Directory for styles for the viewer.
 	const themeDirectory = "build/viewer/themes";
 
@@ -60,13 +62,20 @@
 
 	// Load the user's preferences and apply them to markdown-it.
 	function loadUserSettings() {
-		const mathRenderer = settingsHelper.getSetting("editorMathRenderer");
+		const mathRenderer = settingsHelper.getSetting("viewerMathRenderer");
 		if (mathRenderer != null) {
 			if (mathRenderer.toLowerCase() === "katex") {
 				markdown.use(katex);
 			} else if (mathRenderer.toLowerCase() === "mathjax") {
 				markdown.use(mathjax);
-				fileLoader.getScript(mathjaxUrl, function() {
+				let mathjaxPath;
+				if (location.protocol === "file:") {
+					mathjaxPath = mathjaxUrl;
+				} else {
+					mathjaxPath = "build/lib/mathjax/Mathjax.js";
+				}
+				mathjaxPath += mathjaxConfigString;
+				fileLoader.getScript(mathjaxPath, function() {
 					MathJax.Hub.Config({
 						messageStyle: "none",
 					});

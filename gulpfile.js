@@ -66,6 +66,12 @@ gulp.task("font-awesome", function() {
 		.pipe(gulp.dest(destDir));
 });
 
+gulp.task("font-awesome", function() {
+	const destDir = `${parentDestDir}/lib/mathjax`;
+	gulp.src(["node_modules/mathjax/**/*"])
+		.pipe(gulp.dest(destDir));
+});
+
 gulp.task("codemirror-themes", function() {
 	const destDir = `${parentDestDir}/lib/codemirror/theme`;
 	gulp.src([

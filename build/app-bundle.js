@@ -53783,15 +53783,16 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 	function getScript(url, callback, options) {
 		options = $.extend(options || {}, {
-			dataType: "application/javascript",
+			dataType: "script",
 			cache: true,
-			url,
+			url: url,
 			success: callback,
-			fail: function() {
+			timeout: 10 * 1000, // 10 seconds
+			error: function() {
 				console.error(`Error loading script from url ${url}.\nException: ${e}`);
-			},
+			}
 		});
-		return $.ajax(options);
+		$.ajax(options);
 	}
 
 	function getStyle(url, callback) {
@@ -54248,7 +54249,9 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	// The minimum delay between keystrokes before the user is deemed done typing.
 	const renderDelay = 200;
 	// Url for the MathJax CDN.
-	const mathjaxUrl = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+	const mathjaxUrl = "https://cdn.mathjax.org/mathjax/latest/MathJax.js";
+	// Configuration string used when loading Mathjax.js
+	const mathjaxConfigString = "?config=TeX-MML-AM_CHTML";
 	// Directory for styles for the viewer.
 	const themeDirectory = "build/viewer/themes";
 
@@ -54292,13 +54295,20 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 	// Load the user's preferences and apply them to markdown-it.
 	function loadUserSettings() {
-		const mathRenderer = settingsHelper.getSetting("editorMathRenderer");
+		const mathRenderer = settingsHelper.getSetting("viewerMathRenderer");
 		if (mathRenderer != null) {
 			if (mathRenderer.toLowerCase() === "katex") {
 				markdown.use(katex);
 			} else if (mathRenderer.toLowerCase() === "mathjax") {
 				markdown.use(mathjax);
-				fileLoader.getScript(mathjaxUrl, function() {
+				let mathjaxPath;
+				if (location.protocol === "file:") {
+					mathjaxPath = mathjaxUrl;
+				} else {
+					mathjaxPath = "build/lib/mathjax/Mathjax.js";
+				}
+				mathjaxPath += mathjaxConfigString;
+				fileLoader.getScript(mathjaxPath, function() {
 					MathJax.Hub.Config({
 						messageStyle: "none",
 					});

@@ -3,15 +3,16 @@
 
 	function getScript(url, callback, options) {
 		options = $.extend(options || {}, {
-			dataType: "application/javascript",
+			dataType: "script",
 			cache: true,
-			url,
+			url: url,
 			success: callback,
-			fail: function() {
+			timeout: 10 * 1000, // 10 seconds
+			error: function() {
 				console.error(`Error loading script from url ${url}.\nException: ${e}`);
-			},
+			}
 		});
-		return $.ajax(options);
+		$.ajax(options);
 	}
 
 	function getStyle(url, callback) {
