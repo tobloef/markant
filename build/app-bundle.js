@@ -54253,7 +54253,9 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	// Configuration string used when loading Mathjax.js
 	const mathjaxConfigString = "?config=TeX-MML-AM_CHTML";
 	// Directory for styles for the viewer.
-	const themeDirectory = "build/viewer/themes";
+	const viewerThemeDirectory = "build/viewer/themes";
+	// Directory for styles for Highlight.js
+	const hljsThemeDirectory = "build/lib/highlight.js/styles";
 
 	let renderTimeout;
 	let viewer;
@@ -54312,11 +54314,11 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		}
 		const hljsTheme = settingsHelper.getSetting("viewerHljsTheme");
 		if (hljsTheme != null) {
-			fileLoader.getStyle(`build/lib/highlight.js/styles/${hljsTheme}.css`);
+			fileLoader.getStyle(`${hljsThemeDirectory}/${hljsTheme}.css`);
 		}
 		const viewerTheme = settingsHelper.getSetting("viewerTheme");
 		if (viewerTheme != null) {
-			fileLoader.getStyle(`${themeDirectory}/${viewerTheme}.css`);
+			fileLoader.getStyle(`${viewerThemeDirectory}/${viewerTheme}.css`);
 		}
 	}
 
