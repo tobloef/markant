@@ -4,8 +4,7 @@
 	const $ = require("jquery");
 	const hljs = require("highlight.js");
 	const markdown = require("markdown-it")({
-		html: true,
-		highlight,
+		html: true
 	});
 	const lazyHeaders = require("markdown-it-lazy-headers");
 	const sanitizer = require("markdown-it-sanitizer");
@@ -40,6 +39,9 @@
 		if (mathjaxReady) {
 			MathJax.Hub.Queue(["Typeset", MathJax.Hub, viewer]);
 		}
+		$("#viewer pre code").each(function(i, block) {
+			hljs.highlightBlock(block);
+		});
 		if (callback) {
 			callback();
 		}
@@ -97,19 +99,6 @@
 			const style = $(`<style>.hljs { tab-size: ${hljsTabSize}; -moz-tab-size: ${hljsTabSize}; }</style>`);
 			$("head").append(style);
 		}
-	}
-
-	// Highlight code snippets with highlight.js
-	function highlight(str, lang) {
-		if (lang && hljs.getLanguage(lang)) {
-			try {
-				const tag = `<pre class='hljs'><code>${hljs.highlight(lang, str, true).value}</code></pre>`;
-				return tag;
-			} catch (exception) {
-				console.warn(`Couldn't highlight code with language ${lang}`, exception);
-			}
-		}
-		return `<pre class='hljs'><code>${markdown.utils.escapeHtml(str)}</code></pre>`;
 	}
 
 	module.exports = function(viewerElement) {

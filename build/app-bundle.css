@@ -148,8 +148,12 @@
   float: right;
   height: 100%;
   background: #d3d3d3;
-  background: -webkit-linear-gradient(left, #d3d3d3, #fff);
-  background: linear-gradient(to right, #d3d3d3, #fff);
+  /*
+	background: rgba(0, 0, 0, 0.1);
+	background: -webkit-linear-gradient(right, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.0));
+	background: -o-linear-gradient(right, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.0));
+	background: -moz-linear-gradient(right, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.0));
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.0));*/
 }
 
 #dragbar:hover,
