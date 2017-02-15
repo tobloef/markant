@@ -2030,6 +2030,10 @@ span.CodeMirror-selectedtext {
   height: 100%;
 }
 
+#editor .cm-link {
+  text-decoration: none;
+}
+
 #editor .CodeMirror-lines {
   /*margin: 10px 20px 10px 20px;*/
 }

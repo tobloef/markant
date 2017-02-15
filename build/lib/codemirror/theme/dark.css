@@ -7,3 +7,8 @@
 	color: white;
 }
 
+
+#editor .CodeMirror-selected { background: #49483E; }
+#editor .CodeMirror-line::selection, .cm-s-monokai .CodeMirror-line > span::selection, .cm-s-monokai .CodeMirror-line > span > span::selection { background: rgba(73, 72, 62, .99); }
+#editor .CodeMirror-line::-moz-selection, .cm-s-monokai .CodeMirror-line > span::-moz-selection, .cm-s-monokai .CodeMirror-line > span > span::-moz-selection { background: rgba(73, 72, 62, .99); }
+#editor .CodeMirror-cursor { border-left: 1px solid #f8f8f0; }
