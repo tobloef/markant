@@ -17,7 +17,9 @@ const parentDestDir = "./build";
 const scriptEntryPoints = ["app"];
 const styleEntryPoints = ["app"];
 
-gulp.task("default", ["browserify", "bundle-styles", "font-awesome", "codemirror-themes", "hljs-styles", "viewer-themes"]);
+gulp.task("default", ["browserify", "bundle-styles", "font-awesome", "codemirror-themes", "hljs-styles", "viewer-themes", "mathjax"]);
+
+gulp.task("update", ["browserify", "bundle-styles"]);
 
 gulp.task("browserify", function() {
 	scriptEntryPoints.forEach(function(file) {
@@ -66,7 +68,7 @@ gulp.task("font-awesome", function() {
 		.pipe(gulp.dest(destDir));
 });
 
-gulp.task("font-awesome", function() {
+gulp.task("mathjax", function() {
 	const destDir = `${parentDestDir}/lib/mathjax`;
 	gulp.src(["node_modules/mathjax/**/*"])
 		.pipe(gulp.dest(destDir));

@@ -10,6 +10,7 @@
 	const $leftCollapseButton = $("#left-collapse-button");
 	const $rightCollapseButton = $("#right-collapse-button");
 	const $viewer = $rightPane.find("#viewer");
+	const $body = $("body");
 	const $editorScrollbar = $leftPane.find(".CodeMirror-vscrollbar > div").eq(0);
 
 	module.exports = function(codemirror) {
@@ -110,6 +111,7 @@
 
 		$dragbar.on("mousedown", function(mousedownEvent) {
 			dragging = true;
+			$body.addClass("no-selection");
 			const mouseDownPos = mousedownEvent.pageX;
 			const initialLeftPaneWidth = $leftPane.width();
 			const initialRightPaneWidth = $rightPane.width();
@@ -129,6 +131,7 @@
 			$(document).on("mouseup", function() {
 				if (dragging) {
 					dragging = false;
+					$body.removeClass("no-selection");
 					$(document).unbind("mousemove");
 				}
 			});

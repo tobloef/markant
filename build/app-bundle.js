@@ -54001,6 +54001,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	const $leftCollapseButton = $("#left-collapse-button");
 	const $rightCollapseButton = $("#right-collapse-button");
 	const $viewer = $rightPane.find("#viewer");
+	const $body = $("body");
 	const $editorScrollbar = $leftPane.find(".CodeMirror-vscrollbar > div").eq(0);
 
 	module.exports = function(codemirror) {
@@ -54101,6 +54102,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 		$dragbar.on("mousedown", function(mousedownEvent) {
 			dragging = true;
+			$body.addClass("no-selection");
 			const mouseDownPos = mousedownEvent.pageX;
 			const initialLeftPaneWidth = $leftPane.width();
 			const initialRightPaneWidth = $rightPane.width();
@@ -54120,6 +54122,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			$(document).on("mouseup", function() {
 				if (dragging) {
 					dragging = false;
+					$body.removeClass("no-selection");
 					$(document).unbind("mousemove");
 				}
 			});
