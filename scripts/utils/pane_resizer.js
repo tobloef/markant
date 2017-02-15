@@ -109,8 +109,8 @@
 			$leftCollapseButton.css("visibility", "visible");
 			$rightCollapseButton.css("visibility", "visible");
 
-			leftPanePercentage = 50;//parseFloat(settingsHelper.getSetting("leftPanePercentage"));
-			rightPanePercentage = 50;//parseFloat(settingsHelper.getSetting("rightPanePercentage"));
+			leftPanePercentage = parseFloat(settingsHelper.getSetting("leftPanePercentage"));
+			rightPanePercentage = parseFloat(settingsHelper.getSetting("rightPanePercentage"));
 			oldLeftPanePercentage = leftPanePercentage;
 			oldRightPanePercentage = rightPanePercentage;
 			resizePanesToPercentage(leftPanePercentage, rightPanePercentage);

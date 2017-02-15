@@ -54100,8 +54100,8 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			$leftCollapseButton.css("visibility", "visible");
 			$rightCollapseButton.css("visibility", "visible");
 
-			leftPanePercentage = 50;//parseFloat(settingsHelper.getSetting("leftPanePercentage"));
-			rightPanePercentage = 50;//parseFloat(settingsHelper.getSetting("rightPanePercentage"));
+			leftPanePercentage = parseFloat(settingsHelper.getSetting("leftPanePercentage"));
+			rightPanePercentage = parseFloat(settingsHelper.getSetting("rightPanePercentage"));
 			oldLeftPanePercentage = leftPanePercentage;
 			oldRightPanePercentage = rightPanePercentage;
 			resizePanesToPercentage(leftPanePercentage, rightPanePercentage);
