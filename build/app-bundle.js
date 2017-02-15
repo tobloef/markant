@@ -54004,9 +54004,14 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	const $body = $("body");
 	const $editorScrollbar = $leftPane.find(".CodeMirror-vscrollbar > div").eq(0);
 
+	const minPaneWidth = 250;
+	const minCollapseWidth = 75;
+
 	module.exports = function(codemirror) {
 		// Whether the user is draggin the drag bar.
 		let dragging = false;
+		// Whether the panes should be split the next time the space is available.
+		let shouldSplitPanes = false;
 
 		// Saved size of the two panes, used for restoring their size after opening a collalpsed pane.
 		let oldLeftPanePercentage;
@@ -54017,18 +54022,58 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 		// Resize the two panes to percentage sizes.
 		function resizePanesToPercentage(newLeftPanePercentage, newRightPanePercentage) {
-			// Find the pixel width of a single percentage.
-			const unit = $paneContainer.width() / ((newLeftPanePercentage) + (newRightPanePercentage));
-			// Set the panes to the new widths.
-			leftPanePercentage = newLeftPanePercentage;
-			rightPanePercentage = newRightPanePercentage;
-			$leftPane.width(unit * newLeftPanePercentage);
-			$rightPane.width(unit * newRightPanePercentage);
-			settingsHelper.setSetting("leftPanePercentage", leftPanePercentage);
-			settingsHelper.setSetting("rightPanePercentage", rightPanePercentage);
+			// Make sure the percentages add up to 100% total.
+			if (Math.abs(newLeftPanePercentage + newRightPanePercentage - 100) > 0.1) {
+				console.warn("Error resizing panes, percentages don't add up. Resetting to 50% split.");
+				leftPanePercentage = 50;
+				rightPanePercentage = 50;
+				return resizePanesToPercentage(leftPanePercentage, rightPanePercentage);
+			}
+			let newLeftWidth = ($paneContainer.width() / 100) * newLeftPanePercentage;
+			let newRightWidth = ($paneContainer.width() / 100) * newRightPanePercentage;
+			$dragbar.show();
+			if (newLeftPanePercentage === 0 || newRightPanePercentage === 0) {
+				if (shouldSplitPanes && $paneContainer.width() >= minPaneWidth * 2) {
+					shouldSplitPanes = false;
+					leftPanePercentage = oldLeftPanePercentage;
+					rightPanePercentage = oldRightPanePercentage;
+					return resizePanesToPercentage(leftPanePercentage, rightPanePercentage);
+				}
+				if (newRightPanePercentage === 0) {
+					$dragbar.hide();
+				}
+			} else {
+				if ($paneContainer.width() < minPaneWidth * 2) {
+					shouldSplitPanes = true;
+					leftPanePercentage = 100;
+					rightPanePercentage = 0;
+					return resizePanesToPercentage(leftPanePercentage, rightPanePercentage);
+				}
+				if (newLeftWidth < minCollapseWidth) {
+					leftPanePercentage = 0;
+					rightPanePercentage = 100;
+					return resizePanesToPercentage(leftPanePercentage, rightPanePercentage);
+				}
+				if (newRightWidth < minCollapseWidth) {
+					leftPanePercentage = 100;
+					rightPanePercentage = 0;
+					return resizePanesToPercentage(leftPanePercentage, rightPanePercentage);
+				}
+				if (newLeftWidth < minPaneWidth) {
+					newLeftWidth = minPaneWidth;
+					newRightWidth = $paneContainer.width() - newLeftWidth;
+				}
+				if (newRightWidth < minPaneWidth) {
+					newRightWidth = minPaneWidth;
+					newLeftWidth = $paneContainer.width() - newRightWidth;
+				}
+			}
+			$leftPane.width(newLeftWidth);
+			$rightPane.width(newRightWidth);
 			if (codemirror != null) {
 				codemirror.refresh();
 			}
+			setCollapseButtonPositions();
 		}
 
 		// Set the positions, specifically the horizontal positions, of the two collapse buttons.
@@ -54046,7 +54091,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			if (leftPanePercentage === 0) {
 				$rightCollapseButton.css("margin-left", "5px");
 			} else {
-				$rightCollapseButton.css("margin-left", "0");
+				$rightCollapseButton.css("margin-left", "2px");
 			}
 		}
 
@@ -54055,17 +54100,12 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			$leftCollapseButton.css("visibility", "visible");
 			$rightCollapseButton.css("visibility", "visible");
 
-			const newLeftPercentage = parseFloat(settingsHelper.getSetting("leftPanePercentage"));
-			const newRightPercentage = parseFloat(settingsHelper.getSetting("rightPanePercentage"));
-			resizePanesToPercentage(newLeftPercentage, newRightPercentage);
-			setCollapseButtonPositions();
+			leftPanePercentage = 50;//parseFloat(settingsHelper.getSetting("leftPanePercentage"));
+			rightPanePercentage = 50;//parseFloat(settingsHelper.getSetting("rightPanePercentage"));
+			oldLeftPanePercentage = leftPanePercentage;
+			oldRightPanePercentage = rightPanePercentage;
+			resizePanesToPercentage(leftPanePercentage, rightPanePercentage);
 		});
-
-		// When the HTML of the viewer changes
-		$viewer.bind("DOMSubtreeModified", function() {
-			setCollapseButtonPositions();
-		});
-
 
 		// On window resize, scale the sizes of the panes so they keep the same relative size.
 		$(window).on("resize", function() {
@@ -54073,31 +54113,26 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		});
 
 		$leftCollapseButton.on("click", function() {
-			// If the right pane is completely closed, open it, restoring it to it's former size.
-			if (leftPanePercentage === 100) {
-				$dragbar.show();
-				resizePanesToPercentage(oldLeftPanePercentage, oldRightPanePercentage);
+			if (rightPanePercentage === 0 && $paneContainer.width() >= minPaneWidth * 2) {
+				leftPanePercentage = oldLeftPanePercentage;
+				rightPanePercentage = oldRightPanePercentage;
 			} else {
-				// Save the panes current size and close the left pane.
-				oldLeftPanePercentage = leftPanePercentage;
-				oldRightPanePercentage = rightPanePercentage;
-				resizePanesToPercentage(0, 100);
+				leftPanePercentage = 0;
+				rightPanePercentage = 100;
+				resizePanesToPercentage(leftPanePercentage, rightPanePercentage);
 			}
-			setCollapseButtonPositions();
+			resizePanesToPercentage(leftPanePercentage, rightPanePercentage);
 		});
 
 		$rightCollapseButton.on("click", function() {
-			// If the left pane is completely closed, open it pane, restoring it to it's former size.
-			if (rightPanePercentage === 100) {
-				resizePanesToPercentage(oldLeftPanePercentage, oldRightPanePercentage);
+			if (leftPanePercentage === 0 && $paneContainer.width() >= minPaneWidth * 2) {
+				leftPanePercentage = oldLeftPanePercentage;
+				rightPanePercentage = oldRightPanePercentage;
 			} else {
-				// Save the panes current size and close the right pane.
-				oldLeftPanePercentage = leftPanePercentage;
-				oldRightPanePercentage = rightPanePercentage;
-				$dragbar.hide();
-				resizePanesToPercentage(100, 0);
+				leftPanePercentage = 100;
+				rightPanePercentage = 0;
 			}
-			setCollapseButtonPositions();
+			resizePanesToPercentage(leftPanePercentage, rightPanePercentage);
 		});
 
 		$dragbar.on("mousedown", function(mousedownEvent) {
@@ -54112,9 +54147,23 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			$(document).on("mousemove", function(mousemoveEvent) {
 				if (dragging) {
 					const deltaPageX = mousemoveEvent.pageX - mouseDownPos;
-					const unit = 100 / $paneContainer.width();
-					const newLeftPanePercentage = unit * (initialLeftPaneWidth + deltaPageX);
-					const newRightPanePercentage = unit * (initialRightPaneWidth - deltaPageX);
+					const unit = $paneContainer.width() / 100;
+					const newLeftPanePercentage = (initialLeftPaneWidth + deltaPageX) / unit;
+					const newRightPanePercentage = (initialRightPaneWidth - deltaPageX) / unit;
+					leftPanePercentage = newLeftPanePercentage;
+					rightPanePercentage = newRightPanePercentage;
+					if (leftPanePercentage < minPaneWidth / unit) {
+						leftPanePercentage = minPaneWidth / unit;
+						rightPanePercentage = 100 - leftPanePercentage;
+					}
+					if (rightPanePercentage < minPaneWidth / unit) {
+						rightPanePercentage = minPaneWidth / unit;
+						leftPanePercentage = 100 - rightPanePercentage;
+					}
+					oldLeftPanePercentage = leftPanePercentage;
+					oldRightPanePercentage = rightPanePercentage;
+					settingsHelper.setSetting("leftPanePercentage", leftPanePercentage);
+					settingsHelper.setSetting("rightPanePercentage", rightPanePercentage);
 					resizePanesToPercentage(newLeftPanePercentage, newRightPanePercentage);
 				}
 			});

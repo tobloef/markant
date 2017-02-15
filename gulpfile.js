@@ -19,8 +19,6 @@ const styleEntryPoints = ["app"];
 
 gulp.task("default", ["browserify", "bundle-styles", "font-awesome", "codemirror-themes", "hljs-styles", "viewer-themes", "mathjax"]);
 
-gulp.task("update", ["browserify", "bundle-styles"]);
-
 gulp.task("browserify", function() {
 	scriptEntryPoints.forEach(function(file) {
 		const b = browserify({
