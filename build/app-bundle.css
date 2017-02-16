@@ -148,17 +148,17 @@
   float: left;
   height: 100%;
   background: #d3d3d3;
-  /*
-	background: rgba(0, 0, 0, 0.1);
-	background: -webkit-linear-gradient(right, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.0));
-	background: -o-linear-gradient(right, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.0));
-	background: -moz-linear-gradient(right, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.0));
-    background: linear-gradient(to right, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.0));*/
+  background: rgba(0, 0, 0, 0.1);
+  background: -webkit-linear-gradient(right, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.0));
+  background: -o-linear-gradient(right, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.0));
+  background: -moz-linear-gradient(right, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.0));
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.0));
 }
 
 #dragbar:hover,
 #dragbar:active {
-  background: #d0d0d0;
+  background: #c0c0c0;
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .collapse-button {
