@@ -88,6 +88,16 @@
 		// Set the positions, specifically the horizontal positions, of the two collapse buttons.
 		// This is done so they won't overlap with the scrollbars.
 		function setCollapseButtonPositions() {
+			if ($leftPane.width() === 0) {
+				$rightCollapseButton.show();
+			} else {
+				$rightCollapseButton.hide();
+			}
+			if ($rightPane.width() === 0) {
+				$leftCollapseButton.show();
+			} else {
+				$leftCollapseButton.hide();
+			}
 			const leftPaneHasScrollbar = $editorScrollbar.height() > 0;
 			let rightOffset = 29;
 			$leftCollapseButton.css("left", `calc(100% - ${rightOffset}px)`);
