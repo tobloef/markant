@@ -1,7 +1,7 @@
 #dragbar {
 	cursor: col-resize;
 	width: 6px;
-	float: right;
+	float: left;
 	height: 100%;
 	background: #d3d3d3;/*
 	background: rgba(0, 0, 0, 0.1);
@@ -13,7 +13,7 @@
 
 #dragbar:hover,
 #dragbar:active {
-	background: #d3d3d3;
+	background: #d0d0d0;
 }
 
 .collapse-button {

@@ -14,7 +14,7 @@
 	const $editorScrollbar = $leftPane.find(".CodeMirror-vscrollbar > div").eq(0);
 
 	const minPaneWidth = 250;
-	const minCollapseWidth = 75;
+	const minCollapseWidth = 100;
 
 	module.exports = function(codemirror) {
 		// Whether the user is draggin the drag bar.
@@ -48,7 +48,7 @@
 					rightPanePercentage = oldRightPanePercentage;
 					return resizePanesToPercentage(leftPanePercentage, rightPanePercentage);
 				}
-				if (newRightPanePercentage === 0) {
+				if (newLeftPanePercentage === 0) {
 					$dragbar.hide();
 				}
 			} else {
@@ -89,18 +89,12 @@
 		// This is done so they won't overlap with the scrollbars.
 		function setCollapseButtonPositions() {
 			const leftPaneHasScrollbar = $editorScrollbar.height() > 0;
-			let rightOffset = 34;
-			if (leftPanePercentage === 100) {
-				rightOffset -= 5;
-			}
-			if (leftPaneHasScrollbar) {
-				rightOffset += 13;
-			}
+			let rightOffset = 29;
 			$leftCollapseButton.css("left", `calc(100% - ${rightOffset}px)`);
 			if (leftPanePercentage === 0) {
 				$rightCollapseButton.css("margin-left", "5px");
 			} else {
-				$rightCollapseButton.css("margin-left", "2px");
+				$rightCollapseButton.css("margin-left", "10px");
 			}
 		}
 
