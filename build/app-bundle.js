@@ -53969,11 +53969,25 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	const $ = require("jquery");
 
 	const idFunctionMap = {
-		"edit-settings": showSettingsModal
+		"edit-preferences": showSettingsModal,
+		"edit-undo": undo,
+		"edit-redo": redo,
 	};
 
 	function showSettingsModal() {
 		$("#settings-modal").addClass("active");
+	}
+
+	function undo() {
+
+	}
+
+	function redo() {
+
+	}
+
+	function closeDropdowns() {
+		$(".navbar-dropdown .dropdown-content").hide();
 	}
 
 	module.exports = function() {
@@ -53982,8 +53996,17 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		$links.on("click", function(event) {
 			const id = $(this).attr("id");
 			if (id in idFunctionMap) {
-				idFunctionMap[id]();
+				idFunctionMap[id]($(this));
+				closeDropdowns();
 				event.preventDefault();
+			}
+		});
+
+		$(document).click(function(event) {
+			closeDropdowns();
+			const $navbarDropdown = $(event.target).parent(".navbar-dropdown");
+			if ($navbarDropdown.length !== 0) {
+				$navbarDropdown.find(".dropdown-content").show();
 			}
 		});
 	};
