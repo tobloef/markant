@@ -8,6 +8,7 @@
 	require("./utils/modals/modal")();
 	require("./utils/modals/settings_modal")();
 	require("./utils/navbar")();
+	require("./utils/shortcuts")($);
 
 	// Load styles
 	fileLoader.getStyle("build/lib/font-awesome/css/font-awesome.min.css");

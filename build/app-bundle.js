@@ -53574,6 +53574,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	require("./utils/modals/modal")();
 	require("./utils/modals/settings_modal")();
 	require("./utils/navbar")();
+	require("./utils/shortcuts")($);
 
 	// Load styles
 	fileLoader.getStyle("build/lib/font-awesome/css/font-awesome.min.css");
@@ -53613,7 +53614,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	onChangeHandler();
 }());
 
-},{"./editor":"/home/tobloef/Downloads/code/markant.io/scripts/editor.js","./utils/document_title":"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js","./utils/file_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/file_loader.js","./utils/google_analytics":"/home/tobloef/Downloads/code/markant.io/scripts/utils/google_analytics.js","./utils/modals/modal":"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/modal.js","./utils/modals/settings_modal":"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/settings_modal.js","./utils/navbar":"/home/tobloef/Downloads/code/markant.io/scripts/utils/navbar.js","./utils/pane_resizer":"/home/tobloef/Downloads/code/markant.io/scripts/utils/pane_resizer.js","./utils/scroll_sync":"/home/tobloef/Downloads/code/markant.io/scripts/utils/scroll_sync.js","./utils/settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","./viewer":"/home/tobloef/Downloads/code/markant.io/scripts/viewer.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/editor.js":[function(require,module,exports){
+},{"./editor":"/home/tobloef/Downloads/code/markant.io/scripts/editor.js","./utils/document_title":"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js","./utils/file_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/file_loader.js","./utils/google_analytics":"/home/tobloef/Downloads/code/markant.io/scripts/utils/google_analytics.js","./utils/modals/modal":"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/modal.js","./utils/modals/settings_modal":"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/settings_modal.js","./utils/navbar":"/home/tobloef/Downloads/code/markant.io/scripts/utils/navbar.js","./utils/pane_resizer":"/home/tobloef/Downloads/code/markant.io/scripts/utils/pane_resizer.js","./utils/scroll_sync":"/home/tobloef/Downloads/code/markant.io/scripts/utils/scroll_sync.js","./utils/settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","./utils/shortcuts":"/home/tobloef/Downloads/code/markant.io/scripts/utils/shortcuts.js","./viewer":"/home/tobloef/Downloads/code/markant.io/scripts/viewer.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/editor.js":[function(require,module,exports){
 ;(function() {
 	const fileLoader = require("./utils/file_loader");
 	const CodeMirror = require("codemirror");
@@ -54308,6 +54309,62 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		getDefaultValue,
 		reset
 	};
+}());
+},{}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/shortcuts.js":[function(require,module,exports){
+;(function() {
+	let $;
+	let bindings = {};
+
+	function initiate(jQuery) {
+		$ = jQuery;
+		$(document).on("keydown", handleKeypress);
+	}
+
+	function handleKeypress(event) {
+		const keys = [event.key.toLowerCase()];
+		if (event.shiftKey) {
+			keys.push("shift");
+		}
+		if ((event.ctrlKey || event.metaKey)) {
+			keys.push("ctrl");
+		}
+		if (event.altKey) {
+			keys.push("alt");
+		}
+		for (let key in bindings) {
+			if (keysEqual(key.split("+"), keys)) {
+				event.preventDefault();
+				bindings[key]();
+			}
+		}
+	}
+
+	function bind(shortcut, callback) {
+		bindings[shortcut] = callback;
+	}
+
+	function keysEqual(keys1, keys2) {
+		if (!keys1 || !keys2) {
+			return false;
+		}
+		if (keys1.length !== keys2.length) {
+			return false;
+		}
+		keys1.sort();
+		keys2.sort();
+		for (let i = 0; i < keys1.length; i++) {
+			if (keys1[i] instanceof Array && keys2[i] instanceof Array) {
+				if (!keys1[i].equals(keys2[i])) {
+					return false;
+				}
+			} else if (keys1[i] !== keys2[i]) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	module.exports = initiate;
 }());
 },{}],"/home/tobloef/Downloads/code/markant.io/scripts/viewer.js":[function(require,module,exports){
 ;(function() {
