@@ -53569,12 +53569,12 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	const scrollSync = require("./utils/scroll_sync");
 	const fileLoader = require("./utils/file_loader");
 	const settingsHelper = require("./utils/settings_helper");
+	const shortcuts = require("./utils/shortcuts");
 	require("./utils/document_title")();
 	require("./utils/google_analytics")();
 	require("./utils/modals/modal")();
 	require("./utils/modals/settings_modal")();
 	require("./utils/navbar")();
-	require("./utils/shortcuts")($);
 
 	// Load styles
 	fileLoader.getStyle("build/lib/font-awesome/css/font-awesome.min.css");
@@ -53599,6 +53599,8 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			scrollSync.sync($(".CodeMirror-scroll"), linkedDivs, true);
 		});
 	}
+
+	$(document).on("keydown", shortcuts.handleKeypress);
 
 	// Set up scroll synchronisation between the editor and the viewer.
 	const linkedDivs = $("#viewer-container, .CodeMirror-scroll");
@@ -54312,13 +54314,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 }());
 },{}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/shortcuts.js":[function(require,module,exports){
 ;(function() {
-	let $;
 	let bindings = {};
-
-	function initiate(jQuery) {
-		$ = jQuery;
-		$(document).on("keydown", handleKeypress);
-	}
 
 	function handleKeypress(event) {
 		const keys = [event.key.toLowerCase()];
@@ -54364,7 +54360,10 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		return true;
 	}
 
-	module.exports = initiate;
+	module.exports = {
+		bind,
+		handleKeypress
+	};
 }());
 },{}],"/home/tobloef/Downloads/code/markant.io/scripts/viewer.js":[function(require,module,exports){
 ;(function() {

@@ -1,11 +1,5 @@
 ;(function() {
-	let $;
 	let bindings = {};
-
-	function initiate(jQuery) {
-		$ = jQuery;
-		$(document).on("keydown", handleKeypress);
-	}
 
 	function handleKeypress(event) {
 		const keys = [event.key.toLowerCase()];
@@ -51,5 +45,8 @@
 		return true;
 	}
 
-	module.exports = initiate;
+	module.exports = {
+		bind,
+		handleKeypress
+	};
 }());

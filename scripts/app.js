@@ -3,12 +3,12 @@
 	const scrollSync = require("./utils/scroll_sync");
 	const fileLoader = require("./utils/file_loader");
 	const settingsHelper = require("./utils/settings_helper");
+	const shortcuts = require("./utils/shortcuts");
 	require("./utils/document_title")();
 	require("./utils/google_analytics")();
 	require("./utils/modals/modal")();
 	require("./utils/modals/settings_modal")();
 	require("./utils/navbar")();
-	require("./utils/shortcuts")($);
 
 	// Load styles
 	fileLoader.getStyle("build/lib/font-awesome/css/font-awesome.min.css");
@@ -33,6 +33,8 @@
 			scrollSync.sync($(".CodeMirror-scroll"), linkedDivs, true);
 		});
 	}
+
+	$(document).on("keydown", shortcuts.handleKeypress);
 
 	// Set up scroll synchronisation between the editor and the viewer.
 	const linkedDivs = $("#viewer-container, .CodeMirror-scroll");
