@@ -1,7 +1,6 @@
 ;(function() {
 	const fileLoader = require("./utils/file_loader");
 	const CodeMirror = require("codemirror");
-	const textInserter = require("./utils/text_inserter");
 	const settingsHelper = require("./utils/settings_helper");
 	const $ = require("jquery");
 
@@ -21,12 +20,6 @@
 		lineNumbers: false,
 		// Todo: Replace this with new shortcut helper.
 		extraKeys: {
-			"Ctrl-B": function(codemirror) {
-				textInserter.handleEmphasis(codemirror, "**");
-			},
-			"Ctrl-I": function(codemirror) {
-				textInserter.handleEmphasis(codemirror, "*");
-			},
 			"Enter": function(codemirror) {
 				codemirror.execCommand("newlineAndIndentContinueMarkdownList");
 			},
@@ -68,7 +61,7 @@
 	function loadStyleSettings() {
 		const fontFamily = settingsHelper.getSetting("editorFontFamily");
 		if (fontFamily != null && fontFamily in settingsHelper.fontFamilyMap) {
-			$(".CodeMirror").css("font-family", `'${settingsHelper.fontFamilyMap[fontFamily]}'`);
+			$(".CodeMirror").css("font-family", `${settingsHelper.fontFamilyMap[fontFamily]}`);
 		}
 		const fontSize = settingsHelper.getSetting("editorFontSize");
 		if (fontSize != null) {

@@ -20,8 +20,14 @@
 		}
 	}
 
-	function bind(shortcut, callback) {
+	function addBinding(shortcut, callback) {
 		bindings[shortcut] = callback;
+	}
+
+	function addBindings(newBindings) {
+		for (let binding in newBindings) {
+			bindings[binding] = newBindings[binding];
+		}
 	}
 
 	function keysEqual(keys1, keys2) {
@@ -46,7 +52,8 @@
 	}
 
 	module.exports = {
-		bind,
+		addBinding,
+		addBindings,
 		handleKeypress
 	};
 }());

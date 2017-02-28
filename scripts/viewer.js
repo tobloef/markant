@@ -93,7 +93,7 @@
 	function loadStyleSettings() {
 		const fontFamily = settingsHelper.getSetting("viewerFontFamily");
 		if (fontFamily != null && fontFamily in settingsHelper.fontFamilyMap) {
-			$(viewer).css("font-family", `'${settingsHelper.fontFamilyMap[fontFamily]}'`);
+			$(viewer).css("font-family", `${settingsHelper.fontFamilyMap[fontFamily]}`);
 		}
 		const fontSize = settingsHelper.getSetting("viewerFontSize");
 		if (fontSize != null) {

@@ -21,6 +21,7 @@
 	// Set up a few more utility modules.
 	require("./utils/pane_resizer")(editor.codemirror);
 	require("./utils/navbar")(editor.codemirror);
+	const functions = require("./utils/app_functions")(editor.codemirror);
 
 	function onChangeHandler() {
 		const value = editor.codemirror.getValue();
@@ -34,7 +35,18 @@
 		});
 	}
 
+	// Set up shortcut bindings
 	$(document).on("keydown", shortcuts.handleKeypress);
+	const bindings = {
+		"ctrl+n": functions.fileNew,
+		"ctrl+o": functions.fileOpen,
+		"ctrl+s": functions.fileSave,
+		"ctrl+k": functions.insertLink,
+		"ctrl+": functions.insertEquation,
+		"ctrl+b": functions.formatBold,
+		"ctrl+i": functions.formatItalic
+	};
+	shortcuts.addBindings(bindings);
 
 	// Set up scroll synchronisation between the editor and the viewer.
 	const linkedDivs = $("#viewer-container, .CodeMirror-scroll");
