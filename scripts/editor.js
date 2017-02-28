@@ -1,7 +1,7 @@
 ;(function() {
 	const fileLoader = require("./utils/file_loader");
 	const CodeMirror = require("codemirror");
-	const emphasis = require("./utils/markdown_emphasis");
+	const textInserter = require("./utils/text_inserter");
 	const settingsHelper = require("./utils/settings_helper");
 	const $ = require("jquery");
 
@@ -19,12 +19,13 @@
 		html: true,
 		value: "",
 		lineNumbers: false,
+		// Todo: Replace this with new shortcut helper.
 		extraKeys: {
 			"Ctrl-B": function(codemirror) {
-				emphasis.handleEmphasis(codemirror, "**");
+				textInserter.handleEmphasis(codemirror, "**");
 			},
 			"Ctrl-I": function(codemirror) {
-				emphasis.handleEmphasis(codemirror, "*");
+				textInserter.handleEmphasis(codemirror, "*");
 			},
 			"Enter": function(codemirror) {
 				codemirror.execCommand("newlineAndIndentContinueMarkdownList");

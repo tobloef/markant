@@ -53574,7 +53574,6 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	require("./utils/google_analytics")();
 	require("./utils/modals/modal")();
 	require("./utils/modals/settings_modal")();
-	require("./utils/navbar")();
 
 	// Load styles
 	fileLoader.getStyle("build/lib/font-awesome/css/font-awesome.min.css");
@@ -53585,8 +53584,9 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	const viewer = require("./viewer")(viewerElement);
 	const editor = require("./editor")(editorElement);
 
-	// Set up the pane resizer.
+	// Set up a few more utility modules.
 	require("./utils/pane_resizer")(editor.codemirror);
+	require("./utils/navbar")(editor.codemirror);
 
 	function onChangeHandler() {
 		const value = editor.codemirror.getValue();
@@ -53620,7 +53620,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 ;(function() {
 	const fileLoader = require("./utils/file_loader");
 	const CodeMirror = require("codemirror");
-	const emphasis = require("./utils/markdown_emphasis");
+	const textInserter = require("./utils/text_inserter");
 	const settingsHelper = require("./utils/settings_helper");
 	const $ = require("jquery");
 
@@ -53638,12 +53638,13 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		html: true,
 		value: "",
 		lineNumbers: false,
+		// Todo: Replace this with new shortcut helper.
 		extraKeys: {
 			"Ctrl-B": function(codemirror) {
-				emphasis.handleEmphasis(codemirror, "**");
+				textInserter.handleEmphasis(codemirror, "**");
 			},
 			"Ctrl-I": function(codemirror) {
-				emphasis.handleEmphasis(codemirror, "*");
+				textInserter.handleEmphasis(codemirror, "*");
 			},
 			"Enter": function(codemirror) {
 				codemirror.execCommand("newlineAndIndentContinueMarkdownList");
@@ -53708,7 +53709,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"./utils/file_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/file_loader.js","./utils/markdown_emphasis":"/home/tobloef/Downloads/code/markant.io/scripts/utils/markdown_emphasis.js","./utils/settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","codemirror":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/lib/codemirror.js","codemirror/addon/edit/continuelist":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/addon/edit/continuelist.js","codemirror/mode/gfm/gfm":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/mode/gfm/gfm.js","codemirror/mode/markdown/markdown":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/mode/markdown/markdown.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js":[function(require,module,exports){
+},{"./utils/file_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/file_loader.js","./utils/settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","./utils/text_inserter":"/home/tobloef/Downloads/code/markant.io/scripts/utils/text_inserter.js","codemirror":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/lib/codemirror.js","codemirror/addon/edit/continuelist":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/addon/edit/continuelist.js","codemirror/mode/gfm/gfm":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/mode/gfm/gfm.js","codemirror/mode/markdown/markdown":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/mode/markdown/markdown.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js":[function(require,module,exports){
 ;(function() {
 	const $ = require("jquery");
 	const settingsHelper = require("./settings_helper");
@@ -53839,28 +53840,6 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		ga('send', 'pageview');
 	}
 }());
-},{}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/markdown_emphasis.js":[function(require,module,exports){
-;(function() {
-	// Add some emphasis, like bold (**) or underscore (~~) to the selected text.
-	// If no text is selected insert the emphasis affixes and move to cursor between them.
-	function handleEmphasis(codemirror, emphasisString) {
-		const newString = `${emphasisString}${codemirror.getSelection()}${emphasisString}`;
-		const somethingSelected = codemirror.somethingSelected();
-		codemirror.replaceSelection(newString);
-		if (!somethingSelected) {
-			const cursorPosition = codemirror.getCursor();
-			codemirror.setCursor({
-				line: cursorPosition.line,
-				ch: cursorPosition.ch - emphasisString.length,
-			});
-		}
-	}
-
-	module.exports = {
-		handleEmphasis,
-	};
-}());
-
 },{}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/modal.js":[function(require,module,exports){
 ;(function() {
 	const $ = require("jquery");
@@ -53970,22 +53949,94 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 },{"../settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/navbar.js":[function(require,module,exports){
 ;(function() {
 	const $ = require("jquery");
+	const textInserter = require("./text_inserter");
 
 	const idFunctionMap = {
-		"edit-preferences": showSettingsModal,
-		"edit-undo": undo,
-		"edit-redo": redo,
+		"file-new": fileNew,
+		"file-open": fileOpen,
+		"file-save": fileSave,
+		"file-rename": fileRename,
+		"edit-undo": editUndo,
+		"edit-redo": editRedo,
+		"edit-preferences": editPreferences,
+		"insert-image": insertImage,
+		"insert-link": insertLink,
+		"insert-equation": insertEquation,
+		"format-bold": formatBold,
+		"format-italic": formatItalic,
+		"format-strikethrough": formatStrikethrough,
+		"view-editor": viewEditor,
+		"view-preview": viewPreview,
 	};
 
-	function showSettingsModal() {
+	let codemirror;
+
+	function fileNew() {
+
+	}
+
+	function fileOpen() {
+
+	}
+
+	function fileSave() {
+
+	}
+
+	function fileRename() {
+
+	}
+
+	function editUndo() {
+		if (codemirror == null) {
+			return;
+		}
+		codemirror.undo();
+	}
+
+	function editRedo() {
+		if (codemirror == null) {
+			return;
+		}
+		codemirror.redo();
+	}
+
+	function editPreferences() {
 		$("#settings-modal").addClass("active");
 	}
 
-	function undo() {
+	function insertLink() {
+		textInserter.insertText(codemirror, "[]()", 1);
+	}
+
+	function insertImage() {
+		textInserter.insertText(codemirror, "![]()", 1);
+	}
+
+	function insertEquation() {
+		textInserter.insertText(codemirror, "$$$$", 2);
+	}
+
+	function formatBold() {
+		textInserter.handleEmphasis(codemirror, "**");
+	}
+
+	function formatItalic() {
+		textInserter.handleEmphasis(codemirror, "*");
+	}
+
+	function formatStrikethrough() {
+		if (codemirror == null) {
+			return;
+		}
+		codemirror.execCommand("newlineAndIndentContinueMarkdownList");
+	}
+
+	function viewEditor() {
 
 	}
 
-	function redo() {
+	function viewPreview() {
 
 	}
 
@@ -53993,7 +54044,9 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		$(".navbar-dropdown .dropdown-content").hide();
 	}
 
-	module.exports = function() {
+	module.exports = function(newCodemirror) {
+		codemirror = newCodemirror;
+
 		const $links = $(".navbar a");
 
 		$links.on("click", function(event) {
@@ -54014,7 +54067,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		});
 	};
 }());
-},{"jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/pane_resizer.js":[function(require,module,exports){
+},{"./text_inserter":"/home/tobloef/Downloads/code/markant.io/scripts/utils/text_inserter.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/pane_resizer.js":[function(require,module,exports){
 ;(function() {
 	const $ = require("jquery");
 	const settingsHelper = require("./settings_helper");
@@ -54365,6 +54418,45 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		handleKeypress
 	};
 }());
+},{}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/text_inserter.js":[function(require,module,exports){
+;(function() {
+	// Add some emphasis, like bold (**) or underscore (~~) to the selected text.
+	// If no text is selected insert the emphasis affixes and move to cursor between them.
+	function handleEmphasis(codemirror, emphasisString) {
+		if (codemirror == null) {
+			return;
+		}
+		const newString = `${emphasisString}${codemirror.getSelection()}${emphasisString}`;
+		const somethingSelected = codemirror.somethingSelected();
+		codemirror.replaceSelection(newString);
+		if (!somethingSelected) {
+			insertText(codemirror, emphasisString, emphasisString.length);
+		}
+	}
+
+	// Insert some text in the editor at the current cursor position.
+	// The cursorOffset is optional and can be used to shift the cursor a number of
+	// characters from the right. For example, if cursorOffset is 2 and the inserted
+	// text is "Hello", the cursor will end up between the two l's, like "Hel|lo".
+	function insertText(codemirror, text, cursorOffset) {
+		if (codemirror == null) {
+			return;
+		}
+		const cursorPosition = codemirror.getCursor();
+		codemirror.replaceSelection(text);
+		codemirror.setCursor({
+			line: cursorPosition.line,
+			ch: cursorPosition.ch + text.length - (cursorOffset || 0),
+		});
+		codemirror.focus();
+	}
+
+	module.exports = {
+		handleEmphasis,
+		insertText
+	};
+}());
+
 },{}],"/home/tobloef/Downloads/code/markant.io/scripts/viewer.js":[function(require,module,exports){
 ;(function() {
 	const fileLoader = require("./utils/file_loader");

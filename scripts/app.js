@@ -8,7 +8,6 @@
 	require("./utils/google_analytics")();
 	require("./utils/modals/modal")();
 	require("./utils/modals/settings_modal")();
-	require("./utils/navbar")();
 
 	// Load styles
 	fileLoader.getStyle("build/lib/font-awesome/css/font-awesome.min.css");
@@ -19,8 +18,9 @@
 	const viewer = require("./viewer")(viewerElement);
 	const editor = require("./editor")(editorElement);
 
-	// Set up the pane resizer.
+	// Set up a few more utility modules.
 	require("./utils/pane_resizer")(editor.codemirror);
+	require("./utils/navbar")(editor.codemirror);
 
 	function onChangeHandler() {
 		const value = editor.codemirror.getValue();
