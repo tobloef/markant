@@ -13,8 +13,6 @@
 		"viewerHljsTheme": "default",
 		"viewerMathRenderer": "katex",
 		"viewerTheme": "light",
-		"markdown": "",
-		"documentTitle": "Untitled document",
 		"leftPanePercentage": 50,
 		"rightPanePercentage": 50,
 		"hljsTabSize": 4,

@@ -1,6 +1,6 @@
 ;(function() {
 	const $ = require("jquery");
-	const settingsHelper = require("./settings_helper");
+	const unsavedChanges = require("./unsaved_changes");
 
 	// Max width for the input element.
 	const maxWidth = 300;
@@ -10,20 +10,18 @@
 	const inputClass = "document-title-input";
 	// Class for the title mirror element.
 	const mirrorClass = "document-title-mirror";
+	// The default title
+	const defaultTitle = "Untitled document";
 
 	const $input = $(`.${inputClass}`);
 	const $mirror = $(`.${mirrorClass}`);
 
 	let oldTitle;
 
-	setup($input, $mirror);
+	setTitle(defaultTitle);
 
 	$input.on("focusout", function(event) {
-		if ($input.val() === "") {
-			$input.val(settingsHelper.getDefaultValue("documentTitle"));
-		}
-		oldTitle = $input.val();
-		settingsHelper.setSetting("documentTitle", $input.val());
+		setTitle($input.val());
 	});
 
 	$input.on("input change load focusout", function() {
@@ -31,7 +29,7 @@
 	});
 
 	$input.on("focus", function(event) {
-		if ($input.val() === settingsHelper.getDefaultValue("documentTitle")) {
+		if ($input.val() === defaultTitle) {
 			$input.select();
 		}
 	});
@@ -50,13 +48,18 @@
 		return $input.val();
 	}
 
-	function setup($input, $mirror) {
-		$input.val(settingsHelper.getSetting("documentTitle"));
-		if ($input.val() === "") {
-			$input.val(settingsHelper.getDefaultValue("documentTitle"));
+	function setTitle(title) {
+		if (title === null || title === "") {
+			title = defaultTitle;
 		}
-		oldTitle = $input.val();
+		$input.val(title);
+		oldTitle = title;
 		mirrorWidth($input, $mirror);
+		unsavedChanges.hasChanges = true;
+	}
+
+	function focus() {
+		$input.focus();
 	}
 
 	function mirrorWidth($input, $mirror) {
@@ -70,6 +73,8 @@
 	}
 
 	module.exports = {
-		getTitle
+		getTitle,
+		setTitle,
+		focus
 	};
 }());

@@ -4,6 +4,7 @@
 	const resourceLoader = require("./utils/resource_loader");
 	const settingsHelper = require("./utils/settings_helper");
 	const shortcuts = require("./utils/shortcuts");
+	const unsavedChanges = require("./utils/unsaved_changes");
 	require("./utils/document_title");
 	require("./utils/google_analytics");
 	require("./utils/modals/modal");
@@ -23,17 +24,27 @@
 	require("./utils/navbar")(editor.codemirror);
 	const functions = require("./utils/app_functions")(editor.codemirror);
 
+	const initialMarkdown = "";
+
 	function onChangeHandler() {
 		const value = editor.codemirror.getValue();
-		// Save the markdown to localStorage.
-		settingsHelper.setSetting("markdown", value);
-
+		unsavedChanges.hasChanges = true && (value !== initialMarkdown);
 		// Render the Markdown to the viewer.
 		viewer.render(value, function() {
 			// Sync to the linked scrollbars to match the new content.
 			scrollSync.sync($(".CodeMirror-scroll"), linkedDivs, true);
 		});
 	}
+
+	$(window).on("beforeunload", function(event) {
+		if (unsavedChanges.hasChanges) {
+			const message = "You have unsaved changes. Are you sure you want to leave without saving?";
+			if (event) {
+				event.returnValue = message;
+			}
+			return message;
+		}
+	});
 
 	// Set up shortcut bindings
 	$(document).on("keydown", shortcuts.handleKeypress);
@@ -55,7 +66,6 @@
 	// When the text in the editor is changed, render the markdown.
 	editor.codemirror.on("change", onChangeHandler);
 
-	const initialMarkdown = settingsHelper.getSetting("markdown");
 	editor.codemirror.setValue(initialMarkdown);
 
 	// Render any intial Markdown in the editor.

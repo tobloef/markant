@@ -1,17 +1,26 @@
 ;(function() {
 	const $ = require("jquery");
+	const documentTitle = require("./document_title");
+	const unsavedChanges = require("./unsaved_changes");
 
 	let codemirror;
 
-	if (window.FileReader) {
-		const reader = new FileReader();
-		reader.onload = handleUpload;
-		$("#file-input").on("change", function(event) {
-			reader.readAsText(event.target.files[0]);
-		});
-	}
+	$("#file-input").on("change", function(event) {
+		if (window.FileReader) {
+			const selectedFile = event.target.files[0];
+			const reader = new FileReader();
+			reader.onloadend = (function(file) {
+				const fileName = file.name;
+				return function(event) {
+					handleUpload(event, fileName);
+				};
+			})(selectedFile);
+			reader.readAsText(selectedFile);
+		}
+		$("#file-input").val("");
+	});
 
-	function handleUpload(event) {
+	function handleUpload(event, fileName) {
 		if (event.target.readyState !== 2) {
 			return;
 		}
@@ -21,7 +30,9 @@
 		}
 		const content = event.target.result;
 		if (codemirror) {
+			documentTitle.setTitle(fileName);
 			codemirror.setValue(content);
+			unsavedChanges.hasChanges = false;
 		}
 	}
 
