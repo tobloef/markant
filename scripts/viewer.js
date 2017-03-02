@@ -1,5 +1,5 @@
 ;(function() {
-	const fileLoader = require("./utils/file_loader");
+	const resourceLoader = require("./utils/resource_loader");
 	const settingsHelper = require("./utils/settings_helper");
 	const $ = require("jquery");
 	const hljs = require("highlight.js");
@@ -71,7 +71,7 @@
 			} else if (mathRenderer.toLowerCase() === "mathjax") {
 				markdown.use(mathjax);
 				const mathjaxUrl = mathjaxCdn + mathjaxConfigString;
-				fileLoader.getScript(mathjaxUrl, function() {
+				resourceLoader.getScript(mathjaxUrl, function() {
 					MathJax.Hub.Config({
 						messageStyle: "none",
 					});
@@ -81,11 +81,11 @@
 		}
 		const hljsTheme = settingsHelper.getSetting("viewerHljsTheme");
 		if (hljsTheme != null) {
-			fileLoader.getStyle(`${hljsThemeDirectory}/${hljsTheme}.css`);
+			resourceLoader.getStyle(`${hljsThemeDirectory}/${hljsTheme}.css`);
 		}
 		const viewerTheme = settingsHelper.getSetting("viewerTheme");
 		if (viewerTheme != null) {
-			fileLoader.getStyle(`${viewerThemeDirectory}/${viewerTheme}.css`);
+			resourceLoader.getStyle(`${viewerThemeDirectory}/${viewerTheme}.css`);
 		}
 	}
 

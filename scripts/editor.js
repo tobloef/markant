@@ -1,5 +1,5 @@
 ;(function() {
-	const fileLoader = require("./utils/file_loader");
+	const resourceLoader = require("./utils/resource_loader");
 	const CodeMirror = require("codemirror");
 	const settingsHelper = require("./utils/settings_helper");
 	const $ = require("jquery");
@@ -49,11 +49,11 @@
 			codemirrorConfig.lineNumbers = showLineNumbers;
 		}
 		if (codemirrorConfig.theme != null) {
-			fileLoader.getStyle(`${themeDirectory}/${codemirrorConfig.theme}.css`);
+			resourceLoader.getStyle(`${themeDirectory}/${codemirrorConfig.theme}.css`);
 		}
 		const useBigHeaders = settingsHelper.getSetting("editorBigHeaders");
 		if (useBigHeaders != null && useBigHeaders) {
-			fileLoader.getStyle(`${themeDirectory}/big_headers.css`);
+			resourceLoader.getStyle(`${themeDirectory}/big_headers.css`);
 		}
 	}
 

@@ -1,7 +1,7 @@
 ;(function() {
 	const $ = require("jquery");
 	const scrollSync = require("./utils/scroll_sync");
-	const fileLoader = require("./utils/file_loader");
+	const resourceLoader = require("./utils/resource_loader");
 	const settingsHelper = require("./utils/settings_helper");
 	const shortcuts = require("./utils/shortcuts");
 	require("./utils/document_title")();
@@ -10,7 +10,7 @@
 	require("./utils/modals/settings_modal")();
 
 	// Load styles
-	fileLoader.getStyle("build/lib/font-awesome/css/font-awesome.min.css");
+	resourceLoader.getStyle("build/lib/font-awesome/css/font-awesome.min.css");
 
 	// Set up the editor and the viewer.
 	const viewerElement = $("#viewer").get(0);

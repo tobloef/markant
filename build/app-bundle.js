@@ -53567,7 +53567,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 ;(function() {
 	const $ = require("jquery");
 	const scrollSync = require("./utils/scroll_sync");
-	const fileLoader = require("./utils/file_loader");
+	const resourceLoader = require("./utils/resource_loader");
 	const settingsHelper = require("./utils/settings_helper");
 	const shortcuts = require("./utils/shortcuts");
 	require("./utils/document_title")();
@@ -53576,7 +53576,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	require("./utils/modals/settings_modal")();
 
 	// Load styles
-	fileLoader.getStyle("build/lib/font-awesome/css/font-awesome.min.css");
+	resourceLoader.getStyle("build/lib/font-awesome/css/font-awesome.min.css");
 
 	// Set up the editor and the viewer.
 	const viewerElement = $("#viewer").get(0);
@@ -53628,9 +53628,9 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	onChangeHandler();
 }());
 
-},{"./editor":"/home/tobloef/Downloads/code/markant.io/scripts/editor.js","./utils/app_functions":"/home/tobloef/Downloads/code/markant.io/scripts/utils/app_functions.js","./utils/document_title":"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js","./utils/file_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/file_loader.js","./utils/google_analytics":"/home/tobloef/Downloads/code/markant.io/scripts/utils/google_analytics.js","./utils/modals/modal":"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/modal.js","./utils/modals/settings_modal":"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/settings_modal.js","./utils/navbar":"/home/tobloef/Downloads/code/markant.io/scripts/utils/navbar.js","./utils/pane_resizer":"/home/tobloef/Downloads/code/markant.io/scripts/utils/pane_resizer.js","./utils/scroll_sync":"/home/tobloef/Downloads/code/markant.io/scripts/utils/scroll_sync.js","./utils/settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","./utils/shortcuts":"/home/tobloef/Downloads/code/markant.io/scripts/utils/shortcuts.js","./viewer":"/home/tobloef/Downloads/code/markant.io/scripts/viewer.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/editor.js":[function(require,module,exports){
+},{"./editor":"/home/tobloef/Downloads/code/markant.io/scripts/editor.js","./utils/app_functions":"/home/tobloef/Downloads/code/markant.io/scripts/utils/app_functions.js","./utils/document_title":"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js","./utils/google_analytics":"/home/tobloef/Downloads/code/markant.io/scripts/utils/google_analytics.js","./utils/modals/modal":"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/modal.js","./utils/modals/settings_modal":"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/settings_modal.js","./utils/navbar":"/home/tobloef/Downloads/code/markant.io/scripts/utils/navbar.js","./utils/pane_resizer":"/home/tobloef/Downloads/code/markant.io/scripts/utils/pane_resizer.js","./utils/resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./utils/scroll_sync":"/home/tobloef/Downloads/code/markant.io/scripts/utils/scroll_sync.js","./utils/settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","./utils/shortcuts":"/home/tobloef/Downloads/code/markant.io/scripts/utils/shortcuts.js","./viewer":"/home/tobloef/Downloads/code/markant.io/scripts/viewer.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/editor.js":[function(require,module,exports){
 ;(function() {
-	const fileLoader = require("./utils/file_loader");
+	const resourceLoader = require("./utils/resource_loader");
 	const CodeMirror = require("codemirror");
 	const settingsHelper = require("./utils/settings_helper");
 	const $ = require("jquery");
@@ -53680,11 +53680,11 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			codemirrorConfig.lineNumbers = showLineNumbers;
 		}
 		if (codemirrorConfig.theme != null) {
-			fileLoader.getStyle(`${themeDirectory}/${codemirrorConfig.theme}.css`);
+			resourceLoader.getStyle(`${themeDirectory}/${codemirrorConfig.theme}.css`);
 		}
 		const useBigHeaders = settingsHelper.getSetting("editorBigHeaders");
 		if (useBigHeaders != null && useBigHeaders) {
-			fileLoader.getStyle(`${themeDirectory}/big_headers.css`);
+			resourceLoader.getStyle(`${themeDirectory}/big_headers.css`);
 		}
 	}
 
@@ -53714,19 +53714,21 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"./utils/file_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/file_loader.js","./utils/settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","codemirror":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/lib/codemirror.js","codemirror/addon/edit/continuelist":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/addon/edit/continuelist.js","codemirror/mode/gfm/gfm":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/mode/gfm/gfm.js","codemirror/mode/markdown/markdown":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/mode/markdown/markdown.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/app_functions.js":[function(require,module,exports){
+},{"./utils/resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./utils/settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","codemirror":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/lib/codemirror.js","codemirror/addon/edit/continuelist":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/addon/edit/continuelist.js","codemirror/mode/gfm/gfm":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/mode/gfm/gfm.js","codemirror/mode/markdown/markdown":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/mode/markdown/markdown.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/app_functions.js":[function(require,module,exports){
 ;(function() {
-	const $ = require("jquery");
-	const textInserter = require("./text_inserter");
-
 	module.exports = function(codemirror) {
+		const $ = require("jquery");
+		const textInserter = require("./text_inserter");
+		const resource = require("./resource_loader");
+		const uploader = require("./file_import")(codemirror);
+
 		return {
 			fileNew: function() {
 
 			},
 
 			fileOpen: function() {
-
+				uploader.chooseFile();
 			},
 
 			fileSave: function() {
@@ -53792,7 +53794,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		};
 	};
 }());
-},{"./text_inserter":"/home/tobloef/Downloads/code/markant.io/scripts/utils/text_inserter.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js":[function(require,module,exports){
+},{"./file_import":"/home/tobloef/Downloads/code/markant.io/scripts/utils/file_import.js","./resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./text_inserter":"/home/tobloef/Downloads/code/markant.io/scripts/utils/text_inserter.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js":[function(require,module,exports){
 ;(function() {
 	const $ = require("jquery");
 	const settingsHelper = require("./settings_helper");
@@ -53864,43 +53866,45 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	}
 }());
 
-},{"./settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/file_loader.js":[function(require,module,exports){
+},{"./settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/file_import.js":[function(require,module,exports){
 ;(function() {
 	const $ = require("jquery");
 
-	function getScript(url, callback, options) {
-		options = $.extend(options || {}, {
-			dataType: "script",
-			cache: true,
-			url: url,
-			success: callback,
-			timeout: 10 * 1000, // 10 seconds
-			error: function() {
-				console.error(`Error loading script from url ${url}.\nException: ${e}`);
-			}
+	let codemirror;
+
+	if (window.FileReader) {
+		const reader = new FileReader();
+		reader.onload = handleUpload;
+		$("#file-input").on("change", function(event) {
+			reader.readAsText(event.target.files[0]);
 		});
-		$.ajax(options);
 	}
 
-	function getStyle(url, callback) {
-		try {
-			$("<link/>", {
-				rel: "stylesheet",
-				type: "text/css",
-				href: url,
-			}).appendTo("head");
-			if (callback) {
-				callback();
-			}
-		} catch (e) {
-			console.error(`Error loading style from url ${url}.\nException: ${e}`);
+	function handleUpload(event) {
+		if (event.target.readyState !== 2) {
 			return;
 		}
+		if (event.target.error) {
+			alert("There was an error opening the file.");
+			return;
+		}
+		const content = event.target.result;
+		codemirror.setValue(content);
 	}
 
-	module.exports = {
-		getScript,
-		getStyle,
+	function chooseFile() {
+		if (!window.FileReader) {
+			alert("Your browser doesn't support opening files, consider upgrading to a newer version of your browser.");
+			return;
+		}
+		$("#file-input").click();
+	}
+
+	module.exports = function(newCodemirror) {
+		codemirror = newCodemirror;
+		return {
+			chooseFile
+		};
 	};
 }());
 
@@ -54273,7 +54277,47 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"./settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/scroll_sync.js":[function(require,module,exports){
+},{"./settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js":[function(require,module,exports){
+;(function() {
+	const $ = require("jquery");
+
+	function getScript(url, callback, options) {
+		options = $.extend(options || {}, {
+			dataType: "script",
+			cache: true,
+			url: url,
+			success: callback,
+			timeout: 10 * 1000, // 10 seconds
+			error: function() {
+				console.error(`Error loading script from url ${url}.\nException: ${e}`);
+			}
+		});
+		$.ajax(options);
+	}
+
+	function getStyle(url, callback) {
+		try {
+			$("<link/>", {
+				rel: "stylesheet",
+				type: "text/css",
+				href: url,
+			}).appendTo("head");
+			if (callback) {
+				callback();
+			}
+		} catch (e) {
+			console.error(`Error loading style from url ${url}.\nException: ${e}`);
+			return;
+		}
+	}
+
+	module.exports = {
+		getScript,
+		getStyle,
+	};
+}());
+
+},{"jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/scroll_sync.js":[function(require,module,exports){
 ;(function() {
 	const $ = require("jquery");
 
@@ -54477,7 +54521,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 },{}],"/home/tobloef/Downloads/code/markant.io/scripts/viewer.js":[function(require,module,exports){
 ;(function() {
-	const fileLoader = require("./utils/file_loader");
+	const resourceLoader = require("./utils/resource_loader");
 	const settingsHelper = require("./utils/settings_helper");
 	const $ = require("jquery");
 	const hljs = require("highlight.js");
@@ -54549,7 +54593,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			} else if (mathRenderer.toLowerCase() === "mathjax") {
 				markdown.use(mathjax);
 				const mathjaxUrl = mathjaxCdn + mathjaxConfigString;
-				fileLoader.getScript(mathjaxUrl, function() {
+				resourceLoader.getScript(mathjaxUrl, function() {
 					MathJax.Hub.Config({
 						messageStyle: "none",
 					});
@@ -54559,11 +54603,11 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		}
 		const hljsTheme = settingsHelper.getSetting("viewerHljsTheme");
 		if (hljsTheme != null) {
-			fileLoader.getStyle(`${hljsThemeDirectory}/${hljsTheme}.css`);
+			resourceLoader.getStyle(`${hljsThemeDirectory}/${hljsTheme}.css`);
 		}
 		const viewerTheme = settingsHelper.getSetting("viewerTheme");
 		if (viewerTheme != null) {
-			fileLoader.getStyle(`${viewerThemeDirectory}/${viewerTheme}.css`);
+			resourceLoader.getStyle(`${viewerThemeDirectory}/${viewerTheme}.css`);
 		}
 	}
 
@@ -54598,6 +54642,6 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"./utils/file_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/file_loader.js","./utils/settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","highlight.js":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/index.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js","markdown-it":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/index.js","markdown-it-katex":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-katex/index.js","markdown-it-lazy-headers":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-lazy-headers/index.js","markdown-it-mathjax":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-mathjax/markdown-it-mathjax.js","markdown-it-sanitizer":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-sanitizer/index.js"}]},{},["/home/tobloef/Downloads/code/markant.io/scripts/app.js"])
+},{"./utils/resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./utils/settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","highlight.js":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/index.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js","markdown-it":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/index.js","markdown-it-katex":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-katex/index.js","markdown-it-lazy-headers":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-lazy-headers/index.js","markdown-it-mathjax":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-mathjax/markdown-it-mathjax.js","markdown-it-sanitizer":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-sanitizer/index.js"}]},{},["/home/tobloef/Downloads/code/markant.io/scripts/app.js"])
 
 //# sourceMappingURL=app-bundle.js.map

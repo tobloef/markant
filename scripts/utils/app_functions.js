@@ -1,15 +1,17 @@
 ;(function() {
-	const $ = require("jquery");
-	const textInserter = require("./text_inserter");
-
 	module.exports = function(codemirror) {
+		const $ = require("jquery");
+		const textInserter = require("./text_inserter");
+		const resource = require("./resource_loader");
+		const uploader = require("./file_import")(codemirror);
+
 		return {
 			fileNew: function() {
 
 			},
 
 			fileOpen: function() {
-
+				uploader.chooseFile();
 			},
 
 			fileSave: function() {

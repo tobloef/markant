@@ -15,6 +15,7 @@
   "homepage": "https://github.com/tobloef/markant.io#readme",
   "dependencies": {
     "codemirror": "^5.19.0",
+    "fine-uploader": "^5.14.1",
     "font-awesome": "^4.6.3",
     "highlight.js": "^9.9.0",
     "jquery": "^3.1.1",
