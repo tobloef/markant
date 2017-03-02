@@ -2,7 +2,6 @@
 	const $ = require("jquery");
 	const scrollSync = require("./utils/scroll_sync");
 	const resourceLoader = require("./utils/resource_loader");
-	const settingsHelper = require("./utils/settings_helper");
 	const shortcuts = require("./utils/shortcuts");
 	const unsavedChanges = require("./utils/unsaved_changes");
 	require("./utils/document_title");
@@ -26,16 +25,6 @@
 
 	const initialMarkdown = "";
 
-	function onChangeHandler() {
-		const value = editor.codemirror.getValue();
-		unsavedChanges.hasChanges = true && (value !== initialMarkdown);
-		// Render the Markdown to the viewer.
-		viewer.render(value, function() {
-			// Sync to the linked scrollbars to match the new content.
-			scrollSync.sync($(".CodeMirror-scroll"), linkedDivs, true);
-		});
-	}
-
 	$(window).on("beforeunload", function(event) {
 		if (unsavedChanges.hasChanges) {
 			const message = "You have unsaved changes. Are you sure you want to leave without saving?";
@@ -44,6 +33,7 @@
 			}
 			return message;
 		}
+		return;
 	});
 
 	// Set up shortcut bindings
@@ -55,7 +45,7 @@
 		"ctrl+k": functions.insertLink,
 		"ctrl+": functions.insertEquation,
 		"ctrl+b": functions.formatBold,
-		"ctrl+i": functions.formatItalic
+		"ctrl+i": functions.formatItalic,
 	};
 	shortcuts.addBindings(bindings);
 
@@ -70,4 +60,14 @@
 
 	// Render any intial Markdown in the editor.
 	onChangeHandler();
+
+	function onChangeHandler() {
+		const value = editor.codemirror.getValue();
+		unsavedChanges.hasChanges = true && (value !== initialMarkdown);
+		// Render the Markdown to the viewer.
+		viewer.render(value, function() {
+			// Sync to the linked scrollbars to match the new content.
+			scrollSync.sync($(".CodeMirror-scroll"), linkedDivs, true);
+		});
+	}
 }());

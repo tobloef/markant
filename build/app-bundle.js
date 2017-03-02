@@ -53568,7 +53568,6 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	const $ = require("jquery");
 	const scrollSync = require("./utils/scroll_sync");
 	const resourceLoader = require("./utils/resource_loader");
-	const settingsHelper = require("./utils/settings_helper");
 	const shortcuts = require("./utils/shortcuts");
 	const unsavedChanges = require("./utils/unsaved_changes");
 	require("./utils/document_title");
@@ -53592,16 +53591,6 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 	const initialMarkdown = "";
 
-	function onChangeHandler() {
-		const value = editor.codemirror.getValue();
-		unsavedChanges.hasChanges = true && (value !== initialMarkdown);
-		// Render the Markdown to the viewer.
-		viewer.render(value, function() {
-			// Sync to the linked scrollbars to match the new content.
-			scrollSync.sync($(".CodeMirror-scroll"), linkedDivs, true);
-		});
-	}
-
 	$(window).on("beforeunload", function(event) {
 		if (unsavedChanges.hasChanges) {
 			const message = "You have unsaved changes. Are you sure you want to leave without saving?";
@@ -53610,6 +53599,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			}
 			return message;
 		}
+		return;
 	});
 
 	// Set up shortcut bindings
@@ -53621,7 +53611,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		"ctrl+k": functions.insertLink,
 		"ctrl+": functions.insertEquation,
 		"ctrl+b": functions.formatBold,
-		"ctrl+i": functions.formatItalic
+		"ctrl+i": functions.formatItalic,
 	};
 	shortcuts.addBindings(bindings);
 
@@ -53636,9 +53626,19 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 	// Render any intial Markdown in the editor.
 	onChangeHandler();
+
+	function onChangeHandler() {
+		const value = editor.codemirror.getValue();
+		unsavedChanges.hasChanges = true && (value !== initialMarkdown);
+		// Render the Markdown to the viewer.
+		viewer.render(value, function() {
+			// Sync to the linked scrollbars to match the new content.
+			scrollSync.sync($(".CodeMirror-scroll"), linkedDivs, true);
+		});
+	}
 }());
 
-},{"./editor":"/home/tobloef/Downloads/code/markant.io/scripts/editor.js","./utils/app_functions":"/home/tobloef/Downloads/code/markant.io/scripts/utils/app_functions.js","./utils/document_title":"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js","./utils/google_analytics":"/home/tobloef/Downloads/code/markant.io/scripts/utils/google_analytics.js","./utils/modals/modal":"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/modal.js","./utils/modals/settings_modal":"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/settings_modal.js","./utils/navbar":"/home/tobloef/Downloads/code/markant.io/scripts/utils/navbar.js","./utils/pane_resizer":"/home/tobloef/Downloads/code/markant.io/scripts/utils/pane_resizer.js","./utils/resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./utils/scroll_sync":"/home/tobloef/Downloads/code/markant.io/scripts/utils/scroll_sync.js","./utils/settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","./utils/shortcuts":"/home/tobloef/Downloads/code/markant.io/scripts/utils/shortcuts.js","./utils/unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","./viewer":"/home/tobloef/Downloads/code/markant.io/scripts/viewer.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/editor.js":[function(require,module,exports){
+},{"./editor":"/home/tobloef/Downloads/code/markant.io/scripts/editor.js","./utils/app_functions":"/home/tobloef/Downloads/code/markant.io/scripts/utils/app_functions.js","./utils/document_title":"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js","./utils/google_analytics":"/home/tobloef/Downloads/code/markant.io/scripts/utils/google_analytics.js","./utils/modals/modal":"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/modal.js","./utils/modals/settings_modal":"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/settings_modal.js","./utils/navbar":"/home/tobloef/Downloads/code/markant.io/scripts/utils/navbar.js","./utils/pane_resizer":"/home/tobloef/Downloads/code/markant.io/scripts/utils/pane_resizer.js","./utils/resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./utils/scroll_sync":"/home/tobloef/Downloads/code/markant.io/scripts/utils/scroll_sync.js","./utils/shortcuts":"/home/tobloef/Downloads/code/markant.io/scripts/utils/shortcuts.js","./utils/unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","./viewer":"/home/tobloef/Downloads/code/markant.io/scripts/viewer.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/editor.js":[function(require,module,exports){
 ;(function() {
 	const resourceLoader = require("./utils/resource_loader");
 	const CodeMirror = require("codemirror");
@@ -53736,7 +53736,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		const unsavedChanges = require("./unsaved_changes");
 
 		return {
-			fileNew: function() {
+			fileNew() {
 				if (!unsavedChanges.confirmContinue()) {
 					return;
 				}
@@ -53745,14 +53745,14 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 				unsavedChanges.hasChanges = false;
 			},
 
-			fileOpen: function() {
+			fileOpen() {
 				if (!unsavedChanges.confirmContinue()) {
 					return;
 				}
 				fileImport.chooseFile();
 			},
 
-			fileSave: function() {
+			fileSave() {
 				const content = codemirror.getValue();
 				const title = documentTitle.getTitle();
 				const type = ".md";
@@ -53760,64 +53760,64 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 				unsavedChanges.hasChanges = false;
 			},
 
-			fileExport: function() {
+			fileExport() {
 
 			},
 
-			fileRename: function() {
+			fileRename() {
 				documentTitle.focus();
 			},
 
-			editUndo: function() {
+			editUndo() {
 				if (codemirror == null) {
 					return;
 				}
 				codemirror.undo();
 			},
 
-			editRedo: function() {
+			editRedo() {
 				if (codemirror == null) {
 					return;
 				}
 				codemirror.redo();
 			},
 
-			editPreferences: function() {
+			editPreferences() {
 				$("#settings-modal").addClass("active");
 			},
 
-			insertLink: function() {
+			insertLink() {
 				textInserter.insertText(codemirror, "[]()", 1);
 			},
 
-			insertImage: function() {
+			insertImage() {
 				textInserter.insertText(codemirror, "![]()", 1);
 			},
 
-			insertEquation: function() {
+			insertEquation() {
 				textInserter.insertText(codemirror, "$$$$", 2);
 			},
 
-			formatBold: function() {
+			formatBold() {
 				textInserter.handleEmphasis(codemirror, "**");
 			},
 
-			formatItalic: function() {
+			formatItalic() {
 				textInserter.handleEmphasis(codemirror, "*");
 			},
 
-			formatStrikethrough: function() {
+			formatStrikethrough() {
 				if (codemirror == null) {
 					return;
 				}
 				codemirror.execCommand("newlineAndIndentContinueMarkdownList");
 			},
 
-			viewEditor: function() {
+			viewEditor() {
 
 			},
 
-			viewPreview: function() {
+			viewPreview() {
 
 			}
 		};

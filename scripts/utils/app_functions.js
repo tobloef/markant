@@ -9,7 +9,7 @@
 		const unsavedChanges = require("./unsaved_changes");
 
 		return {
-			fileNew: function() {
+			fileNew() {
 				if (!unsavedChanges.confirmContinue()) {
 					return;
 				}
@@ -18,14 +18,14 @@
 				unsavedChanges.hasChanges = false;
 			},
 
-			fileOpen: function() {
+			fileOpen() {
 				if (!unsavedChanges.confirmContinue()) {
 					return;
 				}
 				fileImport.chooseFile();
 			},
 
-			fileSave: function() {
+			fileSave() {
 				const content = codemirror.getValue();
 				const title = documentTitle.getTitle();
 				const type = ".md";
@@ -33,64 +33,64 @@
 				unsavedChanges.hasChanges = false;
 			},
 
-			fileExport: function() {
+			fileExport() {
 
 			},
 
-			fileRename: function() {
+			fileRename() {
 				documentTitle.focus();
 			},
 
-			editUndo: function() {
+			editUndo() {
 				if (codemirror == null) {
 					return;
 				}
 				codemirror.undo();
 			},
 
-			editRedo: function() {
+			editRedo() {
 				if (codemirror == null) {
 					return;
 				}
 				codemirror.redo();
 			},
 
-			editPreferences: function() {
+			editPreferences() {
 				$("#settings-modal").addClass("active");
 			},
 
-			insertLink: function() {
+			insertLink() {
 				textInserter.insertText(codemirror, "[]()", 1);
 			},
 
-			insertImage: function() {
+			insertImage() {
 				textInserter.insertText(codemirror, "![]()", 1);
 			},
 
-			insertEquation: function() {
+			insertEquation() {
 				textInserter.insertText(codemirror, "$$$$", 2);
 			},
 
-			formatBold: function() {
+			formatBold() {
 				textInserter.handleEmphasis(codemirror, "**");
 			},
 
-			formatItalic: function() {
+			formatItalic() {
 				textInserter.handleEmphasis(codemirror, "*");
 			},
 
-			formatStrikethrough: function() {
+			formatStrikethrough() {
 				if (codemirror == null) {
 					return;
 				}
 				codemirror.execCommand("newlineAndIndentContinueMarkdownList");
 			},
 
-			viewEditor: function() {
+			viewEditor() {
 
 			},
 
-			viewPreview: function() {
+			viewPreview() {
 
 			}
 		};
