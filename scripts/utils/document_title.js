@@ -11,43 +11,44 @@
 	// Class for the title mirror element.
 	const mirrorClass = "document-title-mirror";
 
-	let documentTitle;
+	const $input = $(`.${inputClass}`);
+	const $mirror = $(`.${mirrorClass}`);
 
-	module.exports = function() {
-		const $input = $(`.${inputClass}`);
-		const $mirror = $(`.${mirrorClass}`);
+	let oldTitle;
 
-		let oldTitle;
+	setup($input, $mirror);
 
-		setup($input, $mirror);
+	$input.on("focusout", function(event) {
+		if ($input.val() === "") {
+			$input.val(settingsHelper.getDefaultValue("documentTitle"));
+		}
+		oldTitle = $input.val();
+		settingsHelper.setSetting("documentTitle", $input.val());
+	});
 
-		$input.on("focusout", function(event) {
-			if ($input.val() === "") {
-				$input.val(settingsHelper.getDefaultValue("documentTitle"));
-			}
-			oldTitle = $input.val();
-			settingsHelper.setSetting("documentTitle", $input.val());
-		});
+	$input.on("input change load focusout", function() {
+		mirrorWidth($input, $mirror);
+	});
 
-		$input.on("input change load focusout", function() {
-			mirrorWidth($input, $mirror);
-		});
+	$input.on("focus", function(event) {
+		if ($input.val() === settingsHelper.getDefaultValue("documentTitle")) {
+			$input.select();
+		}
+	});
 
-		$input.on("focus", function(event) {
-			if ($input.val() === settingsHelper.getDefaultValue("documentTitle")) {
-				$input.select();
-			}
-		});
+	$input.on("keydown", function(key) {
+		if (key.keyCode === 13) {
+			$input.blur();
+		} else if (key.keyCode === 27) {
+			$input.val(oldTitle);
+			$input.blur();
+		}
+	});
 
-		$input.on("keydown", function(key) {
-			if (key.keyCode === 13) {
-				$input.blur();
-			} else if (key.keyCode === 27) {
-				$input.val(oldTitle);
-				$input.blur();
-			}
-		});
-	};
+	function getTitle() {
+		$input.blur();
+		return $input.val();
+	}
 
 	function setup($input, $mirror) {
 		$input.val(settingsHelper.getSetting("documentTitle"));
@@ -67,4 +68,8 @@
 			$input.css("width", width + "px");
 		}
 	}
+
+	module.exports = {
+		getTitle
+	};
 }());

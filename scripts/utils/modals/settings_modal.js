@@ -69,16 +69,14 @@
 		}
 	}
 
-	module.exports = function() {
+	loadSettings();
+	$("#modal-settings-save").on("click", function() {
+		saveSettings();
+		$(this).closest(".modal").removeClass("active");
+		window.location.reload();
+	});
+	$("#modal-settings-reset").on("click", function() {
+		resetSettings();
 		loadSettings();
-		$("#modal-settings-save").on("click", function() {
-			saveSettings();
-			$(this).closest(".modal").removeClass("active");
-			window.location.reload();
-		});
-		$("#modal-settings-reset").on("click", function() {
-			resetSettings();
-			loadSettings();
-		});
-	};
+	});
 }());

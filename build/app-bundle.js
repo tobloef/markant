@@ -53570,10 +53570,10 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	const resourceLoader = require("./utils/resource_loader");
 	const settingsHelper = require("./utils/settings_helper");
 	const shortcuts = require("./utils/shortcuts");
-	require("./utils/document_title")();
-	require("./utils/google_analytics")();
-	require("./utils/modals/modal")();
-	require("./utils/modals/settings_modal")();
+	require("./utils/document_title");
+	require("./utils/google_analytics");
+	require("./utils/modals/modal");
+	require("./utils/modals/settings_modal");
 
 	// Load styles
 	resourceLoader.getStyle("build/lib/font-awesome/css/font-awesome.min.css");
@@ -53720,7 +53720,9 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		const $ = require("jquery");
 		const textInserter = require("./text_inserter");
 		const resource = require("./resource_loader");
-		const uploader = require("./file_import")(codemirror);
+		const fileImport = require("./markdown_import")(codemirror);
+		const fileExport = require("./file_saver");
+		const documentTitle = require("./document_title");
 
 		return {
 			fileNew: function() {
@@ -53728,10 +53730,17 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			},
 
 			fileOpen: function() {
-				uploader.chooseFile();
+				fileImport.chooseFile();
 			},
 
 			fileSave: function() {
+				const content = codemirror.getValue();
+				const title = documentTitle.getTitle();
+				const type = ".md";
+				fileExport.saveFile(content, title, type);
+			},
+
+			fileExport: function() {
 
 			},
 
@@ -53794,7 +53803,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		};
 	};
 }());
-},{"./file_import":"/home/tobloef/Downloads/code/markant.io/scripts/utils/file_import.js","./resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./text_inserter":"/home/tobloef/Downloads/code/markant.io/scripts/utils/text_inserter.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js":[function(require,module,exports){
+},{"./document_title":"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js","./file_saver":"/home/tobloef/Downloads/code/markant.io/scripts/utils/file_saver.js","./markdown_import":"/home/tobloef/Downloads/code/markant.io/scripts/utils/markdown_import.js","./resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./text_inserter":"/home/tobloef/Downloads/code/markant.io/scripts/utils/text_inserter.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js":[function(require,module,exports){
 ;(function() {
 	const $ = require("jquery");
 	const settingsHelper = require("./settings_helper");
@@ -53808,43 +53817,44 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	// Class for the title mirror element.
 	const mirrorClass = "document-title-mirror";
 
-	let documentTitle;
+	const $input = $(`.${inputClass}`);
+	const $mirror = $(`.${mirrorClass}`);
 
-	module.exports = function() {
-		const $input = $(`.${inputClass}`);
-		const $mirror = $(`.${mirrorClass}`);
+	let oldTitle;
 
-		let oldTitle;
+	setup($input, $mirror);
 
-		setup($input, $mirror);
+	$input.on("focusout", function(event) {
+		if ($input.val() === "") {
+			$input.val(settingsHelper.getDefaultValue("documentTitle"));
+		}
+		oldTitle = $input.val();
+		settingsHelper.setSetting("documentTitle", $input.val());
+	});
 
-		$input.on("focusout", function(event) {
-			if ($input.val() === "") {
-				$input.val(settingsHelper.getDefaultValue("documentTitle"));
-			}
-			oldTitle = $input.val();
-			settingsHelper.setSetting("documentTitle", $input.val());
-		});
+	$input.on("input change load focusout", function() {
+		mirrorWidth($input, $mirror);
+	});
 
-		$input.on("input change load focusout", function() {
-			mirrorWidth($input, $mirror);
-		});
+	$input.on("focus", function(event) {
+		if ($input.val() === settingsHelper.getDefaultValue("documentTitle")) {
+			$input.select();
+		}
+	});
 
-		$input.on("focus", function(event) {
-			if ($input.val() === settingsHelper.getDefaultValue("documentTitle")) {
-				$input.select();
-			}
-		});
+	$input.on("keydown", function(key) {
+		if (key.keyCode === 13) {
+			$input.blur();
+		} else if (key.keyCode === 27) {
+			$input.val(oldTitle);
+			$input.blur();
+		}
+	});
 
-		$input.on("keydown", function(key) {
-			if (key.keyCode === 13) {
-				$input.blur();
-			} else if (key.keyCode === 27) {
-				$input.val(oldTitle);
-				$input.blur();
-			}
-		});
-	};
+	function getTitle() {
+		$input.blur();
+		return $input.val();
+	}
 
 	function setup($input, $mirror) {
 		$input.val(settingsHelper.getSetting("documentTitle"));
@@ -53864,9 +53874,55 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			$input.css("width", width + "px");
 		}
 	}
+
+	module.exports = {
+		getTitle
+	};
 }());
 
-},{"./settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/file_import.js":[function(require,module,exports){
+},{"./settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/file_saver.js":[function(require,module,exports){
+;(function() {
+	function saveFile(data, filename, type) {
+	    const file = new Blob([data]);
+	    if (window.navigator.msSaveOrOpenBlob) {
+	        window.navigator.msSaveOrOpenBlob(file, filename + type);
+	    } else {
+	    	const url = URL.createObjectURL(file);
+	    	const a = document.createElement("a");
+	        a.href = url;
+	        a.download = filename + type;
+	        document.body.appendChild(a);
+	        a.click();
+	        setTimeout(function() {
+	            document.body.removeChild(a);
+	            window.URL.revokeObjectURL(url);
+	        }, 0);
+	    }
+	}
+
+	module.exports = {
+		saveFile
+	};
+}());
+
+},{}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/google_analytics.js":[function(require,module,exports){
+;(function() {
+		(function(i, s, o, g, r, a, m) {
+			i['GoogleAnalyticsObject'] = r;
+			i[r] = i[r] || function() {
+				(i[r].q = i[r].q || []).push(arguments)
+			}, i[r].l = 1 * new Date();
+			a = s.createElement(o),
+				m = s.getElementsByTagName(o)[0];
+			a.async = 1;
+			a.src = g;
+			m.parentNode.insertBefore(a, m)
+		})(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+		ga('create', 'UA-73558830-6', 'auto');
+		ga('send', 'pageview');
+}());
+},{}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/markdown_import.js":[function(require,module,exports){
 ;(function() {
 	const $ = require("jquery");
 
@@ -53889,7 +53945,9 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			return;
 		}
 		const content = event.target.result;
-		codemirror.setValue(content);
+		if (codemirror) {
+			codemirror.setValue(content);
+		}
 	}
 
 	function chooseFile() {
@@ -53908,45 +53966,24 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/google_analytics.js":[function(require,module,exports){
-;(function() {
-	module.exports = function() {
-		(function(i, s, o, g, r, a, m) {
-			i['GoogleAnalyticsObject'] = r;
-			i[r] = i[r] || function() {
-				(i[r].q = i[r].q || []).push(arguments)
-			}, i[r].l = 1 * new Date();
-			a = s.createElement(o),
-				m = s.getElementsByTagName(o)[0];
-			a.async = 1;
-			a.src = g;
-			m.parentNode.insertBefore(a, m)
-		})(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
-
-		ga('create', 'UA-73558830-6', 'auto');
-		ga('send', 'pageview');
-	}
-}());
-},{}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/modal.js":[function(require,module,exports){
+},{"jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/modal.js":[function(require,module,exports){
 ;(function() {
 	const $ = require("jquery");
 
-	module.exports = function() {
-		const $tabs = $(".modal-tabs > li");
-		const $contents = $(".tab-content");
-		const $close = $(".close-modal");
+	const $tabs = $(".modal-tabs > li");
+	const $contents = $(".tab-content");
+	const $close = $(".close-modal");
 
-		$close.on("click", function() {
-			$(this).closest(".modal").removeClass("active");
-		});
+	$close.on("click", function() {
+		$(this).closest(".modal").removeClass("active");
+	});
 
-		$tabs.on("click", function() {
-			$contents.removeClass("active");
-			$(`#${$(this).data("tab")}`).addClass("active");
-			$tabs.removeClass("active");
-			$(this).addClass("active");
-		});
-	};
+	$tabs.on("click", function() {
+		$contents.removeClass("active");
+		$(`#${$(this).data("tab")}`).addClass("active");
+		$tabs.removeClass("active");
+		$(this).addClass("active");
+	});
 }());
 },{"jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/settings_modal.js":[function(require,module,exports){
 ;(function() {
@@ -54020,18 +54057,16 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		}
 	}
 
-	module.exports = function() {
+	loadSettings();
+	$("#modal-settings-save").on("click", function() {
+		saveSettings();
+		$(this).closest(".modal").removeClass("active");
+		window.location.reload();
+	});
+	$("#modal-settings-reset").on("click", function() {
+		resetSettings();
 		loadSettings();
-		$("#modal-settings-save").on("click", function() {
-			saveSettings();
-			$(this).closest(".modal").removeClass("active");
-			window.location.reload();
-		});
-		$("#modal-settings-reset").on("click", function() {
-			resetSettings();
-			loadSettings();
-		});
-	};
+	});
 }());
 },{"../settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/navbar.js":[function(require,module,exports){
 ;(function() {
@@ -54048,6 +54083,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			"file-new": functions.fileNew,
 			"file-open": functions.fileOpen,
 			"file-save": functions.fileSave,
+			"file-export": functions.fileExport,
 			"file-rename": functions.fileRename,
 			"edit-undo": functions.editUndo,
 			"edit-redo": functions.editRedo,

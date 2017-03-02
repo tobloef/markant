@@ -4,10 +4,10 @@
 	const resourceLoader = require("./utils/resource_loader");
 	const settingsHelper = require("./utils/settings_helper");
 	const shortcuts = require("./utils/shortcuts");
-	require("./utils/document_title")();
-	require("./utils/google_analytics")();
-	require("./utils/modals/modal")();
-	require("./utils/modals/settings_modal")();
+	require("./utils/document_title");
+	require("./utils/google_analytics");
+	require("./utils/modals/modal");
+	require("./utils/modals/settings_modal");
 
 	// Load styles
 	resourceLoader.getStyle("build/lib/font-awesome/css/font-awesome.min.css");

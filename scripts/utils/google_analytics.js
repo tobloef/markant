@@ -1,5 +1,4 @@
 ;(function() {
-	module.exports = function() {
 		(function(i, s, o, g, r, a, m) {
 			i['GoogleAnalyticsObject'] = r;
 			i[r] = i[r] || function() {
@@ -14,5 +13,4 @@
 
 		ga('create', 'UA-73558830-6', 'auto');
 		ga('send', 'pageview');
-	}
 }());
