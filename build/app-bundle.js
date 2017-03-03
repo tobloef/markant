@@ -53955,20 +53955,25 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 	let codemirror;
 
-	$("#file-input").on("change", function(event) {
-		if (window.FileReader) {
+	if (window.FileReader) {
+		$("#file-input").on("change", fileInput);
+	}
+
+	function fileInput(event) {
+		event.stopPropagation();
+		event.preventDefault();
+		let files = null;
+		if (event.target && event.target.files && event.target.files.length > 0) {
 			const selectedFile = event.target.files[0];
 			const reader = new FileReader();
-			reader.onloadend = (function(file) {
-				const fileName = file.name;
-				return function(event) {
-					handleUpload(event, fileName);
-				};
-			})(selectedFile);
+			const fileName = selectedFile.name;
+			reader.onloadend = function(event) {
+				handleUpload(event, fileName);
+			};
 			reader.readAsText(selectedFile);
 		}
 		$("#file-input").val("");
-	});
+	}
 
 	function handleUpload(event, fileName) {
 		if (event.target.readyState !== 2) {
