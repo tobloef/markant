@@ -53570,6 +53570,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	const resourceLoader = require("./utils/resource_loader");
 	const shortcuts = require("./utils/shortcuts");
 	const unsavedChanges = require("./utils/unsaved_changes");
+	const navbar = require("./utils/navbar");
 	require("./utils/document_title");
 	require("./utils/google_analytics");
 	require("./utils/modals/modal");
@@ -53586,7 +53587,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 	// Set up a few more utility modules.
 	require("./utils/pane_resizer")(editor.codemirror);
-	require("./utils/navbar")(editor.codemirror);
+	navbar.initialize(editor.codemirror);
 	const functions = require("./utils/app_functions")(editor.codemirror);
 
 	const initialMarkdown = "";
@@ -53734,6 +53735,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		const fileExport = require("./file_saver");
 		const documentTitle = require("./document_title");
 		const unsavedChanges = require("./unsaved_changes");
+		const paneResizer = require("./pane_resizer")();
 
 		return {
 			fileNew() {
@@ -53814,16 +53816,16 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			},
 
 			viewEditor() {
-
+				paneResizer.toggleEditor();
 			},
 
 			viewPreview() {
-
+				paneResizer.toggleViewer();
 			}
 		};
 	};
 }());
-},{"./document_title":"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js","./file_saver":"/home/tobloef/Downloads/code/markant.io/scripts/utils/file_saver.js","./markdown_import":"/home/tobloef/Downloads/code/markant.io/scripts/utils/markdown_import.js","./resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./text_inserter":"/home/tobloef/Downloads/code/markant.io/scripts/utils/text_inserter.js","./unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js":[function(require,module,exports){
+},{"./document_title":"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js","./file_saver":"/home/tobloef/Downloads/code/markant.io/scripts/utils/file_saver.js","./markdown_import":"/home/tobloef/Downloads/code/markant.io/scripts/utils/markdown_import.js","./pane_resizer":"/home/tobloef/Downloads/code/markant.io/scripts/utils/pane_resizer.js","./resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./text_inserter":"/home/tobloef/Downloads/code/markant.io/scripts/utils/text_inserter.js","./unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js":[function(require,module,exports){
 ;(function() {
 	const $ = require("jquery");
 	const unsavedChanges = require("./unsaved_changes");
@@ -54117,7 +54119,18 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		$(".navbar-dropdown .dropdown-content").hide();
 	}
 
-	module.exports = function(codemirror) {
+	function setCircleVisibility(buttonId, visibility) {
+		$(`#${buttonId} > i`).removeClass("fa-eye fa-eye-slash");
+		//$(`#${buttonId} > i`).removeClass("fa-circle");
+		if (visibility) {
+			//$(`#${buttonId} > i`).addClass("fa-circle");
+			$(`#${buttonId} > i`).addClass("fa-eye");
+		} else {
+			$(`#${buttonId} > i`).addClass("fa-eye-slash");
+		}
+	}
+
+	function initialize(codemirror) {
 		const functions = require("./app_functions")(codemirror);
 
 		const idFunctionMap = {
@@ -54157,204 +54170,237 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 				$navbarDropdown.find(".dropdown-content").show();
 			}
 		});
+	}
+
+	module.exports = {
+		initialize,
+		setCircleVisibility
 	};
 }());
 },{"./app_functions":"/home/tobloef/Downloads/code/markant.io/scripts/utils/app_functions.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/pane_resizer.js":[function(require,module,exports){
 ;(function() {
 	const $ = require("jquery");
-	const settingsHelper = require("./settings_helper");
+	const navbar = require("./navbar");
 
 	// jQuery elements
 	const $paneContainer = $("#pane-container");
 	const $dragbar = $("#dragbar");
-	const $leftPane = $("#editor-pane");
-	const $rightPane = $("#viewer-pane");
-	const $leftCollapseButton = $("#left-collapse-button");
-	const $rightCollapseButton = $("#right-collapse-button");
-	const $viewer = $rightPane.find("#viewer");
+	const $editorPane = $("#editor-pane");
+	const $viewerPane = $("#viewer-pane");
+	const $editorCollapseButton = $("#editor-collapse-button");
+	const $viewerCollapseButton = $("#viewer-collapse-button");
+	const $viewer = $viewerPane.find("#viewer");
 	const $body = $("body");
-	const $editorScrollbar = $leftPane.find(".CodeMirror-vscrollbar > div").eq(0);
+	const $editorScrollbar = $editorPane.find(".CodeMirror-vscrollbar > div").eq(0);
 
 	const minPaneWidth = 250;
 	const minCollapseWidth = 100;
 
-	module.exports = function(codemirror) {
-		// Whether the user is draggin the drag bar.
-		let dragging = false;
-		// Whether the panes should be split the next time the space is available.
-		let shouldSplitPanes = false;
+	let codemirror;
+	// Whether the user is draggin the drag bar.
+	let dragging = false;
+	// Whether the panes should be split the next time the space is available.
+	let shouldSplitPanes = false;
 
-		// Saved size of the two panes, used for restoring their size after opening a collalpsed pane.
-		let oldLeftPanePercentage;
-		let oldRightPanePercentage;
-		// The currennt sizes of the panes in percentages.
-		let leftPanePercentage;
-		let rightPanePercentage;
+	// Saved size of the two panes, used for restoring their size after opening a collalpsed pane.
+	let oldEditorPanePercentage;
+	let oldViewerPanePercentage;
+	// The currennt sizes of the panes in percentages.
+	let editorPanePercentage = 50;
+	let viewerPanePercentage = 50;
 
-		// Resize the two panes to percentage sizes.
-		function resizePanesToPercentage(newLeftPanePercentage, newRightPanePercentage) {
-			// Make sure the percentages add up to 100% total.
-			if (Math.abs(newLeftPanePercentage + newRightPanePercentage - 100) > 0.1) {
-				console.warn("Error resizing panes, percentages don't add up. Resetting to 50% split.");
-				leftPanePercentage = 50;
-				rightPanePercentage = 50;
-				return resizePanesToPercentage(leftPanePercentage, rightPanePercentage);
+
+	$(document).ready(function() {
+		// Show the collapse buttons and set the panes to their initial size.
+		$editorCollapseButton.css("visibility", "visible");
+		$viewerCollapseButton.css("visibility", "visible");
+
+		oldEditorPanePercentage = editorPanePercentage;
+		oldViewerPanePercentage = viewerPanePercentage;
+		resizePanesToPercentage(editorPanePercentage, viewerPanePercentage);
+	});
+
+	// On window resize, scale the sizes of the panes so they keep the same relative size.
+	$(window).on("resize", function() {
+		resizePanesToPercentage(editorPanePercentage, viewerPanePercentage);
+	});
+
+	$editorCollapseButton.on("click", toggleViewer);
+
+	$viewerCollapseButton.on("click", toggleEditor);
+
+	$dragbar.on("mousedown", function(mousedownEvent) {
+		dragging = true;
+		$body.addClass("no-selection");
+		const mouseDownPos = mousedownEvent.pageX;
+		const initialLeftPaneWidth = $editorPane.width();
+		const initialRightPaneWidth = $viewerPane.width();
+
+		// Resize the panes based on the current mouse position relative to
+		// the position of the dragbar when it was clicked.
+		$(document).on("mousemove", function(mousemoveEvent) {
+			if (dragging) {
+				const deltaPageX = mousemoveEvent.pageX - mouseDownPos;
+				const unit = $paneContainer.width() / 100;
+				const newEditorPanePercentage = (initialLeftPaneWidth + deltaPageX) / unit;
+				const newViewerPanePercentage = (initialRightPaneWidth - deltaPageX) / unit;
+				editorPanePercentage = newEditorPanePercentage;
+				viewerPanePercentage = newViewerPanePercentage;
+				if (editorPanePercentage < minPaneWidth / unit) {
+					editorPanePercentage = minPaneWidth / unit;
+					viewerPanePercentage = 100 - editorPanePercentage;
+				}
+				if (viewerPanePercentage < minPaneWidth / unit) {
+					viewerPanePercentage = minPaneWidth / unit;
+					editorPanePercentage = 100 - viewerPanePercentage;
+				}
+				oldEditorPanePercentage = editorPanePercentage;
+				oldViewerPanePercentage = viewerPanePercentage;
+				resizePanesToPercentage(newEditorPanePercentage, newViewerPanePercentage);
 			}
-			let newLeftWidth = ($paneContainer.width() / 100) * newLeftPanePercentage;
-			let newRightWidth = ($paneContainer.width() / 100) * newRightPanePercentage;
-			$dragbar.show();
-			if (newLeftPanePercentage === 0 || newRightPanePercentage === 0) {
-				if (shouldSplitPanes && $paneContainer.width() >= minPaneWidth * 2) {
-					shouldSplitPanes = false;
-					leftPanePercentage = oldLeftPanePercentage;
-					rightPanePercentage = oldRightPanePercentage;
-					return resizePanesToPercentage(leftPanePercentage, rightPanePercentage);
-				}
-				if (newLeftPanePercentage === 0) {
-					$dragbar.hide();
-				}
-			} else {
-				if ($paneContainer.width() < minPaneWidth * 2) {
-					shouldSplitPanes = true;
-					leftPanePercentage = 100;
-					rightPanePercentage = 0;
-					return resizePanesToPercentage(leftPanePercentage, rightPanePercentage);
-				}
-				if (newLeftWidth < minCollapseWidth) {
-					leftPanePercentage = 0;
-					rightPanePercentage = 100;
-					return resizePanesToPercentage(leftPanePercentage, rightPanePercentage);
-				}
-				if (newRightWidth < minCollapseWidth) {
-					leftPanePercentage = 100;
-					rightPanePercentage = 0;
-					return resizePanesToPercentage(leftPanePercentage, rightPanePercentage);
-				}
-				if (newLeftWidth < minPaneWidth) {
-					newLeftWidth = minPaneWidth;
-					newRightWidth = $paneContainer.width() - newLeftWidth;
-				}
-				if (newRightWidth < minPaneWidth) {
-					newRightWidth = minPaneWidth;
-					newLeftWidth = $paneContainer.width() - newRightWidth;
-				}
+		});
+
+		$(document).on("mouseup", function() {
+			if (dragging) {
+				dragging = false;
+				$body.removeClass("no-selection");
+				$(document).unbind("mousemove");
+				setNavbarIconVisibility();
 			}
-			$leftPane.width(newLeftWidth);
-			$rightPane.width(newRightWidth);
-			if (codemirror != null) {
-				codemirror.refresh();
+		});
+	});
+
+	function setNavbarIconVisibility() {
+		navbar.setCircleVisibility("view-editor", editorPanePercentage !== 0);
+		navbar.setCircleVisibility("view-preview", viewerPanePercentage !== 0);
+	}
+
+	// Resize the two panes to percentage sizes.
+	function resizePanesToPercentage(newEditorPanePercentage, newViewerPanePercentage) {
+		// Make sure the percentages add up to 100% total.
+		if (Math.abs(newEditorPanePercentage + newViewerPanePercentage - 100) > 0.1) {
+			console.warn("Error resizing panes, percentages don't add up. Resetting to 50% split.");
+			editorPanePercentage = 50;
+			viewerPanePercentage = 50;
+			return resizePanesToPercentage(editorPanePercentage, viewerPanePercentage);
+		}
+		let newLeftWidth = ($paneContainer.width() / 100) * newEditorPanePercentage;
+		let newRightWidth = ($paneContainer.width() / 100) * newViewerPanePercentage;
+		$dragbar.show();
+		if (newEditorPanePercentage === 0 || newViewerPanePercentage === 0) {
+			if (shouldSplitPanes && $paneContainer.width() >= minPaneWidth * 2) {
+				shouldSplitPanes = false;
+				editorPanePercentage = oldEditorPanePercentage;
+				viewerPanePercentage = oldViewerPanePercentage;
+				return resizePanesToPercentage(editorPanePercentage, viewerPanePercentage);
 			}
-			setCollapseButtonPositions();
+			if (newEditorPanePercentage === 0) {
+				$dragbar.hide();
+			}
+		} else {
+			if ($paneContainer.width() < minPaneWidth * 2) {
+				shouldSplitPanes = true;
+				editorPanePercentage = 100;
+				viewerPanePercentage = 0;
+				return resizePanesToPercentage(editorPanePercentage, viewerPanePercentage);
+			}
+			if (newLeftWidth < minCollapseWidth) {
+				editorPanePercentage = 0;
+				viewerPanePercentage = 100;
+				return resizePanesToPercentage(editorPanePercentage, viewerPanePercentage);
+			}
+			if (newRightWidth < minCollapseWidth) {
+				editorPanePercentage = 100;
+				viewerPanePercentage = 0;
+				return resizePanesToPercentage(editorPanePercentage, viewerPanePercentage);
+			}
+			if (newLeftWidth < minPaneWidth) {
+				newLeftWidth = minPaneWidth;
+				newRightWidth = $paneContainer.width() - newLeftWidth;
+			}
+			if (newRightWidth < minPaneWidth) {
+				newRightWidth = minPaneWidth;
+				newLeftWidth = $paneContainer.width() - newRightWidth;
+			}
+		}
+		$editorPane.width(newLeftWidth);
+		$viewerPane.width(newRightWidth);
+		if (codemirror != null) {
+			codemirror.refresh();
 		}
 
-		// Set the positions, specifically the horizontal positions, of the two collapse buttons.
-		// This is done so they won't overlap with the scrollbars.
-		function setCollapseButtonPositions() {
-			if ($leftPane.width() === 0) {
-				$rightCollapseButton.show();
-			} else {
-				$rightCollapseButton.hide();
-			}
-			if ($rightPane.width() === 0) {
-				$leftCollapseButton.show();
-			} else {
-				$leftCollapseButton.hide();
-			}
-			const leftPaneHasScrollbar = $editorScrollbar.height() > 0;
-			let rightOffset = 29;
-			$leftCollapseButton.css("left", `calc(100% - ${rightOffset}px)`);
-			if (leftPanePercentage === 0) {
-				$rightCollapseButton.css("margin-left", "5px");
-			} else {
-				$rightCollapseButton.css("margin-left", "10px");
-			}
+		setCollapseButtonPositions();
+	}
+
+	// Set the positions, specifically the horizontal positions, of the two collapse buttons.
+	// This is done so they won't overlap with the scrollbars.
+	function setCollapseButtonPositions() {
+		if ($editorPane.width() === 0) {
+			$viewerCollapseButton.show();
+		} else {
+			$viewerCollapseButton.hide();
 		}
+		if ($viewerPane.width() === 0) {
+			$editorCollapseButton.show();
+		} else {
+			$editorCollapseButton.hide();
+		}
+		const leftPaneHasScrollbar = $editorScrollbar.height() > 0;
+		let rightOffset = 29;
+		$editorCollapseButton.css("left", `calc(100% - ${rightOffset}px)`);
+		if (editorPanePercentage === 0) {
+			$viewerCollapseButton.css("margin-left", "5px");
+		} else {
+			$viewerCollapseButton.css("margin-left", "10px");
+		}
+	}
 
-		$(document).ready(function() {
-			// Show the collapse buttons and set the panes to their initial size.
-			$leftCollapseButton.css("visibility", "visible");
-			$rightCollapseButton.css("visibility", "visible");
-
-			leftPanePercentage = parseFloat(settingsHelper.getSetting("leftPanePercentage"));
-			rightPanePercentage = parseFloat(settingsHelper.getSetting("rightPanePercentage"));
-			oldLeftPanePercentage = leftPanePercentage;
-			oldRightPanePercentage = rightPanePercentage;
-			resizePanesToPercentage(leftPanePercentage, rightPanePercentage);
-		});
-
-		// On window resize, scale the sizes of the panes so they keep the same relative size.
-		$(window).on("resize", function() {
-			resizePanesToPercentage(leftPanePercentage, rightPanePercentage);
-		});
-
-		$leftCollapseButton.on("click", function() {
-			if (rightPanePercentage === 0 && $paneContainer.width() >= minPaneWidth * 2) {
-				leftPanePercentage = oldLeftPanePercentage;
-				rightPanePercentage = oldRightPanePercentage;
+	function toggleEditor() {
+		if (editorPanePercentage === 0) {
+			if ($paneContainer.width() >= minPaneWidth * 2) {
+				editorPanePercentage = oldEditorPanePercentage;
+				viewerPanePercentage = oldViewerPanePercentage;
 			} else {
-				leftPanePercentage = 0;
-				rightPanePercentage = 100;
-				resizePanesToPercentage(leftPanePercentage, rightPanePercentage);
+				editorPanePercentage = 100;
+				viewerPanePercentage = 0
 			}
-			resizePanesToPercentage(leftPanePercentage, rightPanePercentage);
-		});
+		} else {
+			editorPanePercentage = 0;
+			viewerPanePercentage = 100
+		}
+		resizePanesToPercentage(editorPanePercentage, viewerPanePercentage);
+		setNavbarIconVisibility();
+	}
 
-		$rightCollapseButton.on("click", function() {
-			if (leftPanePercentage === 0 && $paneContainer.width() >= minPaneWidth * 2) {
-				leftPanePercentage = oldLeftPanePercentage;
-				rightPanePercentage = oldRightPanePercentage;
+	function toggleViewer() {
+		if (viewerPanePercentage === 0) {
+			if ($paneContainer.width() >= minPaneWidth * 2) {
+				editorPanePercentage = oldEditorPanePercentage;
+				viewerPanePercentage = oldViewerPanePercentage;
 			} else {
-				leftPanePercentage = 100;
-				rightPanePercentage = 0;
+				editorPanePercentage = 0;
+				viewerPanePercentage = 100
 			}
-			resizePanesToPercentage(leftPanePercentage, rightPanePercentage);
-		});
+		} else {
+			editorPanePercentage = 100;
+			viewerPanePercentage = 0
+		}
+		resizePanesToPercentage(editorPanePercentage, viewerPanePercentage);
+		setNavbarIconVisibility();
+	}
 
-		$dragbar.on("mousedown", function(mousedownEvent) {
-			dragging = true;
-			$body.addClass("no-selection");
-			const mouseDownPos = mousedownEvent.pageX;
-			const initialLeftPaneWidth = $leftPane.width();
-			const initialRightPaneWidth = $rightPane.width();
-
-			// Resize the panes based on the current mouse position relative to
-			// the position of the dragbar when it was clicked.
-			$(document).on("mousemove", function(mousemoveEvent) {
-				if (dragging) {
-					const deltaPageX = mousemoveEvent.pageX - mouseDownPos;
-					const unit = $paneContainer.width() / 100;
-					const newLeftPanePercentage = (initialLeftPaneWidth + deltaPageX) / unit;
-					const newRightPanePercentage = (initialRightPaneWidth - deltaPageX) / unit;
-					leftPanePercentage = newLeftPanePercentage;
-					rightPanePercentage = newRightPanePercentage;
-					if (leftPanePercentage < minPaneWidth / unit) {
-						leftPanePercentage = minPaneWidth / unit;
-						rightPanePercentage = 100 - leftPanePercentage;
-					}
-					if (rightPanePercentage < minPaneWidth / unit) {
-						rightPanePercentage = minPaneWidth / unit;
-						leftPanePercentage = 100 - rightPanePercentage;
-					}
-					oldLeftPanePercentage = leftPanePercentage;
-					oldRightPanePercentage = rightPanePercentage;
-					settingsHelper.setSetting("leftPanePercentage", leftPanePercentage);
-					settingsHelper.setSetting("rightPanePercentage", rightPanePercentage);
-					resizePanesToPercentage(newLeftPanePercentage, newRightPanePercentage);
-				}
-			});
-
-			$(document).on("mouseup", function() {
-				if (dragging) {
-					dragging = false;
-					$body.removeClass("no-selection");
-					$(document).unbind("mousemove");
-				}
-			});
-		});
+	module.exports = function(newCodemirror) {
+		if (codemirror != null) {
+			codemirror = newCodemirror;
+		}
+		return {
+			toggleViewer,
+			toggleEditor
+		}
 	};
 }());
 
-},{"./settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js":[function(require,module,exports){
+},{"./navbar":"/home/tobloef/Downloads/code/markant.io/scripts/utils/navbar.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js":[function(require,module,exports){
 ;(function() {
 	const $ = require("jquery");
 
@@ -54438,8 +54484,6 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		"viewerHljsTheme": "default",
 		"viewerMathRenderer": "katex",
 		"viewerTheme": "light",
-		"leftPanePercentage": 50,
-		"rightPanePercentage": 50,
 		"hljsTabSize": 4,
 	};
 

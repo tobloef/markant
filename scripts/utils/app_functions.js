@@ -7,6 +7,7 @@
 		const fileExport = require("./file_saver");
 		const documentTitle = require("./document_title");
 		const unsavedChanges = require("./unsaved_changes");
+		const paneResizer = require("./pane_resizer")();
 
 		return {
 			fileNew() {
@@ -87,11 +88,11 @@
 			},
 
 			viewEditor() {
-
+				paneResizer.toggleEditor();
 			},
 
 			viewPreview() {
-
+				paneResizer.toggleViewer();
 			}
 		};
 	};

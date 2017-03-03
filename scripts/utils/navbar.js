@@ -5,7 +5,18 @@
 		$(".navbar-dropdown .dropdown-content").hide();
 	}
 
-	module.exports = function(codemirror) {
+	function setCircleVisibility(buttonId, visibility) {
+		$(`#${buttonId} > i`).removeClass("fa-eye fa-eye-slash");
+		//$(`#${buttonId} > i`).removeClass("fa-circle");
+		if (visibility) {
+			//$(`#${buttonId} > i`).addClass("fa-circle");
+			$(`#${buttonId} > i`).addClass("fa-eye");
+		} else {
+			$(`#${buttonId} > i`).addClass("fa-eye-slash");
+		}
+	}
+
+	function initialize(codemirror) {
 		const functions = require("./app_functions")(codemirror);
 
 		const idFunctionMap = {
@@ -45,5 +56,10 @@
 				$navbarDropdown.find(".dropdown-content").show();
 			}
 		});
+	}
+
+	module.exports = {
+		initialize,
+		setCircleVisibility
 	};
 }());

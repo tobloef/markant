@@ -4,6 +4,7 @@
 	const resourceLoader = require("./utils/resource_loader");
 	const shortcuts = require("./utils/shortcuts");
 	const unsavedChanges = require("./utils/unsaved_changes");
+	const navbar = require("./utils/navbar");
 	require("./utils/document_title");
 	require("./utils/google_analytics");
 	require("./utils/modals/modal");
@@ -20,7 +21,7 @@
 
 	// Set up a few more utility modules.
 	require("./utils/pane_resizer")(editor.codemirror);
-	require("./utils/navbar")(editor.codemirror);
+	navbar.initialize(editor.codemirror);
 	const functions = require("./utils/app_functions")(editor.codemirror);
 
 	const initialMarkdown = "";
