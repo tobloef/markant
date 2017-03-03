@@ -1,3 +1,4 @@
+// Main module for the editor logic.
 ;(function() {
 	const resourceLoader = require("./utils/resource_loader");
 	const CodeMirror = require("codemirror");

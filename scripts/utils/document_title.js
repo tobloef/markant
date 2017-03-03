@@ -1,3 +1,5 @@
+// Logic for the document title input field. To properly resize the input field,
+// a hidden input field is mirroring the visible's field's text.
 ;(function() {
 	const $ = require("jquery");
 	const unsavedChanges = require("./unsaved_changes");
@@ -6,34 +8,36 @@
 	const maxWidth = 300;
 	// The amount of extra width to add to the input element.
 	const extraWidth = 3;
-	// Class for the title input element.
-	const inputClass = "document-title-input";
-	// Class for the title mirror element.
-	const mirrorClass = "document-title-mirror";
 	// The default title
 	const defaultTitle = "Untitled document";
 
-	const $input = $(`.${inputClass}`);
-	const $mirror = $(`.${mirrorClass}`);
+	// Set up the jQuery elements.
+	const $input = $(`.document-title-input`);
+	const $mirror = $(`.document-title-mirror`);
 
 	let oldTitle;
 
 	setTitle(defaultTitle);
 
+	// When the input loses focus, finalize the title
 	$input.on("focusout", function(event) {
 		setTitle($input.val());
 	});
 
+	// When the input is changed, mirror the text to the hidden input.
 	$input.on("input change load focusout", function() {
 		mirrorWidth($input, $mirror);
 	});
 
+	// When the input is clicked, highlight the text if it's the default title.
 	$input.on("focus", function(event) {
 		if ($input.val() === defaultTitle) {
 			$input.select();
 		}
 	});
 
+	// If the enter or escape key is pressed, either finalize the title or
+	// cancel the edit and revert to the old title.
 	$input.on("keydown", function(key) {
 		if (key.keyCode === 13) {
 			$input.blur();
@@ -43,11 +47,13 @@
 		}
 	});
 
+	// Get the document's title.
 	function getTitle() {
 		$input.blur();
 		return $input.val();
 	}
 
+	// Set the document's title
 	function setTitle(title) {
 		if (title === null || title === "") {
 			title = defaultTitle;
@@ -58,10 +64,13 @@
 		unsavedChanges.hasChanges = true;
 	}
 
+	// Shift focus to the title input.
 	function focus() {
 		$input.focus();
 	}
 
+	// Mirror the text of the visble input to the hidden input.
+	// This is used to resize the input width dynamically.
 	function mirrorWidth($input, $mirror) {
 		$mirror.text($input.val());
 		let width = parseInt($mirror.css("width"));

@@ -1,4 +1,6 @@
+// Helper functions for saving and loading user settings with localstorage.
 ;(function() {
+	// Default values for various user settings.
 	const defaultValues = {
 		"editorFontFamily": "monospace",
 		"editorFontSize": 13,
@@ -23,6 +25,7 @@
 		"serif": "serif",
 	};
 
+	// Get the setting with the specified key. If the setting is null, use the default value.
 	function getSetting(key) {
 		let setting;
 		try {
@@ -37,6 +40,7 @@
 		return setting;
 	}
 
+	// Set the setting with the specified key to the specified value.
 	function setSetting(key, value) {
 		if (value == null) {
 			value = getDefaultValue(key);
@@ -48,12 +52,14 @@
 		}
 	}
 
+	// Get the default value of the setting with the specified key.
 	function getDefaultValue(key) {
 		if (key in defaultValues) {
 			return defaultValues[key];
 		}
 	}
 
+	// Reset all the settings to their default values.
 	function reset() {
 		for (let key in defaultValues) {
 			setSetting(key, getDefaultValue(key));

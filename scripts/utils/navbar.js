@@ -1,24 +1,28 @@
+// Logic for the top navigation bar (navbar) in the app.
 ;(function() {
 	const $ = require("jquery");
 
+	// Close all open dropdowns from the navbar.
 	function closeDropdowns() {
 		$(".navbar-dropdown .dropdown-content").hide();
 	}
 
-	function setCircleVisibility(buttonId, visibility) {
+	// Set the state of the visibility icon of a dropdown item,
+	// signaling whether something is displayed or not.
+	function setVisibilityIcon(buttonId, visibility) {
 		$(`#${buttonId} > i`).removeClass("fa-eye fa-eye-slash");
-		//$(`#${buttonId} > i`).removeClass("fa-circle");
 		if (visibility) {
-			//$(`#${buttonId} > i`).addClass("fa-circle");
 			$(`#${buttonId} > i`).addClass("fa-eye");
 		} else {
 			$(`#${buttonId} > i`).addClass("fa-eye-slash");
 		}
 	}
 
+	// Initialize the event listeners for the dropdown items.
 	function initialize(codemirror) {
 		const functions = require("./app_functions")(codemirror);
 
+		// A map of dropdown item ids and functions to call when the item is clicked.
 		const idFunctionMap = {
 			"file-new": functions.fileNew,
 			"file-open": functions.fileOpen,
@@ -40,6 +44,7 @@
 
 		const $links = $(".navbar a");
 
+		// When the dropdown item is clicked, call the appropriate function.
 		$links.on("click", function(event) {
 			const id = $(this).attr("id");
 			if (id in idFunctionMap) {
@@ -49,6 +54,7 @@
 			}
 		});
 
+		// Close all open dropdowns if the user clicks anywhere but the dropdown.
 		$(document).click(function(event) {
 			closeDropdowns();
 			const $navbarDropdown = $(event.target).parent(".navbar-dropdown");
@@ -60,6 +66,6 @@
 
 	module.exports = {
 		initialize,
-		setCircleVisibility
+		setVisibilityIcon
 	};
 }());

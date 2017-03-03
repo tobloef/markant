@@ -3,7 +3,6 @@ const gulp = require("gulp");
 const source = require("vinyl-source-stream");
 const buffer = require("vinyl-buffer");
 const browserify = require("browserify");
-const browserifyCss = require("browserify-css");
 const del = require("del");
 const eslint = require("gulp-eslint");
 const csslint = require("gulp-csslint");
@@ -11,7 +10,7 @@ const uglify = require("gulp-uglify");
 const babel = require("gulp-babel");
 const rename = require("gulp-rename");
 const sourcemaps = require("gulp-sourcemaps");
-const importCss = require('gulp-import-css');
+const importCss = require("gulp-import-css");
 
 const parentDestDir = "./build";
 const scriptEntryPoints = ["app"];
@@ -24,7 +23,7 @@ gulp.task("browserify", function() {
 		const b = browserify({
 			entries: [`./scripts/${file}.js`],
 			debug: true,
-			fullPaths: true
+			fullPaths: true,
 		});
 
 		return b.bundle()

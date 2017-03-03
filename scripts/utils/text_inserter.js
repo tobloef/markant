@@ -1,3 +1,4 @@
+// Logic for inserting text into the editor.
 ;(function() {
 	// Add some emphasis, like bold (**) or underscore (~~) to the selected text.
 	// If no text is selected insert the emphasis affixes and move to cursor between them.
@@ -32,6 +33,6 @@
 
 	module.exports = {
 		handleEmphasis,
-		insertText
+		insertText,
 	};
 }());

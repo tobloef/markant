@@ -1,6 +1,10 @@
+// Logic for handling bindings for keyboard shortcuts.
 ;(function() {
-	let bindings = {};
+	const bindings = {};
 
+	// Handler function for all keypress events the user makes.
+	// Will convert the key-combination to a string and compare it to existing
+	// shortcut bindings. If the binding is found, call the appropriate function.
 	function handleKeypress(event) {
 		const keys = [event.key.toLowerCase()];
 		if (event.shiftKey) {
@@ -20,16 +24,21 @@
 		}
 	}
 
+	// Add a keyboard binding to the list.
+	// Shortcut is a string formatted like this: "ctrl+shift+v"
+	// Callback is the function to call when the shortcut is pressed.
 	function addBinding(shortcut, callback) {
 		bindings[shortcut] = callback;
 	}
 
+	// Add an array of bindings to the list.
 	function addBindings(newBindings) {
 		for (let binding in newBindings) {
 			bindings[binding] = newBindings[binding];
 		}
 	}
 
+	// Check if two arrays of keys are equal.
 	function keysEqual(keys1, keys2) {
 		if (!keys1 || !keys2) {
 			return false;

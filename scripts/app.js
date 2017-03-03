@@ -1,3 +1,4 @@
+// Main module for the app. This is where everything is initialized and all other module calls stem from.
 ;(function() {
 	const $ = require("jquery");
 	const scrollSync = require("./utils/scroll_sync");
@@ -26,6 +27,7 @@
 
 	const initialMarkdown = "";
 
+	// Before the user closes the window, warn them if they have unsaved changes.
 	$(window).on("beforeunload", function(event) {
 		if (unsavedChanges.hasChanges) {
 			const message = "You have unsaved changes. Are you sure you want to leave without saving?";
@@ -62,6 +64,7 @@
 	// Render any intial Markdown in the editor.
 	onChangeHandler();
 
+	// When the user changes the markdown in the editor.
 	function onChangeHandler() {
 		const value = editor.codemirror.getValue();
 		unsavedChanges.hasChanges = true && (value !== initialMarkdown);

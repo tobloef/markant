@@ -1,3 +1,4 @@
+// Main module for the HTML preview logic.
 ;(function() {
 	const resourceLoader = require("./utils/resource_loader");
 	const settingsHelper = require("./utils/settings_helper");

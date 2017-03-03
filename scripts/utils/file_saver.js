@@ -1,8 +1,11 @@
+// Save a file to the user's local drive.
 ;(function() {
-	function saveFile(data, filename, type) {
+	// Convert some data to a file and save it to the user's local drive with
+	// the speficied filename and extension.
+	function saveFile(data, filename, extension) {
 	    const file = new Blob([data]);
 	    if (window.navigator.msSaveOrOpenBlob) {
-	        window.navigator.msSaveOrOpenBlob(file, filename + type);
+	        window.navigator.msSaveOrOpenBlob(file, filename + extension);
 	    } else {
 	    	const url = URL.createObjectURL(file);
 	    	const a = document.createElement("a");

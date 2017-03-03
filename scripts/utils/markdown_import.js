@@ -1,3 +1,5 @@
+// Logic for importing a Markdown document from the user's lcoal drive.
+// A hidden <input type="file"> tag i clicked and the user is prompted to choose the file.
 ;(function() {
 	const $ = require("jquery");
 	const documentTitle = require("./document_title");
@@ -5,10 +7,12 @@
 
 	let codemirror;
 
+	// Only set up the listener if file reading is supported.
 	if (window.FileReader) {
 		$("#file-input").on("change", fileInput);
 	}
 
+	// Handler function for whenever the user chooses a file from the dialog prompt.
 	function fileInput(event) {
 		event.stopPropagation();
 		event.preventDefault();
@@ -25,6 +29,7 @@
 		$("#file-input").val("");
 	}
 
+	// Handler method for when the file has been loaded from the drive.
 	function handleUpload(event, fileName) {
 		if (event.target.readyState !== 2) {
 			return;
@@ -41,6 +46,7 @@
 		}
 	}
 
+	// Try to click the hidden <input type="file"> tag, triggering the file upload process.
 	function chooseFile() {
 		if (!window.FileReader) {
 			alert("Your browser doesn't support opening files, consider upgrading to a newer version of your browser.");

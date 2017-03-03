@@ -1,3 +1,4 @@
+// Logic for syncing the scrollbars of the editor and the viewer panes.
 ;(function() {
 	const $ = require("jquery");
 

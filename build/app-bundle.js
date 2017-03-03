@@ -53564,6 +53564,7 @@ exports.Z   = require('./categories/Z/regex');
 },{"./categories/Cc/regex":"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/categories/Cc/regex.js","./categories/Cf/regex":"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/categories/Cf/regex.js","./categories/P/regex":"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/categories/P/regex.js","./categories/Z/regex":"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/categories/Z/regex.js","./properties/Any/regex":"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/properties/Any/regex.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/properties/Any/regex.js":[function(require,module,exports){
 module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]/
 },{}],"/home/tobloef/Downloads/code/markant.io/scripts/app.js":[function(require,module,exports){
+// Main module for the app. This is where everything is initialized and all other module calls stem from.
 ;(function() {
 	const $ = require("jquery");
 	const scrollSync = require("./utils/scroll_sync");
@@ -53592,6 +53593,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 	const initialMarkdown = "";
 
+	// Before the user closes the window, warn them if they have unsaved changes.
 	$(window).on("beforeunload", function(event) {
 		if (unsavedChanges.hasChanges) {
 			const message = "You have unsaved changes. Are you sure you want to leave without saving?";
@@ -53628,6 +53630,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	// Render any intial Markdown in the editor.
 	onChangeHandler();
 
+	// When the user changes the markdown in the editor.
 	function onChangeHandler() {
 		const value = editor.codemirror.getValue();
 		unsavedChanges.hasChanges = true && (value !== initialMarkdown);
@@ -53640,6 +53643,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 }());
 
 },{"./editor":"/home/tobloef/Downloads/code/markant.io/scripts/editor.js","./utils/app_functions":"/home/tobloef/Downloads/code/markant.io/scripts/utils/app_functions.js","./utils/document_title":"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js","./utils/google_analytics":"/home/tobloef/Downloads/code/markant.io/scripts/utils/google_analytics.js","./utils/modals/modal":"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/modal.js","./utils/modals/settings_modal":"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/settings_modal.js","./utils/navbar":"/home/tobloef/Downloads/code/markant.io/scripts/utils/navbar.js","./utils/pane_resizer":"/home/tobloef/Downloads/code/markant.io/scripts/utils/pane_resizer.js","./utils/resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./utils/scroll_sync":"/home/tobloef/Downloads/code/markant.io/scripts/utils/scroll_sync.js","./utils/shortcuts":"/home/tobloef/Downloads/code/markant.io/scripts/utils/shortcuts.js","./utils/unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","./viewer":"/home/tobloef/Downloads/code/markant.io/scripts/viewer.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/editor.js":[function(require,module,exports){
+// Main module for the editor logic.
 ;(function() {
 	const resourceLoader = require("./utils/resource_loader");
 	const CodeMirror = require("codemirror");
@@ -53726,6 +53730,8 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 }());
 
 },{"./utils/resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./utils/settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","codemirror":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/lib/codemirror.js","codemirror/addon/edit/continuelist":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/addon/edit/continuelist.js","codemirror/mode/gfm/gfm":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/mode/gfm/gfm.js","codemirror/mode/markdown/markdown":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/mode/markdown/markdown.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/app_functions.js":[function(require,module,exports){
+// A library of various functions that can be called by the app.
+// This is kept in a seperate module, so the navbar and the shortcuts can call the same functions.
 ;(function() {
 	module.exports = function(codemirror) {
 		const $ = require("jquery");
@@ -53738,6 +53744,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		const paneResizer = require("./pane_resizer")();
 
 		return {
+			// Discard the current document and create an empty one.
 			fileNew() {
 				if (!unsavedChanges.confirmContinue()) {
 					return;
@@ -53747,6 +53754,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 				unsavedChanges.hasChanges = false;
 			},
 
+			// Open a markdown file from the user's computer
 			fileOpen() {
 				if (!unsavedChanges.confirmContinue()) {
 					return;
@@ -53754,6 +53762,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 				fileImport.chooseFile();
 			},
 
+			// Save the current markdown document to the user's computer
 			fileSave() {
 				const content = codemirror.getValue();
 				const title = documentTitle.getTitle();
@@ -53762,14 +53771,17 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 				unsavedChanges.hasChanges = false;
 			},
 
+			// Convert the current markdown to HTML and export it to the user's computer
 			fileExport() {
 
 			},
 
+			// Set the focus on the input box for renaming the document
 			fileRename() {
 				documentTitle.focus();
 			},
 
+			// Undo the last action in the editor
 			editUndo() {
 				if (codemirror == null) {
 					return;
@@ -53777,6 +53789,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 				codemirror.undo();
 			},
 
+			// Redo the last undone action in the editor
 			editRedo() {
 				if (codemirror == null) {
 					return;
@@ -53784,41 +53797,53 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 				codemirror.redo();
 			},
 
+			// Open the settings modal
 			editPreferences() {
 				$("#settings-modal").addClass("active");
 			},
 
+			// Insert the syntax for a link in the editor and
+			// move the cursor inside the brackets for the url
 			insertLink() {
 				textInserter.insertText(codemirror, "[]()", 1);
 			},
 
+			// Insert the syntax for an image in the editor and
+			// move the cursor inside the brackets for the url
 			insertImage() {
 				textInserter.insertText(codemirror, "![]()", 1);
 			},
 
+			// Insert the syntax for a math euqation in the editor and
+			// move the cursor between the dollar-signs.
 			insertEquation() {
 				textInserter.insertText(codemirror, "$$$$", 2);
 			},
 
+			// Insert the syntax for bold text on both sides of the selected text.
+			// If no text is selected, insert it anyway and move the cursor into the middle.
 			formatBold() {
 				textInserter.handleEmphasis(codemirror, "**");
 			},
 
+			// Insert the syntax for italic text on both sides of the selected text.
+			// If no text is selected, insert it anyway and move the cursor into the middle.
 			formatItalic() {
 				textInserter.handleEmphasis(codemirror, "*");
 			},
 
+			// Insert the syntax for strikethrough text on both sides of the selected text.
+			// If no text is selected, insert it anyway and move the cursor into the middle.
 			formatStrikethrough() {
-				if (codemirror == null) {
-					return;
-				}
-				codemirror.execCommand("newlineAndIndentContinueMarkdownList");
+				textInserter.handleEmphasis(codemirror, "~~");
 			},
 
+			// Toggle the editor, either hiding or displaying it.
 			viewEditor() {
 				paneResizer.toggleEditor();
 			},
 
+			// Toggle the viewer, either hiding or displaying it.
 			viewPreview() {
 				paneResizer.toggleViewer();
 			}
@@ -53826,6 +53851,8 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 },{"./document_title":"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js","./file_saver":"/home/tobloef/Downloads/code/markant.io/scripts/utils/file_saver.js","./markdown_import":"/home/tobloef/Downloads/code/markant.io/scripts/utils/markdown_import.js","./pane_resizer":"/home/tobloef/Downloads/code/markant.io/scripts/utils/pane_resizer.js","./resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./text_inserter":"/home/tobloef/Downloads/code/markant.io/scripts/utils/text_inserter.js","./unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js":[function(require,module,exports){
+// Logic for the document title input field. To properly resize the input field,
+// a hidden input field is mirroring the visible's field's text.
 ;(function() {
 	const $ = require("jquery");
 	const unsavedChanges = require("./unsaved_changes");
@@ -53834,34 +53861,36 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	const maxWidth = 300;
 	// The amount of extra width to add to the input element.
 	const extraWidth = 3;
-	// Class for the title input element.
-	const inputClass = "document-title-input";
-	// Class for the title mirror element.
-	const mirrorClass = "document-title-mirror";
 	// The default title
 	const defaultTitle = "Untitled document";
 
-	const $input = $(`.${inputClass}`);
-	const $mirror = $(`.${mirrorClass}`);
+	// Set up the jQuery elements.
+	const $input = $(`.document-title-input`);
+	const $mirror = $(`.document-title-mirror`);
 
 	let oldTitle;
 
 	setTitle(defaultTitle);
 
+	// When the input loses focus, finalize the title
 	$input.on("focusout", function(event) {
 		setTitle($input.val());
 	});
 
+	// When the input is changed, mirror the text to the hidden input.
 	$input.on("input change load focusout", function() {
 		mirrorWidth($input, $mirror);
 	});
 
+	// When the input is clicked, highlight the text if it's the default title.
 	$input.on("focus", function(event) {
 		if ($input.val() === defaultTitle) {
 			$input.select();
 		}
 	});
 
+	// If the enter or escape key is pressed, either finalize the title or
+	// cancel the edit and revert to the old title.
 	$input.on("keydown", function(key) {
 		if (key.keyCode === 13) {
 			$input.blur();
@@ -53871,11 +53900,13 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		}
 	});
 
+	// Get the document's title.
 	function getTitle() {
 		$input.blur();
 		return $input.val();
 	}
 
+	// Set the document's title
 	function setTitle(title) {
 		if (title === null || title === "") {
 			title = defaultTitle;
@@ -53886,10 +53917,13 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		unsavedChanges.hasChanges = true;
 	}
 
+	// Shift focus to the title input.
 	function focus() {
 		$input.focus();
 	}
 
+	// Mirror the text of the visble input to the hidden input.
+	// This is used to resize the input width dynamically.
 	function mirrorWidth($input, $mirror) {
 		$mirror.text($input.val());
 		let width = parseInt($mirror.css("width"));
@@ -53908,11 +53942,14 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 }());
 
 },{"./unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/file_saver.js":[function(require,module,exports){
+// Save a file to the user's local drive.
 ;(function() {
-	function saveFile(data, filename, type) {
+	// Convert some data to a file and save it to the user's local drive with
+	// the speficied filename and extension.
+	function saveFile(data, filename, extension) {
 	    const file = new Blob([data]);
 	    if (window.navigator.msSaveOrOpenBlob) {
-	        window.navigator.msSaveOrOpenBlob(file, filename + type);
+	        window.navigator.msSaveOrOpenBlob(file, filename + extension);
 	    } else {
 	    	const url = URL.createObjectURL(file);
 	    	const a = document.createElement("a");
@@ -53933,23 +53970,26 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 }());
 
 },{}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/google_analytics.js":[function(require,module,exports){
+// Code snippet for initializing Google Analytics
 ;(function() {
 		(function(i, s, o, g, r, a, m) {
 			i['GoogleAnalyticsObject'] = r;
 			i[r] = i[r] || function() {
-				(i[r].q = i[r].q || []).push(arguments)
+				(i[r].q = i[r].q || []).push(arguments);
 			}, i[r].l = 1 * new Date();
 			a = s.createElement(o),
 				m = s.getElementsByTagName(o)[0];
 			a.async = 1;
 			a.src = g;
-			m.parentNode.insertBefore(a, m)
+			m.parentNode.insertBefore(a, m);
 		})(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
 		ga('create', 'UA-73558830-6', 'auto');
 		ga('send', 'pageview');
 }());
 },{}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/markdown_import.js":[function(require,module,exports){
+// Logic for importing a Markdown document from the user's lcoal drive.
+// A hidden <input type="file"> tag i clicked and the user is prompted to choose the file.
 ;(function() {
 	const $ = require("jquery");
 	const documentTitle = require("./document_title");
@@ -53957,10 +53997,12 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 	let codemirror;
 
+	// Only set up the listener if file reading is supported.
 	if (window.FileReader) {
 		$("#file-input").on("change", fileInput);
 	}
 
+	// Handler function for whenever the user chooses a file from the dialog prompt.
 	function fileInput(event) {
 		event.stopPropagation();
 		event.preventDefault();
@@ -53977,6 +54019,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		$("#file-input").val("");
 	}
 
+	// Handler method for when the file has been loaded from the drive.
 	function handleUpload(event, fileName) {
 		if (event.target.readyState !== 2) {
 			return;
@@ -53993,6 +54036,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		}
 	}
 
+	// Try to click the hidden <input type="file"> tag, triggering the file upload process.
 	function chooseFile() {
 		if (!window.FileReader) {
 			alert("Your browser doesn't support opening files, consider upgrading to a newer version of your browser.");
@@ -54010,17 +54054,21 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 }());
 
 },{"./document_title":"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js","./unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/modal.js":[function(require,module,exports){
+// Logic for the general modal UI.
 ;(function() {
 	const $ = require("jquery");
 
+	// Setup jQuery element.
 	const $tabs = $(".modal-tabs > li");
 	const $contents = $(".tab-content");
 	const $close = $(".close-modal");
 
+	// Close the modal
 	$close.on("click", function() {
 		$(this).closest(".modal").removeClass("active");
 	});
 
+	// Switch to the clicked tab
 	$tabs.on("click", function() {
 		$contents.removeClass("active");
 		$(`#${$(this).data("tab")}`).addClass("active");
@@ -54028,22 +54076,32 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		$(this).addClass("active");
 	});
 }());
+
 },{"jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/settings_modal.js":[function(require,module,exports){
+// Logic for the user settings modal.
 ;(function() {
 	const $ = require("jquery");
 	const settingsHelper = require("../settings_helper");
 
-	// Load the settings and set the initial values of the modal items.
-	function loadSettings() {
-		loadGeneralSettings();
-		loadEditorSettings();
-		loadViewerSettings();
-	}
+	loadSettings();
+	// WHen the save button is clicked, save the user's settings and close the modal
+	$("#modal-settings-save").on("click", function() {
+		saveSettings();
+		$(this).closest(".modal").removeClass("active");
+		window.location.reload();
+	});
+	// When the reset button is clicked, reset the user's settings and load the new values.
+	$("#modal-settings-reset").on("click", function() {
+		resetSettings();
+		loadSettings();
+	});
 
+	// Populate the modal's input fields with the users general settings.
 	function loadGeneralSettings() {
 
 	}
 
+	// Populate the modal's input fields with the users editor settings.
 	function loadEditorSettings() {
 		$("#settings-editor-font-family").val(settingsHelper.getSetting("editorFontFamily"));
 		$("#settings-editor-font-size").val(settingsHelper.getSetting("editorFontSize"));
@@ -54054,6 +54112,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		$("#settings-editor-show-big-headers").prop("checked", settingsHelper.getSetting("editorBigHeaders"));
 	}
 
+	// Populate the modal's input fields with the users viewer settings.
 	function loadViewerSettings() {
 		$("#settings-viewer-theme").val(settingsHelper.getSetting("viewerTheme"));
 		$("#settings-viewer-font-family").val(settingsHelper.getSetting("viewerFontFamily"));
@@ -54063,76 +54122,81 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		$("#settings-viewer-math-renderer").val(settingsHelper.getSetting("viewerMathRenderer"));
 	}
 
-	// Save the settings specified in the modal.
-	function saveSettings() {
-		saveGeneralSettings();
-		saveEditorSettings();
-		saveViewerSettings();
+	// Populate the modal's input fields with the users settings.
+	function loadSettings() {
+		loadGeneralSettings();
+		loadEditorSettings();
+		loadViewerSettings();
 	}
 
+	// Save the values of the input fields for the user's general settings.
 	function saveGeneralSettings() {
 
 	}
 
+	// Save the values of the input fields for the user's editor settings.
 	function saveEditorSettings() {
 		settingsHelper.setSetting("editorFontFamily", $("#settings-editor-font-family").val());
-		settingsHelper.setSetting("editorFontSize", parseInt($("#settings-editor-font-size").val()));
-		settingsHelper.setSetting("editorIndentSize", parseInt($("#settings-editor-indent-size").val()));
+		settingsHelper.setSetting("editorFontSize", parseInt($("#settings-editor-font-size").val(), 10));
+		settingsHelper.setSetting("editorIndentSize", parseInt($("#settings-editor-indent-size").val(), 10));
 		settingsHelper.setSetting("editorUseTabs", $("#settings-editor-use-tabs").prop("checked"));
 		settingsHelper.setSetting("editorTheme", $("#settings-editor-theme").val());
 		settingsHelper.setSetting("editorShowLineNumbers", $("#settings-editor-show-line-numbers").prop("checked"));
 		settingsHelper.setSetting("editorBigHeader", $("#settings-editor-big-headers").prop("checked"));
 	}
 
+	// Save the values of the input fields for the user's viewer settings.
 	function saveViewerSettings() {
 		settingsHelper.setSetting("viewerTheme", $("#settings-viewer-theme").val());
 		settingsHelper.setSetting("viewerFontFamily", $("#settings-viewer-font-family").val());
-		settingsHelper.setSetting("viewerFontSize", parseInt($("#settings-viewer-font-size").val()));
+		settingsHelper.setSetting("viewerFontSize", parseInt($("#settings-viewer-font-size").val(), 10));
 		settingsHelper.setSetting("viewerHljsTheme", $("#settings-viewer-hljs-theme").val());
-		settingsHelper.setSetting("hljsTabSize", parseInt($("#settings-viewer-hljs-tab-size").val()));
+		settingsHelper.setSetting("hljsTabSize", parseInt($("#settings-viewer-hljs-tab-size").val(), 10));
 		settingsHelper.setSetting("viewerMathRenderer", $("#settings-viewer-math-renderer").val());
 	}
 
+	// Save all the user's settings.
+	function saveSettings() {
+		saveGeneralSettings();
+		saveEditorSettings();
+		saveViewerSettings();
+	}
+
+	// Reset the all the user's settings.
 	function resetSettings() {
 		const response = confirm("Are you sure you want to reset your settings? This cannot be undone.");
 		if (response) {
 			settingsHelper.reset();
 		}
 	}
-
-	loadSettings();
-	$("#modal-settings-save").on("click", function() {
-		saveSettings();
-		$(this).closest(".modal").removeClass("active");
-		window.location.reload();
-	});
-	$("#modal-settings-reset").on("click", function() {
-		resetSettings();
-		loadSettings();
-	});
 }());
+
 },{"../settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/navbar.js":[function(require,module,exports){
+// Logic for the top navigation bar (navbar) in the app.
 ;(function() {
 	const $ = require("jquery");
 
+	// Close all open dropdowns from the navbar.
 	function closeDropdowns() {
 		$(".navbar-dropdown .dropdown-content").hide();
 	}
 
-	function setCircleVisibility(buttonId, visibility) {
+	// Set the state of the visibility icon of a dropdown item,
+	// signaling whether something is displayed or not.
+	function setVisibilityIcon(buttonId, visibility) {
 		$(`#${buttonId} > i`).removeClass("fa-eye fa-eye-slash");
-		//$(`#${buttonId} > i`).removeClass("fa-circle");
 		if (visibility) {
-			//$(`#${buttonId} > i`).addClass("fa-circle");
 			$(`#${buttonId} > i`).addClass("fa-eye");
 		} else {
 			$(`#${buttonId} > i`).addClass("fa-eye-slash");
 		}
 	}
 
+	// Initialize the event listeners for the dropdown items.
 	function initialize(codemirror) {
 		const functions = require("./app_functions")(codemirror);
 
+		// A map of dropdown item ids and functions to call when the item is clicked.
 		const idFunctionMap = {
 			"file-new": functions.fileNew,
 			"file-open": functions.fileOpen,
@@ -54154,6 +54218,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 		const $links = $(".navbar a");
 
+		// When the dropdown item is clicked, call the appropriate function.
 		$links.on("click", function(event) {
 			const id = $(this).attr("id");
 			if (id in idFunctionMap) {
@@ -54163,6 +54228,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			}
 		});
 
+		// Close all open dropdowns if the user clicks anywhere but the dropdown.
 		$(document).click(function(event) {
 			closeDropdowns();
 			const $navbarDropdown = $(event.target).parent(".navbar-dropdown");
@@ -54174,15 +54240,17 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 	module.exports = {
 		initialize,
-		setCircleVisibility
+		setVisibilityIcon
 	};
 }());
 },{"./app_functions":"/home/tobloef/Downloads/code/markant.io/scripts/utils/app_functions.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/pane_resizer.js":[function(require,module,exports){
+// Handler for resizing the two panes. It handles the logic of the dragable bar in
+// the middle and the buttons to open collapsed panes.
 ;(function() {
 	const $ = require("jquery");
 	const navbar = require("./navbar");
 
-	// jQuery elements
+	// Set up the jQuery elements
 	const $paneContainer = $("#pane-container");
 	const $dragbar = $("#dragbar");
 	const $editorPane = $("#editor-pane");
@@ -54193,7 +54261,10 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	const $body = $("body");
 	const $editorScrollbar = $editorPane.find(".CodeMirror-vscrollbar > div").eq(0);
 
+	// Minimum width for the panes
 	const minPaneWidth = 250;
+	// When the user attempts to resize the pane below this width,
+	// completely hide the pane. This is used for the dragbar.
 	const minCollapseWidth = 100;
 
 	let codemirror;
@@ -54209,7 +54280,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	let editorPanePercentage = 50;
 	let viewerPanePercentage = 50;
 
-
+	// Set the initial state of the various elements.
 	$(document).ready(function() {
 		// Show the collapse buttons and set the panes to their initial size.
 		$editorCollapseButton.css("visibility", "visible");
@@ -54225,8 +54296,9 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		resizePanesToPercentage(editorPanePercentage, viewerPanePercentage);
 	});
 
+	// When the buttons to open a collapsed pane is pressed,
+	// open the appropriate pane.
 	$editorCollapseButton.on("click", toggleViewer);
-
 	$viewerCollapseButton.on("click", toggleEditor);
 
 	$dragbar.on("mousedown", function(mousedownEvent) {
@@ -54270,9 +54342,10 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		});
 	});
 
+	// Set the icon of "Display Editor" and "Display Preview" navbar items.
 	function setNavbarIconVisibility() {
-		navbar.setCircleVisibility("view-editor", editorPanePercentage !== 0);
-		navbar.setCircleVisibility("view-preview", viewerPanePercentage !== 0);
+		navbar.setVisibilityIcon("view-editor", editorPanePercentage !== 0);
+		navbar.setVisibilityIcon("view-preview", viewerPanePercentage !== 0);
 	}
 
 	// Resize the two panes to percentage sizes.
@@ -54355,6 +54428,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		}
 	}
 
+	// Toggle the visibility of the editor pane
 	function toggleEditor() {
 		if (editorPanePercentage === 0) {
 			if ($paneContainer.width() >= minPaneWidth * 2) {
@@ -54372,6 +54446,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		setNavbarIconVisibility();
 	}
 
+	// Toggle the visibility of the viewer pane
 	function toggleViewer() {
 		if (viewerPanePercentage === 0) {
 			if ($paneContainer.width() >= minPaneWidth * 2) {
@@ -54401,9 +54476,12 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 }());
 
 },{"./navbar":"/home/tobloef/Downloads/code/markant.io/scripts/utils/navbar.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js":[function(require,module,exports){
+// Logic to load scripts and styles from an url.
+// Used for loading both internal and external resources.
 ;(function() {
 	const $ = require("jquery");
 
+	// Get a JavaScript file from an url and run it.
 	function getScript(url, callback, options) {
 		options = $.extend(options || {}, {
 			dataType: "script",
@@ -54418,6 +54496,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		$.ajax(options);
 	}
 
+	// Get a CSS file from an url and add the styles to the document.
 	function getStyle(url, callback) {
 		try {
 			$("<link/>", {
@@ -54441,6 +54520,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 }());
 
 },{"jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/scroll_sync.js":[function(require,module,exports){
+// Logic for syncing the scrollbars of the editor and the viewer panes.
 ;(function() {
 	const $ = require("jquery");
 
@@ -54469,7 +54549,9 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 }());
 
 },{"jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js":[function(require,module,exports){
+// Helper functions for saving and loading user settings with localstorage.
 ;(function() {
+	// Default values for various user settings.
 	const defaultValues = {
 		"editorFontFamily": "monospace",
 		"editorFontSize": 13,
@@ -54494,6 +54576,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		"serif": "serif",
 	};
 
+	// Get the setting with the specified key. If the setting is null, use the default value.
 	function getSetting(key) {
 		let setting;
 		try {
@@ -54508,6 +54591,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		return setting;
 	}
 
+	// Set the setting with the specified key to the specified value.
 	function setSetting(key, value) {
 		if (value == null) {
 			value = getDefaultValue(key);
@@ -54519,12 +54603,14 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		}
 	}
 
+	// Get the default value of the setting with the specified key.
 	function getDefaultValue(key) {
 		if (key in defaultValues) {
 			return defaultValues[key];
 		}
 	}
 
+	// Reset all the settings to their default values.
 	function reset() {
 		for (let key in defaultValues) {
 			setSetting(key, getDefaultValue(key));
@@ -54540,9 +54626,13 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 },{}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/shortcuts.js":[function(require,module,exports){
+// Logic for handling bindings for keyboard shortcuts.
 ;(function() {
-	let bindings = {};
+	const bindings = {};
 
+	// Handler function for all keypress events the user makes.
+	// Will convert the key-combination to a string and compare it to existing
+	// shortcut bindings. If the binding is found, call the appropriate function.
 	function handleKeypress(event) {
 		const keys = [event.key.toLowerCase()];
 		if (event.shiftKey) {
@@ -54562,16 +54652,21 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		}
 	}
 
+	// Add a keyboard binding to the list.
+	// Shortcut is a string formatted like this: "ctrl+shift+v"
+	// Callback is the function to call when the shortcut is pressed.
 	function addBinding(shortcut, callback) {
 		bindings[shortcut] = callback;
 	}
 
+	// Add an array of bindings to the list.
 	function addBindings(newBindings) {
 		for (let binding in newBindings) {
 			bindings[binding] = newBindings[binding];
 		}
 	}
 
+	// Check if two arrays of keys are equal.
 	function keysEqual(keys1, keys2) {
 		if (!keys1 || !keys2) {
 			return false;
@@ -54600,6 +54695,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 },{}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/text_inserter.js":[function(require,module,exports){
+// Logic for inserting text into the editor.
 ;(function() {
 	// Add some emphasis, like bold (**) or underscore (~~) to the selected text.
 	// If no text is selected insert the emphasis affixes and move to cursor between them.
@@ -54634,16 +54730,19 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 	module.exports = {
 		handleEmphasis,
-		insertText
+		insertText,
 	};
 }());
 
 },{}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js":[function(require,module,exports){
+// Small module for setting whether the user has unsaved changes.
 ;(function() {
 	const defaultMessage = "You have unsaved changes. Are you sure you want to continue?";
 
 	let hasChanges;
 
+	// Warn the user that they're about to lose unsaved changes.
+	// Return whether they want to continue.
 	function confirmContinue(message) {
 		return !hasChanges || confirm(message || defaultMessage);
 	}
@@ -54655,6 +54754,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 }());
 
 },{}],"/home/tobloef/Downloads/code/markant.io/scripts/viewer.js":[function(require,module,exports){
+// Main module for the HTML preview logic.
 ;(function() {
 	const resourceLoader = require("./utils/resource_loader");
 	const settingsHelper = require("./utils/settings_helper");

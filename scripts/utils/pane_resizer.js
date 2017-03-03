@@ -1,8 +1,10 @@
+// Handler for resizing the two panes. It handles the logic of the dragable bar in
+// the middle and the buttons to open collapsed panes.
 ;(function() {
 	const $ = require("jquery");
 	const navbar = require("./navbar");
 
-	// jQuery elements
+	// Set up the jQuery elements
 	const $paneContainer = $("#pane-container");
 	const $dragbar = $("#dragbar");
 	const $editorPane = $("#editor-pane");
@@ -13,7 +15,10 @@
 	const $body = $("body");
 	const $editorScrollbar = $editorPane.find(".CodeMirror-vscrollbar > div").eq(0);
 
+	// Minimum width for the panes
 	const minPaneWidth = 250;
+	// When the user attempts to resize the pane below this width,
+	// completely hide the pane. This is used for the dragbar.
 	const minCollapseWidth = 100;
 
 	let codemirror;
@@ -29,7 +34,7 @@
 	let editorPanePercentage = 50;
 	let viewerPanePercentage = 50;
 
-
+	// Set the initial state of the various elements.
 	$(document).ready(function() {
 		// Show the collapse buttons and set the panes to their initial size.
 		$editorCollapseButton.css("visibility", "visible");
@@ -45,8 +50,9 @@
 		resizePanesToPercentage(editorPanePercentage, viewerPanePercentage);
 	});
 
+	// When the buttons to open a collapsed pane is pressed,
+	// open the appropriate pane.
 	$editorCollapseButton.on("click", toggleViewer);
-
 	$viewerCollapseButton.on("click", toggleEditor);
 
 	$dragbar.on("mousedown", function(mousedownEvent) {
@@ -90,9 +96,10 @@
 		});
 	});
 
+	// Set the icon of "Display Editor" and "Display Preview" navbar items.
 	function setNavbarIconVisibility() {
-		navbar.setCircleVisibility("view-editor", editorPanePercentage !== 0);
-		navbar.setCircleVisibility("view-preview", viewerPanePercentage !== 0);
+		navbar.setVisibilityIcon("view-editor", editorPanePercentage !== 0);
+		navbar.setVisibilityIcon("view-preview", viewerPanePercentage !== 0);
 	}
 
 	// Resize the two panes to percentage sizes.
@@ -175,6 +182,7 @@
 		}
 	}
 
+	// Toggle the visibility of the editor pane
 	function toggleEditor() {
 		if (editorPanePercentage === 0) {
 			if ($paneContainer.width() >= minPaneWidth * 2) {
@@ -192,6 +200,7 @@
 		setNavbarIconVisibility();
 	}
 
+	// Toggle the visibility of the viewer pane
 	function toggleViewer() {
 		if (viewerPanePercentage === 0) {
 			if ($paneContainer.width() >= minPaneWidth * 2) {
