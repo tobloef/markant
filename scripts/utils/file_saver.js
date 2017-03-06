@@ -10,7 +10,7 @@
 	    	const url = URL.createObjectURL(file);
 	    	const a = document.createElement("a");
 	        a.href = url;
-	        a.download = filename + type;
+	        a.download = filename + extension;
 	        document.body.appendChild(a);
 	        a.click();
 	        setTimeout(function() {
