@@ -12,6 +12,6 @@
 			m.parentNode.insertBefore(a, m);
 		})(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
-		ga('create', 'UA-73558830-6', 'auto');
+		ga('create', 'UA-73558830-7', 'auto');
 		ga('send', 'pageview');
 }());
