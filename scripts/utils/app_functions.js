@@ -10,6 +10,7 @@
 		const documentTitle = require("./document_title");
 		const unsavedChanges = require("./unsaved_changes");
 		const paneResizer = require("./pane_resizer")();
+		const exportHtml = require("./exporters/html");
 
 		return {
 			// Discard the current document and create an empty one.
@@ -32,6 +33,9 @@
 
 			// Save the current markdown document to the user's computer
 			fileSave() {
+				if (codemirror == null) {
+					return;
+				}
 				const content = codemirror.getValue();
 				const title = documentTitle.getTitle();
 				const type = ".md";
@@ -39,9 +43,15 @@
 				unsavedChanges.hasChanges = false;
 			},
 
-			// Convert the current markdown to HTML and export it to the user's computer
-			fileExport() {
-
+			// Convert the current markdown to HTML and export it to the user's local drive
+			fileExportHtml() {
+				if (codemirror == null) {
+					return;
+				}
+				const content = exportHtml(codemirror.getValue());
+				const title = documentTitle.getTitle();
+				const type = ".html";
+				fileExport.saveFile(content, title, type);
 			},
 
 			// Set the focus on the input box for renaming the document

@@ -12,7 +12,7 @@
 	require("./utils/modals/settings_modal");
 
 	// Load styles
-	resourceLoader.getStyle("build/lib/font-awesome/css/font-awesome.min.css");
+	resourceLoader.addStyle("build/lib/font-awesome/css/font-awesome.min.css");
 
 	// Set up the editor and the viewer.
 	const viewerElement = $("#viewer").get(0);

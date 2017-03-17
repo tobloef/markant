@@ -27,7 +27,7 @@
 			"file-new": functions.fileNew,
 			"file-open": functions.fileOpen,
 			"file-save": functions.fileSave,
-			"file-export": functions.fileExport,
+			"file-export-html": functions.fileExportHtml,
 			"file-rename": functions.fileRename,
 			"edit-undo": functions.editUndo,
 			"edit-redo": functions.editRedo,

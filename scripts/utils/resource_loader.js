@@ -4,7 +4,7 @@
 	const $ = require("jquery");
 
 	// Get a JavaScript file from an url and run it.
-	function getScript(url, callback, options) {
+	function addScript(url, callback, options) {
 		options = $.extend(options || {}, {
 			dataType: "script",
 			cache: true,
@@ -12,14 +12,14 @@
 			success: callback,
 			timeout: 10 * 1000, // 10 seconds
 			error: function() {
-				console.error(`Error loading script from url ${url}.\nException: ${e}`);
+				console.error(`Error loading script from url ${url}.`);
 			}
 		});
 		$.ajax(options);
 	}
 
 	// Get a CSS file from an url and add the styles to the document.
-	function getStyle(url, callback) {
+	function addStyle(url, callback) {
 		try {
 			$("<link/>", {
 				rel: "stylesheet",
@@ -30,13 +30,13 @@
 				callback();
 			}
 		} catch (e) {
-			console.error(`Error loading style from url ${url}.\nException: ${e}`);
+			console.error(`Error loading style from url ${url}.`);
 			return;
 		}
 	}
 
 	module.exports = {
-		getScript,
-		getStyle,
+		addScript,
+		addStyle,
 	};
 }());

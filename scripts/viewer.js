@@ -1,10 +1,11 @@
 // Main module for the HTML preview logic.
 ;(function() {
-	const resourceLoader = require("./utils/resource_loader");
-	const settingsHelper = require("./utils/settings_helper");
 	const $ = require("jquery");
 	const hljs = require("highlight.js");
-	const markdown = require("markdown-it")({
+	const resourceLoader = require("./utils/resource_loader");
+	const settingsHelper = require("./utils/settings_helper");
+	const styleUpdater = require("./utils/style_updater");
+	const markdownIt = require("markdown-it")({
 		html: true
 	});
 	const lazyHeaders = require("markdown-it-lazy-headers");
@@ -29,17 +30,9 @@
 	let viewer;
 	let mathjaxReady;
 
-	// Set up markdown-it with the needed plugins.
-	markdown.use(lazyHeaders);
-	markdown.use(sanitizer, {
-		removeUnknown: true,
-		removeUnbalanced: true,
-		img: "",
-	});
-
 	// Render the specified Markdown and insert the resulting HTML into the viewer.
 	function render(markdownString, callback) {
-		const result = markdown.render(markdownString || "");
+		const result = markdownIt.render(markdownString || "");
 		viewer.innerHTML = result;
 		if (mathjaxReady) {
 			MathJax.Hub.Queue(["Typeset", MathJax.Hub, viewer]);
@@ -63,14 +56,14 @@
 		}, renderDelay);
 	}
 
-	// Load the user's preferences and apply them to markdown-it.
+	// Load the user's preferences and apply them.
 	function loadUserSettings() {
+		markdownIt.use(lazyHeaders);
+		markdownIt.use(sanitizer);
 		const mathRenderer = settingsHelper.getSetting("viewerMathRenderer");
 		if (mathRenderer != null) {
-			if (mathRenderer.toLowerCase() === "katex") {
-				markdown.use(katex);
-			} else if (mathRenderer.toLowerCase() === "mathjax") {
-				markdown.use(mathjax);
+			if (mathRenderer.toLowerCase() === "mathjax") {
+				markdownIt.use(mathjax);
 				const mathjaxUrl = mathjaxCdn + mathjaxConfigString;
 				resourceLoader.getScript(mathjaxUrl, function() {
 					MathJax.Hub.Config({
@@ -78,15 +71,24 @@
 					});
 					mathjaxReady = true;
 				});
+			} else if (mathRenderer.toLowerCase() === "katex") {
+				markdownIt.use(katex);
+				$.get("build/lib/katex/dist/katex.min.css", function(style) {
+					styleUpdater.append("viewer-styles", style);
+				});
 			}
 		}
 		const hljsTheme = settingsHelper.getSetting("viewerHljsTheme");
 		if (hljsTheme != null) {
-			resourceLoader.getStyle(`${hljsThemeDirectory}/${hljsTheme}.css`);
+			$.get(`${hljsThemeDirectory}/${hljsTheme}.css`, function(style) {
+				styleUpdater.append("viewer-styles", style);
+			});
 		}
 		const viewerTheme = settingsHelper.getSetting("viewerTheme");
 		if (viewerTheme != null) {
-			resourceLoader.getStyle(`${viewerThemeDirectory}/${viewerTheme}.css`);
+			$.get(`${viewerThemeDirectory}/${viewerTheme}.css`, function(style) {
+				styleUpdater.append("viewer-styles", style);
+			});
 		}
 	}
 
@@ -94,16 +96,18 @@
 	function loadStyleSettings() {
 		const fontFamily = settingsHelper.getSetting("viewerFontFamily");
 		if (fontFamily != null && fontFamily in settingsHelper.fontFamilyMap) {
-			$(viewer).css("font-family", `${settingsHelper.fontFamilyMap[fontFamily]}`);
+			const style = `#viewer { font-family: ${settingsHelper.fontFamilyMap[fontFamily]}; }`;
+			styleUpdater.append("viewer-styles", style);
 		}
 		const fontSize = settingsHelper.getSetting("viewerFontSize");
 		if (fontSize != null) {
-			$(viewer).css("font-size", fontSize);
+			const style = `#viewer { font-size: ${fontSize}; }`;
+			styleUpdater.append("viewer-styles", style);
 		}
 		const hljsTabSize = settingsHelper.getSetting("hljsTabSize");
 		if (hljsTabSize != null) {
-			const style = $(`<style>.hljs { tab-size: ${hljsTabSize}; -moz-tab-size: ${hljsTabSize}; }</style>`);
-			$("head").append(style);
+			const style = `.hljs { tab-size: ${hljsTabSize}; -moz-tab-size: ${hljsTabSize}; }`;
+			styleUpdater.append("viewer-styles", style);
 		}
 	}
 
@@ -112,11 +116,11 @@
 		loadUserSettings();
 		loadStyleSettings();
 		if (useDelayedRendering) {
-			module.render = delayedRender;
+			exports.render = delayedRender;
 		} else {
-			module.render = render;
+			exports.render = render;
 		}
 
-		return module;
+		return exports;
 	};
 }());

@@ -30,6 +30,8 @@
 	// Directory for CodeMirror CSS styles.
 	const themeDirectory = "build/lib/codemirror/theme";
 
+	const $viewerStyles = $("#viewer-styles");
+
 	// Load the user's preferences and apply them to the codemirror config.
 	function loadUserSettings() {
 		const indentSize = settingsHelper.getSetting("editorIndentSize");
@@ -50,11 +52,11 @@
 			codemirrorConfig.lineNumbers = showLineNumbers;
 		}
 		if (codemirrorConfig.theme != null) {
-			resourceLoader.getStyle(`${themeDirectory}/${codemirrorConfig.theme}.css`);
+			resourceLoader.addStyle(`${themeDirectory}/${codemirrorConfig.theme}.css`);
 		}
 		const useBigHeaders = settingsHelper.getSetting("editorBigHeaders");
 		if (useBigHeaders != null && useBigHeaders) {
-			resourceLoader.getStyle(`${themeDirectory}/big_headers.css`);
+			resourceLoader.addStyle(`${themeDirectory}/big_headers.css`);
 		}
 	}
 

@@ -53578,7 +53578,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	require("./utils/modals/settings_modal");
 
 	// Load styles
-	resourceLoader.getStyle("build/lib/font-awesome/css/font-awesome.min.css");
+	resourceLoader.addStyle("build/lib/font-awesome/css/font-awesome.min.css");
 
 	// Set up the editor and the viewer.
 	const viewerElement = $("#viewer").get(0);
@@ -53675,6 +53675,8 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	// Directory for CodeMirror CSS styles.
 	const themeDirectory = "build/lib/codemirror/theme";
 
+	const $viewerStyles = $("#viewer-styles");
+
 	// Load the user's preferences and apply them to the codemirror config.
 	function loadUserSettings() {
 		const indentSize = settingsHelper.getSetting("editorIndentSize");
@@ -53695,11 +53697,11 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			codemirrorConfig.lineNumbers = showLineNumbers;
 		}
 		if (codemirrorConfig.theme != null) {
-			resourceLoader.getStyle(`${themeDirectory}/${codemirrorConfig.theme}.css`);
+			resourceLoader.addStyle(`${themeDirectory}/${codemirrorConfig.theme}.css`);
 		}
 		const useBigHeaders = settingsHelper.getSetting("editorBigHeaders");
 		if (useBigHeaders != null && useBigHeaders) {
-			resourceLoader.getStyle(`${themeDirectory}/big_headers.css`);
+			resourceLoader.addStyle(`${themeDirectory}/big_headers.css`);
 		}
 	}
 
@@ -53742,6 +53744,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		const documentTitle = require("./document_title");
 		const unsavedChanges = require("./unsaved_changes");
 		const paneResizer = require("./pane_resizer")();
+		const exportHtml = require("./exporters/html");
 
 		return {
 			// Discard the current document and create an empty one.
@@ -53764,6 +53767,9 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 			// Save the current markdown document to the user's computer
 			fileSave() {
+				if (codemirror == null) {
+					return;
+				}
 				const content = codemirror.getValue();
 				const title = documentTitle.getTitle();
 				const type = ".md";
@@ -53771,9 +53777,15 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 				unsavedChanges.hasChanges = false;
 			},
 
-			// Convert the current markdown to HTML and export it to the user's computer
-			fileExport() {
-
+			// Convert the current markdown to HTML and export it to the user's local drive
+			fileExportHtml() {
+				if (codemirror == null) {
+					return;
+				}
+				const content = exportHtml(codemirror.getValue());
+				const title = documentTitle.getTitle();
+				const type = ".html";
+				fileExport.saveFile(content, title, type);
 			},
 
 			// Set the focus on the input box for renaming the document
@@ -53850,7 +53862,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		};
 	};
 }());
-},{"./document_title":"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js","./file_saver":"/home/tobloef/Downloads/code/markant.io/scripts/utils/file_saver.js","./markdown_import":"/home/tobloef/Downloads/code/markant.io/scripts/utils/markdown_import.js","./pane_resizer":"/home/tobloef/Downloads/code/markant.io/scripts/utils/pane_resizer.js","./resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./text_inserter":"/home/tobloef/Downloads/code/markant.io/scripts/utils/text_inserter.js","./unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js":[function(require,module,exports){
+},{"./document_title":"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js","./exporters/html":"/home/tobloef/Downloads/code/markant.io/scripts/utils/exporters/html.js","./file_saver":"/home/tobloef/Downloads/code/markant.io/scripts/utils/file_saver.js","./markdown_import":"/home/tobloef/Downloads/code/markant.io/scripts/utils/markdown_import.js","./pane_resizer":"/home/tobloef/Downloads/code/markant.io/scripts/utils/pane_resizer.js","./resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./text_inserter":"/home/tobloef/Downloads/code/markant.io/scripts/utils/text_inserter.js","./unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js":[function(require,module,exports){
 // Logic for the document title input field. To properly resize the input field,
 // a hidden input field is mirroring the visible's field's text.
 ;(function() {
@@ -53941,7 +53953,19 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"./unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/file_saver.js":[function(require,module,exports){
+},{"./unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/exporters/html.js":[function(require,module,exports){
+//
+;(function() {
+	const $ = require("jquery");
+
+	module.exports = function(markdown) {
+		const body = `<body>${$("#viewer")[0].outerHTML}</body>`;
+		const head = `<head>${$("#viewer-styles")[0].outerHTML}</head>`;
+		const HTML = `<html>${head}${body}</html>`;
+		return HTML;
+	};
+}());
+},{"jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/file_saver.js":[function(require,module,exports){
 // Save a file to the user's local drive.
 ;(function() {
 	// Convert some data to a file and save it to the user's local drive with
@@ -54201,7 +54225,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			"file-new": functions.fileNew,
 			"file-open": functions.fileOpen,
 			"file-save": functions.fileSave,
-			"file-export": functions.fileExport,
+			"file-export-html": functions.fileExportHtml,
 			"file-rename": functions.fileRename,
 			"edit-undo": functions.editUndo,
 			"edit-redo": functions.editRedo,
@@ -54482,7 +54506,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	const $ = require("jquery");
 
 	// Get a JavaScript file from an url and run it.
-	function getScript(url, callback, options) {
+	function addScript(url, callback, options) {
 		options = $.extend(options || {}, {
 			dataType: "script",
 			cache: true,
@@ -54490,14 +54514,14 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			success: callback,
 			timeout: 10 * 1000, // 10 seconds
 			error: function() {
-				console.error(`Error loading script from url ${url}.\nException: ${e}`);
+				console.error(`Error loading script from url ${url}.`);
 			}
 		});
 		$.ajax(options);
 	}
 
 	// Get a CSS file from an url and add the styles to the document.
-	function getStyle(url, callback) {
+	function addStyle(url, callback) {
 		try {
 			$("<link/>", {
 				rel: "stylesheet",
@@ -54508,14 +54532,14 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 				callback();
 			}
 		} catch (e) {
-			console.error(`Error loading style from url ${url}.\nException: ${e}`);
+			console.error(`Error loading style from url ${url}.`);
 			return;
 		}
 	}
 
 	module.exports = {
-		getScript,
-		getStyle,
+		addScript,
+		addStyle,
 	};
 }());
 
@@ -54694,7 +54718,27 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		handleKeypress
 	};
 }());
-},{}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/text_inserter.js":[function(require,module,exports){
+},{}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/style_updater.js":[function(require,module,exports){
+// For adding rules to an existing <style> tag.
+;(function() {
+	const $ = require("jquery");
+
+	function append(id, css) {
+		const $element = $(`#${id}`);
+		if ($element) {
+			const $parent = $element.parent();
+			const oldCSS = $element.html();
+			$element.remove();
+			$(`<style type='text/css' id='${id}'>${oldCSS}\n${css}</style>`).appendTo("head");
+		}
+	}
+
+	module.exports = {
+		append
+	};
+}());
+
+},{"jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/text_inserter.js":[function(require,module,exports){
 // Logic for inserting text into the editor.
 ;(function() {
 	// Add some emphasis, like bold (**) or underscore (~~) to the selected text.
@@ -54756,11 +54800,12 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 },{}],"/home/tobloef/Downloads/code/markant.io/scripts/viewer.js":[function(require,module,exports){
 // Main module for the HTML preview logic.
 ;(function() {
-	const resourceLoader = require("./utils/resource_loader");
-	const settingsHelper = require("./utils/settings_helper");
 	const $ = require("jquery");
 	const hljs = require("highlight.js");
-	const markdown = require("markdown-it")({
+	const resourceLoader = require("./utils/resource_loader");
+	const settingsHelper = require("./utils/settings_helper");
+	const styleUpdater = require("./utils/style_updater");
+	const markdownIt = require("markdown-it")({
 		html: true
 	});
 	const lazyHeaders = require("markdown-it-lazy-headers");
@@ -54785,17 +54830,9 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	let viewer;
 	let mathjaxReady;
 
-	// Set up markdown-it with the needed plugins.
-	markdown.use(lazyHeaders);
-	markdown.use(sanitizer, {
-		removeUnknown: true,
-		removeUnbalanced: true,
-		img: "",
-	});
-
 	// Render the specified Markdown and insert the resulting HTML into the viewer.
 	function render(markdownString, callback) {
-		const result = markdown.render(markdownString || "");
+		const result = markdownIt.render(markdownString || "");
 		viewer.innerHTML = result;
 		if (mathjaxReady) {
 			MathJax.Hub.Queue(["Typeset", MathJax.Hub, viewer]);
@@ -54819,14 +54856,14 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		}, renderDelay);
 	}
 
-	// Load the user's preferences and apply them to markdown-it.
+	// Load the user's preferences and apply them.
 	function loadUserSettings() {
+		markdownIt.use(lazyHeaders);
+		markdownIt.use(sanitizer);
 		const mathRenderer = settingsHelper.getSetting("viewerMathRenderer");
 		if (mathRenderer != null) {
-			if (mathRenderer.toLowerCase() === "katex") {
-				markdown.use(katex);
-			} else if (mathRenderer.toLowerCase() === "mathjax") {
-				markdown.use(mathjax);
+			if (mathRenderer.toLowerCase() === "mathjax") {
+				markdownIt.use(mathjax);
 				const mathjaxUrl = mathjaxCdn + mathjaxConfigString;
 				resourceLoader.getScript(mathjaxUrl, function() {
 					MathJax.Hub.Config({
@@ -54834,15 +54871,24 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 					});
 					mathjaxReady = true;
 				});
+			} else if (mathRenderer.toLowerCase() === "katex") {
+				markdownIt.use(katex);
+				$.get("build/lib/katex/dist/katex.min.css", function(style) {
+					styleUpdater.append("viewer-styles", style);
+				});
 			}
 		}
 		const hljsTheme = settingsHelper.getSetting("viewerHljsTheme");
 		if (hljsTheme != null) {
-			resourceLoader.getStyle(`${hljsThemeDirectory}/${hljsTheme}.css`);
+			$.get(`${hljsThemeDirectory}/${hljsTheme}.css`, function(style) {
+				styleUpdater.append("viewer-styles", style);
+			});
 		}
 		const viewerTheme = settingsHelper.getSetting("viewerTheme");
 		if (viewerTheme != null) {
-			resourceLoader.getStyle(`${viewerThemeDirectory}/${viewerTheme}.css`);
+			$.get(`${viewerThemeDirectory}/${viewerTheme}.css`, function(style) {
+				styleUpdater.append("viewer-styles", style);
+			});
 		}
 	}
 
@@ -54850,16 +54896,19 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	function loadStyleSettings() {
 		const fontFamily = settingsHelper.getSetting("viewerFontFamily");
 		if (fontFamily != null && fontFamily in settingsHelper.fontFamilyMap) {
-			$(viewer).css("font-family", `${settingsHelper.fontFamilyMap[fontFamily]}`);
+			const style = `#viewer { font-family: ${settingsHelper.fontFamilyMap[fontFamily]}; }`;
+			styleUpdater.append("viewer-styles", style);
 		}
 		const fontSize = settingsHelper.getSetting("viewerFontSize");
 		if (fontSize != null) {
 			$(viewer).css("font-size", fontSize);
+			const style = `#viewer { font-size: ${fontSize}; }`;
+			styleUpdater.append("viewer-styles", style);
 		}
 		const hljsTabSize = settingsHelper.getSetting("hljsTabSize");
 		if (hljsTabSize != null) {
-			const style = $(`<style>.hljs { tab-size: ${hljsTabSize}; -moz-tab-size: ${hljsTabSize}; }</style>`);
-			$("head").append(style);
+			const style = `.hljs { tab-size: ${hljsTabSize}; -moz-tab-size: ${hljsTabSize}; }`;
+			styleUpdater.append("viewer-styles", style);
 		}
 	}
 
@@ -54868,15 +54917,15 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		loadUserSettings();
 		loadStyleSettings();
 		if (useDelayedRendering) {
-			module.render = delayedRender;
+			exports.render = delayedRender;
 		} else {
-			module.render = render;
+			exports.render = render;
 		}
 
-		return module;
+		return exports;
 	};
 }());
 
-},{"./utils/resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./utils/settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","highlight.js":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/index.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js","markdown-it":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/index.js","markdown-it-katex":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-katex/index.js","markdown-it-lazy-headers":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-lazy-headers/index.js","markdown-it-mathjax":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-mathjax/markdown-it-mathjax.js","markdown-it-sanitizer":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-sanitizer/index.js"}]},{},["/home/tobloef/Downloads/code/markant.io/scripts/app.js"])
+},{"./utils/resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./utils/settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","./utils/style_updater":"/home/tobloef/Downloads/code/markant.io/scripts/utils/style_updater.js","highlight.js":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/index.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js","markdown-it":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/index.js","markdown-it-katex":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-katex/index.js","markdown-it-lazy-headers":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-lazy-headers/index.js","markdown-it-mathjax":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-mathjax/markdown-it-mathjax.js","markdown-it-sanitizer":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-sanitizer/index.js"}]},{},["/home/tobloef/Downloads/code/markant.io/scripts/app.js"])
 
 //# sourceMappingURL=app-bundle.js.map
