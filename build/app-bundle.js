@@ -31,7 +31,7 @@
         return;
       }
       if (emptyListRE.test(line)) {
-        cm.replaceRange("", {
+        if (!/>\s*$/.test(line)) cm.replaceRange("", {
           line: pos.line, ch: 0
         }, {
           line: pos.line, ch: pos.ch + 1
@@ -167,17 +167,18 @@ var platform = navigator.platform
 var gecko = /gecko\/\d/i.test(userAgent)
 var ie_upto10 = /MSIE \d/.test(userAgent)
 var ie_11up = /Trident\/(?:[7-9]|\d{2,})\..*rv:(\d+)/.exec(userAgent)
-var ie = ie_upto10 || ie_11up
-var ie_version = ie && (ie_upto10 ? document.documentMode || 6 : ie_11up[1])
-var webkit = /WebKit\//.test(userAgent)
+var edge = /Edge\/(\d+)/.exec(userAgent)
+var ie = ie_upto10 || ie_11up || edge
+var ie_version = ie && (ie_upto10 ? document.documentMode || 6 : +(edge || ie_11up)[1])
+var webkit = !edge && /WebKit\//.test(userAgent)
 var qtwebkit = webkit && /Qt\/\d+\.\d+/.test(userAgent)
-var chrome = /Chrome\//.test(userAgent)
+var chrome = !edge && /Chrome\//.test(userAgent)
 var presto = /Opera\//.test(userAgent)
 var safari = /Apple Computer/.test(navigator.vendor)
 var mac_geMountainLion = /Mac OS X 1\d\D([8-9]|\d\d)\D/.test(userAgent)
 var phantom = /PhantomJS/.test(userAgent)
 
-var ios = /AppleWebKit/.test(userAgent) && /Mobile\/\w+/.test(userAgent)
+var ios = !edge && /AppleWebKit/.test(userAgent) && /Mobile\/\w+/.test(userAgent)
 // This is woefully incomplete. Suggestions for alternative methods welcome.
 var mobile = ios || /Android|webOS|BlackBerry|Opera Mini|Opera Mobi|IEMobile/i.test(userAgent)
 var mac = ios || /Mac/.test(platform)
@@ -311,11 +312,11 @@ function countColumn(string, end, tabSize, startIndex, startValue) {
   }
 }
 
-function Delayed() {this.id = null}
-Delayed.prototype.set = function(ms, f) {
+var Delayed = function() {this.id = null};
+Delayed.prototype.set = function (ms, f) {
   clearTimeout(this.id)
   this.id = setTimeout(f, ms)
-}
+};
 
 function indexOf(array, elt) {
   for (var i = 0; i < array.length; ++i)
@@ -408,6 +409,23 @@ function isEmpty(obj) {
 // of code points as a group.
 var extendingChars = /[\u0300-\u036f\u0483-\u0489\u0591-\u05bd\u05bf\u05c1\u05c2\u05c4\u05c5\u05c7\u0610-\u061a\u064b-\u065e\u0670\u06d6-\u06dc\u06de-\u06e4\u06e7\u06e8\u06ea-\u06ed\u0711\u0730-\u074a\u07a6-\u07b0\u07eb-\u07f3\u0816-\u0819\u081b-\u0823\u0825-\u0827\u0829-\u082d\u0900-\u0902\u093c\u0941-\u0948\u094d\u0951-\u0955\u0962\u0963\u0981\u09bc\u09be\u09c1-\u09c4\u09cd\u09d7\u09e2\u09e3\u0a01\u0a02\u0a3c\u0a41\u0a42\u0a47\u0a48\u0a4b-\u0a4d\u0a51\u0a70\u0a71\u0a75\u0a81\u0a82\u0abc\u0ac1-\u0ac5\u0ac7\u0ac8\u0acd\u0ae2\u0ae3\u0b01\u0b3c\u0b3e\u0b3f\u0b41-\u0b44\u0b4d\u0b56\u0b57\u0b62\u0b63\u0b82\u0bbe\u0bc0\u0bcd\u0bd7\u0c3e-\u0c40\u0c46-\u0c48\u0c4a-\u0c4d\u0c55\u0c56\u0c62\u0c63\u0cbc\u0cbf\u0cc2\u0cc6\u0ccc\u0ccd\u0cd5\u0cd6\u0ce2\u0ce3\u0d3e\u0d41-\u0d44\u0d4d\u0d57\u0d62\u0d63\u0dca\u0dcf\u0dd2-\u0dd4\u0dd6\u0ddf\u0e31\u0e34-\u0e3a\u0e47-\u0e4e\u0eb1\u0eb4-\u0eb9\u0ebb\u0ebc\u0ec8-\u0ecd\u0f18\u0f19\u0f35\u0f37\u0f39\u0f71-\u0f7e\u0f80-\u0f84\u0f86\u0f87\u0f90-\u0f97\u0f99-\u0fbc\u0fc6\u102d-\u1030\u1032-\u1037\u1039\u103a\u103d\u103e\u1058\u1059\u105e-\u1060\u1071-\u1074\u1082\u1085\u1086\u108d\u109d\u135f\u1712-\u1714\u1732-\u1734\u1752\u1753\u1772\u1773\u17b7-\u17bd\u17c6\u17c9-\u17d3\u17dd\u180b-\u180d\u18a9\u1920-\u1922\u1927\u1928\u1932\u1939-\u193b\u1a17\u1a18\u1a56\u1a58-\u1a5e\u1a60\u1a62\u1a65-\u1a6c\u1a73-\u1a7c\u1a7f\u1b00-\u1b03\u1b34\u1b36-\u1b3a\u1b3c\u1b42\u1b6b-\u1b73\u1b80\u1b81\u1ba2-\u1ba5\u1ba8\u1ba9\u1c2c-\u1c33\u1c36\u1c37\u1cd0-\u1cd2\u1cd4-\u1ce0\u1ce2-\u1ce8\u1ced\u1dc0-\u1de6\u1dfd-\u1dff\u200c\u200d\u20d0-\u20f0\u2cef-\u2cf1\u2de0-\u2dff\u302a-\u302f\u3099\u309a\ua66f-\ua672\ua67c\ua67d\ua6f0\ua6f1\ua802\ua806\ua80b\ua825\ua826\ua8c4\ua8e0-\ua8f1\ua926-\ua92d\ua947-\ua951\ua980-\ua982\ua9b3\ua9b6-\ua9b9\ua9bc\uaa29-\uaa2e\uaa31\uaa32\uaa35\uaa36\uaa43\uaa4c\uaab0\uaab2-\uaab4\uaab7\uaab8\uaabe\uaabf\uaac1\uabe5\uabe8\uabed\udc00-\udfff\ufb1e\ufe00-\ufe0f\ufe20-\ufe26\uff9e\uff9f]/
 function isExtendingChar(ch) { return ch.charCodeAt(0) >= 768 && extendingChars.test(ch) }
+
+// Returns a number from the range [`0`; `str.length`] unless `pos` is outside that range.
+function skipExtendingChars(str, pos, dir) {
+  while ((dir < 0 ? pos > 0 : pos < str.length) && isExtendingChar(str.charAt(pos))) { pos += dir }
+  return pos
+}
+
+// Returns the value from the range [`from`; `to`] that satisfies
+// `pred` and is closest to `from`. Assumes that at least `to` satisfies `pred`.
+function findFirst(pred, from, to) {
+  for (;;) {
+    if (Math.abs(from - to) <= 1) { return pred(from) ? from : to }
+    var mid = Math.floor((from + to) / 2)
+    if (pred(mid)) { to = mid }
+    else { from = mid }
+  }
+}
 
 // The display handles the DOM integration, both for input reading
 // and content drawing. It holds references to DOM nodes and
@@ -596,14 +614,20 @@ function lineNumberFor(options, i) {
 }
 
 // A Pos instance represents a position within the text.
-function Pos (line, ch) {
-  if (!(this instanceof Pos)) { return new Pos(line, ch) }
-  this.line = line; this.ch = ch
+function Pos(line, ch, sticky) {
+  if ( sticky === void 0 ) sticky = null;
+
+  if (!(this instanceof Pos)) { return new Pos(line, ch, sticky) }
+  this.line = line
+  this.ch = ch
+  this.sticky = sticky
 }
 
 // Compare two positions, return 0 if they are the same, a negative
 // number when a is less, and a positive number otherwise.
 function cmp(a, b) { return a.line - b.line || a.ch - b.ch }
+
+function equalCursorPos(a, b) { return a.sticky == b.sticky && cmp(a, b) == 0 }
 
 function copyPos(x) {return Pos(x.line, x.ch)}
 function maxPos(a, b) { return cmp(a, b) < 0 ? b : a }
@@ -800,7 +824,7 @@ function removeReadOnlyRanges(doc, from, to) {
       if (dto > 0 || !mk.inclusiveRight && !dto)
         { newParts.push({from: m.to, to: p.to}) }
       parts.splice.apply(parts, newParts)
-      j += newParts.length - 1
+      j += newParts.length - 3
     }
   }
   return parts
@@ -882,6 +906,13 @@ function visualLine(line) {
   var merged
   while (merged = collapsedSpanAtStart(line))
     { line = merged.find(-1, true).line }
+  return line
+}
+
+function visualLineEnd(line) {
+  var merged
+  while (merged = collapsedSpanAtEnd(line))
+    { line = merged.find(1, true).line }
   return line
 }
 
@@ -1016,84 +1047,23 @@ function iterateBidiSections(order, from, to, f) {
   if (!found) { f(from, to, "ltr") }
 }
 
-function bidiLeft(part) { return part.level % 2 ? part.to : part.from }
-function bidiRight(part) { return part.level % 2 ? part.from : part.to }
-
-function lineLeft(line) { var order = getOrder(line); return order ? bidiLeft(order[0]) : 0 }
-function lineRight(line) {
-  var order = getOrder(line)
-  if (!order) { return line.text.length }
-  return bidiRight(lst(order))
-}
-
-function compareBidiLevel(order, a, b) {
-  var linedir = order[0].level
-  if (a == linedir) { return true }
-  if (b == linedir) { return false }
-  return a < b
-}
-
 var bidiOther = null
-function getBidiPartAt(order, pos) {
+function getBidiPartAt(order, ch, sticky) {
   var found
   bidiOther = null
   for (var i = 0; i < order.length; ++i) {
     var cur = order[i]
-    if (cur.from < pos && cur.to > pos) { return i }
-    if ((cur.from == pos || cur.to == pos)) {
-      if (found == null) {
-        found = i
-      } else if (compareBidiLevel(order, cur.level, order[found].level)) {
-        if (cur.from != cur.to) { bidiOther = found }
-        return i
-      } else {
-        if (cur.from != cur.to) { bidiOther = i }
-        return found
-      }
+    if (cur.from < ch && cur.to > ch) { return i }
+    if (cur.to == ch) {
+      if (cur.from != cur.to && sticky == "before") { found = i }
+      else { bidiOther = i }
+    }
+    if (cur.from == ch) {
+      if (cur.from != cur.to && sticky != "before") { found = i }
+      else { bidiOther = i }
     }
   }
-  return found
-}
-
-function moveInLine(line, pos, dir, byUnit) {
-  if (!byUnit) { return pos + dir }
-  do { pos += dir }
-  while (pos > 0 && isExtendingChar(line.text.charAt(pos)))
-  return pos
-}
-
-// This is needed in order to move 'visually' through bi-directional
-// text -- i.e., pressing left should make the cursor go left, even
-// when in RTL text. The tricky part is the 'jumps', where RTL and
-// LTR text touch each other. This often requires the cursor offset
-// to move more than one unit, in order to visually move one unit.
-function moveVisually(line, start, dir, byUnit) {
-  var bidi = getOrder(line)
-  if (!bidi) { return moveLogically(line, start, dir, byUnit) }
-  var pos = getBidiPartAt(bidi, start), part = bidi[pos]
-  var target = moveInLine(line, start, part.level % 2 ? -dir : dir, byUnit)
-
-  for (;;) {
-    if (target > part.from && target < part.to) { return target }
-    if (target == part.from || target == part.to) {
-      if (getBidiPartAt(bidi, target) == pos) { return target }
-      part = bidi[pos += dir]
-      return (dir > 0) == part.level % 2 ? part.to : part.from
-    } else {
-      part = bidi[pos += dir]
-      if (!part) { return null }
-      if ((dir > 0) == part.level % 2)
-        { target = moveInLine(line, part.to, -1, byUnit) }
-      else
-        { target = moveInLine(line, part.from, 1, byUnit) }
-    }
-  }
-}
-
-function moveLogically(line, start, dir, byUnit) {
-  var target = start + dir
-  if (byUnit) { while (target > 0 && isExtendingChar(line.text.charAt(target))) { target += dir } }
-  return target < 0 || target > line.text.length ? null : target
+  return found != null ? found : bidiOther
 }
 
 // Bidirectional ordering algorithm
@@ -1259,10 +1229,6 @@ var bidiOrdering = (function() {
       lst(order).to -= m[0].length
       order.push(new BidiSpan(0, len - m[0].length, len))
     }
-    if (order[0].level == 2)
-      { order.unshift(new BidiSpan(1, order[0].to, order[0].to)) }
-    if (order[0].level != lst(order).level)
-      { order.push(new BidiSpan(order[0].level, len, len)) }
 
     return order
   }
@@ -1275,6 +1241,111 @@ function getOrder(line) {
   var order = line.order
   if (order == null) { order = line.order = bidiOrdering(line.text) }
   return order
+}
+
+function moveCharLogically(line, ch, dir) {
+  var target = skipExtendingChars(line.text, ch + dir, dir)
+  return target < 0 || target > line.text.length ? null : target
+}
+
+function moveLogically(line, start, dir) {
+  var ch = moveCharLogically(line, start.ch, dir)
+  return ch == null ? null : new Pos(start.line, ch, dir < 0 ? "after" : "before")
+}
+
+function endOfLine(visually, cm, lineObj, lineNo, dir) {
+  if (visually) {
+    var order = getOrder(lineObj)
+    if (order) {
+      var part = dir < 0 ? lst(order) : order[0]
+      var moveInStorageOrder = (dir < 0) == (part.level == 1)
+      var sticky = moveInStorageOrder ? "after" : "before"
+      var ch
+      // With a wrapped rtl chunk (possibly spanning multiple bidi parts),
+      // it could be that the last bidi part is not on the last visual line,
+      // since visual lines contain content order-consecutive chunks.
+      // Thus, in rtl, we are looking for the first (content-order) character
+      // in the rtl chunk that is on the last line (that is, the same line
+      // as the last (content-order) character).
+      if (part.level > 0) {
+        var prep = prepareMeasureForLine(cm, lineObj)
+        ch = dir < 0 ? lineObj.text.length - 1 : 0
+        var targetTop = measureCharPrepared(cm, prep, ch).top
+        ch = findFirst(function (ch) { return measureCharPrepared(cm, prep, ch).top == targetTop; }, (dir < 0) == (part.level == 1) ? part.from : part.to - 1, ch)
+        if (sticky == "before") { ch = moveCharLogically(lineObj, ch, 1, true) }
+      } else { ch = dir < 0 ? part.to : part.from }
+      return new Pos(lineNo, ch, sticky)
+    }
+  }
+  return new Pos(lineNo, dir < 0 ? lineObj.text.length : 0, dir < 0 ? "before" : "after")
+}
+
+function moveVisually(cm, line, start, dir) {
+  var bidi = getOrder(line)
+  if (!bidi) { return moveLogically(line, start, dir) }
+  if (start.ch >= line.text.length) {
+    start.ch = line.text.length
+    start.sticky = "before"
+  } else if (start.ch <= 0) {
+    start.ch = 0
+    start.sticky = "after"
+  }
+  var partPos = getBidiPartAt(bidi, start.ch, start.sticky), part = bidi[partPos]
+  if (part.level % 2 == 0 && (dir > 0 ? part.to > start.ch : part.from < start.ch)) {
+    // Case 1: We move within an ltr part. Even with wrapped lines,
+    // nothing interesting happens.
+    return moveLogically(line, start, dir)
+  }
+
+  var mv = function (pos, dir) { return moveCharLogically(line, pos instanceof Pos ? pos.ch : pos, dir); }
+  var prep
+  var getWrappedLineExtent = function (ch) {
+    if (!cm.options.lineWrapping) { return {begin: 0, end: line.text.length} }
+    prep = prep || prepareMeasureForLine(cm, line)
+    return wrappedLineExtentChar(cm, line, prep, ch)
+  }
+  var wrappedLineExtent = getWrappedLineExtent(start.sticky == "before" ? mv(start, -1) : start.ch)
+
+  if (part.level % 2 == 1) {
+    var ch = mv(start, -dir)
+    if (ch != null && (dir > 0 ? ch >= part.from && ch >= wrappedLineExtent.begin : ch <= part.to && ch <= wrappedLineExtent.end)) {
+      // Case 2: We move within an rtl part on the same visual line
+      var sticky = dir < 0 ? "before" : "after"
+      return new Pos(start.line, ch, sticky)
+    }
+  }
+
+  // Case 3: Could not move within this bidi part in this visual line, so leave
+  // the current bidi part
+
+  var searchInVisualLine = function (partPos, dir, wrappedLineExtent) {
+    var getRes = function (ch, moveInStorageOrder) { return moveInStorageOrder
+      ? new Pos(start.line, mv(ch, 1), "before")
+      : new Pos(start.line, ch, "after"); }
+
+    for (; partPos >= 0 && partPos < bidi.length; partPos += dir) {
+      var part = bidi[partPos]
+      var moveInStorageOrder = (dir > 0) == (part.level != 1)
+      var ch = moveInStorageOrder ? wrappedLineExtent.begin : mv(wrappedLineExtent.end, -1)
+      if (part.from <= ch && ch < part.to) { return getRes(ch, moveInStorageOrder) }
+      ch = moveInStorageOrder ? part.from : mv(part.to, -1)
+      if (wrappedLineExtent.begin <= ch && ch < wrappedLineExtent.end) { return getRes(ch, moveInStorageOrder) }
+    }
+  }
+
+  // Case 3a: Look for other bidi parts on the same visual line
+  var res = searchInVisualLine(partPos + dir, dir, wrappedLineExtent)
+  if (res) { return res }
+
+  // Case 3b: Look for other bidi parts on the next visual line
+  var nextCh = dir > 0 ? wrappedLineExtent.end : mv(wrappedLineExtent.begin, -1)
+  if (nextCh != null && !(dir > 0 && nextCh == line.text.length)) {
+    res = searchInVisualLine(dir > 0 ? 0 : bidi.length - 1, dir, getWrappedLineExtent(nextCh))
+    if (res) { return res }
+  }
+
+  // Case 4: Nowhere to move
+  return null
 }
 
 // EVENT HANDLING
@@ -1565,74 +1636,72 @@ var StringStream = function(string, tabSize) {
   this.tabSize = tabSize || 8
   this.lastColumnPos = this.lastColumnValue = 0
   this.lineStart = 0
-}
+};
 
-StringStream.prototype = {
-  eol: function() {return this.pos >= this.string.length},
-  sol: function() {return this.pos == this.lineStart},
-  peek: function() {return this.string.charAt(this.pos) || undefined},
-  next: function() {
-    if (this.pos < this.string.length)
-      { return this.string.charAt(this.pos++) }
-  },
-  eat: function(match) {
-    var ch = this.string.charAt(this.pos)
-    var ok
-    if (typeof match == "string") { ok = ch == match }
-    else { ok = ch && (match.test ? match.test(ch) : match(ch)) }
-    if (ok) {++this.pos; return ch}
-  },
-  eatWhile: function(match) {
-    var start = this.pos
-    while (this.eat(match)){}
-    return this.pos > start
-  },
-  eatSpace: function() {
+StringStream.prototype.eol = function () {return this.pos >= this.string.length};
+StringStream.prototype.sol = function () {return this.pos == this.lineStart};
+StringStream.prototype.peek = function () {return this.string.charAt(this.pos) || undefined};
+StringStream.prototype.next = function () {
+  if (this.pos < this.string.length)
+    { return this.string.charAt(this.pos++) }
+};
+StringStream.prototype.eat = function (match) {
+  var ch = this.string.charAt(this.pos)
+  var ok
+  if (typeof match == "string") { ok = ch == match }
+  else { ok = ch && (match.test ? match.test(ch) : match(ch)) }
+  if (ok) {++this.pos; return ch}
+};
+StringStream.prototype.eatWhile = function (match) {
+  var start = this.pos
+  while (this.eat(match)){}
+  return this.pos > start
+};
+StringStream.prototype.eatSpace = function () {
     var this$1 = this;
 
-    var start = this.pos
-    while (/[\s\u00a0]/.test(this.string.charAt(this.pos))) { ++this$1.pos }
-    return this.pos > start
-  },
-  skipToEnd: function() {this.pos = this.string.length},
-  skipTo: function(ch) {
-    var found = this.string.indexOf(ch, this.pos)
-    if (found > -1) {this.pos = found; return true}
-  },
-  backUp: function(n) {this.pos -= n},
-  column: function() {
-    if (this.lastColumnPos < this.start) {
-      this.lastColumnValue = countColumn(this.string, this.start, this.tabSize, this.lastColumnPos, this.lastColumnValue)
-      this.lastColumnPos = this.start
-    }
-    return this.lastColumnValue - (this.lineStart ? countColumn(this.string, this.lineStart, this.tabSize) : 0)
-  },
-  indentation: function() {
-    return countColumn(this.string, null, this.tabSize) -
-      (this.lineStart ? countColumn(this.string, this.lineStart, this.tabSize) : 0)
-  },
-  match: function(pattern, consume, caseInsensitive) {
-    if (typeof pattern == "string") {
-      var cased = function (str) { return caseInsensitive ? str.toLowerCase() : str; }
-      var substr = this.string.substr(this.pos, pattern.length)
-      if (cased(substr) == cased(pattern)) {
-        if (consume !== false) { this.pos += pattern.length }
-        return true
-      }
-    } else {
-      var match = this.string.slice(this.pos).match(pattern)
-      if (match && match.index > 0) { return null }
-      if (match && consume !== false) { this.pos += match[0].length }
-      return match
-    }
-  },
-  current: function(){return this.string.slice(this.start, this.pos)},
-  hideFirstChars: function(n, inner) {
-    this.lineStart += n
-    try { return inner() }
-    finally { this.lineStart -= n }
+  var start = this.pos
+  while (/[\s\u00a0]/.test(this.string.charAt(this.pos))) { ++this$1.pos }
+  return this.pos > start
+};
+StringStream.prototype.skipToEnd = function () {this.pos = this.string.length};
+StringStream.prototype.skipTo = function (ch) {
+  var found = this.string.indexOf(ch, this.pos)
+  if (found > -1) {this.pos = found; return true}
+};
+StringStream.prototype.backUp = function (n) {this.pos -= n};
+StringStream.prototype.column = function () {
+  if (this.lastColumnPos < this.start) {
+    this.lastColumnValue = countColumn(this.string, this.start, this.tabSize, this.lastColumnPos, this.lastColumnValue)
+    this.lastColumnPos = this.start
   }
-}
+  return this.lastColumnValue - (this.lineStart ? countColumn(this.string, this.lineStart, this.tabSize) : 0)
+};
+StringStream.prototype.indentation = function () {
+  return countColumn(this.string, null, this.tabSize) -
+    (this.lineStart ? countColumn(this.string, this.lineStart, this.tabSize) : 0)
+};
+StringStream.prototype.match = function (pattern, consume, caseInsensitive) {
+  if (typeof pattern == "string") {
+    var cased = function (str) { return caseInsensitive ? str.toLowerCase() : str; }
+    var substr = this.string.substr(this.pos, pattern.length)
+    if (cased(substr) == cased(pattern)) {
+      if (consume !== false) { this.pos += pattern.length }
+      return true
+    }
+  } else {
+    var match = this.string.slice(this.pos).match(pattern)
+    if (match && match.index > 0) { return null }
+    if (match && consume !== false) { this.pos += match[0].length }
+    return match
+  }
+};
+StringStream.prototype.current = function (){return this.string.slice(this.start, this.pos)};
+StringStream.prototype.hideFirstChars = function (n, inner) {
+  this.lineStart += n
+  try { return inner() }
+  finally { this.lineStart -= n }
+};
 
 // Compute a style array (an array starting with a mode generation
 // -- for invalidation -- followed by pairs of end positions and
@@ -1837,13 +1906,14 @@ function findStartLine(cm, n, precise) {
 
 // Line objects. These hold state related to a line, including
 // highlighting info (the styles array).
-function Line(text, markedSpans, estimateHeight) {
+var Line = function(text, markedSpans, estimateHeight) {
   this.text = text
   attachMarkedSpans(this, markedSpans)
   this.height = estimateHeight ? estimateHeight(this) : 1
-}
+};
+
+Line.prototype.lineNo = function () { return lineNo(this) };
 eventMixin(Line)
-Line.prototype.lineNo = function() { return lineNo(this) }
 
 // Change the content (text, markers) of a line. Automatically
 // invalidates cached information and tries to re-estimate the
@@ -2763,6 +2833,19 @@ function charCoords(cm, pos, context, lineObj, bias) {
 // Returns a box for a given cursor position, which may have an
 // 'other' property containing the position of the secondary cursor
 // on a bidi boundary.
+// A cursor Pos(line, char, "before") is on the same visual line as `char - 1`
+// and after `char - 1` in writing order of `char - 1`
+// A cursor Pos(line, char, "after") is on the same visual line as `char`
+// and before `char` in writing order of `char`
+// Examples (upper-case letters are RTL, lower-case are LTR):
+//     Pos(0, 1, ...)
+//     before   after
+// ab     a|b     a|b
+// aB     a|B     aB|
+// Ab     |Ab     A|b
+// AB     B|A     B|A
+// Every position after the last character on a line is considered to stick
+// to the last character on the line.
 function cursorCoords(cm, pos, context, lineObj, preparedMeasure, varHeight) {
   lineObj = lineObj || getLine(cm.doc, pos.line)
   if (!preparedMeasure) { preparedMeasure = prepareMeasureForLine(cm, lineObj) }
@@ -2771,25 +2854,24 @@ function cursorCoords(cm, pos, context, lineObj, preparedMeasure, varHeight) {
     if (right) { m.left = m.right; } else { m.right = m.left }
     return intoCoordSystem(cm, lineObj, m, context)
   }
-  function getBidi(ch, partPos) {
-    var part = order[partPos], right = part.level % 2
-    if (ch == bidiLeft(part) && partPos && part.level < order[partPos - 1].level) {
-      part = order[--partPos]
-      ch = bidiRight(part) - (part.level % 2 ? 0 : 1)
-      right = true
-    } else if (ch == bidiRight(part) && partPos < order.length - 1 && part.level < order[partPos + 1].level) {
-      part = order[++partPos]
-      ch = bidiLeft(part) - part.level % 2
-      right = false
-    }
-    if (right && ch == part.to && ch > part.from) { return get(ch - 1) }
-    return get(ch, right)
+  var order = getOrder(lineObj), ch = pos.ch, sticky = pos.sticky
+  if (ch >= lineObj.text.length) {
+    ch = lineObj.text.length
+    sticky = "before"
+  } else if (ch <= 0) {
+    ch = 0
+    sticky = "after"
   }
-  var order = getOrder(lineObj), ch = pos.ch
-  if (!order) { return get(ch) }
-  var partPos = getBidiPartAt(order, ch)
-  var val = getBidi(ch, partPos)
-  if (bidiOther != null) { val.other = getBidi(ch, bidiOther) }
+  if (!order) { return get(sticky == "before" ? ch - 1 : ch, sticky == "before") }
+
+  function getBidi(ch, partPos, invert) {
+    var part = order[partPos], right = (part.level % 2) != 0
+    return get(invert ? ch - 1 : ch, right != invert)
+  }
+  var partPos = getBidiPartAt(order, ch, sticky)
+  var other = bidiOther
+  var val = getBidi(ch, partPos, sticky == "before")
+  if (other != null) { val.other = getBidi(ch, other, sticky != "before") }
   return val
 }
 
@@ -2810,8 +2892,8 @@ function estimateCoords(cm, pos) {
 // the right of the character position, for example). When outside
 // is true, that means the coordinates lie outside the line's
 // vertical range.
-function PosWithInfo(line, ch, outside, xRel) {
-  var pos = Pos(line, ch)
+function PosWithInfo(line, ch, sticky, outside, xRel) {
+  var pos = Pos(line, ch, sticky)
   pos.xRel = xRel
   if (outside) { pos.outside = true }
   return pos
@@ -2822,10 +2904,10 @@ function PosWithInfo(line, ch, outside, xRel) {
 function coordsChar(cm, x, y) {
   var doc = cm.doc
   y += cm.display.viewOffset
-  if (y < 0) { return PosWithInfo(doc.first, 0, true, -1) }
+  if (y < 0) { return PosWithInfo(doc.first, 0, null, true, -1) }
   var lineN = lineAtHeight(doc, y), last = doc.first + doc.size - 1
   if (lineN > last)
-    { return PosWithInfo(doc.first + doc.size - 1, getLine(doc, last).text.length, true, 1) }
+    { return PosWithInfo(doc.first + doc.size - 1, getLine(doc, last).text.length, null, true, 1) }
   if (x < 0) { x = 0 }
 
   var lineObj = getLine(doc, lineN)
@@ -2840,57 +2922,68 @@ function coordsChar(cm, x, y) {
   }
 }
 
+function wrappedLineExtent(cm, lineObj, preparedMeasure, y) {
+  var measure = function (ch) { return intoCoordSystem(cm, lineObj, measureCharPrepared(cm, preparedMeasure, ch), "line"); }
+  var end = lineObj.text.length
+  var begin = findFirst(function (ch) { return measure(ch - 1).bottom <= y; }, end, 0)
+  end = findFirst(function (ch) { return measure(ch).top > y; }, begin, end)
+  return {begin: begin, end: end}
+}
+
+function wrappedLineExtentChar(cm, lineObj, preparedMeasure, target) {
+  var targetTop = intoCoordSystem(cm, lineObj, measureCharPrepared(cm, preparedMeasure, target), "line").top
+  return wrappedLineExtent(cm, lineObj, preparedMeasure, targetTop)
+}
+
 function coordsCharInner(cm, lineObj, lineNo, x, y) {
-  var innerOff = y - heightAtLine(lineObj)
-  var wrongLine = false, adjust = 2 * cm.display.wrapper.clientWidth
+  y -= heightAtLine(lineObj)
+  var begin = 0, end = lineObj.text.length
   var preparedMeasure = prepareMeasureForLine(cm, lineObj)
-
-  function getX(ch) {
-    var sp = cursorCoords(cm, Pos(lineNo, ch), "line", lineObj, preparedMeasure)
-    wrongLine = true
-    if (innerOff > sp.bottom) { return sp.left - adjust }
-    else if (innerOff < sp.top) { return sp.left + adjust }
-    else { wrongLine = false }
-    return sp.left
-  }
-
-  var bidi = getOrder(lineObj), dist = lineObj.text.length
-  var from = lineLeft(lineObj), to = lineRight(lineObj)
-  var fromX = getX(from), fromOutside = wrongLine, toX = getX(to), toOutside = wrongLine
-
-  if (x > toX) { return PosWithInfo(lineNo, to, toOutside, 1) }
-  // Do a binary search between these bounds.
-  for (;;) {
-    if (bidi ? to == from || to == moveVisually(lineObj, from, 1) : to - from <= 1) {
-      var ch = x < fromX || x - fromX <= toX - x ? from : to
-      var outside = ch == from ? fromOutside : toOutside
-      var xDiff = x - (ch == from ? fromX : toX)
-      // This is a kludge to handle the case where the coordinates
-      // are after a line-wrapped line. We should replace it with a
-      // more general handling of cursor positions around line
-      // breaks. (Issue #4078)
-      if (toOutside && !bidi && !/\s/.test(lineObj.text.charAt(ch)) && xDiff > 0 &&
-          ch < lineObj.text.length && preparedMeasure.view.measure.heights.length > 1) {
-        var charSize = measureCharPrepared(cm, preparedMeasure, ch, "right")
-        if (innerOff <= charSize.bottom && innerOff >= charSize.top && Math.abs(x - charSize.right) < xDiff) {
-          outside = false
-          ch++
-          xDiff = x - charSize.right
-        }
+  var pos
+  var order = getOrder(lineObj)
+  if (order) {
+    if (cm.options.lineWrapping) {
+      ;var assign;
+      ((assign = wrappedLineExtent(cm, lineObj, preparedMeasure, y), begin = assign.begin, end = assign.end, assign))
+    }
+    pos = new Pos(lineNo, begin)
+    var beginLeft = cursorCoords(cm, pos, "line", lineObj, preparedMeasure).left
+    var dir = beginLeft < x ? 1 : -1
+    var prevDiff, diff = beginLeft - x, prevPos
+    do {
+      prevDiff = diff
+      prevPos = pos
+      pos = moveVisually(cm, lineObj, pos, dir)
+      if (pos == null || pos.ch < begin || end <= (pos.sticky == "before" ? pos.ch - 1 : pos.ch)) {
+        pos = prevPos
+        break
       }
-      while (isExtendingChar(lineObj.text.charAt(ch))) { ++ch }
-      var pos = PosWithInfo(lineNo, ch, outside, xDiff < -1 ? -1 : xDiff > 1 ? 1 : 0)
-      return pos
+      diff = cursorCoords(cm, pos, "line", lineObj, preparedMeasure).left - x
+    } while ((dir < 0) != (diff < 0) && (Math.abs(diff) <= Math.abs(prevDiff)))
+    if (Math.abs(diff) > Math.abs(prevDiff)) {
+      if ((diff < 0) == (prevDiff < 0)) { throw new Error("Broke out of infinite loop in coordsCharInner") }
+      pos = prevPos
     }
-    var step = Math.ceil(dist / 2), middle = from + step
-    if (bidi) {
-      middle = from
-      for (var i = 0; i < step; ++i) { middle = moveVisually(lineObj, middle, 1) }
-    }
-    var middleX = getX(middle)
-    if (middleX > x) {to = middle; toX = middleX; if (toOutside = wrongLine) { toX += 1000; } dist = step}
-    else {from = middle; fromX = middleX; fromOutside = wrongLine; dist -= step}
+  } else {
+    var ch = findFirst(function (ch) {
+      var box = intoCoordSystem(cm, lineObj, measureCharPrepared(cm, preparedMeasure, ch), "line")
+      if (box.top > y) {
+        // For the cursor stickiness
+        end = Math.min(ch, end)
+        return true
+      }
+      else if (box.bottom <= y) { return false }
+      else if (box.left > x) { return true }
+      else if (box.right < x) { return false }
+      else { return (x - box.left < box.right - x) }
+    }, begin, end)
+    ch = skipExtendingChars(lineObj.text, ch, 1)
+    pos = new Pos(lineNo, ch, ch == end ? "before" : "after")
   }
+  var coords = cursorCoords(cm, pos, "line", lineObj, preparedMeasure)
+  if (y < coords.top || coords.bottom < y) { pos.outside = true }
+  pos.xRel = x < coords.left ? -1 : (x > coords.right ? 1 : 0)
+  return pos
 }
 
 var measureText
@@ -3477,7 +3570,7 @@ NativeScrollbars.prototype.update = function (measure) {
     this.horiz.style.left = measure.barLeft + "px"
     var totalWidth = measure.viewWidth - measure.barLeft - (needsV ? sWidth : 0)
     this.horiz.firstChild.style.width =
-      (measure.scrollWidth - measure.clientWidth + totalWidth) + "px"
+      Math.max(0, measure.scrollWidth - measure.clientWidth + totalWidth) + "px"
   } else {
     this.horiz.style.display = ""
     this.horiz.firstChild.style.width = "0"
@@ -4362,63 +4455,61 @@ function setGuttersForLineNumbers(options) {
 // (and non-touching) ranges, sorted, and an integer that indicates
 // which one is the primary selection (the one that's scrolled into
 // view, that getCursor returns, etc).
-function Selection(ranges, primIndex) {
+var Selection = function(ranges, primIndex) {
   this.ranges = ranges
   this.primIndex = primIndex
-}
+};
 
-Selection.prototype = {
-  primary: function() { return this.ranges[this.primIndex] },
-  equals: function(other) {
+Selection.prototype.primary = function () { return this.ranges[this.primIndex] };
+
+Selection.prototype.equals = function (other) {
     var this$1 = this;
 
-    if (other == this) { return true }
-    if (other.primIndex != this.primIndex || other.ranges.length != this.ranges.length) { return false }
-    for (var i = 0; i < this.ranges.length; i++) {
-      var here = this$1.ranges[i], there = other.ranges[i]
-      if (cmp(here.anchor, there.anchor) != 0 || cmp(here.head, there.head) != 0) { return false }
-    }
-    return true
-  },
-  deepCopy: function() {
-    var this$1 = this;
-
-    var out = []
-    for (var i = 0; i < this.ranges.length; i++)
-      { out[i] = new Range(copyPos(this$1.ranges[i].anchor), copyPos(this$1.ranges[i].head)) }
-    return new Selection(out, this.primIndex)
-  },
-  somethingSelected: function() {
-    var this$1 = this;
-
-    for (var i = 0; i < this.ranges.length; i++)
-      { if (!this$1.ranges[i].empty()) { return true } }
-    return false
-  },
-  contains: function(pos, end) {
-    var this$1 = this;
-
-    if (!end) { end = pos }
-    for (var i = 0; i < this.ranges.length; i++) {
-      var range = this$1.ranges[i]
-      if (cmp(end, range.from()) >= 0 && cmp(pos, range.to()) <= 0)
-        { return i }
-    }
-    return -1
+  if (other == this) { return true }
+  if (other.primIndex != this.primIndex || other.ranges.length != this.ranges.length) { return false }
+  for (var i = 0; i < this.ranges.length; i++) {
+    var here = this$1.ranges[i], there = other.ranges[i]
+    if (!equalCursorPos(here.anchor, there.anchor) || !equalCursorPos(here.head, there.head)) { return false }
   }
-}
+  return true
+};
 
-function Range(anchor, head) {
+Selection.prototype.deepCopy = function () {
+    var this$1 = this;
+
+  var out = []
+  for (var i = 0; i < this.ranges.length; i++)
+    { out[i] = new Range(copyPos(this$1.ranges[i].anchor), copyPos(this$1.ranges[i].head)) }
+  return new Selection(out, this.primIndex)
+};
+
+Selection.prototype.somethingSelected = function () {
+    var this$1 = this;
+
+  for (var i = 0; i < this.ranges.length; i++)
+    { if (!this$1.ranges[i].empty()) { return true } }
+  return false
+};
+
+Selection.prototype.contains = function (pos, end) {
+    var this$1 = this;
+
+  if (!end) { end = pos }
+  for (var i = 0; i < this.ranges.length; i++) {
+    var range = this$1.ranges[i]
+    if (cmp(end, range.from()) >= 0 && cmp(pos, range.to()) <= 0)
+      { return i }
+  }
+  return -1
+};
+
+var Range = function(anchor, head) {
   this.anchor = anchor; this.head = head
-}
+};
 
-Range.prototype = {
-  from: function() { return minPos(this.anchor, this.head) },
-  to: function() { return maxPos(this.anchor, this.head) },
-  empty: function() {
-    return this.head.line == this.anchor.line && this.head.ch == this.anchor.ch
-  }
-}
+Range.prototype.from = function () { return minPos(this.anchor, this.head) };
+Range.prototype.to = function () { return maxPos(this.anchor, this.head) };
+Range.prototype.empty = function () { return this.head.line == this.anchor.line && this.head.ch == this.anchor.ch };
 
 // Take an unsorted, potentially overlapping set of ranges, and
 // build a selection out of it. 'Consumes' ranges array (modifying
@@ -5357,7 +5448,7 @@ function changeLine(doc, handle, changeType, op) {
 //
 // See also http://marijnhaverbeke.nl/blog/codemirror-line-tree.html
 
-function LeafChunk(lines) {
+var LeafChunk = function(lines) {
   var this$1 = this;
 
   this.lines = lines
@@ -5368,45 +5459,47 @@ function LeafChunk(lines) {
     height += lines[i].height
   }
   this.height = height
-}
+};
 
-LeafChunk.prototype = {
-  chunkSize: function() { return this.lines.length },
-  // Remove the n lines at offset 'at'.
-  removeInner: function(at, n) {
+LeafChunk.prototype.chunkSize = function () { return this.lines.length };
+
+// Remove the n lines at offset 'at'.
+LeafChunk.prototype.removeInner = function (at, n) {
     var this$1 = this;
 
-    for (var i = at, e = at + n; i < e; ++i) {
-      var line = this$1.lines[i]
-      this$1.height -= line.height
-      cleanUpLine(line)
-      signalLater(line, "delete")
-    }
-    this.lines.splice(at, n)
-  },
-  // Helper used to collapse a small branch into a single leaf.
-  collapse: function(lines) {
-    lines.push.apply(lines, this.lines)
-  },
-  // Insert the given array of lines at offset 'at', count them as
-  // having the given height.
-  insertInner: function(at, lines, height) {
-    var this$1 = this;
-
-    this.height += height
-    this.lines = this.lines.slice(0, at).concat(lines).concat(this.lines.slice(at))
-    for (var i = 0; i < lines.length; ++i) { lines[i].parent = this$1 }
-  },
-  // Used to iterate over a part of the tree.
-  iterN: function(at, n, op) {
-    var this$1 = this;
-
-    for (var e = at + n; at < e; ++at)
-      { if (op(this$1.lines[at])) { return true } }
+  for (var i = at, e = at + n; i < e; ++i) {
+    var line = this$1.lines[i]
+    this$1.height -= line.height
+    cleanUpLine(line)
+    signalLater(line, "delete")
   }
-}
+  this.lines.splice(at, n)
+};
 
-function BranchChunk(children) {
+// Helper used to collapse a small branch into a single leaf.
+LeafChunk.prototype.collapse = function (lines) {
+  lines.push.apply(lines, this.lines)
+};
+
+// Insert the given array of lines at offset 'at', count them as
+// having the given height.
+LeafChunk.prototype.insertInner = function (at, lines, height) {
+    var this$1 = this;
+
+  this.height += height
+  this.lines = this.lines.slice(0, at).concat(lines).concat(this.lines.slice(at))
+  for (var i = 0; i < lines.length; ++i) { lines[i].parent = this$1 }
+};
+
+// Used to iterate over a part of the tree.
+LeafChunk.prototype.iterN = function (at, n, op) {
+    var this$1 = this;
+
+  for (var e = at + n; at < e; ++at)
+    { if (op(this$1.lines[at])) { return true } }
+};
+
+var BranchChunk = function(children) {
   var this$1 = this;
 
   this.children = children
@@ -5419,123 +5512,120 @@ function BranchChunk(children) {
   this.size = size
   this.height = height
   this.parent = null
-}
+};
 
-BranchChunk.prototype = {
-  chunkSize: function() { return this.size },
-  removeInner: function(at, n) {
+BranchChunk.prototype.chunkSize = function () { return this.size };
+
+BranchChunk.prototype.removeInner = function (at, n) {
     var this$1 = this;
 
-    this.size -= n
-    for (var i = 0; i < this.children.length; ++i) {
-      var child = this$1.children[i], sz = child.chunkSize()
-      if (at < sz) {
-        var rm = Math.min(n, sz - at), oldHeight = child.height
-        child.removeInner(at, rm)
-        this$1.height -= oldHeight - child.height
-        if (sz == rm) { this$1.children.splice(i--, 1); child.parent = null }
-        if ((n -= rm) == 0) { break }
-        at = 0
-      } else { at -= sz }
-    }
-    // If the result is smaller than 25 lines, ensure that it is a
-    // single leaf node.
-    if (this.size - n < 25 &&
-        (this.children.length > 1 || !(this.children[0] instanceof LeafChunk))) {
-      var lines = []
-      this.collapse(lines)
-      this.children = [new LeafChunk(lines)]
-      this.children[0].parent = this
-    }
-  },
-  collapse: function(lines) {
-    var this$1 = this;
-
-    for (var i = 0; i < this.children.length; ++i) { this$1.children[i].collapse(lines) }
-  },
-  insertInner: function(at, lines, height) {
-    var this$1 = this;
-
-    this.size += lines.length
-    this.height += height
-    for (var i = 0; i < this.children.length; ++i) {
-      var child = this$1.children[i], sz = child.chunkSize()
-      if (at <= sz) {
-        child.insertInner(at, lines, height)
-        if (child.lines && child.lines.length > 50) {
-          // To avoid memory thrashing when child.lines is huge (e.g. first view of a large file), it's never spliced.
-          // Instead, small slices are taken. They're taken in order because sequential memory accesses are fastest.
-          var remaining = child.lines.length % 25 + 25
-          for (var pos = remaining; pos < child.lines.length;) {
-            var leaf = new LeafChunk(child.lines.slice(pos, pos += 25))
-            child.height -= leaf.height
-            this$1.children.splice(++i, 0, leaf)
-            leaf.parent = this$1
-          }
-          child.lines = child.lines.slice(0, remaining)
-          this$1.maybeSpill()
-        }
-        break
-      }
-      at -= sz
-    }
-  },
-  // When a node has grown, check whether it should be split.
-  maybeSpill: function() {
-    if (this.children.length <= 10) { return }
-    var me = this
-    do {
-      var spilled = me.children.splice(me.children.length - 5, 5)
-      var sibling = new BranchChunk(spilled)
-      if (!me.parent) { // Become the parent node
-        var copy = new BranchChunk(me.children)
-        copy.parent = me
-        me.children = [copy, sibling]
-        me = copy
-     } else {
-        me.size -= sibling.size
-        me.height -= sibling.height
-        var myIndex = indexOf(me.parent.children, me)
-        me.parent.children.splice(myIndex + 1, 0, sibling)
-      }
-      sibling.parent = me.parent
-    } while (me.children.length > 10)
-    me.parent.maybeSpill()
-  },
-  iterN: function(at, n, op) {
-    var this$1 = this;
-
-    for (var i = 0; i < this.children.length; ++i) {
-      var child = this$1.children[i], sz = child.chunkSize()
-      if (at < sz) {
-        var used = Math.min(n, sz - at)
-        if (child.iterN(at, used, op)) { return true }
-        if ((n -= used) == 0) { break }
-        at = 0
-      } else { at -= sz }
-    }
+  this.size -= n
+  for (var i = 0; i < this.children.length; ++i) {
+    var child = this$1.children[i], sz = child.chunkSize()
+    if (at < sz) {
+      var rm = Math.min(n, sz - at), oldHeight = child.height
+      child.removeInner(at, rm)
+      this$1.height -= oldHeight - child.height
+      if (sz == rm) { this$1.children.splice(i--, 1); child.parent = null }
+      if ((n -= rm) == 0) { break }
+      at = 0
+    } else { at -= sz }
   }
-}
+  // If the result is smaller than 25 lines, ensure that it is a
+  // single leaf node.
+  if (this.size - n < 25 &&
+      (this.children.length > 1 || !(this.children[0] instanceof LeafChunk))) {
+    var lines = []
+    this.collapse(lines)
+    this.children = [new LeafChunk(lines)]
+    this.children[0].parent = this
+  }
+};
+
+BranchChunk.prototype.collapse = function (lines) {
+    var this$1 = this;
+
+  for (var i = 0; i < this.children.length; ++i) { this$1.children[i].collapse(lines) }
+};
+
+BranchChunk.prototype.insertInner = function (at, lines, height) {
+    var this$1 = this;
+
+  this.size += lines.length
+  this.height += height
+  for (var i = 0; i < this.children.length; ++i) {
+    var child = this$1.children[i], sz = child.chunkSize()
+    if (at <= sz) {
+      child.insertInner(at, lines, height)
+      if (child.lines && child.lines.length > 50) {
+        // To avoid memory thrashing when child.lines is huge (e.g. first view of a large file), it's never spliced.
+        // Instead, small slices are taken. They're taken in order because sequential memory accesses are fastest.
+        var remaining = child.lines.length % 25 + 25
+        for (var pos = remaining; pos < child.lines.length;) {
+          var leaf = new LeafChunk(child.lines.slice(pos, pos += 25))
+          child.height -= leaf.height
+          this$1.children.splice(++i, 0, leaf)
+          leaf.parent = this$1
+        }
+        child.lines = child.lines.slice(0, remaining)
+        this$1.maybeSpill()
+      }
+      break
+    }
+    at -= sz
+  }
+};
+
+// When a node has grown, check whether it should be split.
+BranchChunk.prototype.maybeSpill = function () {
+  if (this.children.length <= 10) { return }
+  var me = this
+  do {
+    var spilled = me.children.splice(me.children.length - 5, 5)
+    var sibling = new BranchChunk(spilled)
+    if (!me.parent) { // Become the parent node
+      var copy = new BranchChunk(me.children)
+      copy.parent = me
+      me.children = [copy, sibling]
+      me = copy
+   } else {
+      me.size -= sibling.size
+      me.height -= sibling.height
+      var myIndex = indexOf(me.parent.children, me)
+      me.parent.children.splice(myIndex + 1, 0, sibling)
+    }
+    sibling.parent = me.parent
+  } while (me.children.length > 10)
+  me.parent.maybeSpill()
+};
+
+BranchChunk.prototype.iterN = function (at, n, op) {
+    var this$1 = this;
+
+  for (var i = 0; i < this.children.length; ++i) {
+    var child = this$1.children[i], sz = child.chunkSize()
+    if (at < sz) {
+      var used = Math.min(n, sz - at)
+      if (child.iterN(at, used, op)) { return true }
+      if ((n -= used) == 0) { break }
+      at = 0
+    } else { at -= sz }
+  }
+};
 
 // Line widgets are block elements displayed above or below a line.
 
-function LineWidget(doc, node, options) {
+var LineWidget = function(doc, node, options) {
   var this$1 = this;
 
   if (options) { for (var opt in options) { if (options.hasOwnProperty(opt))
     { this$1[opt] = options[opt] } } }
   this.doc = doc
   this.node = node
-}
-eventMixin(LineWidget)
+};
 
-function adjustScrollWhenAboveVisible(cm, line, diff) {
-  if (heightAtLine(line) < ((cm.curOp && cm.curOp.scrollTop) || cm.doc.scrollTop))
-    { addToScrollPos(cm, null, diff) }
-}
-
-LineWidget.prototype.clear = function() {
-  var this$1 = this;
+LineWidget.prototype.clear = function () {
+    var this$1 = this;
 
   var cm = this.doc.cm, ws = this.line.widgets, line = this.line, no = lineNo(line)
   if (no == null || !ws) { return }
@@ -5543,21 +5633,36 @@ LineWidget.prototype.clear = function() {
   if (!ws.length) { line.widgets = null }
   var height = widgetHeight(this)
   updateLineHeight(line, Math.max(0, line.height - height))
-  if (cm) { runInOp(cm, function () {
-    adjustScrollWhenAboveVisible(cm, line, -height)
-    regLineChange(cm, no, "widget")
-  }) }
-}
-LineWidget.prototype.changed = function() {
+  if (cm) {
+    runInOp(cm, function () {
+      adjustScrollWhenAboveVisible(cm, line, -height)
+      regLineChange(cm, no, "widget")
+    })
+    signalLater(cm, "lineWidgetCleared", cm, this, no)
+  }
+};
+
+LineWidget.prototype.changed = function () {
+    var this$1 = this;
+
   var oldH = this.height, cm = this.doc.cm, line = this.line
   this.height = null
   var diff = widgetHeight(this) - oldH
   if (!diff) { return }
   updateLineHeight(line, line.height + diff)
-  if (cm) { runInOp(cm, function () {
-    cm.curOp.forceUpdate = true
-    adjustScrollWhenAboveVisible(cm, line, diff)
-  }) }
+  if (cm) {
+    runInOp(cm, function () {
+      cm.curOp.forceUpdate = true
+      adjustScrollWhenAboveVisible(cm, line, diff)
+      signalLater(cm, "lineWidgetChanged", cm, this$1, lineNo(line))
+    })
+  }
+};
+eventMixin(LineWidget)
+
+function adjustScrollWhenAboveVisible(cm, line, diff) {
+  if (heightAtLine(line) < ((cm.curOp && cm.curOp.scrollTop) || cm.doc.scrollTop))
+    { addToScrollPos(cm, null, diff) }
 }
 
 function addLineWidget(doc, handle, node, options) {
@@ -5577,6 +5682,7 @@ function addLineWidget(doc, handle, node, options) {
     }
     return true
   })
+  signalLater(cm, "lineWidgetAdded", cm, widget, typeof handle == "number" ? handle : lineNo(handle))
   return widget
 }
 
@@ -5597,17 +5703,16 @@ function addLineWidget(doc, handle, node, options) {
 // when they overlap (they may nest, but not partially overlap).
 var nextMarkerId = 0
 
-function TextMarker(doc, type) {
+var TextMarker = function(doc, type) {
   this.lines = []
   this.type = type
   this.doc = doc
   this.id = ++nextMarkerId
-}
-eventMixin(TextMarker)
+};
 
 // Clear the marker.
-TextMarker.prototype.clear = function() {
-  var this$1 = this;
+TextMarker.prototype.clear = function () {
+    var this$1 = this;
 
   if (this.explicitlyCleared) { return }
   var cm = this.doc.cm, withOp = cm && !cm.curOp
@@ -5645,18 +5750,18 @@ TextMarker.prototype.clear = function() {
     this.doc.cantEdit = false
     if (cm) { reCheckSelection(cm.doc) }
   }
-  if (cm) { signalLater(cm, "markerCleared", cm, this) }
+  if (cm) { signalLater(cm, "markerCleared", cm, this, min, max) }
   if (withOp) { endOperation(cm) }
   if (this.parent) { this.parent.clear() }
-}
+};
 
 // Find the position of the marker in the document. Returns a {from,
 // to} object by default. Side can be passed to get a specific side
 // -- 0 (both), -1 (left), or 1 (right). When lineObj is true, the
 // Pos objects returned contain a line object, rather than a line
 // number (used to prevent looking up the same line twice).
-TextMarker.prototype.find = function(side, lineObj) {
-  var this$1 = this;
+TextMarker.prototype.find = function (side, lineObj) {
+    var this$1 = this;
 
   if (side == null && this.type == "bookmark") { side = 1 }
   var from, to
@@ -5673,11 +5778,13 @@ TextMarker.prototype.find = function(side, lineObj) {
     }
   }
   return from && {from: from, to: to}
-}
+};
 
 // Signals that the marker's widget changed, and surrounding layout
 // should be recomputed.
-TextMarker.prototype.changed = function() {
+TextMarker.prototype.changed = function () {
+    var this$1 = this;
+
   var pos = this.find(-1, true), widget = this, cm = this.doc.cm
   if (!pos || !cm) { return }
   runInOp(cm, function () {
@@ -5695,24 +5802,27 @@ TextMarker.prototype.changed = function() {
       if (dHeight)
         { updateLineHeight(line, line.height + dHeight) }
     }
+    signalLater(cm, "markerChanged", cm, this$1)
   })
-}
+};
 
-TextMarker.prototype.attachLine = function(line) {
+TextMarker.prototype.attachLine = function (line) {
   if (!this.lines.length && this.doc.cm) {
     var op = this.doc.cm.curOp
     if (!op.maybeHiddenMarkers || indexOf(op.maybeHiddenMarkers, this) == -1)
       { (op.maybeUnhiddenMarkers || (op.maybeUnhiddenMarkers = [])).push(this) }
   }
   this.lines.push(line)
-}
-TextMarker.prototype.detachLine = function(line) {
+};
+
+TextMarker.prototype.detachLine = function (line) {
   this.lines.splice(indexOf(this.lines, line), 1)
   if (!this.lines.length && this.doc.cm) {
     var op = this.doc.cm.curOp
     ;(op.maybeHiddenMarkers || (op.maybeHiddenMarkers = [])).push(this)
   }
-}
+};
+eventMixin(TextMarker)
 
 // Create a marker, wire it up to the right lines, and
 function markText(doc, from, to, options, type) {
@@ -5790,28 +5900,29 @@ function markText(doc, from, to, options, type) {
 // A shared marker spans multiple linked documents. It is
 // implemented as a meta-marker-object controlling multiple normal
 // markers.
-function SharedTextMarker(markers, primary) {
+var SharedTextMarker = function(markers, primary) {
   var this$1 = this;
 
   this.markers = markers
   this.primary = primary
   for (var i = 0; i < markers.length; ++i)
     { markers[i].parent = this$1 }
-}
-eventMixin(SharedTextMarker)
+};
 
-SharedTextMarker.prototype.clear = function() {
-  var this$1 = this;
+SharedTextMarker.prototype.clear = function () {
+    var this$1 = this;
 
   if (this.explicitlyCleared) { return }
   this.explicitlyCleared = true
   for (var i = 0; i < this.markers.length; ++i)
     { this$1.markers[i].clear() }
   signalLater(this, "clear")
-}
-SharedTextMarker.prototype.find = function(side, lineObj) {
+};
+
+SharedTextMarker.prototype.find = function (side, lineObj) {
   return this.primary.find(side, lineObj)
-}
+};
+eventMixin(SharedTextMarker)
 
 function markTextShared(doc, from, to, options, type) {
   options = copyObj(options)
@@ -6746,19 +6857,13 @@ function lineStart(cm, lineN) {
   var line = getLine(cm.doc, lineN)
   var visual = visualLine(line)
   if (visual != line) { lineN = lineNo(visual) }
-  var order = getOrder(visual)
-  var ch = !order ? 0 : order[0].level % 2 ? lineRight(visual) : lineLeft(visual)
-  return Pos(lineN, ch)
+  return endOfLine(true, cm, visual, lineN, 1)
 }
 function lineEnd(cm, lineN) {
-  var merged, line = getLine(cm.doc, lineN)
-  while (merged = collapsedSpanAtEnd(line)) {
-    line = merged.find(1, true).line
-    lineN = null
-  }
-  var order = getOrder(line)
-  var ch = !order ? line.text.length : order[0].level % 2 ? lineLeft(line) : lineRight(line)
-  return Pos(lineN == null ? lineNo(line) : lineN, ch)
+  var line = getLine(cm.doc, lineN)
+  var visual = visualLineEnd(line)
+  if (visual != line) { lineN = lineNo(visual) }
+  return endOfLine(true, cm, line, lineN, -1)
 }
 function lineStartSmart(cm, pos) {
   var start = lineStart(cm, pos.line)
@@ -6767,7 +6872,7 @@ function lineStartSmart(cm, pos) {
   if (!order || order[0].level == 0) {
     var firstNonWS = Math.max(0, line.text.search(/\S/))
     var inWS = pos.line == start.line && pos.ch <= firstNonWS && pos.ch
-    return Pos(start.line, inWS ? 0 : firstNonWS)
+    return Pos(start.line, inWS ? 0 : firstNonWS, start.sticky)
   }
   return start
 }
@@ -7959,7 +8064,7 @@ function addEditorMethods(CodeMirror) {
       } else {
         lineObj = line
       }
-      return intoCoordSystem(this, lineObj, {top: 0, left: 0}, mode || "page", includeWidgets).top +
+      return intoCoordSystem(this, lineObj, {top: 0, left: 0}, mode || "page", includeWidgets || end).top +
         (end ? this.doc.height - heightAtLine(lineObj) : 0)
     },
 
@@ -8091,7 +8196,7 @@ function addEditorMethods(CodeMirror) {
       var start = pos.ch, end = pos.ch
       if (line) {
         var helper = this.getHelper(pos, "wordChars")
-        if ((pos.xRel < 0 || end == line.length) && start) { --start; } else { ++end }
+        if ((pos.sticky == "before" || end == line.length) && start) { --start; } else { ++end }
         var startChar = line.charAt(start)
         var check = isWordChar(startChar, helper)
           ? function (ch) { return isWordChar(ch, helper); }
@@ -8222,22 +8327,30 @@ function addEditorMethods(CodeMirror) {
 // position. The resulting position will have a hitSide=true
 // property if it reached the end of the document.
 function findPosH(doc, pos, dir, unit, visually) {
-  var line = pos.line, ch = pos.ch, origDir = dir
-  var lineObj = getLine(doc, line)
+  var oldPos = pos
+  var origDir = dir
+  var lineObj = getLine(doc, pos.line)
   function findNextLine() {
-    var l = line + dir
+    var l = pos.line + dir
     if (l < doc.first || l >= doc.first + doc.size) { return false }
-    line = l
+    pos = new Pos(l, pos.ch, pos.sticky)
     return lineObj = getLine(doc, l)
   }
   function moveOnce(boundToLine) {
-    var next = (visually ? moveVisually : moveLogically)(lineObj, ch, dir, true)
+    var next
+    if (visually) {
+      next = moveVisually(doc.cm, lineObj, pos, dir)
+    } else {
+      next = moveLogically(lineObj, pos, dir)
+    }
     if (next == null) {
-      if (!boundToLine && findNextLine()) {
-        if (visually) { ch = (dir < 0 ? lineRight : lineLeft)(lineObj) }
-        else { ch = dir < 0 ? lineObj.text.length : 0 }
-      } else { return false }
-    } else { ch = next }
+      if (!boundToLine && findNextLine())
+        { pos = endOfLine(visually, doc.cm, lineObj, pos.line, dir) }
+      else
+        { return false }
+    } else {
+      pos = next
+    }
     return true
   }
 
@@ -8250,14 +8363,14 @@ function findPosH(doc, pos, dir, unit, visually) {
     var helper = doc.cm && doc.cm.getHelper(pos, "wordChars")
     for (var first = true;; first = false) {
       if (dir < 0 && !moveOnce(!first)) { break }
-      var cur = lineObj.text.charAt(ch) || "\n"
+      var cur = lineObj.text.charAt(pos.ch) || "\n"
       var type = isWordChar(cur, helper) ? "w"
         : group && cur == "\n" ? "n"
         : !group || /\s/.test(cur) ? null
         : "p"
       if (group && !first && !type) { type = "s" }
       if (sawType && sawType != type) {
-        if (dir < 0) {dir = 1; moveOnce()}
+        if (dir < 0) {dir = 1; moveOnce(); pos.sticky = "after"}
         break
       }
 
@@ -8265,8 +8378,8 @@ function findPosH(doc, pos, dir, unit, visually) {
       if (dir > 0 && !moveOnce(!first)) { break }
     }
   }
-  var result = skipAtomic(doc, Pos(line, ch), pos, origDir, true)
-  if (!cmp(pos, result)) { result.hitSide = true }
+  var result = skipAtomic(doc, pos, oldPos, origDir, true)
+  if (equalCursorPos(oldPos, result)) { result.hitSide = true }
   return result
 }
 
@@ -8609,6 +8722,7 @@ ContentEditableInput.prototype.setUneditable = function (node) {
 };
 
 ContentEditableInput.prototype.onKeyPress = function (e) {
+  if (e.charCode == 0) { return }
   e.preventDefault()
   if (!this.cm.isReadOnly())
     { operation(this.cm, applyTextInput)(this.cm, String.fromCharCode(e.charCode == null ? e.keyCode : e.charCode), 0) }
@@ -9073,10 +9187,14 @@ TextareaInput.prototype.onContextMenu = function (e) {
       if (!ie || (ie && ie_version < 9)) { prepareSelectAllHack() }
       var i = 0, poll = function () {
         if (display.selForContextMenu == cm.doc.sel && te.selectionStart == 0 &&
-            te.selectionEnd > 0 && input.prevInput == "\u200b")
-          { operation(cm, selectAll)(cm) }
-        else if (i++ < 10) { display.detectingSelectAll = setTimeout(poll, 500) }
-        else { display.input.reset() }
+            te.selectionEnd > 0 && input.prevInput == "\u200b") {
+          operation(cm, selectAll)(cm)
+        } else if (i++ < 10) {
+          display.detectingSelectAll = setTimeout(poll, 500)
+        } else {
+          display.selForContextMenu = null
+          display.input.reset()
+        }
       }
       display.detectingSelectAll = setTimeout(poll, 200)
     }
@@ -9252,7 +9370,7 @@ CodeMirror.fromTextArea = fromTextArea
 
 addLegacyProps(CodeMirror)
 
-CodeMirror.version = "5.23.0"
+CodeMirror.version = "5.24.2"
 
 return CodeMirror;
 
@@ -9631,10 +9749,13 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
   }
 
   function local(stream, state) {
-    if (state.fencedChars && stream.match(state.fencedChars, false)) {
+    if (state.fencedChars && stream.match(state.fencedChars)) {
+      if (modeCfg.highlightFormatting) state.formatting = "code-block";
       state.localMode = state.localState = null;
       state.f = state.block = leavingLocal;
-      return null;
+      return getType(state)
+    } else if (state.fencedChars && stream.skipTo(state.fencedChars)) {
+      return "comment"
     } else if (state.localMode) {
       return state.localMode.token(stream, state.localState);
     } else {
@@ -10921,15 +11042,17 @@ https://highlightjs.org/
     }
   }
 
-  function inherit(parent, obj) {
+  function inherit(parent) {  // inherit(parent, override_obj, override_obj, ...)
     var key;
     var result = {};
+    var objects = Array.prototype.slice.call(arguments, 1);
 
     for (key in parent)
       result[key] = parent[key];
-    if (obj)
+    objects.forEach(function(obj) {
       for (key in obj)
         result[key] = obj[key];
+    });
     return result;
   }
 
@@ -11040,6 +11163,15 @@ https://highlightjs.org/
 
   /* Initialization */
 
+  function expand_mode(mode) {
+    if (mode.variants && !mode.cached_variants) {
+      mode.cached_variants = mode.variants.map(function(variant) {
+        return inherit(mode, {variants: null}, variant);
+      });
+    }
+    return mode.cached_variants || (mode.endsWithParent && [inherit(mode)]) || [mode];
+  }
+
   function compileLanguage(language) {
 
     function reStr(re) {
@@ -11105,15 +11237,9 @@ https://highlightjs.org/
       if (!mode.contains) {
         mode.contains = [];
       }
-      var expanded_contains = [];
-      mode.contains.forEach(function(c) {
-        if (c.variants) {
-          c.variants.forEach(function(v) {expanded_contains.push(inherit(c, v));});
-        } else {
-          expanded_contains.push(c === 'self' ? mode : c);
-        }
-      });
-      mode.contains = expanded_contains;
+      mode.contains = Array.prototype.concat.apply([], mode.contains.map(function(c) {
+        return expand_mode(c === 'self' ? mode : c)
+      }));
       mode.contains.forEach(function(c) {compileMode(c, mode);});
 
       if (mode.starts) {
@@ -11412,6 +11538,7 @@ https://highlightjs.org/
           } else if (options.tabReplace) {
             return p1.replace(/\t/g, options.tabReplace);
           }
+          return '';
       });
   }
 
@@ -11716,6 +11843,7 @@ hljs.registerLanguage('haxe', require('./languages/haxe'));
 hljs.registerLanguage('hsp', require('./languages/hsp'));
 hljs.registerLanguage('htmlbars', require('./languages/htmlbars'));
 hljs.registerLanguage('http', require('./languages/http'));
+hljs.registerLanguage('hy', require('./languages/hy'));
 hljs.registerLanguage('inform7', require('./languages/inform7'));
 hljs.registerLanguage('ini', require('./languages/ini'));
 hljs.registerLanguage('irpf90', require('./languages/irpf90'));
@@ -11726,6 +11854,7 @@ hljs.registerLanguage('julia', require('./languages/julia'));
 hljs.registerLanguage('kotlin', require('./languages/kotlin'));
 hljs.registerLanguage('lasso', require('./languages/lasso'));
 hljs.registerLanguage('ldif', require('./languages/ldif'));
+hljs.registerLanguage('leaf', require('./languages/leaf'));
 hljs.registerLanguage('less', require('./languages/less'));
 hljs.registerLanguage('lisp', require('./languages/lisp'));
 hljs.registerLanguage('livecodeserver', require('./languages/livecodeserver'));
@@ -11745,6 +11874,7 @@ hljs.registerLanguage('perl', require('./languages/perl'));
 hljs.registerLanguage('mojolicious', require('./languages/mojolicious'));
 hljs.registerLanguage('monkey', require('./languages/monkey'));
 hljs.registerLanguage('moonscript', require('./languages/moonscript'));
+hljs.registerLanguage('n1ql', require('./languages/n1ql'));
 hljs.registerLanguage('nginx', require('./languages/nginx'));
 hljs.registerLanguage('nimrod', require('./languages/nimrod'));
 hljs.registerLanguage('nix', require('./languages/nix'));
@@ -11810,7 +11940,7 @@ hljs.registerLanguage('xquery', require('./languages/xquery'));
 hljs.registerLanguage('zephir', require('./languages/zephir'));
 
 module.exports = hljs;
-},{"./highlight":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/highlight.js","./languages/1c":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/1c.js","./languages/abnf":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/abnf.js","./languages/accesslog":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/accesslog.js","./languages/actionscript":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/actionscript.js","./languages/ada":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ada.js","./languages/apache":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/apache.js","./languages/applescript":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/applescript.js","./languages/arduino":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/arduino.js","./languages/armasm":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/armasm.js","./languages/asciidoc":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/asciidoc.js","./languages/aspectj":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/aspectj.js","./languages/autohotkey":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/autohotkey.js","./languages/autoit":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/autoit.js","./languages/avrasm":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/avrasm.js","./languages/awk":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/awk.js","./languages/axapta":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/axapta.js","./languages/bash":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/bash.js","./languages/basic":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/basic.js","./languages/bnf":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/bnf.js","./languages/brainfuck":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/brainfuck.js","./languages/cal":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/cal.js","./languages/capnproto":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/capnproto.js","./languages/ceylon":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ceylon.js","./languages/clean":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/clean.js","./languages/clojure":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/clojure.js","./languages/clojure-repl":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/clojure-repl.js","./languages/cmake":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/cmake.js","./languages/coffeescript":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/coffeescript.js","./languages/coq":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/coq.js","./languages/cos":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/cos.js","./languages/cpp":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/cpp.js","./languages/crmsh":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/crmsh.js","./languages/crystal":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/crystal.js","./languages/cs":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/cs.js","./languages/csp":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/csp.js","./languages/css":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/css.js","./languages/d":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/d.js","./languages/dart":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/dart.js","./languages/delphi":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/delphi.js","./languages/diff":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/diff.js","./languages/django":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/django.js","./languages/dns":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/dns.js","./languages/dockerfile":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/dockerfile.js","./languages/dos":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/dos.js","./languages/dsconfig":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/dsconfig.js","./languages/dts":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/dts.js","./languages/dust":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/dust.js","./languages/ebnf":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ebnf.js","./languages/elixir":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/elixir.js","./languages/elm":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/elm.js","./languages/erb":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/erb.js","./languages/erlang":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/erlang.js","./languages/erlang-repl":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/erlang-repl.js","./languages/excel":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/excel.js","./languages/fix":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/fix.js","./languages/flix":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/flix.js","./languages/fortran":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/fortran.js","./languages/fsharp":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/fsharp.js","./languages/gams":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/gams.js","./languages/gauss":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/gauss.js","./languages/gcode":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/gcode.js","./languages/gherkin":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/gherkin.js","./languages/glsl":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/glsl.js","./languages/go":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/go.js","./languages/golo":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/golo.js","./languages/gradle":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/gradle.js","./languages/groovy":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/groovy.js","./languages/haml":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/haml.js","./languages/handlebars":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/handlebars.js","./languages/haskell":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/haskell.js","./languages/haxe":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/haxe.js","./languages/hsp":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/hsp.js","./languages/htmlbars":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/htmlbars.js","./languages/http":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/http.js","./languages/inform7":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/inform7.js","./languages/ini":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ini.js","./languages/irpf90":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/irpf90.js","./languages/java":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/java.js","./languages/javascript":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/javascript.js","./languages/json":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/json.js","./languages/julia":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/julia.js","./languages/kotlin":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/kotlin.js","./languages/lasso":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/lasso.js","./languages/ldif":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ldif.js","./languages/less":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/less.js","./languages/lisp":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/lisp.js","./languages/livecodeserver":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/livecodeserver.js","./languages/livescript":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/livescript.js","./languages/llvm":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/llvm.js","./languages/lsl":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/lsl.js","./languages/lua":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/lua.js","./languages/makefile":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/makefile.js","./languages/markdown":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/markdown.js","./languages/mathematica":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/mathematica.js","./languages/matlab":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/matlab.js","./languages/maxima":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/maxima.js","./languages/mel":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/mel.js","./languages/mercury":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/mercury.js","./languages/mipsasm":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/mipsasm.js","./languages/mizar":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/mizar.js","./languages/mojolicious":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/mojolicious.js","./languages/monkey":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/monkey.js","./languages/moonscript":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/moonscript.js","./languages/nginx":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/nginx.js","./languages/nimrod":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/nimrod.js","./languages/nix":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/nix.js","./languages/nsis":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/nsis.js","./languages/objectivec":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/objectivec.js","./languages/ocaml":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ocaml.js","./languages/openscad":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/openscad.js","./languages/oxygene":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/oxygene.js","./languages/parser3":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/parser3.js","./languages/perl":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/perl.js","./languages/pf":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/pf.js","./languages/php":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/php.js","./languages/pony":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/pony.js","./languages/powershell":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/powershell.js","./languages/processing":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/processing.js","./languages/profile":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/profile.js","./languages/prolog":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/prolog.js","./languages/protobuf":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/protobuf.js","./languages/puppet":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/puppet.js","./languages/purebasic":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/purebasic.js","./languages/python":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/python.js","./languages/q":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/q.js","./languages/qml":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/qml.js","./languages/r":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/r.js","./languages/rib":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/rib.js","./languages/roboconf":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/roboconf.js","./languages/rsl":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/rsl.js","./languages/ruby":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ruby.js","./languages/ruleslanguage":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ruleslanguage.js","./languages/rust":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/rust.js","./languages/scala":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/scala.js","./languages/scheme":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/scheme.js","./languages/scilab":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/scilab.js","./languages/scss":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/scss.js","./languages/smali":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/smali.js","./languages/smalltalk":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/smalltalk.js","./languages/sml":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/sml.js","./languages/sqf":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/sqf.js","./languages/sql":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/sql.js","./languages/stan":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/stan.js","./languages/stata":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/stata.js","./languages/step21":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/step21.js","./languages/stylus":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/stylus.js","./languages/subunit":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/subunit.js","./languages/swift":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/swift.js","./languages/taggerscript":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/taggerscript.js","./languages/tap":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/tap.js","./languages/tcl":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/tcl.js","./languages/tex":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/tex.js","./languages/thrift":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/thrift.js","./languages/tp":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/tp.js","./languages/twig":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/twig.js","./languages/typescript":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/typescript.js","./languages/vala":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/vala.js","./languages/vbnet":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/vbnet.js","./languages/vbscript":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/vbscript.js","./languages/vbscript-html":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/vbscript-html.js","./languages/verilog":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/verilog.js","./languages/vhdl":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/vhdl.js","./languages/vim":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/vim.js","./languages/x86asm":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/x86asm.js","./languages/xl":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/xl.js","./languages/xml":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/xml.js","./languages/xquery":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/xquery.js","./languages/yaml":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/yaml.js","./languages/zephir":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/zephir.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/1c.js":[function(require,module,exports){
+},{"./highlight":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/highlight.js","./languages/1c":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/1c.js","./languages/abnf":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/abnf.js","./languages/accesslog":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/accesslog.js","./languages/actionscript":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/actionscript.js","./languages/ada":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ada.js","./languages/apache":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/apache.js","./languages/applescript":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/applescript.js","./languages/arduino":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/arduino.js","./languages/armasm":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/armasm.js","./languages/asciidoc":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/asciidoc.js","./languages/aspectj":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/aspectj.js","./languages/autohotkey":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/autohotkey.js","./languages/autoit":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/autoit.js","./languages/avrasm":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/avrasm.js","./languages/awk":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/awk.js","./languages/axapta":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/axapta.js","./languages/bash":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/bash.js","./languages/basic":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/basic.js","./languages/bnf":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/bnf.js","./languages/brainfuck":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/brainfuck.js","./languages/cal":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/cal.js","./languages/capnproto":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/capnproto.js","./languages/ceylon":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ceylon.js","./languages/clean":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/clean.js","./languages/clojure":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/clojure.js","./languages/clojure-repl":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/clojure-repl.js","./languages/cmake":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/cmake.js","./languages/coffeescript":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/coffeescript.js","./languages/coq":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/coq.js","./languages/cos":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/cos.js","./languages/cpp":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/cpp.js","./languages/crmsh":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/crmsh.js","./languages/crystal":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/crystal.js","./languages/cs":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/cs.js","./languages/csp":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/csp.js","./languages/css":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/css.js","./languages/d":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/d.js","./languages/dart":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/dart.js","./languages/delphi":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/delphi.js","./languages/diff":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/diff.js","./languages/django":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/django.js","./languages/dns":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/dns.js","./languages/dockerfile":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/dockerfile.js","./languages/dos":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/dos.js","./languages/dsconfig":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/dsconfig.js","./languages/dts":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/dts.js","./languages/dust":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/dust.js","./languages/ebnf":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ebnf.js","./languages/elixir":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/elixir.js","./languages/elm":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/elm.js","./languages/erb":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/erb.js","./languages/erlang":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/erlang.js","./languages/erlang-repl":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/erlang-repl.js","./languages/excel":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/excel.js","./languages/fix":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/fix.js","./languages/flix":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/flix.js","./languages/fortran":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/fortran.js","./languages/fsharp":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/fsharp.js","./languages/gams":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/gams.js","./languages/gauss":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/gauss.js","./languages/gcode":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/gcode.js","./languages/gherkin":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/gherkin.js","./languages/glsl":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/glsl.js","./languages/go":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/go.js","./languages/golo":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/golo.js","./languages/gradle":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/gradle.js","./languages/groovy":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/groovy.js","./languages/haml":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/haml.js","./languages/handlebars":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/handlebars.js","./languages/haskell":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/haskell.js","./languages/haxe":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/haxe.js","./languages/hsp":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/hsp.js","./languages/htmlbars":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/htmlbars.js","./languages/http":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/http.js","./languages/hy":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/hy.js","./languages/inform7":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/inform7.js","./languages/ini":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ini.js","./languages/irpf90":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/irpf90.js","./languages/java":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/java.js","./languages/javascript":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/javascript.js","./languages/json":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/json.js","./languages/julia":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/julia.js","./languages/kotlin":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/kotlin.js","./languages/lasso":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/lasso.js","./languages/ldif":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ldif.js","./languages/leaf":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/leaf.js","./languages/less":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/less.js","./languages/lisp":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/lisp.js","./languages/livecodeserver":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/livecodeserver.js","./languages/livescript":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/livescript.js","./languages/llvm":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/llvm.js","./languages/lsl":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/lsl.js","./languages/lua":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/lua.js","./languages/makefile":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/makefile.js","./languages/markdown":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/markdown.js","./languages/mathematica":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/mathematica.js","./languages/matlab":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/matlab.js","./languages/maxima":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/maxima.js","./languages/mel":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/mel.js","./languages/mercury":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/mercury.js","./languages/mipsasm":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/mipsasm.js","./languages/mizar":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/mizar.js","./languages/mojolicious":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/mojolicious.js","./languages/monkey":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/monkey.js","./languages/moonscript":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/moonscript.js","./languages/n1ql":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/n1ql.js","./languages/nginx":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/nginx.js","./languages/nimrod":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/nimrod.js","./languages/nix":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/nix.js","./languages/nsis":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/nsis.js","./languages/objectivec":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/objectivec.js","./languages/ocaml":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ocaml.js","./languages/openscad":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/openscad.js","./languages/oxygene":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/oxygene.js","./languages/parser3":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/parser3.js","./languages/perl":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/perl.js","./languages/pf":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/pf.js","./languages/php":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/php.js","./languages/pony":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/pony.js","./languages/powershell":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/powershell.js","./languages/processing":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/processing.js","./languages/profile":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/profile.js","./languages/prolog":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/prolog.js","./languages/protobuf":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/protobuf.js","./languages/puppet":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/puppet.js","./languages/purebasic":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/purebasic.js","./languages/python":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/python.js","./languages/q":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/q.js","./languages/qml":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/qml.js","./languages/r":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/r.js","./languages/rib":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/rib.js","./languages/roboconf":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/roboconf.js","./languages/rsl":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/rsl.js","./languages/ruby":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ruby.js","./languages/ruleslanguage":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ruleslanguage.js","./languages/rust":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/rust.js","./languages/scala":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/scala.js","./languages/scheme":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/scheme.js","./languages/scilab":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/scilab.js","./languages/scss":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/scss.js","./languages/smali":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/smali.js","./languages/smalltalk":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/smalltalk.js","./languages/sml":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/sml.js","./languages/sqf":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/sqf.js","./languages/sql":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/sql.js","./languages/stan":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/stan.js","./languages/stata":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/stata.js","./languages/step21":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/step21.js","./languages/stylus":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/stylus.js","./languages/subunit":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/subunit.js","./languages/swift":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/swift.js","./languages/taggerscript":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/taggerscript.js","./languages/tap":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/tap.js","./languages/tcl":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/tcl.js","./languages/tex":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/tex.js","./languages/thrift":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/thrift.js","./languages/tp":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/tp.js","./languages/twig":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/twig.js","./languages/typescript":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/typescript.js","./languages/vala":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/vala.js","./languages/vbnet":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/vbnet.js","./languages/vbscript":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/vbscript.js","./languages/vbscript-html":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/vbscript-html.js","./languages/verilog":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/verilog.js","./languages/vhdl":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/vhdl.js","./languages/vim":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/vim.js","./languages/x86asm":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/x86asm.js","./languages/xl":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/xl.js","./languages/xml":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/xml.js","./languages/xquery":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/xquery.js","./languages/yaml":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/yaml.js","./languages/zephir":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/zephir.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/1c.js":[function(require,module,exports){
 module.exports = function(hljs){
   var IDENT_RE_RU = '[a-zA-Zа-яА-Я][a-zA-Z0-9_а-яА-Я]*';
   var OneS_KEYWORDS = 'возврат дата для если и или иначе иначеесли исключение конецесли ' +
@@ -14180,7 +14310,7 @@ module.exports = function(hljs) {
       hljs.inherit(STRINGS, {className: 'meta-string'}),
       {
         className: 'meta-string',
-        begin: '<', end: '>',
+        begin: /<[^\n>]*>/, end: /$/,
         illegal: '\\n',
       },
       hljs.C_LINE_COMMENT_MODE,
@@ -16577,7 +16707,7 @@ module.exports = function(hljs) {
               'getpath getPreviousTradingDay getPreviousWeekDay getRow getscalar3D getscalar4D getTrRow getwind glm gradcplx gradMT ' +
               'gradMTm gradMTT gradMTTm gradp graphprt graphset hasimag header headermt hess hessMT hessMTg hessMTgw hessMTm ' +
               'hessMTmw hessMTT hessMTTg hessMTTgw hessMTTm hessMTw hessp hist histf histp hsec imag indcv indexcat indices indices2 ' +
-              'indicesf indicesfn indnv indsav indx integrate1d integrateControlCreate intgrat2 intgrat3 inthp1 inthp2 inthp3 inthp4 ' +
+              'indicesf indicesfn indnv indsav integrate1d integrateControlCreate intgrat2 intgrat3 inthp1 inthp2 inthp3 inthp4 ' +
               'inthpControlCreate intquad1 intquad2 intquad3 intrleav intrleavsa intrsect intsimp inv invpd invswp iscplx iscplxf ' +
               'isden isinfnanmiss ismiss key keyav keyw lag lag1 lagn lapEighb lapEighi lapEighvb lapEighvi lapgEig lapgEigh lapgEighv ' +
               'lapgEigv lapgSchur lapgSvdcst lapgSvds lapgSvdst lapSvdcusv lapSvds lapSvdusv ldlp ldlsol linSolve listwise ln lncdfbvn ' +
@@ -16617,7 +16747,9 @@ module.exports = function(hljs) {
               'utctodtv utrisol vals varCovMS varCovXS varget vargetl varmall varmares varput varputl vartypef vcm vcms vcx vcxs ' +
               'vec vech vecr vector vget view viewxyz vlist vnamecv volume vput vread vtypecv wait waitc walkindex where window ' +
               'writer xlabel xlsGetSheetCount xlsGetSheetSize xlsGetSheetTypes xlsMakeRange xlsReadM xlsReadSA xlsWrite xlsWriteM ' +
-              'xlsWriteSA xpnd xtics xy xyz ylabel ytics zeros zeta zlabel ztics',
+              'xlsWriteSA xpnd xtics xy xyz ylabel ytics zeros zeta zlabel ztics cdfEmpirical dot h5create h5open h5read h5readAttribute ' +
+              'h5write h5writeAttribute ldl plotAddErrorBar plotAddSurface plotCDFEmpirical plotSetColormap plotSetContourLabels ' +
+              'plotSetLegendFont plotSetTextInterpreter plotSetXTicCount plotSetYTicCount plotSetZLevels powerm strjoin strtrim sylvester',
     literal: 'DB_AFTER_LAST_ROW DB_ALL_TABLES DB_BATCH_OPERATIONS DB_BEFORE_FIRST_ROW DB_BLOB DB_EVENT_NOTIFICATIONS ' +
              'DB_FINISH_QUERY DB_HIGH_PRECISION DB_LAST_INSERT_ID DB_LOW_PRECISION_DOUBLE DB_LOW_PRECISION_INT32 ' +
              'DB_LOW_PRECISION_INT64 DB_LOW_PRECISION_NUMBERS DB_MULTIPLE_RESULT_SETS DB_NAMED_PLACEHOLDERS ' +
@@ -17706,6 +17838,108 @@ module.exports = function(hljs) {
     ]
   };
 };
+},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/hy.js":[function(require,module,exports){
+module.exports = function(hljs) {
+  var keywords = {
+    'builtin-name':
+      // keywords
+      '!= % %= & &= * ** **= *= *map ' +
+      '+ += , --build-class-- --import-- -= . / // //= ' +
+      '/= < << <<= <= = > >= >> >>= ' +
+      '@ @= ^ ^= abs accumulate all and any ap-compose ' +
+      'ap-dotimes ap-each ap-each-while ap-filter ap-first ap-if ap-last ap-map ap-map-when ap-pipe ' +
+      'ap-reduce ap-reject apply as-> ascii assert assoc bin break butlast ' +
+      'callable calling-module-name car case cdr chain chr coll? combinations compile ' +
+      'compress cond cons cons? continue count curry cut cycle dec ' +
+      'def default-method defclass defmacro defmacro-alias defmacro/g! defmain defmethod defmulti defn ' +
+      'defn-alias defnc defnr defreader defseq del delattr delete-route dict-comp dir ' +
+      'disassemble dispatch-reader-macro distinct divmod do doto drop drop-last drop-while empty? ' +
+      'end-sequence eval eval-and-compile eval-when-compile even? every? except exec filter first ' +
+      'flatten float? fn fnc fnr for for* format fraction genexpr ' +
+      'gensym get getattr global globals group-by hasattr hash hex id ' +
+      'identity if if* if-not if-python2 import in inc input instance? ' +
+      'integer integer-char? integer? interleave interpose is is-coll is-cons is-empty is-even ' +
+      'is-every is-float is-instance is-integer is-integer-char is-iterable is-iterator is-keyword is-neg is-none ' +
+      'is-not is-numeric is-odd is-pos is-string is-symbol is-zero isinstance islice issubclass ' +
+      'iter iterable? iterate iterator? keyword keyword? lambda last len let ' +
+      'lif lif-not list* list-comp locals loop macro-error macroexpand macroexpand-1 macroexpand-all ' +
+      'map max merge-with method-decorator min multi-decorator multicombinations name neg? next ' +
+      'none? nonlocal not not-in not? nth numeric? oct odd? open ' +
+      'or ord partition permutations pos? post-route postwalk pow prewalk print ' +
+      'product profile/calls profile/cpu put-route quasiquote quote raise range read read-str ' +
+      'recursive-replace reduce remove repeat repeatedly repr require rest round route ' +
+      'route-with-methods rwm second seq set-comp setattr setv some sorted string ' +
+      'string? sum switch symbol? take take-nth take-while tee try unless ' +
+      'unquote unquote-splicing vars walk when while with with* with-decorator with-gensyms ' +
+      'xi xor yield yield-from zero? zip zip-longest | |= ~'
+   };
+
+  var SYMBOLSTART = 'a-zA-Z_\\-!.?+*=<>&#\'';
+  var SYMBOL_RE = '[' + SYMBOLSTART + '][' + SYMBOLSTART + '0-9/;:]*';
+  var SIMPLE_NUMBER_RE = '[-+]?\\d+(\\.\\d+)?';
+
+  var SHEBANG = {
+    className: 'meta',
+    begin: '^#!', end: '$'
+  };
+
+  var SYMBOL = {
+    begin: SYMBOL_RE,
+    relevance: 0
+  };
+  var NUMBER = {
+    className: 'number', begin: SIMPLE_NUMBER_RE,
+    relevance: 0
+  };
+  var STRING = hljs.inherit(hljs.QUOTE_STRING_MODE, {illegal: null});
+  var COMMENT = hljs.COMMENT(
+    ';',
+    '$',
+    {
+      relevance: 0
+    }
+  );
+  var LITERAL = {
+    className: 'literal',
+    begin: /\b([Tt]rue|[Ff]alse|nil|None)\b/
+  };
+  var COLLECTION = {
+    begin: '[\\[\\{]', end: '[\\]\\}]'
+  };
+  var HINT = {
+    className: 'comment',
+    begin: '\\^' + SYMBOL_RE
+  };
+  var HINT_COL = hljs.COMMENT('\\^\\{', '\\}');
+  var KEY = {
+    className: 'symbol',
+    begin: '[:]{1,2}' + SYMBOL_RE
+  };
+  var LIST = {
+    begin: '\\(', end: '\\)'
+  };
+  var BODY = {
+    endsWithParent: true,
+    relevance: 0
+  };
+  var NAME = {
+    keywords: keywords,
+    lexemes: SYMBOL_RE,
+    className: 'name', begin: SYMBOL_RE,
+    starts: BODY
+  };
+  var DEFAULT_CONTAINS = [LIST, STRING, HINT, HINT_COL, COMMENT, KEY, COLLECTION, NUMBER, LITERAL, SYMBOL];
+
+  LIST.contains = [hljs.COMMENT('comment', ''), NAME, BODY];
+  BODY.contains = DEFAULT_CONTAINS;
+  COLLECTION.contains = DEFAULT_CONTAINS;
+
+  return {
+    aliases: ['hylang'],
+    illegal: /\S/,
+    contains: [SHEBANG, LIST, STRING, HINT, HINT_COL, COMMENT, KEY, COLLECTION, NUMBER, LITERAL]
+  }
+};
 },{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/inform7.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var START_BRACKET = '\\[';
@@ -18400,12 +18634,12 @@ module.exports = function(hljs) {
   return DEFAULT;
 };
 },{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/kotlin.js":[function(require,module,exports){
-module.exports = function (hljs) {
+module.exports = function(hljs) {
   var KEYWORDS = {
     keyword:
       'abstract as val var vararg get set class object open private protected public noinline ' +
       'crossinline dynamic final enum if else do while for when throw try catch finally ' +
-      'import package is in fun override companion reified inline ' +
+      'import package is in fun override companion reified inline lateinit init' +
       'interface annotation data sealed internal infix operator out by constructor super ' +
       // to be deleted soon
       'trait volatile transient native default',
@@ -18756,6 +18990,46 @@ module.exports = function(hljs) {
         begin: '^-', end: '$'
       },
       hljs.HASH_COMMENT_MODE
+    ]
+  };
+};
+},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/leaf.js":[function(require,module,exports){
+module.exports = function (hljs) {
+  return {
+    contains: [
+      {
+        className: 'function',
+        begin: '#+' + '[A-Za-z_0-9]*' + '\\(',
+        end:' {',
+        returnBegin: true,
+        excludeEnd: true,
+        contains : [
+          {
+            className: 'keyword',
+            begin: '#+'
+          },
+          {
+            className: 'title',
+            begin: '[A-Za-z_][A-Za-z_0-9]*'
+          },
+          {
+            className: 'params',
+            begin: '\\(', end: '\\)',
+            endsParent: true,
+            contains: [
+              {
+                className: 'string',
+                begin: '"',
+                end: '"'
+              },
+              {
+                className: 'variable',
+                begin: '[A-Za-z_][A-Za-z_0-9]*'
+              }
+            ]
+          }
+        ]
+      }
     ]
   };
 };
@@ -19502,14 +19776,24 @@ module.exports = function(hljs) {
   return {
     lexemes: hljs.UNDERSCORE_IDENT_RE,
     keywords: {
-      keyword:
-        'and break do else elseif end false for if in local nil not or repeat return then ' +
-        'true until while',
+      literal: "true false nil",
+      keyword: "and break do else elseif end for goto if in local not or repeat return then until while",
       built_in:
-        '_G _VERSION assert collectgarbage dofile error getfenv getmetatable ipairs load ' +
-        'loadfile loadstring module next pairs pcall print rawequal rawget rawset require ' +
-        'select setfenv setmetatable tonumber tostring type unpack xpcall coroutine debug ' +
-        'io math os package string table'
+        //Metatags and globals:
+        '_G _ENV _VERSION __index __newindex __mode __call __metatable __tostring __len ' +
+        '__gc __add __sub __mul __div __mod __pow __concat __unm __eq __lt __le assert ' +
+        //Standard methods and properties:
+        'collectgarbage dofile error getfenv getmetatable ipairs load loadfile loadstring' +
+        'module next pairs pcall print rawequal rawget rawset require select setfenv' +
+        'setmetatable tonumber tostring type unpack xpcall arg self' +
+        //Library methods and properties (one line per library):
+        'coroutine resume yield status wrap create running debug getupvalue' +
+        'debug sethook getmetatable gethook setmetatable setlocal traceback setfenv getinfo setupvalue getlocal getregistry getfenv' +
+        'io lines write close flush open output type read stderr stdin input stdout popen tmpfile' +
+        'math, log, max, acos, huge, ldexp, pi, cos, tanh, pow, deg, tan, cosh, sinh, random, randomseed, frexp, ceil, floor, rad, abs, sqrt, modf, asin, min, mod, fmod, log10, atan2, exp, sin, atan' +
+        'os, exit, setlocale, date, getenv, difftime, remove, time, clock, tmpname, rename, execute, package, preload, loadlib, loaded, loaders, cpath, config path, seeall' +
+        'string, sub, upper, len, gfind, rep, find, match, char, dump, gmatch, reverse, byte, format, gsub, lower' +
+        'table, setn, insert, getn, foreachi, maxn, foreach, concat, sort, remove'
     },
     contains: COMMENTS.concat([
       {
@@ -20863,6 +21147,75 @@ module.exports = function(hljs) {
         relevance: 0
       }
     ])
+  };
+};
+},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/n1ql.js":[function(require,module,exports){
+module.exports = function(hljs) {
+  return {
+    case_insensitive: true,
+    contains: [
+      {
+        beginKeywords:
+          'build create index delete drop explain infer|10 insert merge prepare select update upsert|10',
+        end: /;/, endsWithParent: true,
+        keywords: {
+          // Taken from http://developer.couchbase.com/documentation/server/current/n1ql/n1ql-language-reference/reservedwords.html
+          keyword:
+            'all alter analyze and any array as asc begin between binary boolean break bucket build by call ' +
+            'case cast cluster collate collection commit connect continue correlate cover create database ' +
+            'dataset datastore declare decrement delete derived desc describe distinct do drop each element ' +
+            'else end every except exclude execute exists explain fetch first flatten for force from ' +
+            'function grant group gsi having if ignore ilike in include increment index infer inline inner ' +
+            'insert intersect into is join key keys keyspace known last left let letting like limit lsm map ' +
+            'mapping matched materialized merge minus namespace nest not number object offset on ' +
+            'option or order outer over parse partition password path pool prepare primary private privilege ' +
+            'procedure public raw realm reduce rename return returning revoke right role rollback satisfies ' +
+            'schema select self semi set show some start statistics string system then to transaction trigger ' +
+            'truncate under union unique unknown unnest unset update upsert use user using validate value ' +
+            'valued values via view when where while with within work xor',
+          // Taken from http://developer.couchbase.com/documentation/server/4.5/n1ql/n1ql-language-reference/literals.html
+          literal:
+            'true false null missing|5',
+          // Taken from http://developer.couchbase.com/documentation/server/4.5/n1ql/n1ql-language-reference/functions.html
+          built_in:
+            'array_agg array_append array_concat array_contains array_count array_distinct array_ifnull array_length ' +
+            'array_max array_min array_position array_prepend array_put array_range array_remove array_repeat array_replace ' +
+            'array_reverse array_sort array_sum avg count max min sum greatest least ifmissing ifmissingornull ifnull ' +
+            'missingif nullif ifinf ifnan ifnanorinf naninf neginfif posinfif clock_millis clock_str date_add_millis ' +
+            'date_add_str date_diff_millis date_diff_str date_part_millis date_part_str date_trunc_millis date_trunc_str ' +
+            'duration_to_str millis str_to_millis millis_to_str millis_to_utc millis_to_zone_name now_millis now_str ' +
+            'str_to_duration str_to_utc str_to_zone_name decode_json encode_json encoded_size poly_length base64 base64_encode ' +
+            'base64_decode meta uuid abs acos asin atan atan2 ceil cos degrees e exp ln log floor pi power radians random ' +
+            'round sign sin sqrt tan trunc object_length object_names object_pairs object_inner_pairs object_values ' +
+            'object_inner_values object_add object_put object_remove object_unwrap regexp_contains regexp_like regexp_position ' +
+            'regexp_replace contains initcap length lower ltrim position repeat replace rtrim split substr title trim upper ' +
+            'isarray isatom isboolean isnumber isobject isstring type toarray toatom toboolean tonumber toobject tostring'
+        },
+        contains: [
+          {
+            className: 'string',
+            begin: '\'', end: '\'',
+            contains: [hljs.BACKSLASH_ESCAPE],
+            relevance: 0
+          },
+          {
+            className: 'string',
+            begin: '"', end: '"',
+            contains: [hljs.BACKSLASH_ESCAPE],
+            relevance: 0
+          },
+          {
+            className: 'symbol',
+            begin: '`', end: '`',
+            contains: [hljs.BACKSLASH_ESCAPE],
+            relevance: 2
+          },
+          hljs.C_NUMBER_MODE,
+          hljs.C_BLOCK_COMMENT_MODE
+        ]
+      },
+      hljs.C_BLOCK_COMMENT_MODE
+    ]
   };
 };
 },{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/nginx.js":[function(require,module,exports){
@@ -22390,8 +22743,22 @@ function(hljs) {
 };
 },{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/python.js":[function(require,module,exports){
 module.exports = function(hljs) {
+  var KEYWORDS = {
+    keyword:
+      'and elif is global as in if from raise for except finally print import pass return ' +
+      'exec else break not with class assert yield try while continue del or def lambda ' +
+      'async await nonlocal|10 None True False',
+    built_in:
+      'Ellipsis NotImplemented'
+  };
   var PROMPT = {
     className: 'meta',  begin: /^(>>>|\.\.\.) /
+  };
+  var SUBST = {
+    className: 'subst',
+    begin: /\{/, end: /\}/,
+    keywords: KEYWORDS,
+    illegal: /#/
   };
   var STRING = {
     className: 'string',
@@ -22408,6 +22775,14 @@ module.exports = function(hljs) {
         relevance: 10
       },
       {
+        begin: /(fr|rf|f)'''/, end: /'''/,
+        contains: [PROMPT, SUBST]
+      },
+      {
+        begin: /(fr|rf|f)"""/, end: /"""/,
+        contains: [PROMPT, SUBST]
+      },
+      {
         begin: /(u|r|ur)'/, end: /'/,
         relevance: 10
       },
@@ -22420,6 +22795,14 @@ module.exports = function(hljs) {
       },
       {
         begin: /(b|br)"/, end: /"/
+      },
+      {
+        begin: /(fr|rf|f)'/, end: /'/,
+        contains: [SUBST]
+      },
+      {
+        begin: /(fr|rf|f)"/, end: /"/,
+        contains: [SUBST]
       },
       hljs.APOS_STRING_MODE,
       hljs.QUOTE_STRING_MODE
@@ -22438,16 +22821,10 @@ module.exports = function(hljs) {
     begin: /\(/, end: /\)/,
     contains: ['self', PROMPT, NUMBER, STRING]
   };
+  SUBST.contains = [STRING, NUMBER, PROMPT];
   return {
     aliases: ['py', 'gyp'],
-    keywords: {
-      keyword:
-        'and elif is global as in if from raise for except finally print import pass return ' +
-        'exec else break not with class assert yield try while continue del or def lambda ' +
-        'async await nonlocal|10 None True False',
-      built_in:
-        'Ellipsis NotImplemented'
-    },
+    keywords: KEYWORDS,
     illegal: /(<\/|->|\?)|=>/,
     contains: [
       PROMPT,
@@ -23111,28 +23488,32 @@ module.exports = function(hljs) {
 };
 },{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/rust.js":[function(require,module,exports){
 module.exports = function(hljs) {
-  var NUM_SUFFIX = '([uif](8|16|32|64|size))\?';
+  var NUM_SUFFIX = '([ui](8|16|32|64|128|size)|f(32|64))\?';
   var KEYWORDS =
     'alignof as be box break const continue crate do else enum extern ' +
     'false fn for if impl in let loop match mod mut offsetof once priv ' +
     'proc pub pure ref return self Self sizeof static struct super trait true ' +
-    'type typeof unsafe unsized use virtual while where yield move default ' +
-    'int i8 i16 i32 i64 isize ' +
-    'uint u8 u32 u64 usize ' +
-    'float f32 f64 ' +
-    'str char bool'
+    'type typeof unsafe unsized use virtual while where yield move default';
   var BUILTINS =
-    // prelude
-    'Copy Send Sized Sync Drop Fn FnMut FnOnce drop Box ToOwned Clone ' +
+    // functions
+    'drop ' +
+    // types
+    'i8 i16 i32 i64 i128 isize ' +
+    'u8 u16 u32 u64 u128 usize ' +
+    'f32 f64 ' +
+    'str char bool ' +
+    'Box Option Result String Vec ' +
+    // traits
+    'Copy Send Sized Sync Drop Fn FnMut FnOnce ToOwned Clone Debug ' +
     'PartialEq PartialOrd Eq Ord AsRef AsMut Into From Default Iterator ' +
-    'Extend IntoIterator DoubleEndedIterator ExactSizeIterator Option ' +
-    'Result SliceConcatExt String ToString Vec ' +
+    'Extend IntoIterator DoubleEndedIterator ExactSizeIterator ' +
+    'SliceConcatExt ToString ' +
     // macros
     'assert! assert_eq! bitflags! bytes! cfg! col! concat! concat_idents! ' +
     'debug_assert! debug_assert_eq! env! panic! file! format! format_args! ' +
     'include_bin! include_str! line! local_data_key! module_path! ' +
     'option_env! print! println! select! stringify! try! unimplemented! ' +
-    'unreachable! vec! write! writeln! macro_rules!';
+    'unreachable! vec! write! writeln! macro_rules! assert_ne! debug_assert_ne!';
   return {
     aliases: ['rs'],
     keywords: {
@@ -23197,7 +23578,7 @@ module.exports = function(hljs) {
       },
       {
         className: 'class',
-        beginKeywords: 'trait enum struct', end: '{',
+        beginKeywords: 'trait enum struct union', end: '{',
         contains: [
           hljs.inherit(hljs.UNDERSCORE_TITLE_MODE, {endsParent: true})
         ],
@@ -23427,7 +23808,10 @@ module.exports = function(hljs) {
   };
 
   var QUOTED_LIST = {
-    begin: /'/,
+    variants: [
+      { begin: /'/ },
+      { begin: '`' }
+    ],
     contains: [
       {
         begin: '\\(', end: '\\)',
@@ -25492,7 +25876,8 @@ module.exports = function(hljs) {
       'in if for while finally var new function do return void else break catch ' +
       'instanceof with throw case default try this switch continue typeof delete ' +
       'let yield const class public private protected get set super ' +
-      'static implements enum export import declare type namespace abstract',
+      'static implements enum export import declare type namespace abstract ' +
+      'as from extends async await',
     literal:
       'true false null undefined NaN Infinity',
     built_in:
@@ -25502,7 +25887,7 @@ module.exports = function(hljs) {
       'TypeError URIError Number Math Date String RegExp Array Float32Array ' +
       'Float64Array Int16Array Int32Array Int8Array Uint16Array Uint32Array ' +
       'Uint8Array Uint8ClampedArray ArrayBuffer DataView JSON Intl arguments require ' +
-      'module console window document any number boolean string void'
+      'module console window document any number boolean string void Promise'
   };
 
   return {
@@ -25543,7 +25928,35 @@ module.exports = function(hljs) {
         contains: [
           hljs.C_LINE_COMMENT_MODE,
           hljs.C_BLOCK_COMMENT_MODE,
-          hljs.REGEXP_MODE
+          hljs.REGEXP_MODE,
+          {
+            className: 'function',
+            begin: '(\\(.*?\\)|' + hljs.IDENT_RE + ')\\s*=>', returnBegin: true,
+            end: '\\s*=>',
+            contains: [
+              {
+                className: 'params',
+                variants: [
+                  {
+                    begin: hljs.IDENT_RE
+                  },
+                  {
+                    begin: /\(\s*\)/,
+                  },
+                  {
+                    begin: /\(/, end: /\)/,
+                    excludeBegin: true, excludeEnd: true,
+                    keywords: KEYWORDS,
+                    contains: [
+                      'self',
+                      hljs.C_LINE_COMMENT_MODE,
+                      hljs.C_BLOCK_COMMENT_MODE
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
         ],
         relevance: 0
       },
@@ -26420,7 +26833,7 @@ module.exports = function(hljs) {
 };
 },{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/yaml.js":[function(require,module,exports){
 module.exports = function(hljs) {
-  var LITERALS = {literal: '{ } true false yes no Yes No True False null'};
+  var LITERALS = 'true false yes no null';
 
   var keyPrefix = '^[ \\-]*';
   var keyName =  '[a-zA-Z_][\\w\\-]*';
@@ -26445,7 +26858,8 @@ module.exports = function(hljs) {
     relevance: 0,
     variants: [
       {begin: /'/, end: /'/},
-      {begin: /"/, end: /"/}
+      {begin: /"/, end: /"/},
+      {begin: /\S+/}
     ],
     contains: [
       hljs.BACKSLASH_ESCAPE,
@@ -26495,11 +26909,14 @@ module.exports = function(hljs) {
         begin: '^ *-',
         relevance: 0
       },
-      STRING,
       hljs.HASH_COMMENT_MODE,
-      hljs.C_NUMBER_MODE
-    ],
-    keywords: LITERALS
+      {
+        beginKeywords: LITERALS,
+        keywords: {literal: LITERALS}
+      },
+      hljs.C_NUMBER_MODE,
+      STRING
+    ]
   };
 };
 },{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/zephir.js":[function(require,module,exports){
@@ -26611,17 +27028,17 @@ module.exports = function(hljs) {
 };
 },{}],"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js":[function(require,module,exports){
 /*!
- * jQuery JavaScript Library v3.1.1
+ * jQuery JavaScript Library v3.2.0
  * https://jquery.com/
  *
  * Includes Sizzle.js
  * https://sizzlejs.com/
  *
- * Copyright jQuery Foundation and other contributors
+ * Copyright JS Foundation and other contributors
  * Released under the MIT license
  * https://jquery.org/license
  *
- * Date: 2016-09-22T22:30Z
+ * Date: 2017-03-16T21:26Z
  */
 ( function( global, factory ) {
 
@@ -26700,7 +27117,7 @@ var support = {};
 
 
 var
-	version = "3.1.1",
+	version = "3.2.0",
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
@@ -26848,11 +27265,11 @@ jQuery.extend = jQuery.fn.extend = function() {
 
 				// Recurse if we're merging plain objects or arrays
 				if ( deep && copy && ( jQuery.isPlainObject( copy ) ||
-					( copyIsArray = jQuery.isArray( copy ) ) ) ) {
+					( copyIsArray = Array.isArray( copy ) ) ) ) {
 
 					if ( copyIsArray ) {
 						copyIsArray = false;
-						clone = src && jQuery.isArray( src ) ? src : [];
+						clone = src && Array.isArray( src ) ? src : [];
 
 					} else {
 						clone = src && jQuery.isPlainObject( src ) ? src : {};
@@ -26890,8 +27307,6 @@ jQuery.extend( {
 	isFunction: function( obj ) {
 		return jQuery.type( obj ) === "function";
 	},
-
-	isArray: Array.isArray,
 
 	isWindow: function( obj ) {
 		return obj != null && obj === obj.window;
@@ -26965,10 +27380,6 @@ jQuery.extend( {
 	// Microsoft forgot to hump their vendor prefix (#9572)
 	camelCase: function( string ) {
 		return string.replace( rmsPrefix, "ms-" ).replace( rdashAlpha, fcamelCase );
-	},
-
-	nodeName: function( elem, name ) {
-		return elem.nodeName && elem.nodeName.toLowerCase() === name.toLowerCase();
 	},
 
 	each: function( obj, callback ) {
@@ -29455,6 +29866,13 @@ var siblings = function( n, elem ) {
 
 var rneedsContext = jQuery.expr.match.needsContext;
 
+
+
+function nodeName( elem, name ) {
+
+  return elem.nodeName && elem.nodeName.toLowerCase() === name.toLowerCase();
+
+};
 var rsingleTag = ( /^<([a-z][^\/\0>:\x20\t\r\n\f]*)[\x20\t\r\n\f]*\/?>(?:<\/\1>|)$/i );
 
 
@@ -29806,7 +30224,18 @@ jQuery.each( {
 		return siblings( elem.firstChild );
 	},
 	contents: function( elem ) {
-		return elem.contentDocument || jQuery.merge( [], elem.childNodes );
+        if ( nodeName( elem, "iframe" ) ) {
+            return elem.contentDocument;
+        }
+
+        // Support: IE 9 - 11 only, iOS 7 only, Android Browser <=4.3 only
+        // Treat the template element as a regular one in browsers that
+        // don't support it.
+        if ( nodeName( elem, "template" ) ) {
+            elem = elem.content || elem;
+        }
+
+        return jQuery.merge( [], elem.childNodes );
 	}
 }, function( name, fn ) {
 	jQuery.fn[ name ] = function( until, selector ) {
@@ -29904,7 +30333,7 @@ jQuery.Callbacks = function( options ) {
 		fire = function() {
 
 			// Enforce single-firing
-			locked = options.once;
+			locked = locked || options.once;
 
 			// Execute callbacks for all pending executions,
 			// respecting firingIndex overrides and runtime changes
@@ -30073,7 +30502,7 @@ function Thrower( ex ) {
 	throw ex;
 }
 
-function adoptValue( value, resolve, reject ) {
+function adoptValue( value, resolve, reject, noValue ) {
 	var method;
 
 	try {
@@ -30089,9 +30518,10 @@ function adoptValue( value, resolve, reject ) {
 		// Other non-thenables
 		} else {
 
-			// Support: Android 4.0 only
-			// Strict mode functions invoked without .call/.apply get global-object context
-			resolve.call( undefined, value );
+			// Control `resolve` arguments by letting Array#slice cast boolean `noValue` to integer:
+			// * false: [ value ].slice( 0 ) => resolve( value )
+			// * true: [ value ].slice( 1 ) => resolve()
+			resolve.apply( undefined, [ value ].slice( noValue ) );
 		}
 
 	// For Promises/A+, convert exceptions into rejections
@@ -30101,7 +30531,7 @@ function adoptValue( value, resolve, reject ) {
 
 		// Support: Android 4.0 only
 		// Strict mode functions invoked without .call/.apply get global-object context
-		reject.call( undefined, value );
+		reject.apply( undefined, [ value ] );
 	}
 }
 
@@ -30426,7 +30856,8 @@ jQuery.extend( {
 
 		// Single- and empty arguments are adopted like Promise.resolve
 		if ( remaining <= 1 ) {
-			adoptValue( singleValue, master.done( updateFunc( i ) ).resolve, master.reject );
+			adoptValue( singleValue, master.done( updateFunc( i ) ).resolve, master.reject,
+				!remaining );
 
 			// Use .then() to unwrap secondary thenables (cf. gh-3000)
 			if ( master.state() === "pending" ||
@@ -30497,15 +30928,6 @@ jQuery.extend( {
 	// A counter to track how many items to wait for before
 	// the ready event fires. See #6781
 	readyWait: 1,
-
-	// Hold (or release) the ready event
-	holdReady: function( hold ) {
-		if ( hold ) {
-			jQuery.readyWait++;
-		} else {
-			jQuery.ready( true );
-		}
-	},
 
 	// Handle when the DOM is ready
 	ready: function( wait ) {
@@ -30742,7 +31164,7 @@ Data.prototype = {
 		if ( key !== undefined ) {
 
 			// Support array or space separated string of keys
-			if ( jQuery.isArray( key ) ) {
+			if ( Array.isArray( key ) ) {
 
 				// If key is an array of keys...
 				// We always set camelCase keys, so remove that.
@@ -30968,7 +31390,7 @@ jQuery.extend( {
 
 			// Speed up dequeue by getting out quickly if this is just a lookup
 			if ( data ) {
-				if ( !queue || jQuery.isArray( data ) ) {
+				if ( !queue || Array.isArray( data ) ) {
 					queue = dataPriv.access( elem, type, jQuery.makeArray( data ) );
 				} else {
 					queue.push( data );
@@ -31345,7 +31767,7 @@ function getAll( context, tag ) {
 		ret = [];
 	}
 
-	if ( tag === undefined || tag && jQuery.nodeName( context, tag ) ) {
+	if ( tag === undefined || tag && nodeName( context, tag ) ) {
 		return jQuery.merge( [ context ], ret );
 	}
 
@@ -31950,9 +32372,11 @@ jQuery.event = {
 		},
 		click: {
 
-			// For checkbox, fire native event so checked state will be right
+			// For checkable types, fire native event so checked state will be right
 			trigger: function() {
-				if ( this.type === "checkbox" && this.click && jQuery.nodeName( this, "input" ) ) {
+				if ( rcheckableType.test( this.type ) &&
+					this.click && nodeName( this, "input" ) ) {
+
 					this.click();
 					return false;
 				}
@@ -31960,7 +32384,7 @@ jQuery.event = {
 
 			// For cross-browser consistency, don't fire native .click() on links
 			_default: function( event ) {
-				return jQuery.nodeName( event.target, "a" );
+				return nodeName( event.target, "a" );
 			}
 		},
 
@@ -32237,11 +32661,12 @@ var
 	rscriptTypeMasked = /^true\/(.*)/,
 	rcleanScript = /^\s*<!(?:\[CDATA\[|--)|(?:\]\]|--)>\s*$/g;
 
+// Prefer a tbody over its parent table for containing new rows
 function manipulationTarget( elem, content ) {
-	if ( jQuery.nodeName( elem, "table" ) &&
-		jQuery.nodeName( content.nodeType !== 11 ? content : content.firstChild, "tr" ) ) {
+	if ( nodeName( elem, "table" ) &&
+		nodeName( content.nodeType !== 11 ? content : content.firstChild, "tr" ) ) {
 
-		return elem.getElementsByTagName( "tbody" )[ 0 ] || elem;
+		return jQuery( ">tbody", elem )[ 0 ] || elem;
 	}
 
 	return elem;
@@ -32775,8 +33200,9 @@ function curCSS( elem, name, computed ) {
 
 	computed = computed || getStyles( elem );
 
-	// Support: IE <=9 only
-	// getPropertyValue is only needed for .css('filter') (#12537)
+	// getPropertyValue is needed for:
+	//   .css('filter') (IE 9 only, #12537)
+	//   .css('--customProperty) (#3144)
 	if ( computed ) {
 		ret = computed.getPropertyValue( name ) || computed[ name ];
 
@@ -32842,6 +33268,7 @@ var
 	// except "table", "table-cell", or "table-caption"
 	// See here for display values: https://developer.mozilla.org/en-US/docs/CSS/display
 	rdisplayswap = /^(none|table(?!-c[ea]).+)/,
+	rcustomProp = /^--/,
 	cssShow = { position: "absolute", visibility: "hidden", display: "block" },
 	cssNormalTransform = {
 		letterSpacing: "0",
@@ -32869,6 +33296,16 @@ function vendorPropName( name ) {
 			return name;
 		}
 	}
+}
+
+// Return a property mapped along what jQuery.cssProps suggests or to
+// a vendor prefixed property.
+function finalPropName( name ) {
+	var ret = jQuery.cssProps[ name ];
+	if ( !ret ) {
+		ret = jQuery.cssProps[ name ] = vendorPropName( name ) || name;
+	}
+	return ret;
 }
 
 function setPositiveNumber( elem, value, subtract ) {
@@ -32931,43 +33368,24 @@ function augmentWidthOrHeight( elem, name, extra, isBorderBox, styles ) {
 
 function getWidthOrHeight( elem, name, extra ) {
 
-	// Start with offset property, which is equivalent to the border-box value
-	var val,
-		valueIsBorderBox = true,
+	// Start with computed style
+	var valueIsBorderBox,
 		styles = getStyles( elem ),
+		val = curCSS( elem, name, styles ),
 		isBorderBox = jQuery.css( elem, "boxSizing", false, styles ) === "border-box";
 
-	// Support: IE <=11 only
-	// Running getBoundingClientRect on a disconnected node
-	// in IE throws an error.
-	if ( elem.getClientRects().length ) {
-		val = elem.getBoundingClientRect()[ name ];
+	// Computed unit is not pixels. Stop here and return.
+	if ( rnumnonpx.test( val ) ) {
+		return val;
 	}
 
-	// Some non-html elements return undefined for offsetWidth, so check for null/undefined
-	// svg - https://bugzilla.mozilla.org/show_bug.cgi?id=649285
-	// MathML - https://bugzilla.mozilla.org/show_bug.cgi?id=491668
-	if ( val <= 0 || val == null ) {
+	// Check for style in case a browser which returns unreliable values
+	// for getComputedStyle silently falls back to the reliable elem.style
+	valueIsBorderBox = isBorderBox &&
+		( support.boxSizingReliable() || val === elem.style[ name ] );
 
-		// Fall back to computed then uncomputed css if necessary
-		val = curCSS( elem, name, styles );
-		if ( val < 0 || val == null ) {
-			val = elem.style[ name ];
-		}
-
-		// Computed unit is not pixels. Stop here and return.
-		if ( rnumnonpx.test( val ) ) {
-			return val;
-		}
-
-		// Check for style in case a browser which returns unreliable values
-		// for getComputedStyle silently falls back to the reliable elem.style
-		valueIsBorderBox = isBorderBox &&
-			( support.boxSizingReliable() || val === elem.style[ name ] );
-
-		// Normalize "", auto, and prepare for extra
-		val = parseFloat( val ) || 0;
-	}
+	// Normalize "", auto, and prepare for extra
+	val = parseFloat( val ) || 0;
 
 	// Use the active box-sizing model to add/subtract irrelevant styles
 	return ( val +
@@ -33032,10 +33450,15 @@ jQuery.extend( {
 		// Make sure that we're working with the right name
 		var ret, type, hooks,
 			origName = jQuery.camelCase( name ),
+			isCustomProp = rcustomProp.test( name ),
 			style = elem.style;
 
-		name = jQuery.cssProps[ origName ] ||
-			( jQuery.cssProps[ origName ] = vendorPropName( origName ) || origName );
+		// Make sure that we're working with the right name. We don't
+		// want to query the value if it is a CSS custom property
+		// since they are user-defined.
+		if ( !isCustomProp ) {
+			name = finalPropName( origName );
+		}
 
 		// Gets hook for the prefixed version, then unprefixed version
 		hooks = jQuery.cssHooks[ name ] || jQuery.cssHooks[ origName ];
@@ -33071,7 +33494,11 @@ jQuery.extend( {
 			if ( !hooks || !( "set" in hooks ) ||
 				( value = hooks.set( elem, value, extra ) ) !== undefined ) {
 
-				style[ name ] = value;
+				if ( isCustomProp ) {
+					style.setProperty( name, value );
+				} else {
+					style[ name ] = value;
+				}
 			}
 
 		} else {
@@ -33090,11 +33517,15 @@ jQuery.extend( {
 
 	css: function( elem, name, extra, styles ) {
 		var val, num, hooks,
-			origName = jQuery.camelCase( name );
+			origName = jQuery.camelCase( name ),
+			isCustomProp = rcustomProp.test( name );
 
-		// Make sure that we're working with the right name
-		name = jQuery.cssProps[ origName ] ||
-			( jQuery.cssProps[ origName ] = vendorPropName( origName ) || origName );
+		// Make sure that we're working with the right name. We don't
+		// want to modify the value if it is a CSS custom property
+		// since they are user-defined.
+		if ( !isCustomProp ) {
+			name = finalPropName( origName );
+		}
 
 		// Try prefixed name followed by the unprefixed name
 		hooks = jQuery.cssHooks[ name ] || jQuery.cssHooks[ origName ];
@@ -33119,6 +33550,7 @@ jQuery.extend( {
 			num = parseFloat( val );
 			return extra === true || isFinite( num ) ? num || 0 : val;
 		}
+
 		return val;
 	}
 } );
@@ -33218,7 +33650,7 @@ jQuery.fn.extend( {
 				map = {},
 				i = 0;
 
-			if ( jQuery.isArray( name ) ) {
+			if ( Array.isArray( name ) ) {
 				styles = getStyles( elem );
 				len = name.length;
 
@@ -33356,13 +33788,18 @@ jQuery.fx.step = {};
 
 
 var
-	fxNow, timerId,
+	fxNow, inProgress,
 	rfxtypes = /^(?:toggle|show|hide)$/,
 	rrun = /queueHooks$/;
 
-function raf() {
-	if ( timerId ) {
-		window.requestAnimationFrame( raf );
+function schedule() {
+	if ( inProgress ) {
+		if ( document.hidden === false && window.requestAnimationFrame ) {
+			window.requestAnimationFrame( schedule );
+		} else {
+			window.setTimeout( schedule, jQuery.fx.interval );
+		}
+
 		jQuery.fx.tick();
 	}
 }
@@ -33589,7 +34026,7 @@ function propFilter( props, specialEasing ) {
 		name = jQuery.camelCase( index );
 		easing = specialEasing[ name ];
 		value = props[ index ];
-		if ( jQuery.isArray( value ) ) {
+		if ( Array.isArray( value ) ) {
 			easing = value[ 1 ];
 			value = props[ index ] = value[ 0 ];
 		}
@@ -33648,12 +34085,19 @@ function Animation( elem, properties, options ) {
 
 			deferred.notifyWith( elem, [ animation, percent, remaining ] );
 
+			// If there's more to do, yield
 			if ( percent < 1 && length ) {
 				return remaining;
-			} else {
-				deferred.resolveWith( elem, [ animation ] );
-				return false;
 			}
+
+			// If this was an empty animation, synthesize a final progress notification
+			if ( !length ) {
+				deferred.notifyWith( elem, [ animation, 1, 0 ] );
+			}
+
+			// Resolve the animation and report its conclusion
+			deferred.resolveWith( elem, [ animation ] );
+			return false;
 		},
 		animation = deferred.promise( {
 			elem: elem,
@@ -33718,6 +34162,13 @@ function Animation( elem, properties, options ) {
 		animation.opts.start.call( elem, animation );
 	}
 
+	// Attach callbacks from options
+	animation
+		.progress( animation.opts.progress )
+		.done( animation.opts.done, animation.opts.complete )
+		.fail( animation.opts.fail )
+		.always( animation.opts.always );
+
 	jQuery.fx.timer(
 		jQuery.extend( tick, {
 			elem: elem,
@@ -33726,11 +34177,7 @@ function Animation( elem, properties, options ) {
 		} )
 	);
 
-	// attach callbacks from options
-	return animation.progress( animation.opts.progress )
-		.done( animation.opts.done, animation.opts.complete )
-		.fail( animation.opts.fail )
-		.always( animation.opts.always );
+	return animation;
 }
 
 jQuery.Animation = jQuery.extend( Animation, {
@@ -33781,8 +34228,8 @@ jQuery.speed = function( speed, easing, fn ) {
 		easing: fn && easing || easing && !jQuery.isFunction( easing ) && easing
 	};
 
-	// Go to the end state if fx are off or if document is hidden
-	if ( jQuery.fx.off || document.hidden ) {
+	// Go to the end state if fx are off
+	if ( jQuery.fx.off ) {
 		opt.duration = 0;
 
 	} else {
@@ -33974,7 +34421,7 @@ jQuery.fx.tick = function() {
 	for ( ; i < timers.length; i++ ) {
 		timer = timers[ i ];
 
-		// Checks the timer has not already been removed
+		// Run the timer and safely remove it when done (allowing for external removal)
 		if ( !timer() && timers[ i ] === timer ) {
 			timers.splice( i--, 1 );
 		}
@@ -33988,30 +34435,21 @@ jQuery.fx.tick = function() {
 
 jQuery.fx.timer = function( timer ) {
 	jQuery.timers.push( timer );
-	if ( timer() ) {
-		jQuery.fx.start();
-	} else {
-		jQuery.timers.pop();
-	}
+	jQuery.fx.start();
 };
 
 jQuery.fx.interval = 13;
 jQuery.fx.start = function() {
-	if ( !timerId ) {
-		timerId = window.requestAnimationFrame ?
-			window.requestAnimationFrame( raf ) :
-			window.setInterval( jQuery.fx.tick, jQuery.fx.interval );
+	if ( inProgress ) {
+		return;
 	}
+
+	inProgress = true;
+	schedule();
 };
 
 jQuery.fx.stop = function() {
-	if ( window.cancelAnimationFrame ) {
-		window.cancelAnimationFrame( timerId );
-	} else {
-		window.clearInterval( timerId );
-	}
-
-	timerId = null;
+	inProgress = null;
 };
 
 jQuery.fx.speeds = {
@@ -34128,7 +34566,7 @@ jQuery.extend( {
 		type: {
 			set: function( elem, value ) {
 				if ( !support.radioValue && value === "radio" &&
-					jQuery.nodeName( elem, "input" ) ) {
+					nodeName( elem, "input" ) ) {
 					var val = elem.value;
 					elem.setAttribute( "type", value );
 					if ( val ) {
@@ -34559,7 +34997,7 @@ jQuery.fn.extend( {
 			} else if ( typeof val === "number" ) {
 				val += "";
 
-			} else if ( jQuery.isArray( val ) ) {
+			} else if ( Array.isArray( val ) ) {
 				val = jQuery.map( val, function( value ) {
 					return value == null ? "" : value + "";
 				} );
@@ -34618,7 +35056,7 @@ jQuery.extend( {
 							// Don't return options that are disabled or in a disabled optgroup
 							!option.disabled &&
 							( !option.parentNode.disabled ||
-								!jQuery.nodeName( option.parentNode, "optgroup" ) ) ) {
+								!nodeName( option.parentNode, "optgroup" ) ) ) {
 
 						// Get the specific value for the option
 						value = jQuery( option ).val();
@@ -34670,7 +35108,7 @@ jQuery.extend( {
 jQuery.each( [ "radio", "checkbox" ], function() {
 	jQuery.valHooks[ this ] = {
 		set: function( elem, value ) {
-			if ( jQuery.isArray( value ) ) {
+			if ( Array.isArray( value ) ) {
 				return ( elem.checked = jQuery.inArray( jQuery( elem ).val(), value ) > -1 );
 			}
 		}
@@ -34965,7 +35403,7 @@ var
 function buildParams( prefix, obj, traditional, add ) {
 	var name;
 
-	if ( jQuery.isArray( obj ) ) {
+	if ( Array.isArray( obj ) ) {
 
 		// Serialize array item.
 		jQuery.each( obj, function( i, v ) {
@@ -35017,7 +35455,7 @@ jQuery.param = function( a, traditional ) {
 		};
 
 	// If an array was passed in, assume that it is an array of form elements.
-	if ( jQuery.isArray( a ) || ( a.jquery && !jQuery.isPlainObject( a ) ) ) {
+	if ( Array.isArray( a ) || ( a.jquery && !jQuery.isPlainObject( a ) ) ) {
 
 		// Serialize the form elements
 		jQuery.each( a, function() {
@@ -35063,7 +35501,7 @@ jQuery.fn.extend( {
 				return null;
 			}
 
-			if ( jQuery.isArray( val ) ) {
+			if ( Array.isArray( val ) ) {
 				return jQuery.map( val, function( val ) {
 					return { name: elem.name, value: val.replace( rCRLF, "\r\n" ) };
 				} );
@@ -36488,13 +36926,6 @@ jQuery.expr.pseudos.animated = function( elem ) {
 
 
 
-/**
- * Gets a window from an element
- */
-function getWindow( elem ) {
-	return jQuery.isWindow( elem ) ? elem : elem.nodeType === 9 && elem.defaultView;
-}
-
 jQuery.offset = {
 	setOffset: function( elem, options, i ) {
 		var curPosition, curLeft, curCSSTop, curTop, curOffset, curCSSLeft, calculatePosition,
@@ -36559,13 +36990,14 @@ jQuery.fn.extend( {
 				} );
 		}
 
-		var docElem, win, rect, doc,
+		var doc, docElem, rect, win,
 			elem = this[ 0 ];
 
 		if ( !elem ) {
 			return;
 		}
 
+		// Return zeros for disconnected and hidden (display: none) elements (gh-2310)
 		// Support: IE <=11 only
 		// Running getBoundingClientRect on a
 		// disconnected node in IE throws an error
@@ -36575,20 +37007,14 @@ jQuery.fn.extend( {
 
 		rect = elem.getBoundingClientRect();
 
-		// Make sure element is not hidden (display: none)
-		if ( rect.width || rect.height ) {
-			doc = elem.ownerDocument;
-			win = getWindow( doc );
-			docElem = doc.documentElement;
+		doc = elem.ownerDocument;
+		docElem = doc.documentElement;
+		win = doc.defaultView;
 
-			return {
-				top: rect.top + win.pageYOffset - docElem.clientTop,
-				left: rect.left + win.pageXOffset - docElem.clientLeft
-			};
-		}
-
-		// Return zeros for disconnected and hidden elements (gh-2310)
-		return rect;
+		return {
+			top: rect.top + win.pageYOffset - docElem.clientTop,
+			left: rect.left + win.pageXOffset - docElem.clientLeft
+		};
 	},
 
 	position: function() {
@@ -36614,7 +37040,7 @@ jQuery.fn.extend( {
 
 			// Get correct offsets
 			offset = this.offset();
-			if ( !jQuery.nodeName( offsetParent[ 0 ], "html" ) ) {
+			if ( !nodeName( offsetParent[ 0 ], "html" ) ) {
 				parentOffset = offsetParent.offset();
 			}
 
@@ -36661,7 +37087,14 @@ jQuery.each( { scrollLeft: "pageXOffset", scrollTop: "pageYOffset" }, function( 
 
 	jQuery.fn[ method ] = function( val ) {
 		return access( this, function( elem, method, val ) {
-			var win = getWindow( elem );
+
+			// Coalesce documents and windows
+			var win;
+			if ( jQuery.isWindow( elem ) ) {
+				win = elem;
+			} else if ( elem.nodeType === 9 ) {
+				win = elem.defaultView;
+			}
 
 			if ( val === undefined ) {
 				return win ? win[ prop ] : elem[ method ];
@@ -36767,10 +37200,19 @@ jQuery.fn.extend( {
 		return arguments.length === 1 ?
 			this.off( selector, "**" ) :
 			this.off( types, selector || "**", fn );
+	},
+	holdReady: function( hold ) {
+		if ( hold ) {
+			jQuery.readyWait++;
+		} else {
+			jQuery.ready( true );
+		}
 	}
 } );
 
+jQuery.isArray = Array.isArray;
 jQuery.parseJSON = JSON.parse;
+jQuery.nodeName = nodeName;
 
 
 
@@ -36827,7 +37269,6 @@ if ( !noGlobal ) {
 
 
 
-
 return jQuery;
 } );
 
@@ -36841,24 +37282,24 @@ return jQuery;
  * errors in the expression, or errors in javascript handling.
  */
 
-var ParseError = require("./src/ParseError");
-var Settings = require("./src/Settings");
+const ParseError = require("./src/ParseError");
+const Settings = require("./src/Settings");
 
-var buildTree = require("./src/buildTree");
-var parseTree = require("./src/parseTree");
-var utils = require("./src/utils");
+const buildTree = require("./src/buildTree");
+const parseTree = require("./src/parseTree");
+const utils = require("./src/utils");
 
 /**
  * Parse and build an expression, and place that expression in the DOM node
  * given.
  */
-var render = function(expression, baseNode, options) {
+let render = function(expression, baseNode, options) {
     utils.clearNode(baseNode);
 
-    var settings = new Settings(options);
+    const settings = new Settings(options);
 
-    var tree = parseTree(expression, settings);
-    var node = buildTree(tree, expression, settings).toNode();
+    const tree = parseTree(expression, settings);
+    const node = buildTree(tree, expression, settings).toNode();
 
     baseNode.appendChild(node);
 };
@@ -36880,18 +37321,18 @@ if (typeof document !== "undefined") {
 /**
  * Parse and build an expression, and return the markup for that.
  */
-var renderToString = function(expression, options) {
-    var settings = new Settings(options);
+const renderToString = function(expression, options) {
+    const settings = new Settings(options);
 
-    var tree = parseTree(expression, settings);
+    const tree = parseTree(expression, settings);
     return buildTree(tree, expression, settings).toMarkup();
 };
 
 /**
  * Parse an expression and return the parse tree.
  */
-var generateParseTree = function(expression, options) {
-    var settings = new Settings(options);
+const generateParseTree = function(expression, options) {
+    const settings = new Settings(options);
     return parseTree(expression, settings);
 };
 
@@ -36921,25 +37362,58 @@ module.exports = {
  * kinds.
  */
 
-var matchAt = require("match-at");
+const matchAt = require("match-at");
 
-var ParseError = require("./ParseError");
+const ParseError = require("./ParseError");
 
 // The main lexer class
 function Lexer(input) {
-    this._input = input;
+    this.input = input;
+    this.pos = 0;
 }
 
-// The resulting token returned from `lex`.
-function Token(text, data, position) {
+/**
+ * The resulting token returned from `lex`.
+ *
+ * It consists of the token text plus some position information.
+ * The position information is essentially a range in an input string,
+ * but instead of referencing the bare input string, we refer to the lexer.
+ * That way it is possible to attach extra metadata to the input string,
+ * like for example a file name or similar.
+ *
+ * The position information (all three parameters) is optional,
+ * so it is OK to construct synthetic tokens if appropriate.
+ * Not providing available position information may lead to
+ * degraded error reporting, though.
+ *
+ * @param {string}  text   the text of this token
+ * @param {number=} start  the start offset, zero-based inclusive
+ * @param {number=} end    the end offset, zero-based exclusive
+ * @param {Lexer=}  lexer  the lexer which in turn holds the input string
+ */
+function Token(text, start, end, lexer) {
     this.text = text;
-    this.data = data;
-    this.position = position;
+    this.start = start;
+    this.end = end;
+    this.lexer = lexer;
 }
+
+/**
+ * Given a pair of tokens (this and endToken), compute a “Token” encompassing
+ * the whole input range enclosed by these two.
+ *
+ * @param {Token}  endToken  last token of the range, inclusive
+ * @param {string} text      the text of the newly constructed token
+ */
+Token.prototype.range = function(endToken, text) {
+    if (endToken.lexer !== this.lexer) {
+        return new Token(text); // sorry, no position information available
+    }
+    return new Token(text, this.start, endToken.end, this.lexer);
+};
 
 /* The following tokenRegex
  * - matches typical whitespace (but not NBSP etc.) using its first group
- * - matches symbol combinations which result in a single output character
  * - does not match any control character \x00-\x1f except whitespace
  * - does not match a bare backslash
  * - matches any ASCII character except those just mentioned
@@ -36953,125 +37427,111 @@ function Token(text, data, position) {
  * If there is no matching function or symbol definition, the Parser will
  * still reject the input.
  */
-var tokenRegex = new RegExp(
-    "([ \r\n\t]+)|(" +                                // whitespace
-    "---?" +                                          // special combinations
-    "|[!-\\[\\]-\u2027\u202A-\uD7FF\uF900-\uFFFF]" +  // single codepoint
+const tokenRegex = new RegExp(
+    "([ \r\n\t]+)|" +                                 // whitespace
+    "([!-\\[\\]-\u2027\u202A-\uD7FF\uF900-\uFFFF]" +  // single codepoint
     "|[\uD800-\uDBFF][\uDC00-\uDFFF]" +               // surrogate pair
     "|\\\\(?:[a-zA-Z]+|[^\uD800-\uDFFF])" +           // function name
     ")"
 );
 
-var whitespaceRegex = /\s*/;
-
 /**
- * This function lexes a single normal token. It takes a position and
- * whether it should completely ignore whitespace or not.
+ * This function lexes a single token.
  */
-Lexer.prototype._innerLex = function(pos, ignoreWhitespace) {
-    var input = this._input;
+Lexer.prototype.lex = function() {
+    const input = this.input;
+    const pos = this.pos;
     if (pos === input.length) {
-        return new Token("EOF", null, pos);
+        return new Token("EOF", pos, pos, this);
     }
-    var match = matchAt(tokenRegex, input, pos);
+    const match = matchAt(tokenRegex, input, pos);
     if (match === null) {
         throw new ParseError(
             "Unexpected character: '" + input[pos] + "'",
-            this, pos);
-    } else if (match[2]) { // matched non-whitespace
-        return new Token(match[2], null, pos + match[2].length);
-    } else if (ignoreWhitespace) {
-        return this._innerLex(pos + match[1].length, true);
-    } else { // concatenate whitespace to a single space
-        return new Token(" ", null, pos + match[1].length);
+            new Token(input[pos], pos, pos + 1, this));
     }
-};
-
-// A regex to match a CSS color (like #ffffff or BlueViolet)
-var cssColor = /#[a-z0-9]+|[a-z]+/i;
-
-/**
- * This function lexes a CSS color.
- */
-Lexer.prototype._innerLexColor = function(pos) {
-    var input = this._input;
-
-    // Ignore whitespace
-    var whitespace = matchAt(whitespaceRegex, input, pos)[0];
-    pos += whitespace.length;
-
-    var match;
-    if ((match = matchAt(cssColor, input, pos))) {
-        // If we look like a color, return a color
-        return new Token(match[0], null, pos + match[0].length);
-    } else {
-        throw new ParseError("Invalid color", this, pos);
-    }
-};
-
-// A regex to match a dimension. Dimensions look like
-// "1.2em" or ".4pt" or "1 ex"
-var sizeRegex = /(-?)\s*(\d+(?:\.\d*)?|\.\d+)\s*([a-z]{2})/;
-
-/**
- * This function lexes a dimension.
- */
-Lexer.prototype._innerLexSize = function(pos) {
-    var input = this._input;
-
-    // Ignore whitespace
-    var whitespace = matchAt(whitespaceRegex, input, pos)[0];
-    pos += whitespace.length;
-
-    var match;
-    if ((match = matchAt(sizeRegex, input, pos))) {
-        var unit = match[3];
-        // We only currently handle "em" and "ex" units
-        if (unit !== "em" && unit !== "ex") {
-            throw new ParseError("Invalid unit: '" + unit + "'", this, pos);
-        }
-        return new Token(match[0], {
-            number: +(match[1] + match[2]),
-            unit: unit,
-        }, pos + match[0].length);
-    }
-
-    throw new ParseError("Invalid size", this, pos);
-};
-
-/**
- * This function lexes a string of whitespace.
- */
-Lexer.prototype._innerLexWhitespace = function(pos) {
-    var input = this._input;
-
-    var whitespace = matchAt(whitespaceRegex, input, pos)[0];
-    pos += whitespace.length;
-
-    return new Token(whitespace[0], null, pos);
-};
-
-/**
- * This function lexes a single token starting at `pos` and of the given mode.
- * Based on the mode, we defer to one of the `_innerLex` functions.
- */
-Lexer.prototype.lex = function(pos, mode) {
-    if (mode === "math") {
-        return this._innerLex(pos, true);
-    } else if (mode === "text") {
-        return this._innerLex(pos, false);
-    } else if (mode === "color") {
-        return this._innerLexColor(pos);
-    } else if (mode === "size") {
-        return this._innerLexSize(pos);
-    } else if (mode === "whitespace") {
-        return this._innerLexWhitespace(pos);
-    }
+    const text = match[2] || " ";
+    const start = this.pos;
+    this.pos += match[0].length;
+    const end = this.pos;
+    return new Token(text, start, end, this);
 };
 
 module.exports = Lexer;
 
-},{"./ParseError":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/ParseError.js","match-at":"/home/tobloef/Downloads/code/markant.io/node_modules/match-at/lib/matchAt.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/Options.js":[function(require,module,exports){
+},{"./ParseError":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/ParseError.js","match-at":"/home/tobloef/Downloads/code/markant.io/node_modules/match-at/lib/matchAt.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/MacroExpander.js":[function(require,module,exports){
+/**
+ * This file contains the “gullet” where macros are expanded
+ * until only non-macro tokens remain.
+ */
+
+const Lexer = require("./Lexer");
+
+function MacroExpander(input, macros) {
+    this.lexer = new Lexer(input);
+    this.macros = macros;
+    this.stack = []; // contains tokens in REVERSE order
+    this.discardedWhiteSpace = [];
+}
+
+/**
+ * Recursively expand first token, then return first non-expandable token.
+ */
+MacroExpander.prototype.nextToken = function() {
+    for (;;) {
+        if (this.stack.length === 0) {
+            this.stack.push(this.lexer.lex());
+        }
+        const topToken = this.stack.pop();
+        const name = topToken.text;
+        if (!(name.charAt(0) === "\\" && this.macros.hasOwnProperty(name))) {
+            return topToken;
+        }
+        let expansion = this.macros[name];
+        if (typeof expansion === "string") {
+            const bodyLexer = new Lexer(expansion);
+            expansion = [];
+            let tok = bodyLexer.lex();
+            while (tok.text !== "EOF") {
+                expansion.push(tok);
+                tok = bodyLexer.lex();
+            }
+            expansion.reverse(); // to fit in with stack using push and pop
+            this.macros[name] = expansion;
+        }
+        this.stack = this.stack.concat(expansion);
+    }
+};
+
+MacroExpander.prototype.get = function(ignoreSpace) {
+    this.discardedWhiteSpace = [];
+    let token = this.nextToken();
+    if (ignoreSpace) {
+        while (token.text === " ") {
+            this.discardedWhiteSpace.push(token);
+            token = this.nextToken();
+        }
+    }
+    return token;
+};
+
+/**
+ * Undo the effect of the preceding call to the get method.
+ * A call to this method MUST be immediately preceded and immediately followed
+ * by a call to get.  Only used during mode switching, i.e. after one token
+ * was got in the old mode but should get got again in a new mode
+ * with possibly different whitespace handling.
+ */
+MacroExpander.prototype.unget = function(token) {
+    this.stack.push(token);
+    while (this.discardedWhiteSpace.length !== 0) {
+        this.stack.push(this.discardedWhiteSpace.pop());
+    }
+};
+
+module.exports = MacroExpander;
+
+},{"./Lexer":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/Lexer.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/Options.js":[function(require,module,exports){
 /**
  * This file contains information about the options that the Parser carries
  * around with it while parsing. Data is held in an `Options` object, and when
@@ -37113,7 +37573,7 @@ function Options(data) {
  * from "extension" will be copied to the new options object.
  */
 Options.prototype.extend = function(extension) {
-    var data = {
+    const data = {
         style: this.style,
         size: this.size,
         color: this.color,
@@ -37123,7 +37583,7 @@ Options.prototype.extend = function(extension) {
         font: this.font,
     };
 
-    for (var key in extension) {
+    for (const key in extension) {
         if (extension.hasOwnProperty(key)) {
             data[key] = extension[key];
         }
@@ -37173,7 +37633,7 @@ Options.prototype.withPhantom = function() {
  */
 Options.prototype.withFont = function(font) {
     return this.extend({
-        font: font,
+        font: font || this.font,
     });
 };
 
@@ -37189,7 +37649,7 @@ Options.prototype.reset = function() {
  * A map of color names to CSS colors.
  * TODO(emily): Remove this when we have real macros
  */
-var colorMap = {
+const colorMap = {
     "katex-blue": "#6495ed",
     "katex-orange": "#ffa500",
     "katex-pink": "#ff00af",
@@ -37197,55 +37657,55 @@ var colorMap = {
     "katex-green": "#28ae7b",
     "katex-gray": "gray",
     "katex-purple": "#9d38bd",
-    "katex-blueA": "#c7e9f1",
-    "katex-blueB": "#9cdceb",
-    "katex-blueC": "#58c4dd",
-    "katex-blueD": "#29abca",
-    "katex-blueE": "#1c758a",
-    "katex-tealA": "#acead7",
-    "katex-tealB": "#76ddc0",
-    "katex-tealC": "#5cd0b3",
-    "katex-tealD": "#55c1a7",
-    "katex-tealE": "#49a88f",
-    "katex-greenA": "#c9e2ae",
-    "katex-greenB": "#a6cf8c",
-    "katex-greenC": "#83c167",
-    "katex-greenD": "#77b05d",
-    "katex-greenE": "#699c52",
-    "katex-goldA": "#f7c797",
-    "katex-goldB": "#f9b775",
-    "katex-goldC": "#f0ac5f",
-    "katex-goldD": "#e1a158",
-    "katex-goldE": "#c78d46",
-    "katex-redA": "#f7a1a3",
-    "katex-redB": "#ff8080",
-    "katex-redC": "#fc6255",
-    "katex-redD": "#e65a4c",
-    "katex-redE": "#cf5044",
-    "katex-maroonA": "#ecabc1",
-    "katex-maroonB": "#ec92ab",
-    "katex-maroonC": "#c55f73",
-    "katex-maroonD": "#a24d61",
-    "katex-maroonE": "#94424f",
-    "katex-purpleA": "#caa3e8",
-    "katex-purpleB": "#b189c6",
-    "katex-purpleC": "#9a72ac",
-    "katex-purpleD": "#715582",
-    "katex-purpleE": "#644172",
+    "katex-blueA": "#ccfaff",
+    "katex-blueB": "#80f6ff",
+    "katex-blueC": "#63d9ea",
+    "katex-blueD": "#11accd",
+    "katex-blueE": "#0c7f99",
+    "katex-tealA": "#94fff5",
+    "katex-tealB": "#26edd5",
+    "katex-tealC": "#01d1c1",
+    "katex-tealD": "#01a995",
+    "katex-tealE": "#208170",
+    "katex-greenA": "#b6ffb0",
+    "katex-greenB": "#8af281",
+    "katex-greenC": "#74cf70",
+    "katex-greenD": "#1fab54",
+    "katex-greenE": "#0d923f",
+    "katex-goldA": "#ffd0a9",
+    "katex-goldB": "#ffbb71",
+    "katex-goldC": "#ff9c39",
+    "katex-goldD": "#e07d10",
+    "katex-goldE": "#a75a05",
+    "katex-redA": "#fca9a9",
+    "katex-redB": "#ff8482",
+    "katex-redC": "#f9685d",
+    "katex-redD": "#e84d39",
+    "katex-redE": "#bc2612",
+    "katex-maroonA": "#ffbde0",
+    "katex-maroonB": "#ff92c6",
+    "katex-maroonC": "#ed5fa6",
+    "katex-maroonD": "#ca337c",
+    "katex-maroonE": "#9e034e",
+    "katex-purpleA": "#ddd7ff",
+    "katex-purpleB": "#c6b9fc",
+    "katex-purpleC": "#aa87ff",
+    "katex-purpleD": "#7854ab",
+    "katex-purpleE": "#543b78",
     "katex-mintA": "#f5f9e8",
     "katex-mintB": "#edf2df",
     "katex-mintC": "#e0e5cc",
-    "katex-grayA": "#fdfdfd",
-    "katex-grayB": "#f7f7f7",
-    "katex-grayC": "#eeeeee",
-    "katex-grayD": "#dddddd",
-    "katex-grayE": "#cccccc",
-    "katex-grayF": "#aaaaaa",
-    "katex-grayG": "#999999",
-    "katex-grayH": "#555555",
-    "katex-grayI": "#333333",
+    "katex-grayA": "#f6f7f7",
+    "katex-grayB": "#f0f1f2",
+    "katex-grayC": "#e3e5e6",
+    "katex-grayD": "#d6d8da",
+    "katex-grayE": "#babec2",
+    "katex-grayF": "#888d93",
+    "katex-grayG": "#626569",
+    "katex-grayH": "#3b3e40",
+    "katex-grayI": "#21242c",
     "katex-kaBlue": "#314453",
-    "katex-kaGreen": "#639b24",
+    "katex-kaGreen": "#71B307",
 };
 
 /**
@@ -37267,35 +37727,59 @@ module.exports = Options;
  * This is the ParseError class, which is the main error thrown by KaTeX
  * functions when something has gone wrong. This is used to distinguish internal
  * errors from errors in the expression that the user provided.
+ *
+ * If possible, a caller should provide a Token or ParseNode with information
+ * about where in the source string the problem occurred.
+ *
+ * @param {string} message  The error message
+ * @param {(Token|ParseNode)=} token  An object providing position information
  */
-function ParseError(message, lexer, position) {
-    var error = "KaTeX parse error: " + message;
+function ParseError(message, token) {
+    let error = "KaTeX parse error: " + message;
+    let start;
+    let end;
 
-    if (lexer !== undefined && position !== undefined) {
+    if (token && token.lexer && token.start <= token.end) {
         // If we have the input and a position, make the error a bit fancier
 
-        // Prepend some information
-        error += " at position " + position + ": ";
-
         // Get the input
-        var input = lexer._input;
-        // Insert a combining underscore at the correct position
-        input = input.slice(0, position) + "\u0332" +
-            input.slice(position);
+        const input = token.lexer.input;
+
+        // Prepend some information
+        start = token.start;
+        end = token.end;
+        if (start === input.length) {
+            error += " at end of input: ";
+        } else {
+            error += " at position " + (start + 1) + ": ";
+        }
+
+        // Underline token in question using combining underscores
+        const underlined = input.slice(start, end).replace(/[^]/g, "$&\u0332");
 
         // Extract some context from the input and add it to the error
-        var begin = Math.max(0, position - 15);
-        var end = position + 15;
-        error += input.slice(begin, end);
+        let left;
+        if (start > 15) {
+            left = "…" + input.slice(start - 15, start);
+        } else {
+            left = input.slice(0, start);
+        }
+        let right;
+        if (end + 15 < input.length) {
+            right = input.slice(end, end + 15) + "…";
+        } else {
+            right = input.slice(end);
+        }
+        error += left + underlined + right;
     }
 
     // Some hackery to make ParseError a prototype of Error
     // See http://stackoverflow.com/a/8460753
-    var self = new Error(error);
+    const self = new Error(error);
     self.name = "ParseError";
     self.__proto__ = ParseError.prototype;
 
-    self.position = position;
+    self.position = start;
     return self;
 }
 
@@ -37306,14 +37790,15 @@ module.exports = ParseError;
 
 },{}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/Parser.js":[function(require,module,exports){
 /* eslint no-constant-condition:0 */
-var functions = require("./functions");
-var environments = require("./environments");
-var Lexer = require("./Lexer");
-var symbols = require("./symbols");
-var utils = require("./utils");
+const functions = require("./functions");
+const environments = require("./environments");
+const MacroExpander = require("./MacroExpander");
+const symbols = require("./symbols");
+const utils = require("./utils");
+const cjkRegex = require("./unicodeRegexes").cjkRegex;
 
-var parseData = require("./parseData");
-var ParseError = require("./ParseError");
+const parseData = require("./parseData");
+const ParseError = require("./ParseError");
 
 /**
  * This file contains the parser used to parse out a TeX expression from the
@@ -37353,22 +37838,26 @@ var ParseError = require("./ParseError");
  * Main Parser class
  */
 function Parser(input, settings) {
-    // Make a new lexer
-    this.lexer = new Lexer(input);
+    // Create a new macro expander (gullet) and (indirectly via that) also a
+    // new lexer (mouth) for this parser (stomach, in the language of TeX)
+    this.gullet = new MacroExpander(input, settings.macros);
     // Store the settings for use in parsing
     this.settings = settings;
+    // Count leftright depth (for \middle errors)
+    this.leftrightDepth = 0;
 }
 
-var ParseNode = parseData.ParseNode;
+const ParseNode = parseData.ParseNode;
 
 /**
  * An initial function (without its arguments), or an argument to a function.
  * The `result` argument should be a ParseNode.
  */
-function ParseFuncOrArgument(result, isFunction) {
+function ParseFuncOrArgument(result, isFunction, token) {
     this.result = result;
     // Is this a function (i.e. is it something defined in functions.js)?
     this.isFunction = isFunction;
+    this.token = token;
 }
 
 /**
@@ -37382,7 +37871,7 @@ Parser.prototype.expect = function(text, consume) {
     if (this.nextToken.text !== text) {
         throw new ParseError(
             "Expected '" + text + "', got '" + this.nextToken.text + "'",
-            this.lexer, this.nextToken.position
+            this.nextToken
         );
     }
     if (consume !== false) {
@@ -37395,8 +37884,13 @@ Parser.prototype.expect = function(text, consume) {
  * and fetches the one after that as the new look ahead.
  */
 Parser.prototype.consume = function() {
-    this.pos = this.nextToken.position;
-    this.nextToken = this.lexer.lex(this.pos, this.mode);
+    this.nextToken = this.gullet.get(this.mode === "math");
+};
+
+Parser.prototype.switchMode = function(newMode) {
+    this.gullet.unget(this.nextToken);
+    this.mode = newMode;
+    this.consume();
 };
 
 /**
@@ -37407,9 +37901,8 @@ Parser.prototype.consume = function() {
 Parser.prototype.parse = function() {
     // Try to parse the input
     this.mode = "math";
-    this.pos = 0;
-    this.nextToken = this.lexer.lex(this.pos, this.mode);
-    var parse = this.parseInput();
+    this.consume();
+    const parse = this.parseInput();
     return parse;
 };
 
@@ -37418,55 +37911,50 @@ Parser.prototype.parse = function() {
  */
 Parser.prototype.parseInput = function() {
     // Parse an expression
-    var expression = this.parseExpression(false);
+    const expression = this.parseExpression(false);
     // If we succeeded, make sure there's an EOF at the end
     this.expect("EOF", false);
     return expression;
 };
 
-var endOfExpression = ["}", "\\end", "\\right", "&", "\\\\", "\\cr"];
+const endOfExpression = ["}", "\\end", "\\right", "&", "\\\\", "\\cr"];
 
 /**
  * Parses an "expression", which is a list of atoms.
  *
- * @param {boolean} breakOnInfix Should the parsing stop when we hit infix
+ * @param {boolean} breakOnInfix  Should the parsing stop when we hit infix
  *                  nodes? This happens when functions have higher precendence
  *                  than infix nodes in implicit parses.
  *
- * @param {?string} breakOnToken The token that the expression should end with,
- *                  or `null` if something else should end the expression.
+ * @param {?string} breakOnTokenText  The text of the token that the expression
+ *                  should end with, or `null` if something else should end the
+ *                  expression.
  *
  * @return {ParseNode}
  */
-Parser.prototype.parseExpression = function(breakOnInfix, breakOnToken) {
-    var body = [];
+Parser.prototype.parseExpression = function(breakOnInfix, breakOnTokenText) {
+    const body = [];
     // Keep adding atoms to the body until we can't parse any more atoms (either
     // we reached the end, a }, or a \right)
     while (true) {
-        var lex = this.nextToken;
-        var pos = this.pos;
+        const lex = this.nextToken;
         if (endOfExpression.indexOf(lex.text) !== -1) {
             break;
         }
-        if (breakOnToken && lex.text === breakOnToken) {
+        if (breakOnTokenText && lex.text === breakOnTokenText) {
             break;
         }
-        var atom = this.parseAtom();
+        if (breakOnInfix && functions[lex.text] && functions[lex.text].infix) {
+            break;
+        }
+        const atom = this.parseAtom();
         if (!atom) {
             if (!this.settings.throwOnError && lex.text[0] === "\\") {
-                var errorNode = this.handleUnsupportedCmd();
+                const errorNode = this.handleUnsupportedCmd();
                 body.push(errorNode);
-
-                pos = lex.position;
                 continue;
             }
 
-            break;
-        }
-        if (breakOnInfix && atom.type === "infix") {
-            // rewind so we can parse the infix atom again
-            this.pos = pos;
-            this.nextToken = lex;
             break;
         }
         body.push(atom);
@@ -37484,15 +37972,16 @@ Parser.prototype.parseExpression = function(breakOnInfix, breakOnToken) {
  * @returns {Array}
  */
 Parser.prototype.handleInfixNodes = function(body) {
-    var overIndex = -1;
-    var funcName;
+    let overIndex = -1;
+    let funcName;
 
-    for (var i = 0; i < body.length; i++) {
-        var node = body[i];
+    for (let i = 0; i < body.length; i++) {
+        const node = body[i];
         if (node.type === "infix") {
             if (overIndex !== -1) {
-                throw new ParseError("only one infix operator per group",
-                    this.lexer, -1);
+                throw new ParseError(
+                    "only one infix operator per group",
+                    node.value.token);
             }
             overIndex = i;
             funcName = node.value.replaceWith;
@@ -37500,11 +37989,11 @@ Parser.prototype.handleInfixNodes = function(body) {
     }
 
     if (overIndex !== -1) {
-        var numerNode;
-        var denomNode;
+        let numerNode;
+        let denomNode;
 
-        var numerBody = body.slice(0, overIndex);
-        var denomBody = body.slice(overIndex + 1);
+        const numerBody = body.slice(0, overIndex);
+        const denomBody = body.slice(overIndex + 1);
 
         if (numerBody.length === 1 && numerBody[0].type === "ordgroup") {
             numerNode = numerBody[0];
@@ -37518,7 +38007,7 @@ Parser.prototype.handleInfixNodes = function(body) {
             denomNode = new ParseNode("ordgroup", denomBody, this.mode);
         }
 
-        var value = this.callFunction(
+        const value = this.callFunction(
             funcName, [numerNode, denomNode], null);
         return [new ParseNode(value.type, value, this.mode)];
     } else {
@@ -37527,16 +38016,16 @@ Parser.prototype.handleInfixNodes = function(body) {
 };
 
 // The greediness of a superscript or subscript
-var SUPSUB_GREEDINESS = 1;
+const SUPSUB_GREEDINESS = 1;
 
 /**
  * Handle a subscript or superscript with nice errors.
  */
 Parser.prototype.handleSupSubscript = function(name) {
-    var symbol = this.nextToken.text;
-    var symPos = this.pos;
+    const symbolToken = this.nextToken;
+    const symbol = symbolToken.text;
     this.consume();
-    var group = this.parseGroup();
+    const group = this.parseGroup();
 
     if (!group) {
         if (!this.settings.throwOnError && this.nextToken.text[0] === "\\") {
@@ -37544,21 +38033,19 @@ Parser.prototype.handleSupSubscript = function(name) {
         } else {
             throw new ParseError(
                 "Expected group after '" + symbol + "'",
-                this.lexer,
-                symPos + 1
+                symbolToken
             );
         }
     } else if (group.isFunction) {
         // ^ and _ have a greediness, so handle interactions with functions'
         // greediness
-        var funcGreediness = functions[group.result].greediness;
+        const funcGreediness = functions[group.result].greediness;
         if (funcGreediness > SUPSUB_GREEDINESS) {
             return this.parseFunction(group);
         } else {
             throw new ParseError(
                 "Got function '" + group.result + "' with no arguments " +
-                    "as " + name,
-                this.lexer, symPos + 1);
+                    "as " + name, symbolToken);
         }
     } else {
         return group.result;
@@ -37570,14 +38057,14 @@ Parser.prototype.handleSupSubscript = function(name) {
  * contained within a color node whose color is determined by errorColor
  */
 Parser.prototype.handleUnsupportedCmd = function() {
-    var text = this.nextToken.text;
-    var textordArray = [];
+    const text = this.nextToken.text;
+    const textordArray = [];
 
-    for (var i = 0; i < text.length; i++) {
+    for (let i = 0; i < text.length; i++) {
         textordArray.push(new ParseNode("textord", text[i], "text"));
     }
 
-    var textNode = new ParseNode(
+    const textNode = new ParseNode(
         "text",
         {
             body: textordArray,
@@ -37585,7 +38072,7 @@ Parser.prototype.handleUnsupportedCmd = function() {
         },
         this.mode);
 
-    var colorNode = new ParseNode(
+    const colorNode = new ParseNode(
         "color",
         {
             color: this.settings.errorColor,
@@ -37606,7 +38093,7 @@ Parser.prototype.handleUnsupportedCmd = function() {
 Parser.prototype.parseAtom = function() {
     // The body of an atom is an implicit group, so that things like
     // \left(x\right)^2 work correctly.
-    var base = this.parseImplicitGroup();
+    const base = this.parseImplicitGroup();
 
     // In text mode, we don't have superscripts or subscripts
     if (this.mode === "text") {
@@ -37615,20 +38102,20 @@ Parser.prototype.parseAtom = function() {
 
     // Note that base may be empty (i.e. null) at this point.
 
-    var superscript;
-    var subscript;
+    let superscript;
+    let subscript;
     while (true) {
         // Lex the first token
-        var lex = this.nextToken;
+        const lex = this.nextToken;
 
         if (lex.text === "\\limits" || lex.text === "\\nolimits") {
             // We got a limit control
             if (!base || base.type !== "op") {
                 throw new ParseError(
                     "Limit controls must follow a math operator",
-                    this.lexer, this.pos);
+                    lex);
             } else {
-                var limits = lex.text === "\\limits";
+                const limits = lex.text === "\\limits";
                 base.value.limits = limits;
                 base.value.alwaysHandleSupSub = true;
             }
@@ -37636,23 +38123,24 @@ Parser.prototype.parseAtom = function() {
         } else if (lex.text === "^") {
             // We got a superscript start
             if (superscript) {
-                throw new ParseError(
-                    "Double superscript", this.lexer, this.pos);
+                throw new ParseError("Double superscript", lex);
             }
             superscript = this.handleSupSubscript("superscript");
         } else if (lex.text === "_") {
             // We got a subscript start
             if (subscript) {
-                throw new ParseError(
-                    "Double subscript", this.lexer, this.pos);
+                throw new ParseError("Double subscript", lex);
             }
             subscript = this.handleSupSubscript("subscript");
         } else if (lex.text === "'") {
             // We got a prime
-            var prime = new ParseNode("textord", "\\prime", this.mode);
+            if (superscript) {
+                throw new ParseError("Double superscript", lex);
+            }
+            const prime = new ParseNode("textord", "\\prime", this.mode);
 
             // Many primes can be grouped together, so we handle this here
-            var primes = [prime];
+            const primes = [prime];
             this.consume();
             // Keep lexing tokens until we get something that's not a prime
             while (this.nextToken.text === "'") {
@@ -37660,7 +38148,12 @@ Parser.prototype.parseAtom = function() {
                 primes.push(prime);
                 this.consume();
             }
-            // Put them into an ordgroup as the superscript
+            // If there's a superscript following the primes, combine that
+            // superscript in with the primes.
+            if (this.nextToken.text === "^") {
+                primes.push(this.handleSupSubscript("superscript"));
+            }
+            // Put everything into an ordgroup as the superscript
             superscript = new ParseNode("ordgroup", primes, this.mode);
         } else {
             // If it wasn't ^, _, or ', stop parsing super/subscripts
@@ -37682,13 +38175,13 @@ Parser.prototype.parseAtom = function() {
 };
 
 // A list of the size-changing functions, for use in parseImplicitGroup
-var sizeFuncs = [
+const sizeFuncs = [
     "\\tiny", "\\scriptsize", "\\footnotesize", "\\small", "\\normalsize",
     "\\large", "\\Large", "\\LARGE", "\\huge", "\\Huge",
 ];
 
 // A list of the style-changing functions, for use in parseImplicitGroup
-var styleFuncs = [
+const styleFuncs = [
     "\\displaystyle", "\\textstyle", "\\scriptstyle", "\\scriptscriptstyle",
 ];
 
@@ -37704,25 +38197,26 @@ var styleFuncs = [
  * @return {?ParseNode}
  */
 Parser.prototype.parseImplicitGroup = function() {
-    var start = this.parseSymbol();
+    const start = this.parseSymbol();
 
     if (start == null) {
         // If we didn't get anything we handle, fall back to parseFunction
         return this.parseFunction();
     }
 
-    var func = start.result;
-    var body;
+    const func = start.result;
 
     if (func === "\\left") {
         // If we see a left:
         // Parse the entire left function (including the delimiter)
-        var left = this.parseFunction(start);
+        const left = this.parseFunction(start);
         // Parse out the implicit body
-        body = this.parseExpression(false);
+        ++this.leftrightDepth;
+        const body = this.parseExpression(false);
+        --this.leftrightDepth;
         // Check the next token
         this.expect("\\right", false);
-        var right = this.parseFunction();
+        const right = this.parseFunction();
         return new ParseNode("leftright", {
             body: body,
             left: left.value.value,
@@ -37730,40 +38224,37 @@ Parser.prototype.parseImplicitGroup = function() {
         }, this.mode);
     } else if (func === "\\begin") {
         // begin...end is similar to left...right
-        var begin = this.parseFunction(start);
-        var envName = begin.value.name;
+        const begin = this.parseFunction(start);
+        const envName = begin.value.name;
         if (!environments.hasOwnProperty(envName)) {
             throw new ParseError(
-                "No such environment: " + envName,
-                this.lexer, begin.value.namepos);
+                "No such environment: " + envName, begin.value.nameGroup);
         }
         // Build the environment object. Arguments and other information will
         // be made available to the begin and end methods using properties.
-        var env = environments[envName];
-        var args = this.parseArguments("\\begin{" + envName + "}", env);
-        var context = {
+        const env = environments[envName];
+        const args = this.parseArguments("\\begin{" + envName + "}", env);
+        const context = {
             mode: this.mode,
             envName: envName,
             parser: this,
-            lexer: this.lexer,
             positions: args.pop(),
         };
-        var result = env.handler(context, args);
+        const result = env.handler(context, args);
         this.expect("\\end", false);
-        var end = this.parseFunction();
+        const endNameToken = this.nextToken;
+        const end = this.parseFunction();
         if (end.value.name !== envName) {
             throw new ParseError(
                 "Mismatch: \\begin{" + envName + "} matched " +
                 "by \\end{" + end.value.name + "}",
-                this.lexer /* , end.value.namepos */);
-            // TODO: Add position to the above line and adjust test case,
-            // requires #385 to get merged first
+                endNameToken);
         }
         result.position = end.position;
         return result;
     } else if (utils.contains(sizeFuncs, func)) {
         // If we see a sizing function, parse out the implict body
-        body = this.parseExpression(false);
+        const body = this.parseExpression(false);
         return new ParseNode("sizing", {
             // Figure out what size to use based on the list of functions above
             size: "size" + (utils.indexOf(sizeFuncs, func) + 1),
@@ -37771,7 +38262,7 @@ Parser.prototype.parseImplicitGroup = function() {
         }, this.mode);
     } else if (utils.contains(styleFuncs, func)) {
         // If we see a styling function, parse out the implict body
-        body = this.parseExpression(true);
+        const body = this.parseExpression(true);
         return new ParseNode("styling", {
             // Figure out what style to use by pulling out the style from
             // the function name
@@ -37799,16 +38290,17 @@ Parser.prototype.parseFunction = function(baseGroup) {
 
     if (baseGroup) {
         if (baseGroup.isFunction) {
-            var func = baseGroup.result;
-            var funcData = functions[func];
+            const func = baseGroup.result;
+            const funcData = functions[func];
             if (this.mode === "text" && !funcData.allowedInText) {
                 throw new ParseError(
                     "Can't use function '" + func + "' in text mode",
-                    this.lexer, baseGroup.position);
+                    baseGroup.token);
             }
 
-            var args = this.parseArguments(func, funcData);
-            var result = this.callFunction(func, args, args.pop());
+            const args = this.parseArguments(func, funcData);
+            const token = baseGroup.token;
+            const result = this.callFunction(func, args, args.pop(), token);
             return new ParseNode(result.type, result, this.mode);
         } else {
             return baseGroup.result;
@@ -37821,12 +38313,12 @@ Parser.prototype.parseFunction = function(baseGroup) {
 /**
  * Call a function handler with a suitable context and arguments.
  */
-Parser.prototype.callFunction = function(name, args, positions) {
-    var context = {
+Parser.prototype.callFunction = function(name, args, positions, token) {
+    const context = {
         funcName: name,
         parser: this,
-        lexer: this.lexer,
         positions: positions,
+        token: token,
     };
     return functions[name].handler(context, args);
 };
@@ -37839,23 +38331,24 @@ Parser.prototype.callFunction = function(name, args, positions) {
  * @return the array of arguments, with the list of positions as last element
  */
 Parser.prototype.parseArguments = function(func, funcData) {
-    var totalArgs = funcData.numArgs + funcData.numOptionalArgs;
+    const totalArgs = funcData.numArgs + funcData.numOptionalArgs;
     if (totalArgs === 0) {
         return [[this.pos]];
     }
 
-    var baseGreediness = funcData.greediness;
-    var positions = [this.pos];
-    var args = [];
+    const baseGreediness = funcData.greediness;
+    const positions = [this.pos];
+    const args = [];
 
-    for (var i = 0; i < totalArgs; i++) {
-        var argType = funcData.argTypes && funcData.argTypes[i];
-        var arg;
+    for (let i = 0; i < totalArgs; i++) {
+        const nextToken = this.nextToken;
+        const argType = funcData.argTypes && funcData.argTypes[i];
+        let arg;
         if (i < funcData.numOptionalArgs) {
             if (argType) {
-                arg = this.parseSpecialGroup(argType, true);
+                arg = this.parseGroupOfType(argType, true);
             } else {
-                arg = this.parseOptionalGroup();
+                arg = this.parseGroup(true);
             }
             if (!arg) {
                 args.push(null);
@@ -37864,7 +38357,7 @@ Parser.prototype.parseArguments = function(func, funcData) {
             }
         } else {
             if (argType) {
-                arg = this.parseSpecialGroup(argType);
+                arg = this.parseGroupOfType(argType);
             } else {
                 arg = this.parseGroup();
             }
@@ -37876,22 +38369,20 @@ Parser.prototype.parseArguments = function(func, funcData) {
                         false);
                 } else {
                     throw new ParseError(
-                        "Expected group after '" + func + "'",
-                        this.lexer, this.pos);
+                        "Expected group after '" + func + "'", nextToken);
                 }
             }
         }
-        var argNode;
+        let argNode;
         if (arg.isFunction) {
-            var argGreediness =
+            const argGreediness =
                 functions[arg.result].greediness;
             if (argGreediness > baseGreediness) {
                 argNode = this.parseFunction(arg);
             } else {
                 throw new ParseError(
                     "Got function '" + arg.result + "' as " +
-                    "argument to '" + func + "'",
-                    this.lexer, this.pos - 1);
+                    "argument to '" + func + "'", nextToken);
             }
         } else {
             argNode = arg.result;
@@ -37907,106 +38398,212 @@ Parser.prototype.parseArguments = function(func, funcData) {
 
 
 /**
- * Parses a group when the mode is changing. Takes a position, a new mode, and
- * an outer mode that is used to parse the outside.
+ * Parses a group when the mode is changing.
  *
  * @return {?ParseFuncOrArgument}
  */
-Parser.prototype.parseSpecialGroup = function(innerMode, optional) {
-    var outerMode = this.mode;
+Parser.prototype.parseGroupOfType = function(innerMode, optional) {
+    const outerMode = this.mode;
     // Handle `original` argTypes
     if (innerMode === "original") {
         innerMode = outerMode;
     }
 
-    if (innerMode === "color" || innerMode === "size") {
-        // color and size modes are special because they should have braces and
-        // should only lex a single symbol inside
-        var openBrace = this.nextToken;
-        if (optional && openBrace.text !== "[") {
-            // optional arguments should return null if they don't exist
-            return null;
-        }
-        // The call to expect will lex the token after the '{' in inner mode
-        this.mode = innerMode;
-        this.expect(optional ? "[" : "{");
-        var inner = this.nextToken;
-        this.mode = outerMode;
-        var data;
-        if (innerMode === "color") {
-            data = inner.text;
-        } else {
-            data = inner.data;
-        }
-        this.consume(); // consume the token stored in inner
-        this.expect(optional ? "]" : "}");
-        return new ParseFuncOrArgument(
-            new ParseNode(innerMode, data, outerMode),
-            false);
-    } else if (innerMode === "text") {
-        // text mode is special because it should ignore the whitespace before
-        // it
-        var whitespace = this.lexer.lex(this.pos, "whitespace");
-        this.pos = whitespace.position;
+    if (innerMode === "color") {
+        return this.parseColorGroup(optional);
+    }
+    if (innerMode === "size") {
+        return this.parseSizeGroup(optional);
     }
 
+    this.switchMode(innerMode);
+    if (innerMode === "text") {
+        // text mode is special because it should ignore the whitespace before
+        // it
+        while (this.nextToken.text === " ") {
+            this.consume();
+        }
+    }
     // By the time we get here, innerMode is one of "text" or "math".
     // We switch the mode of the parser, recurse, then restore the old mode.
-    this.mode = innerMode;
-    this.nextToken = this.lexer.lex(this.pos, innerMode);
-    var res;
-    if (optional) {
-        res = this.parseOptionalGroup();
-    } else {
-        res = this.parseGroup();
-    }
-    this.mode = outerMode;
-    this.nextToken = this.lexer.lex(this.pos, outerMode);
+    const res = this.parseGroup(optional);
+    this.switchMode(outerMode);
     return res;
 };
 
 /**
- * Parses a group, which is either a single nucleus (like "x") or an expression
- * in braces (like "{x+y}")
+ * Parses a group, essentially returning the string formed by the
+ * brace-enclosed tokens plus some position information.
  *
+ * @param {string} modeName  Used to describe the mode in error messages
+ * @param {boolean=} optional  Whether the group is optional or required
+ */
+Parser.prototype.parseStringGroup = function(modeName, optional) {
+    if (optional && this.nextToken.text !== "[") {
+        return null;
+    }
+    const outerMode = this.mode;
+    this.mode = "text";
+    this.expect(optional ? "[" : "{");
+    let str = "";
+    const firstToken = this.nextToken;
+    let lastToken = firstToken;
+    while (this.nextToken.text !== (optional ? "]" : "}")) {
+        if (this.nextToken.text === "EOF") {
+            throw new ParseError(
+                "Unexpected end of input in " + modeName,
+                firstToken.range(this.nextToken, str));
+        }
+        lastToken = this.nextToken;
+        str += lastToken.text;
+        this.consume();
+    }
+    this.mode = outerMode;
+    this.expect(optional ? "]" : "}");
+    return firstToken.range(lastToken, str);
+};
+
+/**
+ * Parses a regex-delimited group: the largest sequence of tokens
+ * whose concatenated strings match `regex`. Returns the string
+ * formed by the tokens plus some position information.
+ *
+ * @param {RegExp} regex
+ * @param {string} modeName  Used to describe the mode in error messages
+ */
+Parser.prototype.parseRegexGroup = function(regex, modeName) {
+    const outerMode = this.mode;
+    this.mode = "text";
+    const firstToken = this.nextToken;
+    let lastToken = firstToken;
+    let str = "";
+    while (this.nextToken.text !== "EOF"
+           && regex.test(str + this.nextToken.text)) {
+        lastToken = this.nextToken;
+        str += lastToken.text;
+        this.consume();
+    }
+    if (str === "") {
+        throw new ParseError(
+            "Invalid " + modeName + ": '" + firstToken.text + "'",
+            firstToken);
+    }
+    this.mode = outerMode;
+    return firstToken.range(lastToken, str);
+};
+
+/**
+ * Parses a color description.
+ */
+Parser.prototype.parseColorGroup = function(optional) {
+    const res = this.parseStringGroup("color", optional);
+    if (!res) {
+        return null;
+    }
+    const match = (/^(#[a-z0-9]+|[a-z]+)$/i).exec(res.text);
+    if (!match) {
+        throw new ParseError("Invalid color: '" + res.text + "'", res);
+    }
+    return new ParseFuncOrArgument(
+        new ParseNode("color", match[0], this.mode),
+        false);
+};
+
+/**
+ * Parses a size specification, consisting of magnitude and unit.
+ */
+Parser.prototype.parseSizeGroup = function(optional) {
+    let res;
+    if (!optional && this.nextToken.text !== "{") {
+        res = this.parseRegexGroup(
+            /^[-+]? *(?:$|\d+|\d+\.\d*|\.\d*) *[a-z]{0,2}$/, "size");
+    } else {
+        res = this.parseStringGroup("size", optional);
+    }
+    if (!res) {
+        return null;
+    }
+    const match = (/([-+]?) *(\d+(?:\.\d*)?|\.\d+) *([a-z]{2})/).exec(res.text);
+    if (!match) {
+        throw new ParseError("Invalid size: '" + res.text + "'", res);
+    }
+    const data = {
+        number: +(match[1] + match[2]), // sign + magnitude, cast to number
+        unit: match[3],
+    };
+    if (data.unit !== "em" && data.unit !== "ex" && data.unit !== "mu") {
+        throw new ParseError("Invalid unit: '" + data.unit + "'", res);
+    }
+    return new ParseFuncOrArgument(
+        new ParseNode("color", data, this.mode),
+        false);
+};
+
+/**
+ * If the argument is false or absent, this parses an ordinary group,
+ * which is either a single nucleus (like "x") or an expression
+ * in braces (like "{x+y}").
+ * If the argument is true, it parses either a bracket-delimited expression
+ * (like "[x+y]") or returns null to indicate the absence of a
+ * bracket-enclosed group.
+ *
+ * @param {boolean=} optional  Whether the group is optional or required
  * @return {?ParseFuncOrArgument}
  */
-Parser.prototype.parseGroup = function() {
+Parser.prototype.parseGroup = function(optional) {
+    const firstToken = this.nextToken;
     // Try to parse an open brace
-    if (this.nextToken.text === "{") {
+    if (this.nextToken.text === (optional ? "[" : "{")) {
         // If we get a brace, parse an expression
         this.consume();
-        var expression = this.parseExpression(false);
+        const expression = this.parseExpression(false, optional ? "]" : null);
+        const lastToken = this.nextToken;
         // Make sure we get a close brace
-        this.expect("}");
+        this.expect(optional ? "]" : "}");
+        if (this.mode === "text") {
+            this.formLigatures(expression);
+        }
         return new ParseFuncOrArgument(
-            new ParseNode("ordgroup", expression, this.mode),
+            new ParseNode("ordgroup", expression, this.mode,
+                          firstToken, lastToken),
             false);
     } else {
-        // Otherwise, just return a nucleus
-        return this.parseSymbol();
+        // Otherwise, just return a nucleus, or nothing for an optional group
+        return optional ? null : this.parseSymbol();
     }
 };
 
 /**
- * Parses a group, which is an expression in brackets (like "[x+y]")
+ * Form ligature-like combinations of characters for text mode.
+ * This includes inputs like "--", "---", "``" and "''".
+ * The result will simply replace multiple textord nodes with a single
+ * character in each value by a single textord node having multiple
+ * characters in its value.  The representation is still ASCII source.
  *
- * @return {?ParseFuncOrArgument}
+ * @param {Array.<ParseNode>} group  the nodes of this group,
+ *                                   list will be moified in place
  */
-Parser.prototype.parseOptionalGroup = function() {
-    // Try to parse an open bracket
-    if (this.nextToken.text === "[") {
-        // If we get a brace, parse an expression
-        this.consume();
-        var expression = this.parseExpression(false, "]");
-        // Make sure we get a close bracket
-        this.expect("]");
-        return new ParseFuncOrArgument(
-            new ParseNode("ordgroup", expression, this.mode),
-            false);
-    } else {
-        // Otherwise, return null,
-        return null;
+Parser.prototype.formLigatures = function(group) {
+    let n = group.length - 1;
+    for (let i = 0; i < n; ++i) {
+        const a = group[i];
+        const v = a.value;
+        if (v === "-" && group[i + 1].value === "-") {
+            if (i + 1 < n && group[i + 2].value === "-") {
+                group.splice(i, 3, new ParseNode(
+                    "textord", "---", "text", a, group[i + 2]));
+                n -= 2;
+            } else {
+                group.splice(i, 2, new ParseNode(
+                    "textord", "--", "text", a, group[i + 1]));
+                n -= 1;
+            }
+        }
+        if ((v === "'" || v === "`") && group[i + 1].value === v) {
+            group.splice(i, 2, new ParseNode(
+                "textord", v + v, "text", a, group[i + 1]));
+            n -= 1;
+        }
     }
 };
 
@@ -38017,7 +38614,7 @@ Parser.prototype.parseOptionalGroup = function() {
  * @return {?ParseFuncOrArgument}
  */
 Parser.prototype.parseSymbol = function() {
-    var nucleus = this.nextToken;
+    const nucleus = this.nextToken;
 
     if (functions[nucleus.text]) {
         this.consume();
@@ -38025,15 +38622,20 @@ Parser.prototype.parseSymbol = function() {
         // say that it is a function.
         return new ParseFuncOrArgument(
             nucleus.text,
-            true);
+            true, nucleus);
     } else if (symbols[this.mode][nucleus.text]) {
         this.consume();
         // Otherwise if this is a no-argument function, find the type it
         // corresponds to in the symbols map
         return new ParseFuncOrArgument(
             new ParseNode(symbols[this.mode][nucleus.text].group,
-                          nucleus.text, this.mode),
-            false);
+                          nucleus.text, this.mode, nucleus),
+            false, nucleus);
+    } else if (this.mode === "text" && cjkRegex.test(nucleus.text)) {
+        this.consume();
+        return new ParseFuncOrArgument(
+            new ParseNode("textord", nucleus.text, this.mode, nucleus),
+            false, nucleus);
     } else {
         return null;
     }
@@ -38043,18 +38645,13 @@ Parser.prototype.ParseNode = ParseNode;
 
 module.exports = Parser;
 
-},{"./Lexer":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/Lexer.js","./ParseError":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/ParseError.js","./environments":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/environments.js","./functions":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/functions.js","./parseData":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/parseData.js","./symbols":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/symbols.js","./utils":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/Settings.js":[function(require,module,exports){
+},{"./MacroExpander":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/MacroExpander.js","./ParseError":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/ParseError.js","./environments":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/environments.js","./functions":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/functions.js","./parseData":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/parseData.js","./symbols":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/symbols.js","./unicodeRegexes":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/unicodeRegexes.js","./utils":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/Settings.js":[function(require,module,exports){
 /**
  * This is a module for storing settings passed into KaTeX. It correctly handles
  * default settings.
  */
 
-/**
- * Helper function for getting a default value if the value is undefined
- */
-function get(option, defaultValue) {
-    return option === undefined ? defaultValue : option;
-}
+const utils = require("./utils");
 
 /**
  * The main Settings object
@@ -38066,14 +38663,15 @@ function get(option, defaultValue) {
 function Settings(options) {
     // allow null options
     options = options || {};
-    this.displayMode = get(options.displayMode, false);
-    this.throwOnError = get(options.throwOnError, true);
-    this.errorColor = get(options.errorColor, "#cc0000");
+    this.displayMode = utils.deflt(options.displayMode, false);
+    this.throwOnError = utils.deflt(options.throwOnError, true);
+    this.errorColor = utils.deflt(options.errorColor, "#cc0000");
+    this.macros = options.macros || {};
 }
 
 module.exports = Settings;
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/Style.js":[function(require,module,exports){
+},{"./utils":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/Style.js":[function(require,module,exports){
 /**
  * This file contains information and classes for the various kinds of styles
  * used in TeX. It provides a generic `Style` class, which holds information
@@ -38081,6 +38679,20 @@ module.exports = Settings;
  * of styles possible, and provides functions to move between them and get
  * information about them.
  */
+
+const sigmas = require("./fontMetrics.js").sigmas;
+
+const metrics = [{}, {}, {}];
+for (const key in sigmas) {
+    if (sigmas.hasOwnProperty(key)) {
+        for (let i = 0; i < 3; i++) {
+            metrics[i][key] = sigmas[key][i];
+        }
+    }
+}
+for (let i = 0; i < 3; i++) {
+    metrics[i].emPerEx = sigmas.xHeight[i] / sigmas.quad[i];
+}
 
 /**
  * The main style class. Contains a unique id for the style, a size (which is
@@ -38093,6 +38705,7 @@ function Style(id, size, multiplier, cramped) {
     this.size = size;
     this.cramped = cramped;
     this.sizeMultiplier = multiplier;
+    this.metrics = metrics[size > 0 ? size - 1 : 0];
 }
 
 /**
@@ -38147,18 +38760,25 @@ Style.prototype.reset = function() {
     return resetNames[this.size];
 };
 
+/**
+ * Return if this style is tightly spaced (scriptstyle/scriptscriptstyle)
+ */
+Style.prototype.isTight = function() {
+    return this.size >= 2;
+};
+
 // IDs of the different styles
-var D = 0;
-var Dc = 1;
-var T = 2;
-var Tc = 3;
-var S = 4;
-var Sc = 5;
-var SS = 6;
-var SSc = 7;
+const D = 0;
+const Dc = 1;
+const T = 2;
+const Tc = 3;
+const S = 4;
+const Sc = 5;
+const SS = 6;
+const SSc = 7;
 
 // String names for the different sizes
-var sizeNames = [
+const sizeNames = [
     "displaystyle textstyle",
     "textstyle",
     "scriptstyle",
@@ -38166,7 +38786,7 @@ var sizeNames = [
 ];
 
 // Reset names for the different sizes
-var resetNames = [
+const resetNames = [
     "reset-textstyle",
     "reset-textstyle",
     "reset-scriptstyle",
@@ -38174,7 +38794,7 @@ var resetNames = [
 ];
 
 // Instances of the different styles
-var styles = [
+const styles = [
     new Style(D, 0, 1.0, false),
     new Style(Dc, 0, 1.0, true),
     new Style(T, 1, 1.0, false),
@@ -38186,11 +38806,11 @@ var styles = [
 ];
 
 // Lookup tables for switching from one style to another
-var sup = [S, Sc, S, Sc, SS, SSc, SS, SSc];
-var sub = [Sc, Sc, Sc, Sc, SSc, SSc, SSc, SSc];
-var fracNum = [T, Tc, S, Sc, SS, SSc, SS, SSc];
-var fracDen = [Tc, Tc, Sc, Sc, SSc, SSc, SSc, SSc];
-var cramp = [Dc, Dc, Tc, Tc, Sc, Sc, SSc, SSc];
+const sup = [S, Sc, S, Sc, SS, SSc, SS, SSc];
+const sub = [Sc, Sc, Sc, Sc, SSc, SSc, SSc, SSc];
+const fracNum = [T, Tc, S, Sc, SS, SSc, SS, SSc];
+const fracDen = [Tc, Tc, Sc, Sc, SSc, SSc, SSc, SSc];
+const cramp = [Dc, Dc, Tc, Tc, Sc, Sc, SSc, SSc];
 
 // We only export some of the styles. Also, we don't export the `Style` class so
 // no more styles can be generated.
@@ -38201,65 +38821,78 @@ module.exports = {
     SCRIPTSCRIPT: styles[SS],
 };
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/buildCommon.js":[function(require,module,exports){
+},{"./fontMetrics.js":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/fontMetrics.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/buildCommon.js":[function(require,module,exports){
 /* eslint no-console:0 */
 /**
  * This module contains general functions that can be used for building
  * different kinds of domTree nodes in a consistent manner.
  */
 
-var domTree = require("./domTree");
-var fontMetrics = require("./fontMetrics");
-var symbols = require("./symbols");
-var utils = require("./utils");
+const domTree = require("./domTree");
+const fontMetrics = require("./fontMetrics");
+const symbols = require("./symbols");
+const utils = require("./utils");
 
-var greekCapitals = [
-    "\\Gamma",
-    "\\Delta",
-    "\\Theta",
-    "\\Lambda",
-    "\\Xi",
-    "\\Pi",
-    "\\Sigma",
-    "\\Upsilon",
-    "\\Phi",
-    "\\Psi",
-    "\\Omega",
+// The following have to be loaded from Main-Italic font, using class mainit
+const mainitLetters = [
+    "\\imath",   // dotless i
+    "\\jmath",   // dotless j
+    "\\pounds",  // pounds symbol
 ];
 
-var dotlessLetters = [
-    "\u0131",   // dotless i, \imath
-    "\u0237",   // dotless j, \jmath
-];
+/**
+ * Looks up the given symbol in fontMetrics, after applying any symbol
+ * replacements defined in symbol.js
+ */
+const lookupSymbol = function(value, fontFamily, mode) {
+    // Replace the value with its replaced value from symbol.js
+    if (symbols[mode][value] && symbols[mode][value].replace) {
+        value = symbols[mode][value].replace;
+    }
+    return {
+        value: value,
+        metrics: fontMetrics.getCharacterMetrics(value, fontFamily),
+    };
+};
 
 /**
  * Makes a symbolNode after translation via the list of symbols in symbols.js.
  * Correctly pulls out metrics for the character, and optionally takes a list of
  * classes to be attached to the node.
+ *
+ * TODO: make argument order closer to makeSpan
+ * TODO: add a separate argument for math class (e.g. `mop`, `mbin`), which
+ * should if present come first in `classes`.
  */
-var makeSymbol = function(value, style, mode, color, classes) {
-    // Replace the value with its replaced value from symbol.js
-    if (symbols[mode][value] && symbols[mode][value].replace) {
-        value = symbols[mode][value].replace;
-    }
+const makeSymbol = function(value, fontFamily, mode, options, classes) {
+    const lookup = lookupSymbol(value, fontFamily, mode);
+    const metrics = lookup.metrics;
+    value = lookup.value;
 
-    var metrics = fontMetrics.getCharacterMetrics(value, style);
-
-    var symbolNode;
+    let symbolNode;
     if (metrics) {
+        let italic = metrics.italic;
+        if (mode === "text") {
+            italic = 0;
+        }
         symbolNode = new domTree.symbolNode(
-            value, metrics.height, metrics.depth, metrics.italic, metrics.skew,
+            value, metrics.height, metrics.depth, italic, metrics.skew,
             classes);
     } else {
         // TODO(emily): Figure out a good way to only print this in development
         typeof console !== "undefined" && console.warn(
             "No character metrics for '" + value + "' in style '" +
-                style + "'");
+                fontFamily + "'");
         symbolNode = new domTree.symbolNode(value, 0, 0, 0, 0, classes);
     }
 
-    if (color) {
-        symbolNode.style.color = color;
+    if (options) {
+        if (options.style.isTight()) {
+            symbolNode.classes.push("mtight");
+        }
+        if (options.getColor()) {
+            symbolNode.style.color = options.getColor();
+        }
     }
 
     return symbolNode;
@@ -38269,7 +38902,7 @@ var makeSymbol = function(value, style, mode, color, classes) {
  * Makes a symbol in Main-Regular or AMS-Regular.
  * Used for rel, bin, open, close, inner, and punct.
  */
-var mathsym = function(value, mode, color, classes) {
+const mathsym = function(value, mode, options, classes) {
     // Decide what font to render the symbol in by its entry in the symbols
     // table.
     // Have a special case for when the value = \ because the \ is used as a
@@ -38277,72 +38910,84 @@ var mathsym = function(value, mode, color, classes) {
     // text ordinal and is therefore not present as a symbol in the symbols
     // table for text
     if (value === "\\" || symbols[mode][value].font === "main") {
-        return makeSymbol(value, "Main-Regular", mode, color, classes);
+        return makeSymbol(value, "Main-Regular", mode, options, classes);
     } else {
         return makeSymbol(
-            value, "AMS-Regular", mode, color, classes.concat(["amsrm"]));
+            value, "AMS-Regular", mode, options, classes.concat(["amsrm"]));
     }
 };
 
 /**
  * Makes a symbol in the default font for mathords and textords.
  */
-var mathDefault = function(value, mode, color, classes, type) {
+const mathDefault = function(value, mode, options, classes, type) {
     if (type === "mathord") {
-        return mathit(value, mode, color, classes);
+        const fontLookup = mathit(value, mode, options, classes);
+        return makeSymbol(value, fontLookup.fontName, mode, options,
+            classes.concat([fontLookup.fontClass]));
     } else if (type === "textord") {
-        return makeSymbol(
-            value, "Main-Regular", mode, color, classes.concat(["mathrm"]));
+        const font = symbols[mode][value] && symbols[mode][value].font;
+        if (font === "ams") {
+            return makeSymbol(
+                value, "AMS-Regular", mode, options, classes.concat(["amsrm"]));
+        } else { // if (font === "main") {
+            return makeSymbol(
+                value, "Main-Regular", mode, options,
+                classes.concat(["mathrm"]));
+        }
     } else {
         throw new Error("unexpected type: " + type + " in mathDefault");
     }
 };
 
 /**
- * Makes a symbol in the italic math font.
+ * Determines which of the two font names (Main-Italic and Math-Italic) and
+ * corresponding style tags (mainit or mathit) to use for font "mathit",
+ * depending on the symbol.  Use this function instead of fontMap for font
+ * "mathit".
  */
-var mathit = function(value, mode, color, classes) {
+const mathit = function(value, mode, options, classes) {
     if (/[0-9]/.test(value.charAt(0)) ||
             // glyphs for \imath and \jmath do not exist in Math-Italic so we
             // need to use Main-Italic instead
-            utils.contains(dotlessLetters, value) ||
-            utils.contains(greekCapitals, value)) {
-        return makeSymbol(
-            value, "Main-Italic", mode, color, classes.concat(["mainit"]));
+            utils.contains(mainitLetters, value)) {
+        return {
+            fontName: "Main-Italic",
+            fontClass: "mainit",
+        };
     } else {
-        return makeSymbol(
-            value, "Math-Italic", mode, color, classes.concat(["mathit"]));
+        return {
+            fontName: "Math-Italic",
+            fontClass: "mathit",
+        };
     }
 };
 
 /**
  * Makes either a mathord or textord in the correct font and color.
  */
-var makeOrd = function(group, options, type) {
-    var mode = group.mode;
-    var value = group.value;
-    if (symbols[mode][value] && symbols[mode][value].replace) {
-        value = symbols[mode][value].replace;
-    }
+const makeOrd = function(group, options, type) {
+    const mode = group.mode;
+    const value = group.value;
 
-    var classes = ["mord"];
-    var color = options.getColor();
+    const classes = ["mord"];
 
-    var font = options.font;
+    const font = options.font;
     if (font) {
-        if (font === "mathit" || utils.contains(dotlessLetters, value)) {
-            return mathit(value, mode, color, classes);
+        let fontLookup;
+        if (font === "mathit" || utils.contains(mainitLetters, value)) {
+            fontLookup = mathit(value, mode, options, classes);
         } else {
-            var fontName = fontMap[font].fontName;
-            if (fontMetrics.getCharacterMetrics(value, fontName)) {
-                return makeSymbol(
-                    value, fontName, mode, color, classes.concat([font]));
-            } else {
-                return mathDefault(value, mode, color, classes, type);
-            }
+            fontLookup = fontMap[font];
+        }
+        if (lookupSymbol(value, fontLookup.fontName, mode).metrics) {
+            return makeSymbol(value, fontLookup.fontName, mode, options,
+                classes.concat([fontLookup.fontClass || font]));
+        } else {
+            return mathDefault(value, mode, options, classes, type);
         }
     } else {
-        return mathDefault(value, mode, color, classes, type);
+        return mathDefault(value, mode, options, classes, type);
     }
 };
 
@@ -38350,13 +38995,13 @@ var makeOrd = function(group, options, type) {
  * Calculate the height, depth, and maxFontSize of an element based on its
  * children.
  */
-var sizeElementFromChildren = function(elem) {
-    var height = 0;
-    var depth = 0;
-    var maxFontSize = 0;
+const sizeElementFromChildren = function(elem) {
+    let height = 0;
+    let depth = 0;
+    let maxFontSize = 0;
 
     if (elem.children) {
-        for (var i = 0; i < elem.children.length; i++) {
+        for (let i = 0; i < elem.children.length; i++) {
             if (elem.children[i].height > height) {
                 height = elem.children[i].height;
             }
@@ -38375,25 +39020,36 @@ var sizeElementFromChildren = function(elem) {
 };
 
 /**
- * Makes a span with the given list of classes, list of children, and color.
+ * Makes a span with the given list of classes, list of children, and options.
+ *
+ * TODO: Ensure that `options` is always provided (currently some call sites
+ * don't pass it).
+ * TODO: add a separate argument for math class (e.g. `mop`, `mbin`), which
+ * should if present come first in `classes`.
  */
-var makeSpan = function(classes, children, color) {
-    var span = new domTree.span(classes, children);
+const makeSpan = function(classes, children, options) {
+    const span = new domTree.span(classes, children, options);
 
     sizeElementFromChildren(span);
-
-    if (color) {
-        span.style.color = color;
-    }
 
     return span;
 };
 
 /**
+ * Prepends the given children to the given span, updating height, depth, and
+ * maxFontSize.
+ */
+const prependChildren = function(span, children) {
+    span.children = children.concat(span.children);
+
+    sizeElementFromChildren(span);
+};
+
+/**
  * Makes a document fragment with the given list of children.
  */
-var makeFragment = function(children) {
-    var fragment = new domTree.documentFragment(children);
+const makeFragment = function(children) {
+    const fragment = new domTree.documentFragment(children);
 
     sizeElementFromChildren(fragment);
 
@@ -38405,12 +39061,12 @@ var makeFragment = function(children) {
  * element has the same max font size. To do this, we create a zero-width space
  * with the correct font size.
  */
-var makeFontSizer = function(options, fontSize) {
-    var fontSizeInner = makeSpan([], [new domTree.symbolNode("\u200b")]);
+const makeFontSizer = function(options, fontSize) {
+    const fontSizeInner = makeSpan([], [new domTree.symbolNode("\u200b")]);
     fontSizeInner.style.fontSize =
         (fontSize / options.style.sizeMultiplier) + "em";
 
-    var fontSizer = makeSpan(
+    const fontSizer = makeSpan(
         ["fontsize-ensurer", "reset-" + options.size, "size5"],
         [fontSizeInner]);
 
@@ -38456,12 +39112,12 @@ var makeFontSizer = function(options, fontSize) {
  *  - options: An Options object
  *
  */
-var makeVList = function(children, positionType, positionData, options) {
-    var depth;
-    var currPos;
-    var i;
+const makeVList = function(children, positionType, positionData, options) {
+    let depth;
+    let currPos;
+    let i;
     if (positionType === "individualShift") {
-        var oldChildren = children;
+        const oldChildren = children;
         children = [oldChildren[0]];
 
         // Add in kerns to the list of children to get each element to be
@@ -38469,9 +39125,9 @@ var makeVList = function(children, positionType, positionData, options) {
         depth = -oldChildren[0].shift - oldChildren[0].elem.depth;
         currPos = depth;
         for (i = 1; i < oldChildren.length; i++) {
-            var diff = -oldChildren[i].shift - currPos -
+            const diff = -oldChildren[i].shift - currPos -
                 oldChildren[i].elem.depth;
-            var size = diff -
+            const size = diff -
                 (oldChildren[i - 1].elem.height +
                  oldChildren[i - 1].elem.depth);
 
@@ -38483,7 +39139,7 @@ var makeVList = function(children, positionType, positionData, options) {
     } else if (positionType === "top") {
         // We always start at the bottom, so calculate the bottom by adding up
         // all the sizes
-        var bottom = positionData;
+        let bottom = positionData;
         for (i = 0; i < children.length; i++) {
             if (children[i].type === "kern") {
                 bottom -= children[i].size;
@@ -38503,27 +39159,27 @@ var makeVList = function(children, positionType, positionData, options) {
     }
 
     // Make the fontSizer
-    var maxFontSize = 0;
+    let maxFontSize = 0;
     for (i = 0; i < children.length; i++) {
         if (children[i].type === "elem") {
             maxFontSize = Math.max(maxFontSize, children[i].elem.maxFontSize);
         }
     }
-    var fontSizer = makeFontSizer(options, maxFontSize);
+    const fontSizer = makeFontSizer(options, maxFontSize);
 
     // Create a new list of actual children at the correct offsets
-    var realChildren = [];
+    const realChildren = [];
     currPos = depth;
     for (i = 0; i < children.length; i++) {
         if (children[i].type === "kern") {
             currPos += children[i].size;
         } else {
-            var child = children[i].elem;
+            const child = children[i].elem;
 
-            var shift = -child.depth - currPos;
+            const shift = -child.depth - currPos;
             currPos += child.height + child.depth;
 
-            var childWrap = makeSpan([], [fontSizer, child]);
+            const childWrap = makeSpan([], [fontSizer, child]);
             childWrap.height -= shift;
             childWrap.depth += shift;
             childWrap.style.top = shift + "em";
@@ -38534,11 +39190,11 @@ var makeVList = function(children, positionType, positionData, options) {
 
     // Add in an element at the end with no offset to fix the calculation of
     // baselines in some browsers (namely IE, sometimes safari)
-    var baselineFix = makeSpan(
+    const baselineFix = makeSpan(
         ["baseline-fix"], [fontSizer, new domTree.symbolNode("\u200b")]);
     realChildren.push(baselineFix);
 
-    var vlist = makeSpan(["vlist"], realChildren);
+    const vlist = makeSpan(["vlist"], realChildren);
     // Fix the final height and depth, in case there were kerns at the ends
     // since the makeSpan calculation won't take that in to account.
     vlist.height = Math.max(currPos, vlist.height);
@@ -38547,7 +39203,7 @@ var makeVList = function(children, positionType, positionData, options) {
 };
 
 // A table of size -> font size for the different sizing functions
-var sizingMultiplier = {
+const sizingMultiplier = {
     size1: 0.5,
     size2: 0.7,
     size3: 0.8,
@@ -38562,7 +39218,7 @@ var sizingMultiplier = {
 
 // A map of spacing functions to their attributes, like size and corresponding
 // CSS class
-var spacingFunctions = {
+const spacingFunctions = {
     "\\qquad": {
         size: "2em",
         className: "qquad",
@@ -38599,7 +39255,7 @@ var spacingFunctions = {
  * - fontName: the "style" parameter to fontMetrics.getCharacterMetrics
  */
 // A map between tex font commands an MathML mathvariant attribute values
-var fontMap = {
+const fontMap = {
     // styles
     "mathbf": {
         variant: "bold",
@@ -38608,6 +39264,10 @@ var fontMap = {
     "mathrm": {
         variant: "normal",
         fontName: "Main-Regular",
+    },
+    "textit": {
+        variant: "italic",
+        fontName: "Main-Italic",
     },
 
     // "mathit" is missing because it requires the use of two fonts: Main-Italic
@@ -38649,6 +39309,7 @@ module.exports = {
     makeFragment: makeFragment,
     makeVList: makeVList,
     makeOrd: makeOrd,
+    prependChildren: prependChildren,
     sizingMultiplier: sizingMultiplier,
     spacingFunctions: spacingFunctions,
 };
@@ -38662,91 +39323,121 @@ module.exports = {
  * called, to produce a final HTML tree.
  */
 
-var ParseError = require("./ParseError");
-var Style = require("./Style");
+const ParseError = require("./ParseError");
+const Style = require("./Style");
 
-var buildCommon = require("./buildCommon");
-var delimiter = require("./delimiter");
-var domTree = require("./domTree");
-var fontMetrics = require("./fontMetrics");
-var utils = require("./utils");
+const buildCommon = require("./buildCommon");
+const delimiter = require("./delimiter");
+const domTree = require("./domTree");
+const fontMetrics = require("./fontMetrics");
+const utils = require("./utils");
 
-var makeSpan = buildCommon.makeSpan;
+const makeSpan = buildCommon.makeSpan;
+
+const isSpace = function(node) {
+    return node instanceof domTree.span && node.classes[0] === "mspace";
+};
+
+// Binary atoms (first class `mbin`) change into ordinary atoms (`mord`)
+// depending on their surroundings. See TeXbook pg. 442-446, Rules 5 and 6,
+// and the text before Rule 19.
+
+const isBin = function(node) {
+    return node && node.classes[0] === "mbin";
+};
+
+const isBinLeftCanceller = function(node, isRealGroup) {
+    // TODO: This code assumes that a node's math class is the first element
+    // of its `classes` array. A later cleanup should ensure this, for
+    // instance by changing the signature of `makeSpan`.
+    if (node) {
+        return utils.contains(["mbin", "mopen", "mrel", "mop", "mpunct"],
+                              node.classes[0]);
+    } else {
+        return isRealGroup;
+    }
+};
+
+const isBinRightCanceller = function(node, isRealGroup) {
+    if (node) {
+        return utils.contains(["mrel", "mclose", "mpunct"], node.classes[0]);
+    } else {
+        return isRealGroup;
+    }
+};
 
 /**
  * Take a list of nodes, build them in order, and return a list of the built
- * nodes. This function handles the `prev` node correctly, and passes the
- * previous element from the list as the prev of the next element.
+ * nodes. documentFragments are flattened into their contents, so the
+ * returned list contains no fragments. `isRealGroup` is true if `expression`
+ * is a real group (no atoms will be added on either side), as opposed to
+ * a partial group (e.g. one created by \color).
  */
-var buildExpression = function(expression, options, prev) {
-    var groups = [];
-    for (var i = 0; i < expression.length; i++) {
-        var group = expression[i];
-        groups.push(buildGroup(group, options, prev));
-        prev = group;
+const buildExpression = function(expression, options, isRealGroup) {
+    // Parse expressions into `groups`.
+    const groups = [];
+    for (let i = 0; i < expression.length; i++) {
+        const group = expression[i];
+        const output = buildGroup(group, options);
+        if (output instanceof domTree.documentFragment) {
+            Array.prototype.push.apply(groups, output.children);
+        } else {
+            groups.push(output);
+        }
     }
+    // At this point `groups` consists entirely of `symbolNode`s and `span`s.
+
+    // Explicit spaces (e.g., \;, \,) should be ignored with respect to atom
+    // spacing (e.g., "add thick space between mord and mrel"). Since CSS
+    // adjacency rules implement atom spacing, spaces should be invisible to
+    // CSS. So we splice them out of `groups` and into the atoms themselves.
+    let spaces = null;
+    for (let i = 0; i < groups.length; i++) {
+        if (isSpace(groups[i])) {
+            spaces = spaces || [];
+            spaces.push(groups[i]);
+            groups.splice(i, 1);
+            i--;
+        } else if (spaces) {
+            if (groups[i] instanceof domTree.symbolNode) {
+                groups[i] = makeSpan([].concat(groups[i].classes), [groups[i]]);
+            }
+            buildCommon.prependChildren(groups[i], spaces);
+            spaces = null;
+        }
+    }
+    if (spaces) {
+        Array.prototype.push.apply(groups, spaces);
+    }
+
+    // Binary operators change to ordinary symbols in some contexts.
+    for (let i = 0; i < groups.length; i++) {
+        if (isBin(groups[i])
+            && (isBinLeftCanceller(groups[i - 1], isRealGroup)
+                || isBinRightCanceller(groups[i + 1], isRealGroup))) {
+            groups[i].classes[0] = "mord";
+        }
+    }
+
     return groups;
 };
 
-// List of types used by getTypeOfGroup,
-// see https://github.com/Khan/KaTeX/wiki/Examining-TeX#group-types
-var groupToType = {
-    mathord: "mord",
-    textord: "mord",
-    bin: "mbin",
-    rel: "mrel",
-    text: "mord",
-    open: "mopen",
-    close: "mclose",
-    inner: "minner",
-    genfrac: "mord",
-    array: "mord",
-    spacing: "mord",
-    punct: "mpunct",
-    ordgroup: "mord",
-    op: "mop",
-    katex: "mord",
-    overline: "mord",
-    underline: "mord",
-    rule: "mord",
-    leftright: "minner",
-    sqrt: "mord",
-    accent: "mord",
-};
-
-/**
- * Gets the final math type of an expression, given its group type. This type is
- * used to determine spacing between elements, and affects bin elements by
- * causing them to change depending on what types are around them. This type
- * must be attached to the outermost node of an element as a CSS class so that
- * spacing with its surrounding elements works correctly.
- *
- * Some elements can be mapped one-to-one from group type to math type, and
- * those are listed in the `groupToType` table.
- *
- * Others (usually elements that wrap around other elements) often have
- * recursive definitions, and thus call `getTypeOfGroup` on their inner
- * elements.
- */
-var getTypeOfGroup = function(group) {
-    if (group == null) {
-        // Like when typesetting $^3$
-        return groupToType.mathord;
-    } else if (group.type === "supsub") {
-        return getTypeOfGroup(group.value.base);
-    } else if (group.type === "llap" || group.type === "rlap") {
-        return getTypeOfGroup(group.value);
-    } else if (group.type === "color") {
-        return getTypeOfGroup(group.value.value);
-    } else if (group.type === "sizing") {
-        return getTypeOfGroup(group.value.value);
-    } else if (group.type === "styling") {
-        return getTypeOfGroup(group.value.value);
-    } else if (group.type === "delimsizing") {
-        return groupToType[group.value.delimType];
+// Return math atom class (mclass) of a domTree.
+const getTypeOfDomTree = function(node) {
+    if (node instanceof domTree.documentFragment) {
+        if (node.children.length) {
+            return getTypeOfDomTree(
+                node.children[node.children.length - 1]);
+        }
     } else {
-        return groupToType[group.type];
+        if (utils.contains([
+            "mord", "mop", "mbin", "mrel", "mopen", "mclose",
+            "mpunct", "minner",
+        ], node.classes[0])) {
+            return node.classes[0];
+        }
     }
+    return null;
 };
 
 /**
@@ -38755,7 +39446,7 @@ var getTypeOfGroup = function(group) {
  * its inner element should handle the superscripts and subscripts instead of
  * handling them itself.
  */
-var shouldHandleSupSub = function(group, options) {
+const shouldHandleSupSub = function(group, options) {
     if (!group) {
         return false;
     } else if (group.type === "op") {
@@ -38776,7 +39467,7 @@ var shouldHandleSupSub = function(group, options) {
  * cases, this will just be the group itself, but when ordgroups and colors have
  * a single element, we want to pull that out.
  */
-var getBaseElem = function(group) {
+const getBaseElem = function(group) {
     if (!group) {
         return false;
     } else if (group.type === "ordgroup") {
@@ -38791,6 +39482,8 @@ var getBaseElem = function(group) {
         } else {
             return group;
         }
+    } else if (group.type === "font") {
+        return getBaseElem(group.value.body);
     } else {
         return group;
     }
@@ -38801,8 +39494,8 @@ var getBaseElem = function(group) {
  * with a single character in them. To decide if something is a character box,
  * we find its innermost group, and see if it is a single character.
  */
-var isCharacterBox = function(group) {
-    var baseElem = getBaseElem(group);
+const isCharacterBox = function(group) {
+    const baseElem = getBaseElem(group);
 
     // These are all they types of groups which hold single characters
     return baseElem.type === "mathord" ||
@@ -38815,93 +39508,83 @@ var isCharacterBox = function(group) {
         baseElem.type === "punct";
 };
 
-var makeNullDelimiter = function(options) {
-    return makeSpan([
+const makeNullDelimiter = function(options, classes) {
+    return makeSpan(classes.concat([
         "sizing", "reset-" + options.size, "size5",
         options.style.reset(), Style.TEXT.cls(),
-        "nulldelimiter",
-    ]);
+        "nulldelimiter"]));
 };
 
 /**
  * This is a map of group types to the function used to handle that type.
  * Simpler types come at the beginning, while complicated types come afterwards.
  */
-var groupTypes = {};
+const groupTypes = {};
 
-groupTypes.mathord = function(group, options, prev) {
+groupTypes.mathord = function(group, options) {
     return buildCommon.makeOrd(group, options, "mathord");
 };
 
-groupTypes.textord = function(group, options, prev) {
+groupTypes.textord = function(group, options) {
     return buildCommon.makeOrd(group, options, "textord");
 };
 
-groupTypes.bin = function(group, options, prev) {
-    var className = "mbin";
-    // Pull out the most recent element. Do some special handling to find
-    // things at the end of a \color group. Note that we don't use the same
-    // logic for ordgroups (which count as ords).
-    var prevAtom = prev;
-    while (prevAtom && prevAtom.type === "color") {
-        var atoms = prevAtom.value.value;
-        prevAtom = atoms[atoms.length - 1];
-    }
-    // See TeXbook pg. 442-446, Rules 5 and 6, and the text before Rule 19.
-    // Here, we determine whether the bin should turn into an ord. We
-    // currently only apply Rule 5.
-    if (!prev || utils.contains(["mbin", "mopen", "mrel", "mop", "mpunct"],
-            getTypeOfGroup(prevAtom))) {
-        group.type = "textord";
-        className = "mord";
-    }
-
+groupTypes.bin = function(group, options) {
     return buildCommon.mathsym(
-        group.value, group.mode, options.getColor(), [className]);
+        group.value, group.mode, options, ["mbin"]);
 };
 
-groupTypes.rel = function(group, options, prev) {
+groupTypes.rel = function(group, options) {
     return buildCommon.mathsym(
-        group.value, group.mode, options.getColor(), ["mrel"]);
+        group.value, group.mode, options, ["mrel"]);
 };
 
-groupTypes.open = function(group, options, prev) {
+groupTypes.open = function(group, options) {
     return buildCommon.mathsym(
-        group.value, group.mode, options.getColor(), ["mopen"]);
+        group.value, group.mode, options, ["mopen"]);
 };
 
-groupTypes.close = function(group, options, prev) {
+groupTypes.close = function(group, options) {
     return buildCommon.mathsym(
-        group.value, group.mode, options.getColor(), ["mclose"]);
+        group.value, group.mode, options, ["mclose"]);
 };
 
-groupTypes.inner = function(group, options, prev) {
+groupTypes.inner = function(group, options) {
     return buildCommon.mathsym(
-        group.value, group.mode, options.getColor(), ["minner"]);
+        group.value, group.mode, options, ["minner"]);
 };
 
-groupTypes.punct = function(group, options, prev) {
+groupTypes.punct = function(group, options) {
     return buildCommon.mathsym(
-        group.value, group.mode, options.getColor(), ["mpunct"]);
+        group.value, group.mode, options, ["mpunct"]);
 };
 
-groupTypes.ordgroup = function(group, options, prev) {
+groupTypes.ordgroup = function(group, options) {
     return makeSpan(
         ["mord", options.style.cls()],
-        buildExpression(group.value, options.reset())
+        buildExpression(group.value, options.reset(), true),
+        options
     );
 };
 
-groupTypes.text = function(group, options, prev) {
-    return makeSpan(["text", "mord", options.style.cls()],
-        buildExpression(group.value.body, options.reset()));
+groupTypes.text = function(group, options) {
+    const newOptions = options.withFont(group.value.style);
+    const inner = buildExpression(group.value.body, newOptions, true);
+    for (let i = 0; i < inner.length - 1; i++) {
+        if (inner[i].tryCombine(inner[i + 1])) {
+            inner.splice(i + 1, 1);
+            i--;
+        }
+    }
+    return makeSpan(["mord", "text", newOptions.style.cls()],
+        inner, newOptions);
 };
 
-groupTypes.color = function(group, options, prev) {
-    var elements = buildExpression(
+groupTypes.color = function(group, options) {
+    const elements = buildExpression(
         group.value.value,
         options.withColor(group.value.color),
-        prev
+        false
     );
 
     // \color isn't supposed to affect the type of the elements it contains.
@@ -38911,70 +39594,73 @@ groupTypes.color = function(group, options, prev) {
     return new buildCommon.makeFragment(elements);
 };
 
-groupTypes.supsub = function(group, options, prev) {
+groupTypes.supsub = function(group, options) {
     // Superscript and subscripts are handled in the TeXbook on page
     // 445-446, rules 18(a-f).
 
     // Here is where we defer to the inner group if it should handle
     // superscripts and subscripts itself.
     if (shouldHandleSupSub(group.value.base, options)) {
-        return groupTypes[group.value.base.type](group, options, prev);
+        return groupTypes[group.value.base.type](group, options);
     }
 
-    var base = buildGroup(group.value.base, options.reset());
-    var supmid;
-    var submid;
-    var sup;
-    var sub;
+    const base = buildGroup(group.value.base, options.reset());
+    let supmid;
+    let submid;
+    let sup;
+    let sub;
+
+    const style = options.style;
+    let newOptions;
 
     if (group.value.sup) {
-        sup = buildGroup(group.value.sup,
-                options.withStyle(options.style.sup()));
-        supmid = makeSpan(
-                [options.style.reset(), options.style.sup().cls()], [sup]);
+        newOptions = options.withStyle(style.sup());
+        sup = buildGroup(group.value.sup, newOptions);
+        supmid = makeSpan([style.reset(), style.sup().cls()],
+            [sup], newOptions);
     }
 
     if (group.value.sub) {
-        sub = buildGroup(group.value.sub,
-                options.withStyle(options.style.sub()));
-        submid = makeSpan(
-                [options.style.reset(), options.style.sub().cls()], [sub]);
+        newOptions = options.withStyle(style.sub());
+        sub = buildGroup(group.value.sub, newOptions);
+        submid = makeSpan([style.reset(), style.sub().cls()],
+            [sub], newOptions);
     }
 
     // Rule 18a
-    var supShift;
-    var subShift;
+    let supShift;
+    let subShift;
     if (isCharacterBox(group.value.base)) {
         supShift = 0;
         subShift = 0;
     } else {
-        supShift = base.height - fontMetrics.metrics.supDrop;
-        subShift = base.depth + fontMetrics.metrics.subDrop;
+        supShift = base.height - style.metrics.supDrop;
+        subShift = base.depth + style.metrics.subDrop;
     }
 
     // Rule 18c
-    var minSupShift;
-    if (options.style === Style.DISPLAY) {
-        minSupShift = fontMetrics.metrics.sup1;
-    } else if (options.style.cramped) {
-        minSupShift = fontMetrics.metrics.sup3;
+    let minSupShift;
+    if (style === Style.DISPLAY) {
+        minSupShift = style.metrics.sup1;
+    } else if (style.cramped) {
+        minSupShift = style.metrics.sup3;
     } else {
-        minSupShift = fontMetrics.metrics.sup2;
+        minSupShift = style.metrics.sup2;
     }
 
     // scriptspace is a font-size-independent size, so scale it
     // appropriately
-    var multiplier = Style.TEXT.sizeMultiplier *
-            options.style.sizeMultiplier;
-    var scriptspace =
+    const multiplier = Style.TEXT.sizeMultiplier *
+            style.sizeMultiplier;
+    const scriptspace =
         (0.5 / fontMetrics.metrics.ptPerEm) / multiplier + "em";
 
-    var supsub;
+    let supsub;
     if (!group.value.sup) {
         // Rule 18b
         subShift = Math.max(
-            subShift, fontMetrics.metrics.sub1,
-            sub.height - 0.8 * fontMetrics.metrics.xHeight);
+            subShift, style.metrics.sub1,
+            sub.height - 0.8 * style.metrics.xHeight);
 
         supsub = buildCommon.makeVList([
             {type: "elem", elem: submid},
@@ -38991,7 +39677,7 @@ groupTypes.supsub = function(group, options, prev) {
     } else if (!group.value.sub) {
         // Rule 18c, d
         supShift = Math.max(supShift, minSupShift,
-            sup.depth + 0.25 * fontMetrics.metrics.xHeight);
+            sup.depth + 0.25 * style.metrics.xHeight);
 
         supsub = buildCommon.makeVList([
             {type: "elem", elem: supmid},
@@ -39000,18 +39686,16 @@ groupTypes.supsub = function(group, options, prev) {
         supsub.children[0].style.marginRight = scriptspace;
     } else {
         supShift = Math.max(
-            supShift, minSupShift,
-            sup.depth + 0.25 * fontMetrics.metrics.xHeight);
-        subShift = Math.max(subShift, fontMetrics.metrics.sub2);
+            supShift, minSupShift, sup.depth + 0.25 * style.metrics.xHeight);
+        subShift = Math.max(subShift, style.metrics.sub2);
 
-        var ruleWidth = fontMetrics.metrics.defaultRuleThickness;
+        const ruleWidth = fontMetrics.metrics.defaultRuleThickness;
 
         // Rule 18e
         if ((supShift - sup.depth) - (sub.height - subShift) <
                 4 * ruleWidth) {
             subShift = 4 * ruleWidth - (supShift - sup.depth) + sub.height;
-            var psi = 0.8 * fontMetrics.metrics.xHeight -
-                (supShift - sup.depth);
+            const psi = 0.8 * style.metrics.xHeight - (supShift - sup.depth);
             if (psi > 0) {
                 supShift += psi;
                 subShift -= psi;
@@ -39032,31 +39716,39 @@ groupTypes.supsub = function(group, options, prev) {
         supsub.children[1].style.marginRight = scriptspace;
     }
 
-    return makeSpan([getTypeOfGroup(group.value.base)],
-        [base, supsub]);
+    // We ensure to wrap the supsub vlist in a span.msupsub to reset text-align
+    const mclass = getTypeOfDomTree(base) || "mord";
+    return makeSpan([mclass],
+        [base, makeSpan(["msupsub"], [supsub])],
+        options);
 };
 
-groupTypes.genfrac = function(group, options, prev) {
+groupTypes.genfrac = function(group, options) {
     // Fractions are handled in the TeXbook on pages 444-445, rules 15(a-e).
     // Figure out what style this fraction should be in based on the
     // function used
-    var fstyle = options.style;
+    let style = options.style;
     if (group.value.size === "display") {
-        fstyle = Style.DISPLAY;
+        style = Style.DISPLAY;
     } else if (group.value.size === "text") {
-        fstyle = Style.TEXT;
+        style = Style.TEXT;
     }
 
-    var nstyle = fstyle.fracNum();
-    var dstyle = fstyle.fracDen();
+    const nstyle = style.fracNum();
+    const dstyle = style.fracDen();
+    let newOptions;
 
-    var numer = buildGroup(group.value.numer, options.withStyle(nstyle));
-    var numerreset = makeSpan([fstyle.reset(), nstyle.cls()], [numer]);
+    newOptions = options.withStyle(nstyle);
+    const numer = buildGroup(group.value.numer, newOptions);
+    const numerreset = makeSpan([style.reset(), nstyle.cls()],
+        [numer], newOptions);
 
-    var denom = buildGroup(group.value.denom, options.withStyle(dstyle));
-    var denomreset = makeSpan([fstyle.reset(), dstyle.cls()], [denom]);
+    newOptions = options.withStyle(dstyle);
+    const denom = buildGroup(group.value.denom, newOptions);
+    const denomreset = makeSpan([style.reset(), dstyle.cls()],
+        [denom], newOptions);
 
-    var ruleWidth;
+    let ruleWidth;
     if (group.value.hasBarLine) {
         ruleWidth = fontMetrics.metrics.defaultRuleThickness /
             options.style.sizeMultiplier;
@@ -39065,36 +39757,36 @@ groupTypes.genfrac = function(group, options, prev) {
     }
 
     // Rule 15b
-    var numShift;
-    var clearance;
-    var denomShift;
-    if (fstyle.size === Style.DISPLAY.size) {
-        numShift = fontMetrics.metrics.num1;
+    let numShift;
+    let clearance;
+    let denomShift;
+    if (style.size === Style.DISPLAY.size) {
+        numShift = style.metrics.num1;
         if (ruleWidth > 0) {
             clearance = 3 * ruleWidth;
         } else {
             clearance = 7 * fontMetrics.metrics.defaultRuleThickness;
         }
-        denomShift = fontMetrics.metrics.denom1;
+        denomShift = style.metrics.denom1;
     } else {
         if (ruleWidth > 0) {
-            numShift = fontMetrics.metrics.num2;
+            numShift = style.metrics.num2;
             clearance = ruleWidth;
         } else {
-            numShift = fontMetrics.metrics.num3;
+            numShift = style.metrics.num3;
             clearance = 3 * fontMetrics.metrics.defaultRuleThickness;
         }
-        denomShift = fontMetrics.metrics.denom2;
+        denomShift = style.metrics.denom2;
     }
 
-    var frac;
+    let frac;
     if (ruleWidth === 0) {
         // Rule 15c
-        var candiateClearance =
+        const candidateClearance =
             (numShift - numer.depth) - (denom.height - denomShift);
-        if (candiateClearance < clearance) {
-            numShift += 0.5 * (clearance - candiateClearance);
-            denomShift += 0.5 * (clearance - candiateClearance);
+        if (candidateClearance < clearance) {
+            numShift += 0.5 * (clearance - candidateClearance);
+            denomShift += 0.5 * (clearance - candidateClearance);
         }
 
         frac = buildCommon.makeVList([
@@ -39103,7 +39795,7 @@ groupTypes.genfrac = function(group, options, prev) {
         ], "individualShift", null, options);
     } else {
         // Rule 15d
-        var axisHeight = fontMetrics.metrics.axisHeight;
+        const axisHeight = style.metrics.axisHeight;
 
         if ((numShift - numer.depth) - (axisHeight + 0.5 * ruleWidth) <
                 clearance) {
@@ -39119,13 +39811,13 @@ groupTypes.genfrac = function(group, options, prev) {
                              (denom.height - denomShift));
         }
 
-        var mid = makeSpan(
+        const mid = makeSpan(
             [options.style.reset(), Style.TEXT.cls(), "frac-line"]);
         // Manually set the height of the line because its height is
         // created in CSS
         mid.height = ruleWidth;
 
-        var midShift = -(axisHeight - 0.5 * ruleWidth);
+        const midShift = -(axisHeight - 0.5 * ruleWidth);
 
         frac = buildCommon.makeVList([
             {type: "elem", elem: denomreset, shift: denomShift},
@@ -39136,73 +39828,85 @@ groupTypes.genfrac = function(group, options, prev) {
 
     // Since we manually change the style sometimes (with \dfrac or \tfrac),
     // account for the possible size change here.
-    frac.height *= fstyle.sizeMultiplier / options.style.sizeMultiplier;
-    frac.depth *= fstyle.sizeMultiplier / options.style.sizeMultiplier;
+    frac.height *= style.sizeMultiplier / options.style.sizeMultiplier;
+    frac.depth *= style.sizeMultiplier / options.style.sizeMultiplier;
 
     // Rule 15e
-    var delimSize;
-    if (fstyle.size === Style.DISPLAY.size) {
-        delimSize = fontMetrics.metrics.delim1;
+    let delimSize;
+    if (style.size === Style.DISPLAY.size) {
+        delimSize = style.metrics.delim1;
     } else {
-        delimSize = fontMetrics.metrics.getDelim2(fstyle);
+        delimSize = style.metrics.delim2;
     }
 
-    var leftDelim;
-    var rightDelim;
+    let leftDelim;
+    let rightDelim;
     if (group.value.leftDelim == null) {
-        leftDelim = makeNullDelimiter(options);
+        leftDelim = makeNullDelimiter(options, ["mopen"]);
     } else {
         leftDelim = delimiter.customSizedDelim(
             group.value.leftDelim, delimSize, true,
-            options.withStyle(fstyle), group.mode);
+            options.withStyle(style), group.mode, ["mopen"]);
     }
     if (group.value.rightDelim == null) {
-        rightDelim = makeNullDelimiter(options);
+        rightDelim = makeNullDelimiter(options, ["mclose"]);
     } else {
         rightDelim = delimiter.customSizedDelim(
             group.value.rightDelim, delimSize, true,
-            options.withStyle(fstyle), group.mode);
+            options.withStyle(style), group.mode, ["mclose"]);
     }
 
     return makeSpan(
-        ["mord", options.style.reset(), fstyle.cls()],
+        ["mord", options.style.reset(), style.cls()],
         [leftDelim, makeSpan(["mfrac"], [frac]), rightDelim],
-        options.getColor());
+        options);
 };
 
-groupTypes.array = function(group, options, prev) {
-    var r;
-    var c;
-    var nr = group.value.body.length;
-    var nc = 0;
-    var body = new Array(nr);
+const calculateSize = function(sizeValue, style) {
+    let x = sizeValue.number;
+    if (sizeValue.unit === "ex") {
+        x *= style.metrics.emPerEx;
+    } else if (sizeValue.unit === "mu") {
+        x /= 18;
+    }
+    return x;
+};
+
+groupTypes.array = function(group, options) {
+    let r;
+    let c;
+    const nr = group.value.body.length;
+    let nc = 0;
+    let body = new Array(nr);
+
+    const style = options.style;
 
     // Horizontal spacing
-    var pt = 1 / fontMetrics.metrics.ptPerEm;
-    var arraycolsep = 5 * pt; // \arraycolsep in article.cls
+    const pt = 1 / fontMetrics.metrics.ptPerEm;
+    const arraycolsep = 5 * pt; // \arraycolsep in article.cls
 
     // Vertical spacing
-    var baselineskip = 12 * pt; // see size10.clo
+    const baselineskip = 12 * pt; // see size10.clo
     // Default \arraystretch from lttab.dtx
     // TODO(gagern): may get redefined once we have user-defined macros
-    var arraystretch = utils.deflt(group.value.arraystretch, 1);
-    var arrayskip = arraystretch * baselineskip;
-    var arstrutHeight = 0.7 * arrayskip; // \strutbox in ltfsstrc.dtx and
-    var arstrutDepth = 0.3 * arrayskip;  // \@arstrutbox in lttab.dtx
+    const arraystretch = utils.deflt(group.value.arraystretch, 1);
+    const arrayskip = arraystretch * baselineskip;
+    const arstrutHeight = 0.7 * arrayskip; // \strutbox in ltfsstrc.dtx and
+    const arstrutDepth = 0.3 * arrayskip;  // \@arstrutbox in lttab.dtx
 
-    var totalHeight = 0;
+    let totalHeight = 0;
     for (r = 0; r < group.value.body.length; ++r) {
-        var inrow = group.value.body[r];
-        var height = arstrutHeight; // \@array adds an \@arstrut
-        var depth = arstrutDepth;   // to each tow (via the template)
+        const inrow = group.value.body[r];
+        let height = arstrutHeight; // \@array adds an \@arstrut
+        let depth = arstrutDepth;   // to each tow (via the template)
 
         if (nc < inrow.length) {
             nc = inrow.length;
         }
 
-        var outrow = new Array(inrow.length);
+        const outrow = new Array(inrow.length);
         for (c = 0; c < inrow.length; ++c) {
-            var elt = buildGroup(inrow[c], options);
+            const elt = buildGroup(inrow[c], options);
             if (depth < elt.depth) {
                 depth = elt.depth;
             }
@@ -39212,20 +39916,9 @@ groupTypes.array = function(group, options, prev) {
             outrow[c] = elt;
         }
 
-        var gap = 0;
+        let gap = 0;
         if (group.value.rowGaps[r]) {
-            gap = group.value.rowGaps[r].value;
-            switch (gap.unit) {
-                case "em":
-                    gap = gap.number;
-                    break;
-                case "ex":
-                    gap = gap.number * fontMetrics.metrics.emPerEx;
-                    break;
-                default:
-                    console.error("Can't handle unit " + gap.unit);
-                    gap = 0;
-            }
+            gap = calculateSize(group.value.rowGaps[r].value, style);
             if (gap > 0) { // \@argarraycr
                 gap += arstrutDepth;
                 if (depth < gap) {
@@ -39243,20 +39936,20 @@ groupTypes.array = function(group, options, prev) {
         body[r] = outrow;
     }
 
-    var offset = totalHeight / 2 + fontMetrics.metrics.axisHeight;
-    var colDescriptions = group.value.cols || [];
-    var cols = [];
-    var colSep;
-    var colDescrNum;
+    const offset = totalHeight / 2 + style.metrics.axisHeight;
+    const colDescriptions = group.value.cols || [];
+    const cols = [];
+    let colSep;
+    let colDescrNum;
     for (c = 0, colDescrNum = 0;
          // Continue while either there are more columns or more column
          // descriptions, so trailing separators don't get lost.
          c < nc || colDescrNum < colDescriptions.length;
          ++c, ++colDescrNum) {
 
-        var colDescr = colDescriptions[colDescrNum] || {};
+        let colDescr = colDescriptions[colDescrNum] || {};
 
-        var firstSeparator = true;
+        let firstSeparator = true;
         while (colDescr.type === "separator") {
             // If there is more than one separator in a row, add a space
             // between them.
@@ -39268,7 +39961,7 @@ groupTypes.array = function(group, options, prev) {
             }
 
             if (colDescr.separator === "|") {
-                var separator = makeSpan(
+                const separator = makeSpan(
                     ["vertical-separator"],
                     []);
                 separator.style.height = totalHeight + "em";
@@ -39290,7 +39983,7 @@ groupTypes.array = function(group, options, prev) {
             continue;
         }
 
-        var sepwidth;
+        let sepwidth;
         if (c > 0 || group.value.hskipBeforeAndAfter) {
             sepwidth = utils.deflt(colDescr.pregap, arraycolsep);
             if (sepwidth !== 0) {
@@ -39300,14 +39993,14 @@ groupTypes.array = function(group, options, prev) {
             }
         }
 
-        var col = [];
+        let col = [];
         for (r = 0; r < nr; ++r) {
-            var row = body[r];
-            var elem = row[c];
+            const row = body[r];
+            const elem = row[c];
             if (!elem) {
                 continue;
             }
-            var shift = row.pos - offset;
+            const shift = row.pos - offset;
             elem.depth = row.depth;
             elem.height = row.height;
             col.push({type: "elem", elem: elem, shift: shift});
@@ -39329,50 +40022,53 @@ groupTypes.array = function(group, options, prev) {
         }
     }
     body = makeSpan(["mtable"], cols);
-    return makeSpan(["mord"], [body], options.getColor());
+    return makeSpan(["mord"], [body], options);
 };
 
-groupTypes.spacing = function(group, options, prev) {
+groupTypes.spacing = function(group, options) {
     if (group.value === "\\ " || group.value === "\\space" ||
         group.value === " " || group.value === "~") {
         // Spaces are generated by adding an actual space. Each of these
         // things has an entry in the symbols table, so these will be turned
         // into appropriate outputs.
-        return makeSpan(
-            ["mord", "mspace"],
-            [buildCommon.mathsym(group.value, group.mode)]
-        );
+        if (group.mode === "text") {
+            return buildCommon.makeOrd(group, options, "textord");
+        } else {
+            return makeSpan(["mspace"],
+                [buildCommon.mathsym(group.value, group.mode, options)],
+                options);
+        }
     } else {
         // Other kinds of spaces are of arbitrary width. We use CSS to
         // generate these.
         return makeSpan(
-            ["mord", "mspace",
-             buildCommon.spacingFunctions[group.value].className]);
+            ["mspace", buildCommon.spacingFunctions[group.value].className],
+            [], options);
     }
 };
 
-groupTypes.llap = function(group, options, prev) {
-    var inner = makeSpan(
+groupTypes.llap = function(group, options) {
+    const inner = makeSpan(
         ["inner"], [buildGroup(group.value.body, options.reset())]);
-    var fix = makeSpan(["fix"], []);
+    const fix = makeSpan(["fix"], []);
     return makeSpan(
-        ["llap", options.style.cls()], [inner, fix]);
+        ["mord", "llap", options.style.cls()], [inner, fix], options);
 };
 
-groupTypes.rlap = function(group, options, prev) {
-    var inner = makeSpan(
+groupTypes.rlap = function(group, options) {
+    const inner = makeSpan(
         ["inner"], [buildGroup(group.value.body, options.reset())]);
-    var fix = makeSpan(["fix"], []);
+    const fix = makeSpan(["fix"], []);
     return makeSpan(
-        ["rlap", options.style.cls()], [inner, fix]);
+        ["mord", "rlap", options.style.cls()], [inner, fix], options);
 };
 
-groupTypes.op = function(group, options, prev) {
+groupTypes.op = function(group, options) {
     // Operators are handled in the TeXbook pg. 443-444, rule 13(a).
-    var supGroup;
-    var subGroup;
-    var hasLimits = false;
-    if (group.type === "supsub" ) {
+    let supGroup;
+    let subGroup;
+    let hasLimits = false;
+    if (group.type === "supsub") {
         // If we have limits, supsub will pass us its group to handle. Pull
         // out the superscript and subscript and set the group to the op in
         // its base.
@@ -39382,13 +40078,15 @@ groupTypes.op = function(group, options, prev) {
         hasLimits = true;
     }
 
+    const style = options.style;
+
     // Most operators have a large successor symbol, but these don't.
-    var noSuccessor = [
+    const noSuccessor = [
         "\\smallint",
     ];
 
-    var large = false;
-    if (options.style.size === Style.DISPLAY.size &&
+    let large = false;
+    if (style.size === Style.DISPLAY.size &&
         group.value.symbol &&
         !utils.contains(noSuccessor, group.value.body)) {
 
@@ -39396,15 +40094,15 @@ groupTypes.op = function(group, options, prev) {
         large = true;
     }
 
-    var base;
-    var baseShift = 0;
-    var slant = 0;
+    let base;
+    let baseShift = 0;
+    let slant = 0;
     if (group.value.symbol) {
         // If this is a symbol, create the symbol.
-        var style = large ? "Size2-Regular" : "Size1-Regular";
+        const fontName = large ? "Size2-Regular" : "Size1-Regular";
         base = buildCommon.makeSymbol(
-            group.value.body, style, "math", options.getColor(),
-            ["op-symbol", large ? "large-op" : "small-op", "mop"]);
+            group.value.body, fontName, "math", options,
+            ["mop", "op-symbol", large ? "large-op" : "small-op"]);
 
         // Shift the symbol so its center lies on the axis (rule 13). It
         // appears that our fonts have the centers of the symbols already
@@ -39412,21 +40110,25 @@ groupTypes.op = function(group, options, prev) {
         // don't actually apply this here, but instead it is used either in
         // the vlist creation or separately when there are no limits.
         baseShift = (base.height - base.depth) / 2 -
-            fontMetrics.metrics.axisHeight *
-            options.style.sizeMultiplier;
+            style.metrics.axisHeight * style.sizeMultiplier;
 
         // The slant of the symbol is just its italic correction.
         slant = base.italic;
+    } else if (group.value.value) {
+        // If this is a list, compose that list.
+        const inner = buildExpression(group.value.value, options, true);
+
+        base = makeSpan(["mop"], inner, options);
     } else {
         // Otherwise, this is a text operator. Build the text from the
         // operator's name.
         // TODO(emily): Add a space in the middle of some of these
         // operators, like \limsup
-        var output = [];
-        for (var i = 1; i < group.value.body.length; i++) {
+        const output = [];
+        for (let i = 1; i < group.value.body.length; i++) {
             output.push(buildCommon.mathsym(group.value.body[i], group.mode));
         }
-        base = makeSpan(["mop"], output, options.getColor());
+        base = makeSpan(["mop"], output, options);
     }
 
     if (hasLimits) {
@@ -39434,17 +40136,18 @@ groupTypes.op = function(group, options, prev) {
         // in a new span so it is an inline, and works.
         base = makeSpan([], [base]);
 
-        var supmid;
-        var supKern;
-        var submid;
-        var subKern;
+        let supmid;
+        let supKern;
+        let submid;
+        let subKern;
+        let newOptions;
         // We manually have to handle the superscripts and subscripts. This,
         // aside from the kern calculations, is copied from supsub.
         if (supGroup) {
-            var sup = buildGroup(
-                supGroup, options.withStyle(options.style.sup()));
-            supmid = makeSpan(
-                [options.style.reset(), options.style.sup().cls()], [sup]);
+            newOptions = options.withStyle(style.sup());
+            const sup = buildGroup(supGroup, newOptions);
+            supmid = makeSpan([style.reset(), style.sup().cls()],
+                [sup], newOptions);
 
             supKern = Math.max(
                 fontMetrics.metrics.bigOpSpacing1,
@@ -39452,11 +40155,10 @@ groupTypes.op = function(group, options, prev) {
         }
 
         if (subGroup) {
-            var sub = buildGroup(
-                subGroup, options.withStyle(options.style.sub()));
-            submid = makeSpan(
-                [options.style.reset(), options.style.sub().cls()],
-                [sub]);
+            newOptions = options.withStyle(style.sub());
+            const sub = buildGroup(subGroup, newOptions);
+            submid = makeSpan([style.reset(), style.sub().cls()],
+                [sub], newOptions);
 
             subKern = Math.max(
                 fontMetrics.metrics.bigOpSpacing2,
@@ -39465,9 +40167,9 @@ groupTypes.op = function(group, options, prev) {
 
         // Build the final group as a vlist of the possible subscript, base,
         // and possible superscript.
-        var finalGroup;
-        var top;
-        var bottom;
+        let finalGroup;
+        let top;
+        let bottom;
         if (!supGroup) {
             top = base.height - baseShift;
 
@@ -39521,7 +40223,7 @@ groupTypes.op = function(group, options, prev) {
             finalGroup.children[2].style.marginLeft = slant + "em";
         }
 
-        return makeSpan(["mop", "op-limits"], [finalGroup]);
+        return makeSpan(["mop", "op-limits"], [finalGroup], options);
     } else {
         if (group.value.symbol) {
             base.style.top = baseShift + "em";
@@ -39531,122 +40233,176 @@ groupTypes.op = function(group, options, prev) {
     }
 };
 
-groupTypes.katex = function(group, options, prev) {
+groupTypes.mod = function(group, options) {
+    const inner = [];
+
+    if (group.value.modType === "bmod") {
+        // “\nonscript\mskip-\medmuskip\mkern5mu”
+        if (!options.style.isTight()) {
+            inner.push(makeSpan(
+                ["mspace", "negativemediumspace"], [], options));
+        }
+        inner.push(makeSpan(["mspace", "thickspace"], [], options));
+    } else if (options.style.size === Style.DISPLAY.size) {
+        inner.push(makeSpan(["mspace", "quad"], [], options));
+    } else if (group.value.modType === "mod") {
+        inner.push(makeSpan(["mspace", "twelvemuspace"], [], options));
+    } else {
+        inner.push(makeSpan(["mspace", "eightmuspace"], [], options));
+    }
+
+    if (group.value.modType === "pod" || group.value.modType === "pmod") {
+        inner.push(buildCommon.mathsym("(", group.mode));
+    }
+
+    if (group.value.modType !== "pod") {
+        const modInner = [
+            buildCommon.mathsym("m", group.mode),
+            buildCommon.mathsym("o", group.mode),
+            buildCommon.mathsym("d", group.mode)];
+        if (group.value.modType === "bmod") {
+            inner.push(makeSpan(["mbin"], modInner, options));
+            // “\mkern5mu\nonscript\mskip-\medmuskip”
+            inner.push(makeSpan(["mspace", "thickspace"], [], options));
+            if (!options.style.isTight()) {
+                inner.push(makeSpan(
+                    ["mspace", "negativemediumspace"], [], options));
+            }
+        } else {
+            Array.prototype.push.apply(inner, modInner);
+            inner.push(makeSpan(["mspace", "sixmuspace"], [], options));
+        }
+    }
+
+    if (group.value.value) {
+        Array.prototype.push.apply(inner,
+            buildExpression(group.value.value, options, false));
+    }
+
+    if (group.value.modType === "pod" || group.value.modType === "pmod") {
+        inner.push(buildCommon.mathsym(")", group.mode));
+    }
+
+    return buildCommon.makeFragment(inner);
+};
+
+groupTypes.katex = function(group, options) {
     // The KaTeX logo. The offsets for the K and a were chosen to look
     // good, but the offsets for the T, E, and X were taken from the
     // definition of \TeX in TeX (see TeXbook pg. 356)
-    var k = makeSpan(
-        ["k"], [buildCommon.mathsym("K", group.mode)]);
-    var a = makeSpan(
-        ["a"], [buildCommon.mathsym("A", group.mode)]);
+    const k = makeSpan(
+        ["k"], [buildCommon.mathsym("K", group.mode)], options);
+    const a = makeSpan(
+        ["a"], [buildCommon.mathsym("A", group.mode)], options);
 
     a.height = (a.height + 0.2) * 0.75;
     a.depth = (a.height - 0.2) * 0.75;
 
-    var t = makeSpan(
-        ["t"], [buildCommon.mathsym("T", group.mode)]);
-    var e = makeSpan(
-        ["e"], [buildCommon.mathsym("E", group.mode)]);
+    const t = makeSpan(
+        ["t"], [buildCommon.mathsym("T", group.mode)], options);
+    const e = makeSpan(
+        ["e"], [buildCommon.mathsym("E", group.mode)], options);
 
     e.height = (e.height - 0.2155);
     e.depth = (e.depth + 0.2155);
 
-    var x = makeSpan(
-        ["x"], [buildCommon.mathsym("X", group.mode)]);
+    const x = makeSpan(
+        ["x"], [buildCommon.mathsym("X", group.mode)], options);
 
     return makeSpan(
-        ["katex-logo", "mord"], [k, a, t, e, x], options.getColor());
+        ["mord", "katex-logo"], [k, a, t, e, x], options);
 };
 
-groupTypes.overline = function(group, options, prev) {
+groupTypes.overline = function(group, options) {
     // Overlines are handled in the TeXbook pg 443, Rule 9.
+    const style = options.style;
 
     // Build the inner group in the cramped style.
-    var innerGroup = buildGroup(group.value.body,
-            options.withStyle(options.style.cramp()));
+    const innerGroup = buildGroup(group.value.body,
+            options.withStyle(style.cramp()));
 
-    var ruleWidth = fontMetrics.metrics.defaultRuleThickness /
-        options.style.sizeMultiplier;
+    const ruleWidth = fontMetrics.metrics.defaultRuleThickness /
+        style.sizeMultiplier;
 
     // Create the line above the body
-    var line = makeSpan(
-        [options.style.reset(), Style.TEXT.cls(), "overline-line"]);
+    const line = makeSpan(
+        [style.reset(), Style.TEXT.cls(), "overline-line"]);
     line.height = ruleWidth;
     line.maxFontSize = 1.0;
 
     // Generate the vlist, with the appropriate kerns
-    var vlist = buildCommon.makeVList([
+    const vlist = buildCommon.makeVList([
         {type: "elem", elem: innerGroup},
         {type: "kern", size: 3 * ruleWidth},
         {type: "elem", elem: line},
         {type: "kern", size: ruleWidth},
     ], "firstBaseline", null, options);
 
-    return makeSpan(["overline", "mord"], [vlist], options.getColor());
+    return makeSpan(["mord", "overline"], [vlist], options);
 };
 
-groupTypes.underline = function(group, options, prev) {
+groupTypes.underline = function(group, options) {
     // Underlines are handled in the TeXbook pg 443, Rule 10.
+    const style = options.style;
 
     // Build the inner group.
-    var innerGroup = buildGroup(group.value.body, options);
+    const innerGroup = buildGroup(group.value.body, options);
 
-    var ruleWidth = fontMetrics.metrics.defaultRuleThickness /
-        options.style.sizeMultiplier;
+    const ruleWidth = fontMetrics.metrics.defaultRuleThickness /
+        style.sizeMultiplier;
 
     // Create the line above the body
-    var line = makeSpan(
-        [options.style.reset(), Style.TEXT.cls(), "underline-line"]);
+    const line = makeSpan([style.reset(), Style.TEXT.cls(), "underline-line"]);
     line.height = ruleWidth;
     line.maxFontSize = 1.0;
 
     // Generate the vlist, with the appropriate kerns
-    var vlist = buildCommon.makeVList([
+    const vlist = buildCommon.makeVList([
         {type: "kern", size: ruleWidth},
         {type: "elem", elem: line},
         {type: "kern", size: 3 * ruleWidth},
         {type: "elem", elem: innerGroup},
     ], "top", innerGroup.height, options);
 
-    return makeSpan(["underline", "mord"], [vlist], options.getColor());
+    return makeSpan(["mord", "underline"], [vlist], options);
 };
 
-groupTypes.sqrt = function(group, options, prev) {
+groupTypes.sqrt = function(group, options) {
     // Square roots are handled in the TeXbook pg. 443, Rule 11.
+    const style = options.style;
 
     // First, we do the same steps as in overline to build the inner group
     // and line
-    var inner = buildGroup(group.value.body,
-            options.withStyle(options.style.cramp()));
+    const inner = buildGroup(
+        group.value.body, options.withStyle(style.cramp()));
 
-    var ruleWidth = fontMetrics.metrics.defaultRuleThickness /
-        options.style.sizeMultiplier;
+    const ruleWidth = fontMetrics.metrics.defaultRuleThickness /
+        style.sizeMultiplier;
 
-    var line = makeSpan(
-        [options.style.reset(), Style.TEXT.cls(), "sqrt-line"], [],
-        options.getColor());
+    const line = makeSpan(
+        [style.reset(), Style.TEXT.cls(), "sqrt-line"], [],
+        options);
     line.height = ruleWidth;
     line.maxFontSize = 1.0;
 
-    var phi = ruleWidth;
-    if (options.style.id < Style.TEXT.id) {
-        phi = fontMetrics.metrics.xHeight;
+    let phi = ruleWidth;
+    if (style.id < Style.TEXT.id) {
+        phi = style.metrics.xHeight;
     }
 
     // Calculate the clearance between the body and line
-    var lineClearance = ruleWidth + phi / 4;
+    let lineClearance = ruleWidth + phi / 4;
 
-    var innerHeight =
-        (inner.height + inner.depth) * options.style.sizeMultiplier;
-    var minDelimiterHeight = innerHeight + lineClearance + ruleWidth;
+    const innerHeight = (inner.height + inner.depth) * style.sizeMultiplier;
+    const minDelimiterHeight = innerHeight + lineClearance + ruleWidth;
 
     // Create a \surd delimiter of the required minimum size
-    var delim = makeSpan(["sqrt-sign"], [
+    const delim = makeSpan(["sqrt-sign"], [
         delimiter.customSizedDelim("\\surd", minDelimiterHeight,
                                    false, options, group.mode)],
-                         options.getColor());
+                         options);
 
-    var delimDepth = (delim.height + delim.depth) - ruleWidth;
+    const delimDepth = (delim.height + delim.depth) - ruleWidth;
 
     // Adjust the clearance based on the delimiter size
     if (delimDepth > inner.height + inner.depth + lineClearance) {
@@ -39655,7 +40411,8 @@ groupTypes.sqrt = function(group, options, prev) {
     }
 
     // Shift the delimiter so that its top lines up with the top of the line
-    var delimShift = -(inner.height + lineClearance + ruleWidth) + delim.height;
+    const delimShift = -(inner.height + lineClearance + ruleWidth) +
+          delim.height;
     delim.style.top = delimShift + "em";
     delim.height -= delimShift;
     delim.depth += delimShift;
@@ -39665,7 +40422,7 @@ groupTypes.sqrt = function(group, options, prev) {
     // should omit the body entirely. (note this doesn't work for something
     // like `\sqrt{\rlap{x}}`, but if someone is doing that they deserve for
     // it not to work.
-    var body;
+    let body;
     if (inner.height === 0 && inner.depth === 0) {
         body = makeSpan();
     } else {
@@ -39678,175 +40435,223 @@ groupTypes.sqrt = function(group, options, prev) {
     }
 
     if (!group.value.index) {
-        return makeSpan(["sqrt", "mord"], [delim, body]);
+        return makeSpan(["mord", "sqrt"], [delim, body], options);
     } else {
         // Handle the optional root index
 
         // The index is always in scriptscript style
-        var root = buildGroup(
-            group.value.index,
-            options.withStyle(Style.SCRIPTSCRIPT));
-        var rootWrap = makeSpan(
-            [options.style.reset(), Style.SCRIPTSCRIPT.cls()],
-            [root]);
+        const newOptions = options.withStyle(Style.SCRIPTSCRIPT);
+        const root = buildGroup(group.value.index, newOptions);
+        const rootWrap = makeSpan(
+            [style.reset(), Style.SCRIPTSCRIPT.cls()],
+            [root],
+            newOptions);
 
         // Figure out the height and depth of the inner part
-        var innerRootHeight = Math.max(delim.height, body.height);
-        var innerRootDepth = Math.max(delim.depth, body.depth);
+        const innerRootHeight = Math.max(delim.height, body.height);
+        const innerRootDepth = Math.max(delim.depth, body.depth);
 
         // The amount the index is shifted by. This is taken from the TeX
         // source, in the definition of `\r@@t`.
-        var toShift = 0.6 * (innerRootHeight - innerRootDepth);
+        const toShift = 0.6 * (innerRootHeight - innerRootDepth);
 
         // Build a VList with the superscript shifted up correctly
-        var rootVList = buildCommon.makeVList(
+        const rootVList = buildCommon.makeVList(
             [{type: "elem", elem: rootWrap}],
             "shift", -toShift, options);
         // Add a class surrounding it so we can add on the appropriate
         // kerning
-        var rootVListWrap = makeSpan(["root"], [rootVList]);
+        const rootVListWrap = makeSpan(["root"], [rootVList]);
 
-        return makeSpan(["sqrt", "mord"], [rootVListWrap, delim, body]);
+        return makeSpan(["mord", "sqrt"],
+            [rootVListWrap, delim, body], options);
     }
 };
 
-groupTypes.sizing = function(group, options, prev) {
+groupTypes.sizing = function(group, options) {
     // Handle sizing operators like \Huge. Real TeX doesn't actually allow
     // these functions inside of math expressions, so we do some special
     // handling.
-    var inner = buildExpression(group.value.value,
-            options.withSize(group.value.size), prev);
+    const inner = buildExpression(group.value.value,
+            options.withSize(group.value.size), false);
 
-    var span = makeSpan(["mord"],
-        [makeSpan(["sizing", "reset-" + options.size, group.value.size,
-                   options.style.cls()],
-                  inner)]);
+    // Compute the correct maxFontSize.
+    const style = options.style;
+    const fontSize = buildCommon.sizingMultiplier[group.value.size] *
+          style.sizeMultiplier;
 
-    // Calculate the correct maxFontSize manually
-    var fontSize = buildCommon.sizingMultiplier[group.value.size];
-    span.maxFontSize = fontSize * options.style.sizeMultiplier;
+    // Add size-resetting classes to the inner list and set maxFontSize
+    // manually. Handle nested size changes.
+    for (let i = 0; i < inner.length; i++) {
+        const pos = utils.indexOf(inner[i].classes, "sizing");
+        if (pos < 0) {
+            inner[i].classes.push("sizing", "reset-" + options.size,
+                                  group.value.size, style.cls());
+            inner[i].maxFontSize = fontSize;
+        } else if (inner[i].classes[pos + 1] === "reset-" + group.value.size) {
+            // This is a nested size change: e.g., inner[i] is the "b" in
+            // `\Huge a \small b`. Override the old size (the `reset-` class)
+            // but not the new size.
+            inner[i].classes[pos + 1] = "reset-" + options.size;
+        }
+    }
 
-    return span;
+    return buildCommon.makeFragment(inner);
 };
 
-groupTypes.styling = function(group, options, prev) {
+groupTypes.styling = function(group, options) {
     // Style changes are handled in the TeXbook on pg. 442, Rule 3.
 
     // Figure out what style we're changing to.
-    var style = {
+    const styleMap = {
         "display": Style.DISPLAY,
         "text": Style.TEXT,
         "script": Style.SCRIPT,
         "scriptscript": Style.SCRIPTSCRIPT,
     };
 
-    var newStyle = style[group.value.style];
+    const newStyle = styleMap[group.value.style];
+    const newOptions = options.withStyle(newStyle);
 
     // Build the inner expression in the new style.
-    var inner = buildExpression(
-        group.value.value, options.withStyle(newStyle), prev);
+    const inner = buildExpression(
+        group.value.value, newOptions, false);
 
-    return makeSpan([options.style.reset(), newStyle.cls()], inner);
+    // Add style-resetting classes to the inner list. Handle nested changes.
+    for (let i = 0; i < inner.length; i++) {
+        const pos = utils.indexOf(inner[i].classes, newStyle.reset());
+        if (pos < 0) {
+            inner[i].classes.push(options.style.reset(), newStyle.cls());
+        } else {
+            // This is a nested style change, as `\textstyle a\scriptstyle b`.
+            // Only override the old style (the reset class).
+            inner[i].classes[pos] = options.style.reset();
+        }
+    }
+
+    return new buildCommon.makeFragment(inner);
 };
 
-groupTypes.font = function(group, options, prev) {
-    var font = group.value.font;
-    return buildGroup(group.value.body, options.withFont(font), prev);
+groupTypes.font = function(group, options) {
+    const font = group.value.font;
+    return buildGroup(group.value.body, options.withFont(font));
 };
 
-groupTypes.delimsizing = function(group, options, prev) {
-    var delim = group.value.value;
+groupTypes.delimsizing = function(group, options) {
+    const delim = group.value.value;
 
     if (delim === ".") {
         // Empty delimiters still count as elements, even though they don't
         // show anything.
-        return makeSpan([groupToType[group.value.delimType]]);
+        return makeSpan([group.value.mclass]);
     }
 
     // Use delimiter.sizedDelim to generate the delimiter.
-    return makeSpan(
-        [groupToType[group.value.delimType]],
-        [delimiter.sizedDelim(
-            delim, group.value.size, options, group.mode)]);
+    return delimiter.sizedDelim(
+            delim, group.value.size, options, group.mode,
+            [group.value.mclass]);
 };
 
-groupTypes.leftright = function(group, options, prev) {
+groupTypes.leftright = function(group, options) {
     // Build the inner expression
-    var inner = buildExpression(group.value.body, options.reset());
+    const inner = buildExpression(group.value.body, options.reset(), true);
 
-    var innerHeight = 0;
-    var innerDepth = 0;
+    let innerHeight = 0;
+    let innerDepth = 0;
+    let hadMiddle = false;
 
     // Calculate its height and depth
-    for (var i = 0; i < inner.length; i++) {
-        innerHeight = Math.max(inner[i].height, innerHeight);
-        innerDepth = Math.max(inner[i].depth, innerDepth);
+    for (let i = 0; i < inner.length; i++) {
+        if (inner[i].isMiddle) {
+            hadMiddle = true;
+        } else {
+            innerHeight = Math.max(inner[i].height, innerHeight);
+            innerDepth = Math.max(inner[i].depth, innerDepth);
+        }
     }
+
+    const style = options.style;
 
     // The size of delimiters is the same, regardless of what style we are
     // in. Thus, to correctly calculate the size of delimiter we need around
     // a group, we scale down the inner size based on the size.
-    innerHeight *= options.style.sizeMultiplier;
-    innerDepth *= options.style.sizeMultiplier;
+    innerHeight *= style.sizeMultiplier;
+    innerDepth *= style.sizeMultiplier;
 
-    var leftDelim;
+    let leftDelim;
     if (group.value.left === ".") {
         // Empty delimiters in \left and \right make null delimiter spaces.
-        leftDelim = makeNullDelimiter(options);
+        leftDelim = makeNullDelimiter(options, ["mopen"]);
     } else {
         // Otherwise, use leftRightDelim to generate the correct sized
         // delimiter.
         leftDelim = delimiter.leftRightDelim(
             group.value.left, innerHeight, innerDepth, options,
-            group.mode);
+            group.mode, ["mopen"]);
     }
     // Add it to the beginning of the expression
     inner.unshift(leftDelim);
 
-    var rightDelim;
+    // Handle middle delimiters
+    if (hadMiddle) {
+        for (let i = 1; i < inner.length; i++) {
+            if (inner[i].isMiddle) {
+                // Apply the options that were active when \middle was called
+                inner[i] = delimiter.leftRightDelim(
+                    inner[i].isMiddle.value, innerHeight, innerDepth,
+                    inner[i].isMiddle.options, group.mode, []);
+            }
+        }
+    }
+
+    let rightDelim;
     // Same for the right delimiter
     if (group.value.right === ".") {
-        rightDelim = makeNullDelimiter(options);
+        rightDelim = makeNullDelimiter(options, ["mclose"]);
     } else {
         rightDelim = delimiter.leftRightDelim(
             group.value.right, innerHeight, innerDepth, options,
-            group.mode);
+            group.mode, ["mclose"]);
     }
     // Add it to the end of the expression.
     inner.push(rightDelim);
 
     return makeSpan(
-        ["minner", options.style.cls()], inner, options.getColor());
+        ["minner", style.cls()], inner, options);
 };
 
-groupTypes.rule = function(group, options, prev) {
+groupTypes.middle = function(group, options) {
+    let middleDelim;
+    if (group.value.value === ".") {
+        middleDelim = makeNullDelimiter(options, []);
+    } else {
+        middleDelim = delimiter.sizedDelim(
+            group.value.value, 1, options,
+            group.mode, []);
+        middleDelim.isMiddle = {value: group.value.value, options: options};
+    }
+    return middleDelim;
+};
+
+groupTypes.rule = function(group, options) {
     // Make an empty span for the rule
-    var rule = makeSpan(["mord", "rule"], [], options.getColor());
+    const rule = makeSpan(["mord", "rule"], [], options);
+    const style = options.style;
 
     // Calculate the shift, width, and height of the rule, and account for units
-    var shift = 0;
+    let shift = 0;
     if (group.value.shift) {
-        shift = group.value.shift.number;
-        if (group.value.shift.unit === "ex") {
-            shift *= fontMetrics.metrics.xHeight;
-        }
+        shift = calculateSize(group.value.shift, style);
     }
 
-    var width = group.value.width.number;
-    if (group.value.width.unit === "ex") {
-        width *= fontMetrics.metrics.xHeight;
-    }
-
-    var height = group.value.height.number;
-    if (group.value.height.unit === "ex") {
-        height *= fontMetrics.metrics.xHeight;
-    }
+    let width = calculateSize(group.value.width, style);
+    let height = calculateSize(group.value.height, style);
 
     // The sizes of rules are absolute, so make it larger if we are in a
     // smaller style.
-    shift /= options.style.sizeMultiplier;
-    width /= options.style.sizeMultiplier;
-    height /= options.style.sizeMultiplier;
+    shift /= style.sizeMultiplier;
+    width /= style.sizeMultiplier;
+    height /= style.sizeMultiplier;
 
     // Style the rule to the right size
     rule.style.borderRightWidth = width + "em";
@@ -39861,11 +40666,29 @@ groupTypes.rule = function(group, options, prev) {
     return rule;
 };
 
-groupTypes.accent = function(group, options, prev) {
-    // Accents are handled in the TeXbook pg. 443, rule 12.
-    var base = group.value.base;
+groupTypes.kern = function(group, options) {
+    // Make an empty span for the rule
+    const rule = makeSpan(["mord", "rule"], [], options);
+    const style = options.style;
 
-    var supsubGroup;
+    let dimension = 0;
+    if (group.value.dimension) {
+        dimension = calculateSize(group.value.dimension, style);
+    }
+
+    dimension /= style.sizeMultiplier;
+
+    rule.style.marginLeft = dimension + "em";
+
+    return rule;
+};
+
+groupTypes.accent = function(group, options) {
+    // Accents are handled in the TeXbook pg. 443, rule 12.
+    let base = group.value.base;
+    const style = options.style;
+
+    let supsubGroup;
     if (group.type === "supsub") {
         // If our base is a character box, and we have superscripts and
         // subscripts, the supsub will defer to us. In particular, we want
@@ -39876,7 +40699,7 @@ groupTypes.accent = function(group, options, prev) {
         // rendering that, while keeping track of where the accent is.
 
         // The supsub group is the group that was passed in
-        var supsub = group;
+        const supsub = group;
         // The real accent group is the base of the supsub group
         group = supsub.value.base;
         // The character box is the base of the accent group
@@ -39887,42 +40710,42 @@ groupTypes.accent = function(group, options, prev) {
         // Rerender the supsub group with its new base, and store that
         // result.
         supsubGroup = buildGroup(
-            supsub, options.reset(), prev);
+            supsub, options.reset());
     }
 
     // Build the base group
-    var body = buildGroup(
-        base, options.withStyle(options.style.cramp()));
+    const body = buildGroup(
+        base, options.withStyle(style.cramp()));
 
     // Calculate the skew of the accent. This is based on the line "If the
     // nucleus is not a single character, let s = 0; otherwise set s to the
     // kern amount for the nucleus followed by the \skewchar of its font."
     // Note that our skew metrics are just the kern between each character
     // and the skewchar.
-    var skew;
+    let skew = 0;
     if (isCharacterBox(base)) {
         // If the base is a character box, then we want the skew of the
         // innermost character. To do that, we find the innermost character:
-        var baseChar = getBaseElem(base);
+        const baseChar = getBaseElem(base);
         // Then, we render its group to get the symbol inside it
-        var baseGroup = buildGroup(
-            baseChar, options.withStyle(options.style.cramp()));
+        const baseGroup = buildGroup(
+            baseChar, options.withStyle(style.cramp()));
         // Finally, we pull the skew off of the symbol.
         skew = baseGroup.skew;
         // Note that we now throw away baseGroup, because the layers we
         // removed with getBaseElem might contain things like \color which
         // we can't get rid of.
         // TODO(emily): Find a better way to get the skew
-    } else {
-        skew = 0;
     }
 
     // calculate the amount of space between the body and the accent
-    var clearance = Math.min(body.height, fontMetrics.metrics.xHeight);
+    const clearance = Math.min(
+        body.height,
+        style.metrics.xHeight);
 
     // Build the accent
-    var accent = buildCommon.makeSymbol(
-        group.value.accent, "Main-Regular", "math", options.getColor());
+    const accent = buildCommon.makeSymbol(
+        group.value.accent, "Main-Regular", "math", options);
     // Remove the italic correction of the accent, because it only serves to
     // shift the accent over to a place we don't want.
     accent.italic = 0;
@@ -39931,9 +40754,9 @@ groupTypes.accent = function(group, options, prev) {
     // thus shows up much too far to the left. To account for this, we add a
     // specific class which shifts the accent over to where we want it.
     // TODO(emily): Fix this in a better way, like by changing the font
-    var vecClass = group.value.accent === "\\vec" ? "accent-vec" : null;
+    const vecClass = group.value.accent === "\\vec" ? "accent-vec" : null;
 
-    var accentBody = makeSpan(["accent-body", vecClass], [
+    let accentBody = makeSpan(["accent-body", vecClass], [
         makeSpan([], [accent])]);
 
     accentBody = buildCommon.makeVList([
@@ -39947,7 +40770,7 @@ groupTypes.accent = function(group, options, prev) {
     // we shift it to the right by 1*skew.
     accentBody.children[1].style.marginLeft = 2 * skew + "em";
 
-    var accentWrap = makeSpan(["mord", "accent"], [accentBody]);
+    const accentWrap = makeSpan(["mord", "accent"], [accentBody], options);
 
     if (supsubGroup) {
         // Here, we replace the "base" child of the supsub with our newly
@@ -39967,11 +40790,11 @@ groupTypes.accent = function(group, options, prev) {
     }
 };
 
-groupTypes.phantom = function(group, options, prev) {
-    var elements = buildExpression(
+groupTypes.phantom = function(group, options) {
+    const elements = buildExpression(
         group.value.value,
         options.withPhantom(),
-        prev
+        false
     );
 
     // \phantom isn't supposed to affect the elements it contains.
@@ -39979,20 +40802,26 @@ groupTypes.phantom = function(group, options, prev) {
     return new buildCommon.makeFragment(elements);
 };
 
+groupTypes.mclass = function(group, options) {
+    const elements = buildExpression(group.value.value, options, true);
+
+    return makeSpan([group.value.mclass], elements, options);
+};
+
 /**
  * buildGroup is the function that takes a group and calls the correct groupType
  * function for it. It also handles the interaction of size and style changes
  * between parents and children.
  */
-var buildGroup = function(group, options, prev) {
+const buildGroup = function(group, options) {
     if (!group) {
         return makeSpan();
     }
 
     if (groupTypes[group.type]) {
         // Call the groupTypes function
-        var groupNode = groupTypes[group.type](group, options, prev);
-        var multiplier;
+        const groupNode = groupTypes[group.type](group, options);
+        let multiplier;
 
         // If the style changed between the parent and the current group,
         // account for the size difference
@@ -40025,20 +40854,20 @@ var buildGroup = function(group, options, prev) {
  * Take an entire parse tree, and build it into an appropriate set of HTML
  * nodes.
  */
-var buildHTML = function(tree, options) {
+const buildHTML = function(tree, options) {
     // buildExpression is destructive, so we need to make a clone
     // of the incoming tree so that it isn't accidentally changed
     tree = JSON.parse(JSON.stringify(tree));
 
     // Build the expression contained in the tree
-    var expression = buildExpression(tree, options);
-    var body = makeSpan(["base", options.style.cls()], expression);
+    const expression = buildExpression(tree, options, true);
+    const body = makeSpan(["base", options.style.cls()], expression, options);
 
     // Add struts, which ensure that the top of the HTML element falls at the
     // height of the expression, and the bottom of the HTML element falls at the
     // depth of the expression.
-    var topStrut = makeSpan(["strut"]);
-    var bottomStrut = makeSpan(["strut", "bottom"]);
+    const topStrut = makeSpan(["strut"]);
+    const bottomStrut = makeSpan(["strut", "bottom"]);
 
     topStrut.style.height = body.height + "em";
     bottomStrut.style.height = (body.height + body.depth) + "em";
@@ -40048,7 +40877,7 @@ var buildHTML = function(tree, options) {
     bottomStrut.style.verticalAlign = -body.depth + "em";
 
     // Wrap the struts and body together
-    var htmlNode = makeSpan(["katex-html"], [topStrut, bottomStrut, body]);
+    const htmlNode = makeSpan(["katex-html"], [topStrut, bottomStrut, body]);
 
     htmlNode.setAttribute("aria-hidden", "true");
 
@@ -40064,21 +40893,21 @@ module.exports = buildHTML;
  * parser.
  */
 
-var buildCommon = require("./buildCommon");
-var fontMetrics = require("./fontMetrics");
-var mathMLTree = require("./mathMLTree");
-var ParseError = require("./ParseError");
-var symbols = require("./symbols");
-var utils = require("./utils");
+const buildCommon = require("./buildCommon");
+const fontMetrics = require("./fontMetrics");
+const mathMLTree = require("./mathMLTree");
+const ParseError = require("./ParseError");
+const symbols = require("./symbols");
+const utils = require("./utils");
 
-var makeSpan = buildCommon.makeSpan;
-var fontMap = buildCommon.fontMap;
+const makeSpan = buildCommon.makeSpan;
+const fontMap = buildCommon.fontMap;
 
 /**
  * Takes a symbol and converts it into a MathML text node after performing
  * optional replacement from symbols.js.
  */
-var makeText = function(text, mode) {
+const makeText = function(text, mode) {
     if (symbols[mode][text] && symbols[mode][text].replace) {
         text = symbols[mode][text].replace;
     }
@@ -40089,18 +40918,18 @@ var makeText = function(text, mode) {
 /**
  * Returns the math variant as a string or null if none is required.
  */
-var getVariant = function(group, options) {
-    var font = options.font;
+const getVariant = function(group, options) {
+    const font = options.font;
     if (!font) {
         return null;
     }
 
-    var mode = group.mode;
+    const mode = group.mode;
     if (font === "mathit") {
         return "italic";
     }
 
-    var value = group.value;
+    let value = group.value;
     if (utils.contains(["\\imath", "\\jmath"], value)) {
         return null;
     }
@@ -40109,7 +40938,7 @@ var getVariant = function(group, options) {
         value = symbols[mode][value].replace;
     }
 
-    var fontName = fontMap[font].fontName;
+    const fontName = fontMap[font].fontName;
     if (fontMetrics.getCharacterMetrics(value, fontName)) {
         return fontMap[options.font].variant;
     }
@@ -40121,14 +40950,14 @@ var getVariant = function(group, options) {
  * Functions for handling the different types of groups found in the parse
  * tree. Each function should take a parse group and return a MathML node.
  */
-var groupTypes = {};
+const groupTypes = {};
 
 groupTypes.mathord = function(group, options) {
-    var node = new mathMLTree.MathNode(
+    const node = new mathMLTree.MathNode(
         "mi",
         [makeText(group.value, group.mode)]);
 
-    var variant = getVariant(group, options);
+    const variant = getVariant(group, options);
     if (variant) {
         node.setAttribute("mathvariant", variant);
     }
@@ -40136,11 +40965,11 @@ groupTypes.mathord = function(group, options) {
 };
 
 groupTypes.textord = function(group, options) {
-    var text = makeText(group.value, group.mode);
+    const text = makeText(group.value, group.mode);
 
-    var variant = getVariant(group, options) || "normal";
+    const variant = getVariant(group, options) || "normal";
 
-    var node;
+    let node;
     if (/[0-9]/.test(group.value)) {
         // TODO(kevinb) merge adjacent <mn> nodes
         // do it as a post processing step
@@ -40157,42 +40986,42 @@ groupTypes.textord = function(group, options) {
 };
 
 groupTypes.bin = function(group) {
-    var node = new mathMLTree.MathNode(
+    const node = new mathMLTree.MathNode(
         "mo", [makeText(group.value, group.mode)]);
 
     return node;
 };
 
 groupTypes.rel = function(group) {
-    var node = new mathMLTree.MathNode(
+    const node = new mathMLTree.MathNode(
         "mo", [makeText(group.value, group.mode)]);
 
     return node;
 };
 
 groupTypes.open = function(group) {
-    var node = new mathMLTree.MathNode(
+    const node = new mathMLTree.MathNode(
         "mo", [makeText(group.value, group.mode)]);
 
     return node;
 };
 
 groupTypes.close = function(group) {
-    var node = new mathMLTree.MathNode(
+    const node = new mathMLTree.MathNode(
         "mo", [makeText(group.value, group.mode)]);
 
     return node;
 };
 
 groupTypes.inner = function(group) {
-    var node = new mathMLTree.MathNode(
+    const node = new mathMLTree.MathNode(
         "mo", [makeText(group.value, group.mode)]);
 
     return node;
 };
 
 groupTypes.punct = function(group) {
-    var node = new mathMLTree.MathNode(
+    const node = new mathMLTree.MathNode(
         "mo", [makeText(group.value, group.mode)]);
 
     node.setAttribute("separator", "true");
@@ -40201,25 +41030,25 @@ groupTypes.punct = function(group) {
 };
 
 groupTypes.ordgroup = function(group, options) {
-    var inner = buildExpression(group.value, options);
+    const inner = buildExpression(group.value, options);
 
-    var node = new mathMLTree.MathNode("mrow", inner);
+    const node = new mathMLTree.MathNode("mrow", inner);
 
     return node;
 };
 
 groupTypes.text = function(group, options) {
-    var inner = buildExpression(group.value.body, options);
+    const inner = buildExpression(group.value.body, options);
 
-    var node = new mathMLTree.MathNode("mtext", inner);
+    const node = new mathMLTree.MathNode("mtext", inner);
 
     return node;
 };
 
 groupTypes.color = function(group, options) {
-    var inner = buildExpression(group.value.value, options);
+    const inner = buildExpression(group.value.value, options);
 
-    var node = new mathMLTree.MathNode("mstyle", inner);
+    const node = new mathMLTree.MathNode("mstyle", inner);
 
     node.setAttribute("mathcolor", group.value.color);
 
@@ -40227,7 +41056,7 @@ groupTypes.color = function(group, options) {
 };
 
 groupTypes.supsub = function(group, options) {
-    var children = [buildGroup(group.value.base, options)];
+    const children = [buildGroup(group.value.base, options)];
 
     if (group.value.sub) {
         children.push(buildGroup(group.value.sub, options));
@@ -40237,7 +41066,7 @@ groupTypes.supsub = function(group, options) {
         children.push(buildGroup(group.value.sup, options));
     }
 
-    var nodeType;
+    let nodeType;
     if (!group.value.sub) {
         nodeType = "msup";
     } else if (!group.value.sup) {
@@ -40246,26 +41075,28 @@ groupTypes.supsub = function(group, options) {
         nodeType = "msubsup";
     }
 
-    var node = new mathMLTree.MathNode(nodeType, children);
+    const node = new mathMLTree.MathNode(nodeType, children);
 
     return node;
 };
 
 groupTypes.genfrac = function(group, options) {
-    var node = new mathMLTree.MathNode(
+    const node = new mathMLTree.MathNode(
         "mfrac",
-        [buildGroup(group.value.numer, options),
-         buildGroup(group.value.denom, options)]);
+        [
+            buildGroup(group.value.numer, options),
+            buildGroup(group.value.denom, options),
+        ]);
 
     if (!group.value.hasBarLine) {
         node.setAttribute("linethickness", "0px");
     }
 
     if (group.value.leftDelim != null || group.value.rightDelim != null) {
-        var withDelims = [];
+        const withDelims = [];
 
         if (group.value.leftDelim != null) {
-            var leftOp = new mathMLTree.MathNode(
+            const leftOp = new mathMLTree.MathNode(
                 "mo", [new mathMLTree.TextNode(group.value.leftDelim)]);
 
             leftOp.setAttribute("fence", "true");
@@ -40276,7 +41107,7 @@ groupTypes.genfrac = function(group, options) {
         withDelims.push(node);
 
         if (group.value.rightDelim != null) {
-            var rightOp = new mathMLTree.MathNode(
+            const rightOp = new mathMLTree.MathNode(
                 "mo", [new mathMLTree.TextNode(group.value.rightDelim)]);
 
             rightOp.setAttribute("fence", "true");
@@ -40284,7 +41115,7 @@ groupTypes.genfrac = function(group, options) {
             withDelims.push(rightOp);
         }
 
-        var outerNode = new mathMLTree.MathNode("mrow", withDelims);
+        const outerNode = new mathMLTree.MathNode("mrow", withDelims);
 
         return outerNode;
     }
@@ -40304,7 +41135,7 @@ groupTypes.array = function(group, options) {
 };
 
 groupTypes.sqrt = function(group, options) {
-    var node;
+    let node;
     if (group.value.index) {
         node = new mathMLTree.MathNode(
             "mroot", [
@@ -40320,10 +41151,10 @@ groupTypes.sqrt = function(group, options) {
 };
 
 groupTypes.leftright = function(group, options) {
-    var inner = buildExpression(group.value.body, options);
+    const inner = buildExpression(group.value.body, options);
 
     if (group.value.left !== ".") {
-        var leftNode = new mathMLTree.MathNode(
+        const leftNode = new mathMLTree.MathNode(
             "mo", [makeText(group.value.left, group.mode)]);
 
         leftNode.setAttribute("fence", "true");
@@ -40332,7 +41163,7 @@ groupTypes.leftright = function(group, options) {
     }
 
     if (group.value.right !== ".") {
-        var rightNode = new mathMLTree.MathNode(
+        const rightNode = new mathMLTree.MathNode(
             "mo", [makeText(group.value.right, group.mode)]);
 
         rightNode.setAttribute("fence", "true");
@@ -40340,19 +41171,25 @@ groupTypes.leftright = function(group, options) {
         inner.push(rightNode);
     }
 
-    var outerNode = new mathMLTree.MathNode("mrow", inner);
+    const outerNode = new mathMLTree.MathNode("mrow", inner);
 
     return outerNode;
 };
 
+groupTypes.middle = function(group, options) {
+    const middleNode = new mathMLTree.MathNode(
+        "mo", [makeText(group.value.middle, group.mode)]);
+    middleNode.setAttribute("fence", "true");
+    return middleNode;
+};
+
 groupTypes.accent = function(group, options) {
-    var accentNode = new mathMLTree.MathNode(
+    const accentNode = new mathMLTree.MathNode(
         "mo", [makeText(group.value.accent, group.mode)]);
 
-    var node = new mathMLTree.MathNode(
+    const node = new mathMLTree.MathNode(
         "mover",
-        [buildGroup(group.value.base, options),
-         accentNode]);
+        [buildGroup(group.value.base, options), accentNode]);
 
     node.setAttribute("accent", "true");
 
@@ -40360,7 +41197,7 @@ groupTypes.accent = function(group, options) {
 };
 
 groupTypes.spacing = function(group) {
-    var node;
+    let node;
 
     if (group.value === "\\ " || group.value === "\\space" ||
         group.value === " " || group.value === "~") {
@@ -40376,8 +41213,8 @@ groupTypes.spacing = function(group) {
     return node;
 };
 
-groupTypes.op = function(group) {
-    var node;
+groupTypes.op = function(group, options) {
+    let node;
 
     // TODO(emily): handle big operators using the `largeop` attribute
 
@@ -40385,6 +41222,10 @@ groupTypes.op = function(group) {
         // This is a symbol. Just add the symbol.
         node = new mathMLTree.MathNode(
             "mo", [makeText(group.value.body, group.mode)]);
+    } else if (group.value.value) {
+        // This is an operator with children. Add them.
+        node = new mathMLTree.MathNode(
+            "mo", buildExpression(group.value.value, options));
     } else {
         // This is a text operator. Add all of the characters from the
         // operator's name.
@@ -40397,31 +41238,56 @@ groupTypes.op = function(group) {
     return node;
 };
 
+groupTypes.mod = function(group, options) {
+    let inner = [];
+
+    if (group.value.modType === "pod" || group.value.modType === "pmod") {
+        inner.push(new mathMLTree.MathNode(
+            "mo", [makeText("(", group.mode)]));
+    }
+    if (group.value.modType !== "pod") {
+        inner.push(new mathMLTree.MathNode(
+            "mo", [makeText("mod", group.mode)]));
+    }
+    if (group.value.value) {
+        const space = new mathMLTree.MathNode("mspace");
+        space.setAttribute("width", "0.333333em");
+        inner.push(space);
+        inner = inner.concat(buildExpression(group.value.value, options));
+    }
+    if (group.value.modType === "pod" || group.value.modType === "pmod") {
+        inner.push(new mathMLTree.MathNode(
+            "mo", [makeText(")", group.mode)]));
+    }
+
+    return new mathMLTree.MathNode("mo", inner);
+};
+
 groupTypes.katex = function(group) {
-    var node = new mathMLTree.MathNode(
+    const node = new mathMLTree.MathNode(
         "mtext", [new mathMLTree.TextNode("KaTeX")]);
 
     return node;
 };
 
 groupTypes.font = function(group, options) {
-    var font = group.value.font;
+    const font = group.value.font;
     return buildGroup(group.value.body, options.withFont(font));
 };
 
 groupTypes.delimsizing = function(group) {
-    var children = [];
+    const children = [];
 
     if (group.value.value !== ".") {
         children.push(makeText(group.value.value, group.mode));
     }
 
-    var node = new mathMLTree.MathNode("mo", children);
+    const node = new mathMLTree.MathNode("mo", children);
 
-    if (group.value.delimType === "open" ||
-        group.value.delimType === "close") {
+    if (group.value.mclass === "mopen" ||
+        group.value.mclass === "mclose") {
         // Only some of the delimsizing functions act as fences, and they
-        // return "open" or "close" delimTypes.
+        // return "mopen" or "mclose" mclass.
         node.setAttribute("fence", "true");
     } else {
         // Explicitly disable fencing if it's not a fence, to override the
@@ -40433,18 +41299,18 @@ groupTypes.delimsizing = function(group) {
 };
 
 groupTypes.styling = function(group, options) {
-    var inner = buildExpression(group.value.value, options);
+    const inner = buildExpression(group.value.value, options);
 
-    var node = new mathMLTree.MathNode("mstyle", inner);
+    const node = new mathMLTree.MathNode("mstyle", inner);
 
-    var styleAttributes = {
+    const styleAttributes = {
         "display": ["0", "true"],
         "text": ["0", "false"],
         "script": ["1", "false"],
         "scriptscript": ["2", "false"],
     };
 
-    var attr = styleAttributes[group.value.style];
+    const attr = styleAttributes[group.value.style];
 
     node.setAttribute("scriptlevel", attr[0]);
     node.setAttribute("displaystyle", attr[1]);
@@ -40453,9 +41319,9 @@ groupTypes.styling = function(group, options) {
 };
 
 groupTypes.sizing = function(group, options) {
-    var inner = buildExpression(group.value.value, options);
+    const inner = buildExpression(group.value.value, options);
 
-    var node = new mathMLTree.MathNode("mstyle", inner);
+    const node = new mathMLTree.MathNode("mstyle", inner);
 
     // TODO(emily): This doesn't produce the correct size for nested size
     // changes, because we don't keep state of what style we're currently
@@ -40469,28 +41335,26 @@ groupTypes.sizing = function(group, options) {
 };
 
 groupTypes.overline = function(group, options) {
-    var operator = new mathMLTree.MathNode(
+    const operator = new mathMLTree.MathNode(
         "mo", [new mathMLTree.TextNode("\u203e")]);
     operator.setAttribute("stretchy", "true");
 
-    var node = new mathMLTree.MathNode(
+    const node = new mathMLTree.MathNode(
         "mover",
-        [buildGroup(group.value.body, options),
-         operator]);
+        [buildGroup(group.value.body, options), operator]);
     node.setAttribute("accent", "true");
 
     return node;
 };
 
 groupTypes.underline = function(group, options) {
-    var operator = new mathMLTree.MathNode(
+    const operator = new mathMLTree.MathNode(
         "mo", [new mathMLTree.TextNode("\u203e")]);
     operator.setAttribute("stretchy", "true");
 
-    var node = new mathMLTree.MathNode(
+    const node = new mathMLTree.MathNode(
         "munder",
-        [buildGroup(group.value.body, options),
-         operator]);
+        [buildGroup(group.value.body, options), operator]);
     node.setAttribute("accentunder", "true");
 
     return node;
@@ -40499,13 +41363,20 @@ groupTypes.underline = function(group, options) {
 groupTypes.rule = function(group) {
     // TODO(emily): Figure out if there's an actual way to draw black boxes
     // in MathML.
-    var node = new mathMLTree.MathNode("mrow");
+    const node = new mathMLTree.MathNode("mrow");
+
+    return node;
+};
+
+groupTypes.kern = function(group) {
+    // TODO(kevin): Figure out if there's a way to add space in MathML
+    const node = new mathMLTree.MathNode("mrow");
 
     return node;
 };
 
 groupTypes.llap = function(group, options) {
-    var node = new mathMLTree.MathNode(
+    const node = new mathMLTree.MathNode(
         "mpadded", [buildGroup(group.value.body, options)]);
 
     node.setAttribute("lspace", "-1width");
@@ -40515,7 +41386,7 @@ groupTypes.llap = function(group, options) {
 };
 
 groupTypes.rlap = function(group, options) {
-    var node = new mathMLTree.MathNode(
+    const node = new mathMLTree.MathNode(
         "mpadded", [buildGroup(group.value.body, options)]);
 
     node.setAttribute("width", "0px");
@@ -40523,9 +41394,14 @@ groupTypes.rlap = function(group, options) {
     return node;
 };
 
-groupTypes.phantom = function(group, options, prev) {
-    var inner = buildExpression(group.value.value, options);
+groupTypes.phantom = function(group, options) {
+    const inner = buildExpression(group.value.value, options);
     return new mathMLTree.MathNode("mphantom", inner);
+};
+
+groupTypes.mclass = function(group, options) {
+    const inner = buildExpression(group.value.value, options);
+    return new mathMLTree.MathNode("mstyle", inner);
 };
 
 /**
@@ -40533,10 +41409,10 @@ groupTypes.phantom = function(group, options, prev) {
  * MathML nodes. A little simpler than the HTML version because we don't do any
  * previous-node handling.
  */
-var buildExpression = function(expression, options) {
-    var groups = [];
-    for (var i = 0; i < expression.length; i++) {
-        var group = expression[i];
+const buildExpression = function(expression, options) {
+    const groups = [];
+    for (let i = 0; i < expression.length; i++) {
+        const group = expression[i];
         groups.push(buildGroup(group, options));
     }
     return groups;
@@ -40546,7 +41422,7 @@ var buildExpression = function(expression, options) {
  * Takes a group from the parser and calls the appropriate groupTypes function
  * on it to produce a MathML node.
  */
-var buildGroup = function(group, options) {
+const buildGroup = function(group, options) {
     if (!group) {
         return new mathMLTree.MathNode("mrow");
     }
@@ -40568,23 +41444,23 @@ var buildGroup = function(group, options) {
  * Note that we actually return a domTree element with a `<math>` inside it so
  * we can do appropriate styling.
  */
-var buildMathML = function(tree, texExpression, options) {
-    var expression = buildExpression(tree, options);
+const buildMathML = function(tree, texExpression, options) {
+    const expression = buildExpression(tree, options);
 
     // Wrap up the expression in an mrow so it is presented in the semantics
     // tag correctly.
-    var wrapper = new mathMLTree.MathNode("mrow", expression);
+    const wrapper = new mathMLTree.MathNode("mrow", expression);
 
     // Build a TeX annotation of the source
-    var annotation = new mathMLTree.MathNode(
+    const annotation = new mathMLTree.MathNode(
         "annotation", [new mathMLTree.TextNode(texExpression)]);
 
     annotation.setAttribute("encoding", "application/x-tex");
 
-    var semantics = new mathMLTree.MathNode(
+    const semantics = new mathMLTree.MathNode(
         "semantics", [wrapper, annotation]);
 
-    var math = new mathMLTree.MathNode("math", [semantics]);
+    const math = new mathMLTree.MathNode("math", [semantics]);
 
     // You can't style <math> nodes, so we wrap the node in a span.
     return makeSpan(["katex-mathml"], [math]);
@@ -40593,35 +41469,35 @@ var buildMathML = function(tree, texExpression, options) {
 module.exports = buildMathML;
 
 },{"./ParseError":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/ParseError.js","./buildCommon":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/buildCommon.js","./fontMetrics":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/fontMetrics.js","./mathMLTree":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/mathMLTree.js","./symbols":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/symbols.js","./utils":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/buildTree.js":[function(require,module,exports){
-var buildHTML = require("./buildHTML");
-var buildMathML = require("./buildMathML");
-var buildCommon = require("./buildCommon");
-var Options = require("./Options");
-var Settings = require("./Settings");
-var Style = require("./Style");
+const buildHTML = require("./buildHTML");
+const buildMathML = require("./buildMathML");
+const buildCommon = require("./buildCommon");
+const Options = require("./Options");
+const Settings = require("./Settings");
+const Style = require("./Style");
 
-var makeSpan = buildCommon.makeSpan;
+const makeSpan = buildCommon.makeSpan;
 
-var buildTree = function(tree, expression, settings) {
+const buildTree = function(tree, expression, settings) {
     settings = settings || new Settings({});
 
-    var startStyle = Style.TEXT;
+    let startStyle = Style.TEXT;
     if (settings.displayMode) {
         startStyle = Style.DISPLAY;
     }
 
     // Setup the default options
-    var options = new Options({
+    const options = new Options({
         style: startStyle,
         size: "size5",
     });
 
     // `buildHTML` sometimes messes with the parse tree (like turning bins ->
     // ords), so we build the MathML version first.
-    var mathMLNode = buildMathML(tree, expression, options);
-    var htmlNode = buildHTML(tree, options);
+    const mathMLNode = buildMathML(tree, expression, options);
+    const htmlNode = buildHTML(tree, options);
 
-    var katexNode = makeSpan(["katex"], [
+    const katexNode = makeSpan(["katex"], [
         mathMLNode, htmlNode,
     ]);
 
@@ -40657,21 +41533,21 @@ module.exports = buildTree;
  * used in `\left` and `\right`.
  */
 
-var ParseError = require("./ParseError");
-var Style = require("./Style");
+const ParseError = require("./ParseError");
+const Style = require("./Style");
 
-var buildCommon = require("./buildCommon");
-var fontMetrics = require("./fontMetrics");
-var symbols = require("./symbols");
-var utils = require("./utils");
+const buildCommon = require("./buildCommon");
+const fontMetrics = require("./fontMetrics");
+const symbols = require("./symbols");
+const utils = require("./utils");
 
-var makeSpan = buildCommon.makeSpan;
+const makeSpan = buildCommon.makeSpan;
 
 /**
  * Get the metrics for a given symbol and font, after transformation (i.e.
  * after following replacement from symbols.js)
  */
-var getMetrics = function(symbol, font) {
+const getMetrics = function(symbol, font) {
     if (symbols.math[symbol] && symbols.math[symbol].replace) {
         return fontMetrics.getCharacterMetrics(
             symbols.math[symbol].replace, font);
@@ -40684,19 +41560,22 @@ var getMetrics = function(symbol, font) {
 /**
  * Builds a symbol in the given font size (note size is an integer)
  */
-var mathrmSize = function(value, size, mode) {
-    return buildCommon.makeSymbol(value, "Size" + size + "-Regular", mode);
+const mathrmSize = function(value, size, mode, options) {
+    return buildCommon.makeSymbol(value, "Size" + size + "-Regular",
+        mode, options);
 };
 
 /**
  * Puts a delimiter span in a given style, and adds appropriate height, depth,
  * and maxFontSizes.
  */
-var styleWrap = function(delim, toStyle, options) {
-    var span = makeSpan(
-        ["style-wrap", options.style.reset(), toStyle.cls()], [delim]);
+const styleWrap = function(delim, toStyle, options, classes) {
+    classes = classes || [];
+    const span = makeSpan(
+        classes.concat(["style-wrap", options.style.reset(), toStyle.cls()]),
+        [delim], options);
 
-    var multiplier = toStyle.sizeMultiplier / options.style.sizeMultiplier;
+    const multiplier = toStyle.sizeMultiplier / options.style.sizeMultiplier;
 
     span.height *= multiplier;
     span.depth *= multiplier;
@@ -40710,15 +41589,15 @@ var styleWrap = function(delim, toStyle, options) {
  * font, but is restyled to either be in textstyle, scriptstyle, or
  * scriptscriptstyle.
  */
-var makeSmallDelim = function(delim, style, center, options, mode) {
-    var text = buildCommon.makeSymbol(delim, "Main-Regular", mode);
+const makeSmallDelim = function(delim, style, center, options, mode, classes) {
+    const text = buildCommon.makeSymbol(delim, "Main-Regular", mode, options);
 
-    var span = styleWrap(text, style, options);
+    const span = styleWrap(text, style, options, classes);
 
     if (center) {
-        var shift =
+        const shift =
             (1 - options.style.sizeMultiplier / style.sizeMultiplier) *
-            fontMetrics.metrics.axisHeight;
+            options.style.metrics.axisHeight;
 
         span.style.top = shift + "em";
         span.height -= shift;
@@ -40732,17 +41611,16 @@ var makeSmallDelim = function(delim, style, center, options, mode) {
  * Makes a large delimiter. This is a delimiter that comes in the Size1, Size2,
  * Size3, or Size4 fonts. It is always rendered in textstyle.
  */
-var makeLargeDelim = function(delim, size, center, options, mode) {
-    var inner = mathrmSize(delim, size, mode);
+const makeLargeDelim = function(delim, size, center, options, mode, classes) {
+    const inner = mathrmSize(delim, size, mode, options);
 
-    var span = styleWrap(
-        makeSpan(["delimsizing", "size" + size],
-                 [inner], options.getColor()),
-        Style.TEXT, options);
+    const span = styleWrap(
+        makeSpan(["delimsizing", "size" + size], [inner], options),
+        Style.TEXT, options, classes);
 
     if (center) {
-        var shift = (1 - options.style.sizeMultiplier) *
-            fontMetrics.metrics.axisHeight;
+        const shift = (1 - options.style.sizeMultiplier) *
+            options.style.metrics.axisHeight;
 
         span.style.top = shift + "em";
         span.height -= shift;
@@ -40756,8 +41634,8 @@ var makeLargeDelim = function(delim, size, center, options, mode) {
  * Make an inner span with the given offset and in the given font. This is used
  * in `makeStackedDelim` to make the stacking pieces for the delimiter.
  */
-var makeInner = function(symbol, font, mode) {
-    var sizeClass;
+const makeInner = function(symbol, font, mode) {
+    let sizeClass;
     // Apply the correct CSS class to choose the right font.
     if (font === "Size1-Regular") {
         sizeClass = "delim-size1";
@@ -40765,7 +41643,7 @@ var makeInner = function(symbol, font, mode) {
         sizeClass = "delim-size4";
     }
 
-    var inner = makeSpan(
+    const inner = makeSpan(
         ["delimsizinginner", sizeClass],
         [makeSpan([], [buildCommon.makeSymbol(symbol, font, mode)])]);
 
@@ -40778,17 +41656,18 @@ var makeInner = function(symbol, font, mode) {
  * Make a stacked delimiter out of a given delimiter, with the total height at
  * least `heightTotal`. This routine is mentioned on page 442 of the TeXbook.
  */
-var makeStackedDelim = function(delim, heightTotal, center, options, mode) {
+const makeStackedDelim = function(delim, heightTotal, center, options, mode,
+                                classes) {
     // There are four parts, the top, an optional middle, a repeated part, and a
     // bottom.
-    var top;
-    var middle;
-    var repeat;
-    var bottom;
+    let top;
+    let middle;
+    let repeat;
+    let bottom;
     top = repeat = bottom = delim;
     middle = null;
     // Also keep track of what font the delimiters are in
-    var font = "Size1-Regular";
+    let font = "Size1-Regular";
 
     // We set the parts and font based on the symbol. Note that we use
     // '\u23d0' instead of '|' and '\u2016' instead of '\\|' for the
@@ -40885,65 +41764,64 @@ var makeStackedDelim = function(delim, heightTotal, center, options, mode) {
     }
 
     // Get the metrics of the four sections
-    var topMetrics = getMetrics(top, font);
-    var topHeightTotal = topMetrics.height + topMetrics.depth;
-    var repeatMetrics = getMetrics(repeat, font);
-    var repeatHeightTotal = repeatMetrics.height + repeatMetrics.depth;
-    var bottomMetrics = getMetrics(bottom, font);
-    var bottomHeightTotal = bottomMetrics.height + bottomMetrics.depth;
-    var middleHeightTotal = 0;
-    var middleFactor = 1;
+    const topMetrics = getMetrics(top, font);
+    const topHeightTotal = topMetrics.height + topMetrics.depth;
+    const repeatMetrics = getMetrics(repeat, font);
+    const repeatHeightTotal = repeatMetrics.height + repeatMetrics.depth;
+    const bottomMetrics = getMetrics(bottom, font);
+    const bottomHeightTotal = bottomMetrics.height + bottomMetrics.depth;
+    let middleHeightTotal = 0;
+    let middleFactor = 1;
     if (middle !== null) {
-        var middleMetrics = getMetrics(middle, font);
+        const middleMetrics = getMetrics(middle, font);
         middleHeightTotal = middleMetrics.height + middleMetrics.depth;
         middleFactor = 2; // repeat symmetrically above and below middle
     }
 
     // Calcuate the minimal height that the delimiter can have.
     // It is at least the size of the top, bottom, and optional middle combined.
-    var minHeight = topHeightTotal + bottomHeightTotal + middleHeightTotal;
+    const minHeight = topHeightTotal + bottomHeightTotal + middleHeightTotal;
 
     // Compute the number of copies of the repeat symbol we will need
-    var repeatCount = Math.ceil(
+    const repeatCount = Math.ceil(
         (heightTotal - minHeight) / (middleFactor * repeatHeightTotal));
 
     // Compute the total height of the delimiter including all the symbols
-    var realHeightTotal =
+    const realHeightTotal =
         minHeight + repeatCount * middleFactor * repeatHeightTotal;
 
     // The center of the delimiter is placed at the center of the axis. Note
     // that in this context, "center" means that the delimiter should be
     // centered around the axis in the current style, while normally it is
     // centered around the axis in textstyle.
-    var axisHeight = fontMetrics.metrics.axisHeight;
+    let axisHeight = options.style.metrics.axisHeight;
     if (center) {
         axisHeight *= options.style.sizeMultiplier;
     }
     // Calculate the depth
-    var depth = realHeightTotal / 2 - axisHeight;
+    const depth = realHeightTotal / 2 - axisHeight;
 
     // Now, we start building the pieces that will go into the vlist
 
     // Keep a list of the inner pieces
-    var inners = [];
+    const inners = [];
 
     // Add the bottom symbol
     inners.push(makeInner(bottom, font, mode));
 
-    var i;
     if (middle === null) {
         // Add that many symbols
-        for (i = 0; i < repeatCount; i++) {
+        for (let i = 0; i < repeatCount; i++) {
             inners.push(makeInner(repeat, font, mode));
         }
     } else {
         // When there is a middle bit, we need the middle part and two repeated
         // sections
-        for (i = 0; i < repeatCount; i++) {
+        for (let i = 0; i < repeatCount; i++) {
             inners.push(makeInner(repeat, font, mode));
         }
         inners.push(makeInner(middle, font, mode));
-        for (i = 0; i < repeatCount; i++) {
+        for (let i = 0; i < repeatCount; i++) {
             inners.push(makeInner(repeat, font, mode));
         }
     }
@@ -40952,16 +41830,16 @@ var makeStackedDelim = function(delim, heightTotal, center, options, mode) {
     inners.push(makeInner(top, font, mode));
 
     // Finally, build the vlist
-    var inner = buildCommon.makeVList(inners, "bottom", depth, options);
+    const inner = buildCommon.makeVList(inners, "bottom", depth, options);
 
     return styleWrap(
-        makeSpan(["delimsizing", "mult"], [inner], options.getColor()),
-        Style.TEXT, options);
+        makeSpan(["delimsizing", "mult"], [inner], options),
+        Style.TEXT, options, classes);
 };
 
 // There are three kinds of delimiters, delimiters that stack when they become
 // too large
-var stackLargeDelimiters = [
+const stackLargeDelimiters = [
     "(", ")", "[", "\\lbrack", "]", "\\rbrack",
     "\\{", "\\lbrace", "\\}", "\\rbrace",
     "\\lfloor", "\\rfloor", "\\lceil", "\\rceil",
@@ -40969,7 +41847,7 @@ var stackLargeDelimiters = [
 ];
 
 // delimiters that always stack
-var stackAlwaysDelimiters = [
+const stackAlwaysDelimiters = [
     "\\uparrow", "\\downarrow", "\\updownarrow",
     "\\Uparrow", "\\Downarrow", "\\Updownarrow",
     "|", "\\|", "\\vert", "\\Vert",
@@ -40978,19 +41856,19 @@ var stackAlwaysDelimiters = [
 ];
 
 // and delimiters that never stack
-var stackNeverDelimiters = [
+const stackNeverDelimiters = [
     "<", ">", "\\langle", "\\rangle", "/", "\\backslash", "\\lt", "\\gt",
 ];
 
 // Metrics of the different sizes. Found by looking at TeX's output of
 // $\bigl| // \Bigl| \biggl| \Biggl| \showlists$
 // Used to create stacked delimiters of appropriate sizes in makeSizedDelim.
-var sizeToMaxHeight = [0, 1.2, 1.8, 2.4, 3.0];
+const sizeToMaxHeight = [0, 1.2, 1.8, 2.4, 3.0];
 
 /**
  * Used to create a delimiter of a specific size, where `size` is 1, 2, 3, or 4.
  */
-var makeSizedDelim = function(delim, size, options, mode) {
+const makeSizedDelim = function(delim, size, options, mode, classes) {
     // < and > turn into \langle and \rangle in delimiters
     if (delim === "<" || delim === "\\lt") {
         delim = "\\langle";
@@ -41001,10 +41879,10 @@ var makeSizedDelim = function(delim, size, options, mode) {
     // Sized delimiters are never centered.
     if (utils.contains(stackLargeDelimiters, delim) ||
         utils.contains(stackNeverDelimiters, delim)) {
-        return makeLargeDelim(delim, size, false, options, mode);
+        return makeLargeDelim(delim, size, false, options, mode, classes);
     } else if (utils.contains(stackAlwaysDelimiters, delim)) {
         return makeStackedDelim(
-            delim, sizeToMaxHeight[size], false, options, mode);
+            delim, sizeToMaxHeight[size], false, options, mode, classes);
     } else {
         throw new ParseError("Illegal delimiter: '" + delim + "'");
     }
@@ -41023,7 +41901,7 @@ var makeSizedDelim = function(delim, size, options, mode) {
  */
 
 // Delimiters that never stack try small delimiters and large delimiters only
-var stackNeverDelimiterSequence = [
+const stackNeverDelimiterSequence = [
     {type: "small", style: Style.SCRIPTSCRIPT},
     {type: "small", style: Style.SCRIPT},
     {type: "small", style: Style.TEXT},
@@ -41034,7 +41912,7 @@ var stackNeverDelimiterSequence = [
 ];
 
 // Delimiters that always stack try the small delimiters first, then stack
-var stackAlwaysDelimiterSequence = [
+const stackAlwaysDelimiterSequence = [
     {type: "small", style: Style.SCRIPTSCRIPT},
     {type: "small", style: Style.SCRIPT},
     {type: "small", style: Style.TEXT},
@@ -41043,7 +41921,7 @@ var stackAlwaysDelimiterSequence = [
 
 // Delimiters that stack when large try the small and then large delimiters, and
 // stack afterwards
-var stackLargeDelimiterSequence = [
+const stackLargeDelimiterSequence = [
     {type: "small", style: Style.SCRIPTSCRIPT},
     {type: "small", style: Style.SCRIPT},
     {type: "small", style: Style.TEXT},
@@ -41057,7 +41935,7 @@ var stackLargeDelimiterSequence = [
 /**
  * Get the font used in a delimiter based on what kind of delimiter it is.
  */
-var delimTypeToFont = function(type) {
+const delimTypeToFont = function(type) {
     if (type.type === "small") {
         return "Main-Regular";
     } else if (type.type === "large") {
@@ -41071,20 +41949,20 @@ var delimTypeToFont = function(type) {
  * Traverse a sequence of types of delimiters to decide what kind of delimiter
  * should be used to create a delimiter of the given height+depth.
  */
-var traverseSequence = function(delim, height, sequence, options) {
+const traverseSequence = function(delim, height, sequence, options) {
     // Here, we choose the index we should start at in the sequences. In smaller
     // sizes (which correspond to larger numbers in style.size) we start earlier
     // in the sequence. Thus, scriptscript starts at index 3-3=0, script starts
     // at index 3-2=1, text starts at 3-1=2, and display starts at min(2,3-0)=2
-    var start = Math.min(2, 3 - options.style.size);
-    for (var i = start; i < sequence.length; i++) {
+    const start = Math.min(2, 3 - options.style.size);
+    for (let i = start; i < sequence.length; i++) {
         if (sequence[i].type === "stack") {
             // This is always the last delimiter, so we just break the loop now.
             break;
         }
 
-        var metrics = getMetrics(delim, delimTypeToFont(sequence[i]));
-        var heightDepth = metrics.height + metrics.depth;
+        const metrics = getMetrics(delim, delimTypeToFont(sequence[i]));
+        let heightDepth = metrics.height + metrics.depth;
 
         // Small delimiters are scaled down versions of the same font, so we
         // account for the style change size.
@@ -41107,7 +41985,8 @@ var traverseSequence = function(delim, height, sequence, options) {
  * Make a delimiter of a given height+depth, with optional centering. Here, we
  * traverse the sequences, and create a delimiter that the sequence tells us to.
  */
-var makeCustomSizedDelim = function(delim, height, center, options, mode) {
+const makeCustomSizedDelim = function(delim, height, center, options, mode,
+                                    classes) {
     if (delim === "<" || delim === "\\lt") {
         delim = "\\langle";
     } else if (delim === ">" || delim === "\\gt") {
@@ -41115,7 +41994,7 @@ var makeCustomSizedDelim = function(delim, height, center, options, mode) {
     }
 
     // Decide what sequence to use
-    var sequence;
+    let sequence;
     if (utils.contains(stackNeverDelimiters, delim)) {
         sequence = stackNeverDelimiterSequence;
     } else if (utils.contains(stackLargeDelimiters, delim)) {
@@ -41125,16 +42004,18 @@ var makeCustomSizedDelim = function(delim, height, center, options, mode) {
     }
 
     // Look through the sequence
-    var delimType = traverseSequence(delim, height, sequence, options);
+    const delimType = traverseSequence(delim, height, sequence, options);
 
     // Depending on the sequence element we decided on, call the appropriate
     // function.
     if (delimType.type === "small") {
-        return makeSmallDelim(delim, delimType.style, center, options, mode);
+        return makeSmallDelim(delim, delimType.style, center, options, mode,
+                              classes);
     } else if (delimType.type === "large") {
-        return makeLargeDelim(delim, delimType.size, center, options, mode);
+        return makeLargeDelim(delim, delimType.size, center, options, mode,
+                              classes);
     } else if (delimType.type === "stack") {
-        return makeStackedDelim(delim, height, center, options, mode);
+        return makeStackedDelim(delim, height, center, options, mode, classes);
     }
 };
 
@@ -41142,19 +42023,20 @@ var makeCustomSizedDelim = function(delim, height, center, options, mode) {
  * Make a delimiter for use with `\left` and `\right`, given a height and depth
  * of an expression that the delimiters surround.
  */
-var makeLeftRightDelim = function(delim, height, depth, options, mode) {
+const makeLeftRightDelim = function(delim, height, depth, options, mode,
+                                  classes) {
     // We always center \left/\right delimiters, so the axis is always shifted
-    var axisHeight =
-        fontMetrics.metrics.axisHeight * options.style.sizeMultiplier;
+    const axisHeight =
+        options.style.metrics.axisHeight * options.style.sizeMultiplier;
 
     // Taken from TeX source, tex.web, function make_left_right
-    var delimiterFactor = 901;
-    var delimiterExtend = 5.0 / fontMetrics.metrics.ptPerEm;
+    const delimiterFactor = 901;
+    const delimiterExtend = 5.0 / fontMetrics.metrics.ptPerEm;
 
-    var maxDistFromAxis = Math.max(
+    const maxDistFromAxis = Math.max(
         height - axisHeight, depth + axisHeight);
 
-    var totalHeight = Math.max(
+    const totalHeight = Math.max(
         // In real TeX, calculations are done using integral values which are
         // 65536 per pt, or 655360 per em. So, the division here truncates in
         // TeX but doesn't here, producing different results. If we wanted to
@@ -41169,7 +42051,8 @@ var makeLeftRightDelim = function(delim, height, depth, options, mode) {
 
     // Finally, we defer to `makeCustomSizedDelim` with our calculated total
     // height
-    return makeCustomSizedDelim(delim, totalHeight, true, options, mode);
+    return makeCustomSizedDelim(delim, totalHeight, true, options, mode,
+                                classes);
 };
 
 module.exports = {
@@ -41188,16 +42071,16 @@ module.exports = {
  *
  * Similar functions for working with MathML nodes exist in mathMLTree.js.
  */
-
-var utils = require("./utils");
+const unicodeRegexes = require("./unicodeRegexes");
+const utils = require("./utils");
 
 /**
  * Create an HTML className based on a list of classes. In addition to joining
  * with spaces, we also remove null or empty classes.
  */
-var createClass = function(classes) {
+const createClass = function(classes) {
     classes = classes.slice();
-    for (var i = classes.length - 1; i >= 0; i--) {
+    for (let i = classes.length - 1; i >= 0; i--) {
         if (!classes[i]) {
             classes.splice(i, 1);
         }
@@ -41211,14 +42094,22 @@ var createClass = function(classes) {
  * an inline style. It also contains information about its height, depth, and
  * maxFontSize.
  */
-function span(classes, children, height, depth, maxFontSize, style) {
+function span(classes, children, options) {
     this.classes = classes || [];
     this.children = children || [];
-    this.height = height || 0;
-    this.depth = depth || 0;
-    this.maxFontSize = maxFontSize || 0;
-    this.style = style || {};
+    this.height = 0;
+    this.depth = 0;
+    this.maxFontSize = 0;
+    this.style = {};
     this.attributes = {};
+    if (options) {
+        if (options.style.isTight()) {
+            this.classes.push("mtight");
+        }
+        if (options.getColor()) {
+            this.style.color = options.getColor();
+        }
+    }
 }
 
 /**
@@ -41230,31 +42121,35 @@ span.prototype.setAttribute = function(attribute, value) {
     this.attributes[attribute] = value;
 };
 
+span.prototype.tryCombine = function(sibling) {
+    return false;
+};
+
 /**
  * Convert the span into an HTML node
  */
 span.prototype.toNode = function() {
-    var span = document.createElement("span");
+    const span = document.createElement("span");
 
     // Apply the class
     span.className = createClass(this.classes);
 
     // Apply inline styles
-    for (var style in this.style) {
+    for (const style in this.style) {
         if (Object.prototype.hasOwnProperty.call(this.style, style)) {
             span.style[style] = this.style[style];
         }
     }
 
     // Apply attributes
-    for (var attr in this.attributes) {
+    for (const attr in this.attributes) {
         if (Object.prototype.hasOwnProperty.call(this.attributes, attr)) {
             span.setAttribute(attr, this.attributes[attr]);
         }
     }
 
     // Append the children, also as HTML nodes
-    for (var i = 0; i < this.children.length; i++) {
+    for (let i = 0; i < this.children.length; i++) {
         span.appendChild(this.children[i].toNode());
     }
 
@@ -41265,7 +42160,7 @@ span.prototype.toNode = function() {
  * Convert the span into an HTML markup string
  */
 span.prototype.toMarkup = function() {
-    var markup = "<span";
+    let markup = "<span";
 
     // Add the class
     if (this.classes.length) {
@@ -41274,10 +42169,10 @@ span.prototype.toMarkup = function() {
         markup += "\"";
     }
 
-    var styles = "";
+    let styles = "";
 
     // Add the styles, after hyphenation
-    for (var style in this.style) {
+    for (const style in this.style) {
         if (this.style.hasOwnProperty(style)) {
             styles += utils.hyphenate(style) + ":" + this.style[style] + ";";
         }
@@ -41288,7 +42183,7 @@ span.prototype.toMarkup = function() {
     }
 
     // Add the attributes
-    for (var attr in this.attributes) {
+    for (const attr in this.attributes) {
         if (Object.prototype.hasOwnProperty.call(this.attributes, attr)) {
             markup += " " + attr + "=\"";
             markup += utils.escape(this.attributes[attr]);
@@ -41299,7 +42194,7 @@ span.prototype.toMarkup = function() {
     markup += ">";
 
     // Add the markup of the children, also as markup
-    for (var i = 0; i < this.children.length; i++) {
+    for (let i = 0; i < this.children.length; i++) {
         markup += this.children[i].toMarkup();
     }
 
@@ -41314,11 +42209,11 @@ span.prototype.toMarkup = function() {
  * contains children and doesn't have any HTML properties. It also keeps track
  * of a height, depth, and maxFontSize.
  */
-function documentFragment(children, height, depth, maxFontSize) {
+function documentFragment(children) {
     this.children = children || [];
-    this.height = height || 0;
-    this.depth = depth || 0;
-    this.maxFontSize = maxFontSize || 0;
+    this.height = 0;
+    this.depth = 0;
+    this.maxFontSize = 0;
 }
 
 /**
@@ -41326,10 +42221,10 @@ function documentFragment(children, height, depth, maxFontSize) {
  */
 documentFragment.prototype.toNode = function() {
     // Create a fragment
-    var frag = document.createDocumentFragment();
+    const frag = document.createDocumentFragment();
 
     // Append the children
-    for (var i = 0; i < this.children.length; i++) {
+    for (let i = 0; i < this.children.length; i++) {
         frag.appendChild(this.children[i].toNode());
     }
 
@@ -41340,14 +42235,22 @@ documentFragment.prototype.toNode = function() {
  * Convert the fragment into HTML markup
  */
 documentFragment.prototype.toMarkup = function() {
-    var markup = "";
+    let markup = "";
 
     // Simply concatenate the markup for the children together
-    for (var i = 0; i < this.children.length; i++) {
+    for (let i = 0; i < this.children.length; i++) {
         markup += this.children[i].toMarkup();
     }
 
     return markup;
+};
+
+const iCombinations = {
+    'î': '\u0131\u0302',
+    'ï': '\u0131\u0308',
+    'í': '\u0131\u0301',
+    // 'ī': '\u0131\u0304', // enable when we add Extended Latin
+    'ì': '\u0131\u0300',
 };
 
 /**
@@ -41364,15 +42267,62 @@ function symbolNode(value, height, depth, italic, skew, classes, style) {
     this.classes = classes || [];
     this.style = style || {};
     this.maxFontSize = 0;
+
+    // Mark CJK characters with specific classes so that we can specify which
+    // fonts to use.  This allows us to render these characters with a serif
+    // font in situations where the browser would either default to a sans serif
+    // or render a placeholder character.
+    if (unicodeRegexes.cjkRegex.test(value)) {
+        // I couldn't find any fonts that contained Hangul as well as all of
+        // the other characters we wanted to test there for it gets its own
+        // CSS class.
+        if (unicodeRegexes.hangulRegex.test(value)) {
+            this.classes.push('hangul_fallback');
+        } else {
+            this.classes.push('cjk_fallback');
+        }
+    }
+
+    if (/[îïíì]/.test(this.value)) {    // add ī when we add Extended Latin
+        this.value = iCombinations[this.value];
+    }
 }
+
+symbolNode.prototype.tryCombine = function(sibling) {
+    if (!sibling
+        || !(sibling instanceof symbolNode)
+        || this.italic > 0
+        || createClass(this.classes) !== createClass(sibling.classes)
+        || this.skew !== sibling.skew
+        || this.maxFontSize !== sibling.maxFontSize) {
+        return false;
+    }
+    for (const style in this.style) {
+        if (this.style.hasOwnProperty(style)
+            && this.style[style] !== sibling.style[style]) {
+            return false;
+        }
+    }
+    for (const style in sibling.style) {
+        if (sibling.style.hasOwnProperty(style)
+            && this.style[style] !== sibling.style[style]) {
+            return false;
+        }
+    }
+    this.value += sibling.value;
+    this.height = Math.max(this.height, sibling.height);
+    this.depth = Math.max(this.depth, sibling.depth);
+    this.italic = sibling.italic;
+    return true;
+};
 
 /**
  * Creates a text node or span from a symbol node. Note that a span is only
  * created if it is needed.
  */
 symbolNode.prototype.toNode = function() {
-    var node = document.createTextNode(this.value);
-    var span = null;
+    const node = document.createTextNode(this.value);
+    let span = null;
 
     if (this.italic > 0) {
         span = document.createElement("span");
@@ -41384,7 +42334,7 @@ symbolNode.prototype.toNode = function() {
         span.className = createClass(this.classes);
     }
 
-    for (var style in this.style) {
+    for (const style in this.style) {
         if (this.style.hasOwnProperty(style)) {
             span = span || document.createElement("span");
             span.style[style] = this.style[style];
@@ -41405,9 +42355,9 @@ symbolNode.prototype.toNode = function() {
 symbolNode.prototype.toMarkup = function() {
     // TODO(alpert): More duplication than I'd like from
     // span.prototype.toMarkup and symbolNode.prototype.toNode...
-    var needsSpan = false;
+    let needsSpan = false;
 
-    var markup = "<span";
+    let markup = "<span";
 
     if (this.classes.length) {
         needsSpan = true;
@@ -41416,12 +42366,12 @@ symbolNode.prototype.toMarkup = function() {
         markup += "\"";
     }
 
-    var styles = "";
+    let styles = "";
 
     if (this.italic > 0) {
         styles += "margin-right:" + this.italic + "em;";
     }
-    for (var style in this.style) {
+    for (const style in this.style) {
         if (this.style.hasOwnProperty(style)) {
             styles += utils.hyphenate(style) + ":" + this.style[style] + ";";
         }
@@ -41432,7 +42382,7 @@ symbolNode.prototype.toMarkup = function() {
         markup += " style=\"" + utils.escape(styles) + "\"";
     }
 
-    var escaped = utils.escape(this.value);
+    const escaped = utils.escape(this.value);
     if (needsSpan) {
         markup += ">";
         markup += escaped;
@@ -41449,41 +42399,47 @@ module.exports = {
     symbolNode: symbolNode,
 };
 
-},{"./utils":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/environments.js":[function(require,module,exports){
+},{"./unicodeRegexes":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/unicodeRegexes.js","./utils":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/environments.js":[function(require,module,exports){
 /* eslint no-constant-condition:0 */
-var fontMetrics = require("./fontMetrics");
-var parseData = require("./parseData");
-var ParseError = require("./ParseError");
+const parseData = require("./parseData");
+const ParseError = require("./ParseError");
+const Style = require("./Style");
 
-var ParseNode = parseData.ParseNode;
+const ParseNode = parseData.ParseNode;
 
 /**
  * Parse the body of the environment, with rows delimited by \\ and
  * columns delimited by &, and create a nested list in row-major order
- * with one group per cell.
+ * with one group per cell.  If given an optional argument style
+ * ("text", "display", etc.), then each cell is cast into that style.
  */
-function parseArray(parser, result) {
-    var row = [];
-    var body = [row];
-    var rowGaps = [];
+function parseArray(parser, result, style) {
+    let row = [];
+    const body = [row];
+    const rowGaps = [];
     while (true) {
-        var cell = parser.parseExpression(false, null);
-        row.push(new ParseNode("ordgroup", cell, parser.mode));
-        var next = parser.nextToken.text;
+        let cell = parser.parseExpression(false, null);
+        cell = new ParseNode("ordgroup", cell, parser.mode);
+        if (style) {
+            cell = new ParseNode("styling", {
+                style: style,
+                value: [cell],
+            }, parser.mode);
+        }
+        row.push(cell);
+        const next = parser.nextToken.text;
         if (next === "&") {
             parser.consume();
         } else if (next === "\\end") {
             break;
         } else if (next === "\\\\" || next === "\\cr") {
-            var cr = parser.parseFunction();
+            const cr = parser.parseFunction();
             rowGaps.push(cr.value.size);
             row = [];
             body.push(row);
         } else {
-            // TODO: Clean up the following hack once #385 got merged
-            var pos = Math.min(parser.pos + 1, parser.lexer._input.length);
             throw new ParseError("Expected & or \\\\ or \\end",
-                                 parser.lexer, pos);
+                                 parser.nextToken);
         }
     }
     result.body = body;
@@ -41523,7 +42479,7 @@ function defineEnvironment(names, props, handler) {
         props = { numArgs: props };
     }
     // Set default values of environments
-    var data = {
+    const data = {
         numArgs: props.numArgs || 0,
         argTypes: props.argTypes,
         greediness: 1,
@@ -41531,20 +42487,32 @@ function defineEnvironment(names, props, handler) {
         numOptionalArgs: props.numOptionalArgs || 0,
         handler: handler,
     };
-    for (var i = 0; i < names.length; ++i) {
+    for (let i = 0; i < names.length; ++i) {
         module.exports[names[i]] = data;
+    }
+}
+
+// Decides on a style for cells in an array according to whether the given
+// environment name starts with the letter 'd'.
+function dCellStyle(envName) {
+    if (envName.substr(0, 1) === "d") {
+        return "display";
+    } else {
+        return "text";
     }
 }
 
 // Arrays are part of LaTeX, defined in lttab.dtx so its documentation
 // is part of the source2e.pdf file of LaTeX2e source documentation.
-defineEnvironment("array", {
+// {darray} is an {array} environment where cells are set in \displaystyle,
+// as defined in nccmath.sty.
+defineEnvironment(["array", "darray"], {
     numArgs: 1,
 }, function(context, args) {
-    var colalign = args[0];
+    let colalign = args[0];
     colalign = colalign.value.map ? colalign.value : [colalign];
-    var cols = colalign.map(function(node) {
-        var ca = node.value;
+    const cols = colalign.map(function(node) {
+        const ca = node.value;
         if ("lcr".indexOf(ca) !== -1) {
             return {
                 type: "align",
@@ -41558,14 +42526,14 @@ defineEnvironment("array", {
         }
         throw new ParseError(
             "Unknown column alignment: " + node.value,
-            context.lexer, context.positions[1]);
+            node);
     });
-    var res = {
+    let res = {
         type: "array",
         cols: cols,
         hskipBeforeAndAfter: true, // \@preamble in lttab.dtx
     };
-    res = parseArray(context.parser, res);
+    res = parseArray(context.parser, res, dCellStyle(context.envName));
     return res;
 });
 
@@ -41580,7 +42548,7 @@ defineEnvironment([
     "Vmatrix",
 ], {
 }, function(context) {
-    var delimiters = {
+    const delimiters = {
         "matrix": null,
         "pmatrix": ["(", ")"],
         "bmatrix": ["[", "]"],
@@ -41588,11 +42556,11 @@ defineEnvironment([
         "vmatrix": ["|", "|"],
         "Vmatrix": ["\\Vert", "\\Vert"],
     }[context.envName];
-    var res = {
+    let res = {
         type: "array",
         hskipBeforeAndAfter: false, // \hskip -\arraycolsep in amsmath
     };
-    res = parseArray(context.parser, res);
+    res = parseArray(context.parser, res, dCellStyle(context.envName));
     if (delimiters) {
         res = new ParseNode("leftright", {
             body: [res],
@@ -41606,16 +42574,25 @@ defineEnvironment([
 // A cases environment (in amsmath.sty) is almost equivalent to
 // \def\arraystretch{1.2}%
 // \left\{\begin{array}{@{}l@{\quad}l@{}} … \end{array}\right.
-defineEnvironment("cases", {
+// {dcases} is a {cases} environment where cells are set in \displaystyle,
+// as defined in mathtools.sty.
+defineEnvironment([
+    "cases",
+    "dcases",
+], {
 }, function(context) {
-    var res = {
+    let res = {
         type: "array",
         arraystretch: 1.2,
         cols: [{
             type: "align",
             align: "l",
             pregap: 0,
-            postgap: fontMetrics.metrics.quad,
+            // TODO(kevinb) get the current style.
+            // For now we use the metrics for TEXT style which is what we were
+            // doing before.  Before attempting to get the current style we
+            // should look at TeX's behavior especially for \over and matrices.
+            postgap: Style.TEXT.metrics.quad,
         }, {
             type: "align",
             align: "l",
@@ -41623,7 +42600,7 @@ defineEnvironment("cases", {
             postgap: 0,
         }],
     };
-    res = parseArray(context.parser, res);
+    res = parseArray(context.parser, res, dCellStyle(context.envName));
     res = new ParseNode("leftright", {
         body: [res],
         left: "\\{",
@@ -41638,25 +42615,24 @@ defineEnvironment("cases", {
 // so that \strut@ is the same as \strut.
 defineEnvironment("aligned", {
 }, function(context) {
-    var res = {
+    let res = {
         type: "array",
         cols: [],
     };
     res = parseArray(context.parser, res);
-    var emptyGroup = new ParseNode("ordgroup", [], context.mode);
-    var numCols = 0;
+    const emptyGroup = new ParseNode("ordgroup", [], context.mode);
+    let numCols = 0;
     res.value.body.forEach(function(row) {
-        var i;
-        for (i = 1; i < row.length; i += 2) {
+        for (let i = 1; i < row.length; i += 2) {
             row[i].value.unshift(emptyGroup);
         }
         if (numCols < row.length) {
             numCols = row.length;
         }
     });
-    for (var i = 0; i < numCols; ++i) {
-        var align = "r";
-        var pregap = 0;
+    for (let i = 0; i < numCols; ++i) {
+        let align = "r";
+        let pregap = 0;
         if (i % 2 === 1) {
             align = "l";
         } else if (i > 0) {
@@ -41672,10 +42648,11 @@ defineEnvironment("aligned", {
     return res;
 });
 
-},{"./ParseError":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/ParseError.js","./fontMetrics":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/fontMetrics.js","./parseData":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/parseData.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/fontMetrics.js":[function(require,module,exports){
+},{"./ParseError":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/ParseError.js","./Style":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/Style.js","./parseData":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/parseData.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/fontMetrics.js":[function(require,module,exports){
 /* eslint no-unused-vars:0 */
 
-var Style = require("./Style");
+const Style = require("./Style");
+const cjkRegex = require("./unicodeRegexes").cjkRegex;
 
 /**
  * This file contains metrics regarding fonts and individual symbols. The sigma
@@ -41684,87 +42661,86 @@ var Style = require("./Style");
  * `metrics` variable and the getCharacterMetrics function.
  */
 
-// These font metrics are extracted from TeX by using
-// \font\a=cmmi10
-// \showthe\fontdimenX\a
-// where X is the corresponding variable number. These correspond to the font
-// parameters of the symbol fonts. In TeX, there are actually three sets of
-// dimensions, one for each of textstyle, scriptstyle, and scriptscriptstyle,
-// but we only use the textstyle ones, and scale certain dimensions accordingly.
-// See the TeXbook, page 441.
-var sigma1 = 0.025;
-var sigma2 = 0;
-var sigma3 = 0;
-var sigma4 = 0;
-var sigma5 = 0.431;
-var sigma6 = 1;
-var sigma7 = 0;
-var sigma8 = 0.677;
-var sigma9 = 0.394;
-var sigma10 = 0.444;
-var sigma11 = 0.686;
-var sigma12 = 0.345;
-var sigma13 = 0.413;
-var sigma14 = 0.363;
-var sigma15 = 0.289;
-var sigma16 = 0.150;
-var sigma17 = 0.247;
-var sigma18 = 0.386;
-var sigma19 = 0.050;
-var sigma20 = 2.390;
-var sigma21 = 1.01;
-var sigma21Script = 0.81;
-var sigma21ScriptScript = 0.71;
-var sigma22 = 0.250;
+// In TeX, there are actually three sets of dimensions, one for each of
+// textstyle, scriptstyle, and scriptscriptstyle.  These are provided in the
+// the arrays below, in that order.
+//
+// The font metrics are stored in fonts cmsy10, cmsy7, and cmsy5 respsectively.
+// This was determined by running the folllowing script:
+//
+//     latex -interaction=nonstopmode \
+//     '\documentclass{article}\usepackage{amsmath}\begin{document}' \
+//     '$a$ \expandafter\show\the\textfont2' \
+//     '\expandafter\show\the\scriptfont2' \
+//     '\expandafter\show\the\scriptscriptfont2' \
+//     '\stop'
+//
+// The metrics themselves were retreived using the following commands:
+//
+//     tftopl cmsy10
+//     tftopl cmsy7
+//     tftopl cmsy5
+//
+// The output of each of these commands is quite lengthy.  The only part we
+// care about is the FONTDIMEN section. Each value is measured in EMs.
+const sigmas = {
+    slant: [0.250, 0.250, 0.250],       // sigma1
+    space: [0.000, 0.000, 0.000],       // sigma2
+    stretch: [0.000, 0.000, 0.000],     // sigma3
+    shrink: [0.000, 0.000, 0.000],      // sigma4
+    xHeight: [0.431, 0.431, 0.431],     // sigma5
+    quad: [1.000, 1.171, 1.472],        // sigma6
+    extraSpace: [0.000, 0.000, 0.000],  // sigma7
+    num1: [0.677, 0.732, 0.925],        // sigma8
+    num2: [0.394, 0.384, 0.387],        // sigma9
+    num3: [0.444, 0.471, 0.504],        // sigma10
+    denom1: [0.686, 0.752, 1.025],      // sigma11
+    denom2: [0.345, 0.344, 0.532],      // sigma12
+    sup1: [0.413, 0.503, 0.504],        // sigma13
+    sup2: [0.363, 0.431, 0.404],        // sigma14
+    sup3: [0.289, 0.286, 0.294],        // sigma15
+    sub1: [0.150, 0.143, 0.200],        // sigma16
+    sub2: [0.247, 0.286, 0.400],        // sigma17
+    supDrop: [0.386, 0.353, 0.494],     // sigma18
+    subDrop: [0.050, 0.071, 0.100],     // sigma19
+    delim1: [2.390, 1.700, 1.980],      // sigma20
+    delim2: [1.010, 1.157, 1.420],      // sigma21
+    axisHeight: [0.250, 0.250, 0.250],  // sigma22
+};
 
 // These font metrics are extracted from TeX by using
 // \font\a=cmex10
 // \showthe\fontdimenX\a
 // where X is the corresponding variable number. These correspond to the font
 // parameters of the extension fonts (family 3). See the TeXbook, page 441.
-var xi1 = 0;
-var xi2 = 0;
-var xi3 = 0;
-var xi4 = 0;
-var xi5 = 0.431;
-var xi6 = 1;
-var xi7 = 0;
-var xi8 = 0.04;
-var xi9 = 0.111;
-var xi10 = 0.166;
-var xi11 = 0.2;
-var xi12 = 0.6;
-var xi13 = 0.1;
+const xi1 = 0;
+const xi2 = 0;
+const xi3 = 0;
+const xi4 = 0;
+const xi5 = 0.431;
+const xi6 = 1;
+const xi7 = 0;
+const xi8 = 0.04;
+const xi9 = 0.111;
+const xi10 = 0.166;
+const xi11 = 0.2;
+const xi12 = 0.6;
+const xi13 = 0.1;
 
 // This value determines how large a pt is, for metrics which are defined in
 // terms of pts.
 // This value is also used in katex.less; if you change it make sure the values
 // match.
-var ptPerEm = 10.0;
+const ptPerEm = 10.0;
 
 // The space between adjacent `|` columns in an array definition. From
 // `\showthe\doublerulesep` in LaTeX.
-var doubleRuleSep = 2.0 / ptPerEm;
+const doubleRuleSep = 2.0 / ptPerEm;
 
 /**
  * This is just a mapping from common names to real metrics
  */
-var metrics = {
-    xHeight: sigma5,
-    quad: sigma6,
-    num1: sigma8,
-    num2: sigma9,
-    num3: sigma10,
-    denom1: sigma11,
-    denom2: sigma12,
-    sup1: sigma13,
-    sup2: sigma14,
-    sup3: sigma15,
-    sub1: sigma16,
-    sub2: sigma17,
-    supDrop: sigma18,
-    subDrop: sigma19,
-    axisHeight: sigma22,
+const metrics = {
     defaultRuleThickness: xi8,
     bigOpSpacing1: xi9,
     bigOpSpacing2: xi10,
@@ -41772,29 +42748,153 @@ var metrics = {
     bigOpSpacing4: xi12,
     bigOpSpacing5: xi13,
     ptPerEm: ptPerEm,
-    emPerEx: sigma5 / sigma6,
     doubleRuleSep: doubleRuleSep,
-
-    // TODO(alpert): Missing parallel structure here. We should probably add
-    // style-specific metrics for all of these.
-    delim1: sigma20,
-    getDelim2: function(style) {
-        if (style.size === Style.TEXT.size) {
-            return sigma21;
-        } else if (style.size === Style.SCRIPT.size) {
-            return sigma21Script;
-        } else if (style.size === Style.SCRIPTSCRIPT.size) {
-            return sigma21ScriptScript;
-        }
-        throw new Error("Unexpected style size: " + style.size);
-    },
 };
 
 // This map contains a mapping from font name and character code to character
 // metrics, including height, depth, italic correction, and skew (kern from the
 // character to the corresponding \skewchar)
 // This map is generated via `make metrics`. It should not be changed manually.
-var metricMap = require("./fontMetricsData");
+const metricMap = require("./fontMetricsData");
+
+// These are very rough approximations.  We default to Times New Roman which
+// should have Latin-1 and Cyrillic characters, but may not depending on the
+// operating system.  The metrics do not account for extra height from the
+// accents.  In the case of Cyrillic characters which have both ascenders and
+// descenders we prefer approximations with ascenders, primarily to prevent
+// the fraction bar or root line from intersecting the glyph.
+// TODO(kevinb) allow union of multiple glyph metrics for better accuracy.
+const extraCharacterMap = {
+    // Latin-1
+    'À': 'A',
+    'Á': 'A',
+    'Â': 'A',
+    'Ã': 'A',
+    'Ä': 'A',
+    'Å': 'A',
+    'Æ': 'A',
+    'Ç': 'C',
+    'È': 'E',
+    'É': 'E',
+    'Ê': 'E',
+    'Ë': 'E',
+    'Ì': 'I',
+    'Í': 'I',
+    'Î': 'I',
+    'Ï': 'I',
+    'Ð': 'D',
+    'Ñ': 'N',
+    'Ò': 'O',
+    'Ó': 'O',
+    'Ô': 'O',
+    'Õ': 'O',
+    'Ö': 'O',
+    'Ø': 'O',
+    'Ù': 'U',
+    'Ú': 'U',
+    'Û': 'U',
+    'Ü': 'U',
+    'Ý': 'Y',
+    'Þ': 'o',
+    'ß': 'B',
+    'à': 'a',
+    'á': 'a',
+    'â': 'a',
+    'ã': 'a',
+    'ä': 'a',
+    'å': 'a',
+    'æ': 'a',
+    'ç': 'c',
+    'è': 'e',
+    'é': 'e',
+    'ê': 'e',
+    'ë': 'e',
+    'ì': 'i',
+    'í': 'i',
+    'î': 'i',
+    'ï': 'i',
+    'ð': 'd',
+    'ñ': 'n',
+    'ò': 'o',
+    'ó': 'o',
+    'ô': 'o',
+    'õ': 'o',
+    'ö': 'o',
+    'ø': 'o',
+    'ù': 'u',
+    'ú': 'u',
+    'û': 'u',
+    'ü': 'u',
+    'ý': 'y',
+    'þ': 'o',
+    'ÿ': 'y',
+
+    // Cyrillic
+    'А': 'A',
+    'Б': 'B',
+    'В': 'B',
+    'Г': 'F',
+    'Д': 'A',
+    'Е': 'E',
+    'Ж': 'K',
+    'З': '3',
+    'И': 'N',
+    'Й': 'N',
+    'К': 'K',
+    'Л': 'N',
+    'М': 'M',
+    'Н': 'H',
+    'О': 'O',
+    'П': 'N',
+    'Р': 'P',
+    'С': 'C',
+    'Т': 'T',
+    'У': 'y',
+    'Ф': 'O',
+    'Х': 'X',
+    'Ц': 'U',
+    'Ч': 'h',
+    'Ш': 'W',
+    'Щ': 'W',
+    'Ъ': 'B',
+    'Ы': 'X',
+    'Ь': 'B',
+    'Э': '3',
+    'Ю': 'X',
+    'Я': 'R',
+    'а': 'a',
+    'б': 'b',
+    'в': 'a',
+    'г': 'r',
+    'д': 'y',
+    'е': 'e',
+    'ж': 'm',
+    'з': 'e',
+    'и': 'n',
+    'й': 'n',
+    'к': 'n',
+    'л': 'n',
+    'м': 'm',
+    'н': 'n',
+    'о': 'o',
+    'п': 'n',
+    'р': 'p',
+    'с': 'c',
+    'т': 'o',
+    'у': 'y',
+    'ф': 'b',
+    'х': 'x',
+    'ц': 'n',
+    'ч': 'n',
+    'ш': 'w',
+    'щ': 'w',
+    'ъ': 'a',
+    'ы': 'm',
+    'ь': 'a',
+    'э': 'e',
+    'ю': 'm',
+    'я': 'r',
+};
 
 /**
  * This function is a convenience function for looking up information in the
@@ -41803,8 +42903,14 @@ var metricMap = require("./fontMetricsData");
  * Note: the `width` property may be undefined if fontMetricsData.js wasn't
  * built using `Make extended_metrics`.
  */
-var getCharacterMetrics = function(character, style) {
-    var metrics = metricMap[style][character.charCodeAt(0)];
+const getCharacterMetrics = function(character, style) {
+    let ch = character.charCodeAt(0);
+    if (character[0] in extraCharacterMap) {
+        ch = extraCharacterMap[character[0]].charCodeAt(0);
+    } else if (cjkRegex.test(character[0])) {
+        ch = 'M'.charCodeAt(0);
+    }
+    const metrics = metricMap[style][ch];
     if (metrics) {
         return {
             depth: metrics[0],
@@ -41818,10 +42924,11 @@ var getCharacterMetrics = function(character, style) {
 
 module.exports = {
     metrics: metrics,
+    sigmas: sigmas,
     getCharacterMetrics: getCharacterMetrics,
 };
 
-},{"./Style":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/Style.js","./fontMetricsData":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/fontMetricsData.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/fontMetricsData.js":[function(require,module,exports){
+},{"./Style":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/Style.js","./fontMetricsData":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/fontMetricsData.js","./unicodeRegexes":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/unicodeRegexes.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/fontMetricsData.js":[function(require,module,exports){
 module.exports = {
     "AMS-Regular": {
         "65": [0, 0.68889, 0, 0],
@@ -43576,8 +44683,10 @@ module.exports = {
 };
 
 },{}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/functions.js":[function(require,module,exports){
-var utils = require("./utils");
-var ParseError = require("./ParseError");
+const utils = require("./utils");
+const ParseError = require("./ParseError");
+const parseData = require("./parseData");
+const ParseNode = parseData.ParseNode;
 
 /* This file contains a list of functions that we parse, identified by
  * the calls to defineFunction.
@@ -43633,6 +44742,7 @@ var ParseError = require("./ParseError");
  *                     should parse. If the optional arguments aren't found,
  *                     `null` will be passed to the handler in their place.
  *                     (default 0)
+ *  - infix: (optional) Must be true if the function is an infix operator.
  *
  * The last argument is that implementation, the handler for the function(s).
  * It is called to handle these functions and their arguments.
@@ -43663,26 +44773,37 @@ function defineFunction(names, props, handler) {
         props = { numArgs: props };
     }
     // Set default values of functions
-    var data = {
+    const data = {
         numArgs: props.numArgs,
         argTypes: props.argTypes,
         greediness: (props.greediness === undefined) ? 1 : props.greediness,
         allowedInText: !!props.allowedInText,
         numOptionalArgs: props.numOptionalArgs || 0,
+        infix: !!props.infix,
         handler: handler,
     };
-    for (var i = 0; i < names.length; ++i) {
+    for (let i = 0; i < names.length; ++i) {
         module.exports[names[i]] = data;
     }
 }
+
+// Since the corresponding buildHTML/buildMathML function expects a
+// list of elements, we normalize for different kinds of arguments
+const ordargument = function(arg) {
+    if (arg.type === "ordgroup") {
+        return arg.value;
+    } else {
+        return [arg];
+    }
+};
 
 // A normal square root
 defineFunction("\\sqrt", {
     numArgs: 1,
     numOptionalArgs: 1,
 }, function(context, args) {
-    var index = args[0];
-    var body = args[1];
+    const index = args[0];
+    const body = args[1];
     return {
         type: "sqrt",
         body: body,
@@ -43690,26 +44811,27 @@ defineFunction("\\sqrt", {
     };
 });
 
-// Some non-mathy text
-defineFunction("\\text", {
+// Non-mathy text, possibly in a font
+const textFunctionStyles = {
+    "\\text": undefined, "\\textrm": "mathrm", "\\textsf": "mathsf",
+    "\\texttt": "mathtt", "\\textnormal": "mathrm", "\\textbf": "mathbf",
+    "\\textit": "textit",
+};
+
+defineFunction([
+    "\\text", "\\textrm", "\\textsf", "\\texttt", "\\textnormal",
+    "\\textbf", "\\textit",
+], {
     numArgs: 1,
     argTypes: ["text"],
     greediness: 2,
+    allowedInText: true,
 }, function(context, args) {
-    var body = args[0];
-    // Since the corresponding buildHTML/buildMathML function expects a
-    // list of elements, we normalize for different kinds of arguments
-    // TODO(emily): maybe this should be done somewhere else
-    var inner;
-    if (body.type === "ordgroup") {
-        inner = body.value;
-    } else {
-        inner = [body];
-    }
-
+    const body = args[0];
     return {
         type: "text",
-        body: inner,
+        body: ordargument(body),
+        style: textFunctionStyles[context.funcName],
     };
 });
 
@@ -43720,20 +44842,12 @@ defineFunction("\\color", {
     greediness: 3,
     argTypes: ["color", "original"],
 }, function(context, args) {
-    var color = args[0];
-    var body = args[1];
-    // Normalize the different kinds of bodies (see \text above)
-    var inner;
-    if (body.type === "ordgroup") {
-        inner = body.value;
-    } else {
-        inner = [body];
-    }
-
+    const color = args[0];
+    const body = args[1];
     return {
         type: "color",
         color: color.value,
-        value: inner,
+        value: ordargument(body),
     };
 });
 
@@ -43741,7 +44855,7 @@ defineFunction("\\color", {
 defineFunction("\\overline", {
     numArgs: 1,
 }, function(context, args) {
-    var body = args[0];
+    const body = args[0];
     return {
         type: "overline",
         body: body,
@@ -43752,7 +44866,7 @@ defineFunction("\\overline", {
 defineFunction("\\underline", {
     numArgs: 1,
 }, function(context, args) {
-    var body = args[0];
+    const body = args[0];
     return {
         type: "underline",
         body: body,
@@ -43765,14 +44879,26 @@ defineFunction("\\rule", {
     numOptionalArgs: 1,
     argTypes: ["size", "size", "size"],
 }, function(context, args) {
-    var shift = args[0];
-    var width = args[1];
-    var height = args[2];
+    const shift = args[0];
+    const width = args[1];
+    const height = args[2];
     return {
         type: "rule",
         shift: shift && shift.value,
         width: width.value,
         height: height.value,
+    };
+});
+
+// TODO: In TeX, \mkern only accepts mu-units, and \kern does not accept
+// mu-units. In current KaTeX we relax this; both commands accept any unit.
+defineFunction(["\\kern", "\\mkern"], {
+    numArgs: 1,
+    argTypes: ["size"],
+}, function(context, args) {
+    return {
+        type: "kern",
+        dimension: args[0].value,
     };
 });
 
@@ -43788,41 +44914,99 @@ defineFunction("\\KaTeX", {
 defineFunction("\\phantom", {
     numArgs: 1,
 }, function(context, args) {
-    var body = args[0];
-    var inner;
-    if (body.type === "ordgroup") {
-        inner = body.value;
-    } else {
-        inner = [body];
-    }
-
+    const body = args[0];
     return {
         type: "phantom",
-        value: inner,
+        value: ordargument(body),
+    };
+});
+
+// Math class commands except \mathop
+defineFunction([
+    "\\mathord", "\\mathbin", "\\mathrel", "\\mathopen",
+    "\\mathclose", "\\mathpunct", "\\mathinner",
+], {
+    numArgs: 1,
+}, function(context, args) {
+    const body = args[0];
+    return {
+        type: "mclass",
+        mclass: "m" + context.funcName.substr(5),
+        value: ordargument(body),
+    };
+});
+
+// Build a relation by placing one symbol on top of another
+defineFunction("\\stackrel", {
+    numArgs: 2,
+}, function(context, args) {
+    const top = args[0];
+    const bottom = args[1];
+
+    const bottomop = new ParseNode("op", {
+        type: "op",
+        limits: true,
+        alwaysHandleSupSub: true,
+        symbol: false,
+        value: ordargument(bottom),
+    }, bottom.mode);
+
+    const supsub = new ParseNode("supsub", {
+        base: bottomop,
+        sup: top,
+        sub: null,
+    }, top.mode);
+
+    return {
+        type: "mclass",
+        mclass: "mrel",
+        value: [supsub],
+    };
+});
+
+// \mod-type functions
+defineFunction("\\bmod", {
+    numArgs: 0,
+}, function(context, args) {
+    return {
+        type: "mod",
+        modType: "bmod",
+        value: null,
+    };
+});
+
+defineFunction(["\\pod", "\\pmod", "\\mod"], {
+    numArgs: 1,
+}, function(context, args) {
+    const body = args[0];
+    return {
+        type: "mod",
+        modType: context.funcName.substr(1),
+        value: ordargument(body),
     };
 });
 
 // Extra data needed for the delimiter handler down below
-var delimiterSizes = {
-    "\\bigl" : {type: "open",    size: 1},
-    "\\Bigl" : {type: "open",    size: 2},
-    "\\biggl": {type: "open",    size: 3},
-    "\\Biggl": {type: "open",    size: 4},
-    "\\bigr" : {type: "close",   size: 1},
-    "\\Bigr" : {type: "close",   size: 2},
-    "\\biggr": {type: "close",   size: 3},
-    "\\Biggr": {type: "close",   size: 4},
-    "\\bigm" : {type: "rel",     size: 1},
-    "\\Bigm" : {type: "rel",     size: 2},
-    "\\biggm": {type: "rel",     size: 3},
-    "\\Biggm": {type: "rel",     size: 4},
-    "\\big"  : {type: "textord", size: 1},
-    "\\Big"  : {type: "textord", size: 2},
-    "\\bigg" : {type: "textord", size: 3},
-    "\\Bigg" : {type: "textord", size: 4},
+const delimiterSizes = {
+    "\\bigl" : {mclass: "mopen",    size: 1},
+    "\\Bigl" : {mclass: "mopen",    size: 2},
+    "\\biggl": {mclass: "mopen",    size: 3},
+    "\\Biggl": {mclass: "mopen",    size: 4},
+    "\\bigr" : {mclass: "mclose",   size: 1},
+    "\\Bigr" : {mclass: "mclose",   size: 2},
+    "\\biggr": {mclass: "mclose",   size: 3},
+    "\\Biggr": {mclass: "mclose",   size: 4},
+    "\\bigm" : {mclass: "mrel",     size: 1},
+    "\\Bigm" : {mclass: "mrel",     size: 2},
+    "\\biggm": {mclass: "mrel",     size: 3},
+    "\\Biggm": {mclass: "mrel",     size: 4},
+    "\\big"  : {mclass: "mord",     size: 1},
+    "\\Big"  : {mclass: "mord",     size: 2},
+    "\\bigg" : {mclass: "mord",     size: 3},
+    "\\Bigg" : {mclass: "mord",     size: 4},
 };
 
-var delimiters = [
+const delimiters = [
     "(", ")", "[", "\\lbrack", "]", "\\rbrack",
     "\\{", "\\lbrace", "\\}", "\\rbrace",
     "\\lfloor", "\\rfloor", "\\lceil", "\\rceil",
@@ -43837,7 +45021,7 @@ var delimiters = [
     ".",
 ];
 
-var fontAliases = {
+const fontAliases = {
     "\\Bbb": "\\mathbb",
     "\\bold": "\\mathbf",
     "\\frak": "\\mathfrak",
@@ -43863,18 +45047,11 @@ defineFunction([
     allowedInText: true,
     greediness: 3,
 }, function(context, args) {
-    var body = args[0];
-    var atoms;
-    if (body.type === "ordgroup") {
-        atoms = body.value;
-    } else {
-        atoms = [body];
-    }
-
+    const body = args[0];
     return {
         type: "color",
         color: "katex-" + context.funcName.slice(1),
-        value: atoms,
+        value: ordargument(body),
     };
 });
 
@@ -43884,10 +45061,11 @@ defineFunction([
 
 // No limits, not symbols
 defineFunction([
-    "\\arcsin", "\\arccos", "\\arctan", "\\arg", "\\cos", "\\cosh",
-    "\\cot", "\\coth", "\\csc", "\\deg", "\\dim", "\\exp", "\\hom",
-    "\\ker", "\\lg", "\\ln", "\\log", "\\sec", "\\sin", "\\sinh",
-    "\\tan", "\\tanh",
+    "\\arcsin", "\\arccos", "\\arctan", "\\arctg", "\\arcctg",
+    "\\arg", "\\ch", "\\cos", "\\cosec", "\\cosh", "\\cot", "\\cotg",
+    "\\coth", "\\csc", "\\ctg", "\\cth", "\\deg", "\\dim", "\\exp",
+    "\\hom", "\\ker", "\\lg", "\\ln", "\\log", "\\sec", "\\sin",
+    "\\sinh", "\\sh", "\\tan", "\\tanh", "\\tg", "\\th",
 ], {
     numArgs: 0,
 }, function(context) {
@@ -43944,26 +45122,43 @@ defineFunction([
     };
 });
 
+// \mathop class command
+defineFunction("\\mathop", {
+    numArgs: 1,
+}, function(context, args) {
+    const body = args[0];
+    return {
+        type: "op",
+        limits: false,
+        symbol: false,
+        value: ordargument(body),
+    };
+});
+
 // Fractions
 defineFunction([
     "\\dfrac", "\\frac", "\\tfrac",
     "\\dbinom", "\\binom", "\\tbinom",
+    "\\\\atopfrac", // can’t be entered directly
 ], {
     numArgs: 2,
     greediness: 2,
 }, function(context, args) {
-    var numer = args[0];
-    var denom = args[1];
-    var hasBarLine;
-    var leftDelim = null;
-    var rightDelim = null;
-    var size = "auto";
+    const numer = args[0];
+    const denom = args[1];
+    let hasBarLine;
+    let leftDelim = null;
+    let rightDelim = null;
+    let size = "auto";
 
     switch (context.funcName) {
         case "\\dfrac":
         case "\\frac":
         case "\\tfrac":
             hasBarLine = true;
+            break;
+        case "\\\\atopfrac":
+            hasBarLine = false;
             break;
         case "\\dbinom":
         case "\\binom":
@@ -44003,7 +45198,7 @@ defineFunction(["\\llap", "\\rlap"], {
     numArgs: 1,
     allowedInText: true,
 }, function(context, args) {
-    var body = args[0];
+    const body = args[0];
     return {
         type: context.funcName.slice(1),
         body: body,
@@ -44011,38 +45206,61 @@ defineFunction(["\\llap", "\\rlap"], {
 });
 
 // Delimiter functions
+const checkDelimiter = function(delim, context) {
+    if (utils.contains(delimiters, delim.value)) {
+        return delim;
+    } else {
+        throw new ParseError(
+            "Invalid delimiter: '" + delim.value + "' after '" +
+            context.funcName + "'", delim);
+    }
+};
+
 defineFunction([
     "\\bigl", "\\Bigl", "\\biggl", "\\Biggl",
     "\\bigr", "\\Bigr", "\\biggr", "\\Biggr",
     "\\bigm", "\\Bigm", "\\biggm", "\\Biggm",
     "\\big",  "\\Big",  "\\bigg",  "\\Bigg",
+], {
+    numArgs: 1,
+}, function(context, args) {
+    const delim = checkDelimiter(args[0], context);
+
+    return {
+        type: "delimsizing",
+        size: delimiterSizes[context.funcName].size,
+        mclass: delimiterSizes[context.funcName].mclass,
+        value: delim.value,
+    };
+});
+
+defineFunction([
     "\\left", "\\right",
 ], {
     numArgs: 1,
 }, function(context, args) {
-    var delim = args[0];
-    if (!utils.contains(delimiters, delim.value)) {
-        throw new ParseError(
-            "Invalid delimiter: '" + delim.value + "' after '" +
-                context.funcName + "'",
-            context.lexer, context.positions[1]);
-    }
+    const delim = checkDelimiter(args[0], context);
 
     // \left and \right are caught somewhere in Parser.js, which is
     // why this data doesn't match what is in buildHTML.
-    if (context.funcName === "\\left" || context.funcName === "\\right") {
-        return {
-            type: "leftright",
-            value: delim.value,
-        };
-    } else {
-        return {
-            type: "delimsizing",
-            size: delimiterSizes[context.funcName].size,
-            delimType: delimiterSizes[context.funcName].type,
-            value: delim.value,
-        };
+    return {
+        type: "leftright",
+        value: delim.value,
+    };
+});
+
+defineFunction("\\middle", {
+    numArgs: 1,
+}, function(context, args) {
+    const delim = checkDelimiter(args[0], context);
+    if (!context.parser.leftrightDepth) {
+        throw new ParseError("\\middle without preceding \\left", delim);
     }
+
+    return {
+        type: "middle",
+        value: delim.value,
+    };
 });
 
 // Sizing functions (handled in Parser.js explicitly, hence no handler)
@@ -44072,8 +45290,8 @@ defineFunction([
     numArgs: 1,
     greediness: 2,
 }, function(context, args) {
-    var body = args[0];
-    var func = context.funcName;
+    const body = args[0];
+    let func = context.funcName;
     if (func in fontAliases) {
         func = fontAliases[func];
     }
@@ -44093,7 +45311,7 @@ defineFunction([
 ], {
     numArgs: 1,
 }, function(context, args) {
-    var base = args[0];
+    const base = args[0];
     return {
         type: "accent",
         accent: context.funcName,
@@ -44102,10 +45320,11 @@ defineFunction([
 });
 
 // Infix generalized fractions
-defineFunction(["\\over", "\\choose"], {
+defineFunction(["\\over", "\\choose", "\\atop"], {
     numArgs: 0,
+    infix: true,
 }, function(context) {
-    var replaceWith;
+    let replaceWith;
     switch (context.funcName) {
         case "\\over":
             replaceWith = "\\frac";
@@ -44113,12 +45332,16 @@ defineFunction(["\\over", "\\choose"], {
         case "\\choose":
             replaceWith = "\\binom";
             break;
+        case "\\atop":
+            replaceWith = "\\\\atopfrac";
+            break;
         default:
             throw new Error("Unrecognized infix genfrac command");
     }
     return {
         type: "infix",
         replaceWith: replaceWith,
+        token: context.token,
     };
 });
 
@@ -44128,7 +45351,7 @@ defineFunction(["\\\\", "\\cr"], {
     numOptionalArgs: 1,
     argTypes: ["size"],
 }, function(context, args) {
-    var size = args[0];
+    const size = args[0];
     return {
         type: "cr",
         size: size,
@@ -44140,24 +45363,22 @@ defineFunction(["\\begin", "\\end"], {
     numArgs: 1,
     argTypes: ["text"],
 }, function(context, args) {
-    var nameGroup = args[0];
+    const nameGroup = args[0];
     if (nameGroup.type !== "ordgroup") {
-        throw new ParseError(
-            "Invalid environment name",
-            context.lexer, context.positions[1]);
+        throw new ParseError("Invalid environment name", nameGroup);
     }
-    var name = "";
-    for (var i = 0; i < nameGroup.value.length; ++i) {
+    let name = "";
+    for (let i = 0; i < nameGroup.value.length; ++i) {
         name += nameGroup.value[i].value;
     }
     return {
         type: "environment",
         name: name,
-        namepos: context.positions[1],
+        nameGroup: nameGroup,
     };
 });
 
-},{"./ParseError":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/ParseError.js","./utils":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/mathMLTree.js":[function(require,module,exports){
+},{"./ParseError":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/ParseError.js","./parseData":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/parseData.js","./utils":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/mathMLTree.js":[function(require,module,exports){
 /**
  * These objects store data about MathML nodes. This is the MathML equivalent
  * of the types in domTree.js. Since MathML handles its own rendering, and
@@ -44168,7 +45389,7 @@ defineFunction(["\\begin", "\\end"], {
  * domTree.js, creating namespaced DOM nodes and HTML text markup respectively.
  */
 
-var utils = require("./utils");
+const utils = require("./utils");
 
 /**
  * This node represents a general purpose MathML node of any type. The
@@ -44193,16 +45414,16 @@ MathNode.prototype.setAttribute = function(name, value) {
  * Converts the math node into a MathML-namespaced DOM element.
  */
 MathNode.prototype.toNode = function() {
-    var node = document.createElementNS(
+    const node = document.createElementNS(
         "http://www.w3.org/1998/Math/MathML", this.type);
 
-    for (var attr in this.attributes) {
+    for (const attr in this.attributes) {
         if (Object.prototype.hasOwnProperty.call(this.attributes, attr)) {
             node.setAttribute(attr, this.attributes[attr]);
         }
     }
 
-    for (var i = 0; i < this.children.length; i++) {
+    for (let i = 0; i < this.children.length; i++) {
         node.appendChild(this.children[i].toNode());
     }
 
@@ -44213,10 +45434,10 @@ MathNode.prototype.toNode = function() {
  * Converts the math node into an HTML markup string.
  */
 MathNode.prototype.toMarkup = function() {
-    var markup = "<" + this.type;
+    let markup = "<" + this.type;
 
     // Add the attributes
-    for (var attr in this.attributes) {
+    for (const attr in this.attributes) {
         if (Object.prototype.hasOwnProperty.call(this.attributes, attr)) {
             markup += " " + attr + "=\"";
             markup += utils.escape(this.attributes[attr]);
@@ -44226,7 +45447,7 @@ MathNode.prototype.toMarkup = function() {
 
     markup += ">";
 
-    for (var i = 0; i < this.children.length; i++) {
+    for (let i = 0; i < this.children.length; i++) {
         markup += this.children[i].toMarkup();
     }
 
@@ -44264,11 +45485,30 @@ module.exports = {
 },{"./utils":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/parseData.js":[function(require,module,exports){
 /**
  * The resulting parse tree nodes of the parse tree.
+ *
+ * It is possible to provide position information, so that a ParseNode can
+ * fulfil a role similar to a Token in error reporting.
+ * For details on the corresponding properties see Token constructor.
+ * Providing such information can lead to better error reporting.
+ *
+ * @param {string}  type       type of node, like e.g. "ordgroup"
+ * @param {?object} value      type-specific representation of the node
+ * @param {string}  mode       parse mode in action for this node,
+ *                             "math" or "text"
+ * @param {Token=} firstToken  first token of the input for this node,
+ *                             will omit position information if unset
+ * @param {Token=} lastToken   last token of the input for this node,
+ *                             will default to firstToken if unset
  */
-function ParseNode(type, value, mode) {
+function ParseNode(type, value, mode, firstToken, lastToken) {
     this.type = type;
     this.value = value;
     this.mode = mode;
+    if (firstToken && (!lastToken || lastToken.lexer === firstToken.lexer)) {
+        this.lexer = firstToken.lexer;
+        this.start = firstToken.start;
+        this.end = (lastToken || firstToken).end;
+    }
 }
 
 module.exports = {
@@ -44282,13 +45522,16 @@ module.exports = {
  * TODO(emily): Remove this
  */
 
-var Parser = require("./Parser");
+const Parser = require("./Parser");
 
 /**
  * Parses an expression using a Parser, then returns the parsed result.
  */
-var parseTree = function(toParse, settings) {
-    var parser = new Parser(toParse, settings);
+const parseTree = function(toParse, settings) {
+    if (!(typeof toParse === 'string' || toParse instanceof String)) {
+        throw new TypeError('KaTeX can only parse string typed expression');
+    }
+    const parser = new Parser(toParse, settings);
 
     return parser.parse();
 };
@@ -44331,25 +45574,25 @@ function defineSymbol(mode, font, group, replace, name) {
 // This helps minify the code, and also spotting typos using jshint.
 
 // modes:
-var math = "math";
-var text = "text";
+const math = "math";
+const text = "text";
 
 // fonts:
-var main = "main";
-var ams = "ams";
+const main = "main";
+const ams = "ams";
 
 // groups:
-var accent = "accent";
-var bin = "bin";
-var close = "close";
-var inner = "inner";
-var mathord = "mathord";
-var op = "op";
-var open = "open";
-var punct = "punct";
-var rel = "rel";
-var spacing = "spacing";
-var textord = "textord";
+const accent = "accent";
+const bin = "bin";
+const close = "close";
+const inner = "inner";
+const mathord = "mathord";
+const op = "op";
+const open = "open";
+const punct = "punct";
+const rel = "rel";
+const spacing = "spacing";
+const textord = "textord";
 
 // Now comes the symbol table
 
@@ -44385,7 +45628,9 @@ defineSymbol(math, main, punct, "\u22c5", "\\cdotp");
 
 // Misc Symbols
 defineSymbol(math, main, textord, "\u0023", "\\#");
+defineSymbol(text, main, textord, "\u0023", "\\#");
 defineSymbol(math, main, textord, "\u0026", "\\&");
+defineSymbol(text, main, textord, "\u0026", "\\&");
 defineSymbol(math, main, textord, "\u2135", "\\aleph");
 defineSymbol(math, main, textord, "\u2200", "\\forall");
 defineSymbol(math, main, textord, "\u210f", "\\hbar");
@@ -44692,8 +45937,11 @@ defineSymbol(math, ams, rel, "\u21be", "\\restriction");
 
 defineSymbol(math, main, textord, "\u2018", "`");
 defineSymbol(math, main, textord, "$", "\\$");
+defineSymbol(text, main, textord, "$", "\\$");
 defineSymbol(math, main, textord, "%", "\\%");
+defineSymbol(text, main, textord, "%", "\\%");
 defineSymbol(math, main, textord, "_", "\\_");
+defineSymbol(text, main, textord, "_", "\\_");
 defineSymbol(math, main, textord, "\u2220", "\\angle");
 defineSymbol(math, main, textord, "\u221e", "\\infty");
 defineSymbol(math, main, textord, "\u2032", "\\prime");
@@ -44832,7 +46080,9 @@ defineSymbol(math, main, bin, "\u22c6", "\\star");
 defineSymbol(math, main, bin, "\u25c3", "\\triangleleft");
 defineSymbol(math, main, bin, "\u25b9", "\\triangleright");
 defineSymbol(math, main, open, "{", "\\{");
+defineSymbol(text, main, textord, "{", "\\{");
 defineSymbol(math, main, close, "}", "\\}");
+defineSymbol(text, main, textord, "}", "\\}");
 defineSymbol(math, main, open, "{", "\\lbrace");
 defineSymbol(math, main, close, "}", "\\rbrace");
 defineSymbol(math, main, open, "[", "\\lbrack");
@@ -44870,6 +46120,9 @@ defineSymbol(math, math, op, "\u2a00", "\\bigodot");
 defineSymbol(math, math, op, "\u222e", "\\oint");
 defineSymbol(math, math, op, "\u2a06", "\\bigsqcup");
 defineSymbol(math, math, op, "\u222b", "\\smallint");
+defineSymbol(text, main, inner, "\u2026", "\\textellipsis");
+defineSymbol(math, main, inner, "\u2026", "\\mathellipsis");
+defineSymbol(text, main, inner, "\u2026", "\\ldots");
 defineSymbol(math, main, inner, "\u2026", "\\ldots");
 defineSymbol(math, main, inner, "\u22ef", "\\cdots");
 defineSymbol(math, main, inner, "\u22f1", "\\ddots");
@@ -44887,35 +46140,92 @@ defineSymbol(math, main, accent, "\u02d9", "\\dot");
 defineSymbol(math, main, mathord, "\u0131", "\\imath");
 defineSymbol(math, main, mathord, "\u0237", "\\jmath");
 
+defineSymbol(text, main, textord, "\u2013", "--");
+defineSymbol(text, main, textord, "\u2014", "---");
+defineSymbol(text, main, textord, "\u2018", "`");
+defineSymbol(text, main, textord, "\u2019", "'");
+defineSymbol(text, main, textord, "\u201c", "``");
+defineSymbol(text, main, textord, "\u201d", "''");
+defineSymbol(math, main, textord, "\u00b0", "\\degree");
+defineSymbol(text, main, textord, "\u00b0", "\\degree");
+defineSymbol(math, main, mathord, "\u00a3", "\\pounds");
+defineSymbol(math, ams, textord, "\u2720", "\\maltese");
+defineSymbol(text, ams, textord, "\u2720", "\\maltese");
+
 defineSymbol(text, main, spacing, "\u00a0", "\\ ");
 defineSymbol(text, main, spacing, "\u00a0", " ");
 defineSymbol(text, main, spacing, "\u00a0", "~");
 
 // There are lots of symbols which are the same, so we add them in afterwards.
-var i;
-var ch;
 
 // All of these are textords in math mode
-var mathTextSymbols = "0123456789/@.\"";
-for (i = 0; i < mathTextSymbols.length; i++) {
-    ch = mathTextSymbols.charAt(i);
+const mathTextSymbols = "0123456789/@.\"";
+for (let i = 0; i < mathTextSymbols.length; i++) {
+    const ch = mathTextSymbols.charAt(i);
     defineSymbol(math, main, textord, ch, ch);
 }
 
 // All of these are textords in text mode
-var textSymbols = "0123456789`!@*()-=+[]'\";:?/.,";
-for (i = 0; i < textSymbols.length; i++) {
-    ch = textSymbols.charAt(i);
+const textSymbols = "0123456789!@*()-=+[]\";:?/.,";
+for (let i = 0; i < textSymbols.length; i++) {
+    const ch = textSymbols.charAt(i);
     defineSymbol(text, main, textord, ch, ch);
 }
 
 // All of these are textords in text mode, and mathords in math mode
-var letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-for (i = 0; i < letters.length; i++) {
-    ch = letters.charAt(i);
+const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+for (let i = 0; i < letters.length; i++) {
+    const ch = letters.charAt(i);
     defineSymbol(math, main, mathord, ch, ch);
     defineSymbol(text, main, textord, ch, ch);
 }
+
+// Latin-1 letters
+for (let i = 0x00C0; i <= 0x00D6; i++) {
+    const ch = String.fromCharCode(i);
+    defineSymbol(text, main, textord, ch, ch);
+}
+
+for (let i = 0x00D8; i <= 0x00F6; i++) {
+    const ch = String.fromCharCode(i);
+    defineSymbol(text, main, textord, ch, ch);
+}
+
+for (let i = 0x00F8; i <= 0x00FF; i++) {
+    const ch = String.fromCharCode(i);
+    defineSymbol(text, main, textord, ch, ch);
+}
+
+// Cyrillic
+for (let i = 0x0410; i <= 0x044F; i++) {
+    const ch = String.fromCharCode(i);
+    defineSymbol(text, main, textord, ch, ch);
+}
+
+// Unicode versions of existing characters
+defineSymbol(text, main, textord, "\u2013", "–");
+defineSymbol(text, main, textord, "\u2014", "—");
+defineSymbol(text, main, textord, "\u2018", "‘");
+defineSymbol(text, main, textord, "\u2019", "’");
+defineSymbol(text, main, textord, "\u201c", "“");
+defineSymbol(text, main, textord, "\u201d", "”");
+
+},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/unicodeRegexes.js":[function(require,module,exports){
+const hangulRegex = /[\uAC00-\uD7AF]/;
+
+// This regex combines
+// - Hiragana: [\u3040-\u309F]
+// - Katakana: [\u30A0-\u30FF]
+// - CJK ideograms: [\u4E00-\u9FAF]
+// - Hangul syllables: [\uAC00-\uD7AF]
+// Notably missing are halfwidth Katakana and Romanji glyphs.
+const cjkRegex =
+    /[\u3040-\u309F]|[\u30A0-\u30FF]|[\u4E00-\u9FAF]|[\uAC00-\uD7AF]/;
+
+module.exports = {
+    cjkRegex: cjkRegex,
+    hangulRegex: hangulRegex,
+};
 
 },{}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/utils.js":[function(require,module,exports){
 /**
@@ -44927,17 +46237,16 @@ for (i = 0; i < letters.length; i++) {
  * Provide an `indexOf` function which works in IE8, but defers to native if
  * possible.
  */
-var nativeIndexOf = Array.prototype.indexOf;
-var indexOf = function(list, elem) {
+const nativeIndexOf = Array.prototype.indexOf;
+const indexOf = function(list, elem) {
     if (list == null) {
         return -1;
     }
     if (nativeIndexOf && list.indexOf === nativeIndexOf) {
         return list.indexOf(elem);
     }
-    var i = 0;
-    var l = list.length;
-    for (; i < l; i++) {
+    const l = list.length;
+    for (let i = 0; i < l; i++) {
         if (list[i] === elem) {
             return i;
         }
@@ -44948,25 +46257,25 @@ var indexOf = function(list, elem) {
 /**
  * Return whether an element is contained in a list
  */
-var contains = function(list, elem) {
+const contains = function(list, elem) {
     return indexOf(list, elem) !== -1;
 };
 
 /**
  * Provide a default value if a setting is undefined
  */
-var deflt = function(setting, defaultIfUndefined) {
+const deflt = function(setting, defaultIfUndefined) {
     return setting === undefined ? defaultIfUndefined : setting;
 };
 
 // hyphenate and escape adapted from Facebook's React under Apache 2 license
 
-var uppercase = /([A-Z])/g;
-var hyphenate = function(str) {
+const uppercase = /([A-Z])/g;
+const hyphenate = function(str) {
     return str.replace(uppercase, "-$1").toLowerCase();
 };
 
-var ESCAPE_LOOKUP = {
+const ESCAPE_LOOKUP = {
     "&": "&amp;",
     ">": "&gt;",
     "<": "&lt;",
@@ -44974,7 +46283,7 @@ var ESCAPE_LOOKUP = {
     "'": "&#x27;",
 };
 
-var ESCAPE_REGEX = /[&><"']/g;
+const ESCAPE_REGEX = /[&><"']/g;
 
 function escaper(match) {
     return ESCAPE_LOOKUP[match];
@@ -44994,9 +46303,9 @@ function escape(text) {
  * A function to set the text content of a DOM element in all supported
  * browsers. Note that we don't define this if there is no document.
  */
-var setTextContent;
+let setTextContent;
 if (typeof document !== "undefined") {
-    var testNode = document.createElement("span");
+    const testNode = document.createElement("span");
     if ("textContent" in testNode) {
         setTextContent = function(node, text) {
             node.textContent = text;
@@ -45843,206 +47152,7 @@ module.exports = function (opts) {
   return re;
 };
 
-},{"uc.micro/categories/Cc/regex":"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/categories/Cc/regex.js","uc.micro/categories/P/regex":"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/categories/P/regex.js","uc.micro/categories/Z/regex":"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/categories/Z/regex.js","uc.micro/properties/Any/regex":"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/properties/Any/regex.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-katex/index.js":[function(require,module,exports){
-/* Process inline math */
-/*
-Like markdown-it-simplemath, this is a stripped down, simplified version of:
-https://github.com/runarberg/markdown-it-math
-
-It differs in that it takes (a subset of) LaTeX as input and relies on KaTeX
-for rendering output.
-*/
-
-/*jslint node: true */
-'use strict';
-
-var katex = require('katex');
-
-// Test if potential opening or closing delimieter
-// Assumes that there is a "$" at state.src[pos]
-function isValidDelim(state, pos) {
-    var prevChar, nextChar,
-        max = state.posMax,
-        can_open = true,
-        can_close = true;
-
-    prevChar = pos > 0 ? state.src.charCodeAt(pos - 1) : -1;
-    nextChar = pos + 1 <= max ? state.src.charCodeAt(pos + 1) : -1;
-
-    // Check non-whitespace conditions for opening and closing, and
-    // check that closing delimeter isn't followed by a number
-    if (prevChar === 0x20/* " " */ || prevChar === 0x09/* \t */ ||
-            (nextChar >= 0x30/* "0" */ && nextChar <= 0x39/* "9" */)) {
-        can_close = false;
-    }
-    if (nextChar === 0x20/* " " */ || nextChar === 0x09/* \t */) {
-        can_open = false;
-    }
-
-    return {
-        can_open: can_open,
-        can_close: can_close
-    };
-}
-
-function math_inline(state, silent) {
-    var start, match, token, res, pos, esc_count;
-
-    if (state.src[state.pos] !== "$") { return false; }
-
-    res = isValidDelim(state, state.pos);
-    if (!res.can_open) {
-        if (!silent) { state.pending += "$"; }
-        state.pos += 1;
-        return true;
-    }
-
-    // First check for and bypass all properly escaped delimieters
-    // This loop will assume that the first leading backtick can not
-    // be the first character in state.src, which is known since
-    // we have found an opening delimieter already.
-    start = state.pos + 1;
-    match = start;
-    while ( (match = state.src.indexOf("$", match)) !== -1) {
-        // Found potential $, look for escapes, pos will point to
-        // first non escape when complete
-        pos = match - 1;
-        while (state.src[pos] === "\\") { pos -= 1; }
-
-        // Even number of escapes, potential closing delimiter found
-        if ( ((match - pos) % 2) == 1 ) { break; }
-        match += 1;
-    }
-
-    // No closing delimter found.  Consume $ and continue.
-    if (match === -1) {
-        if (!silent) { state.pending += "$"; }
-        state.pos = start;
-        return true;
-    }
-
-    // Check if we have empty content, ie: $$.  Do not parse.
-    if (match - start === 0) {
-        if (!silent) { state.pending += "$$"; }
-        state.pos = start + 1;
-        return true;
-    }
-
-    // Check for valid closing delimiter
-    res = isValidDelim(state, match);
-    if (!res.can_close) {
-        if (!silent) { state.pending += "$"; }
-        state.pos = start;
-        return true;
-    }
-
-    if (!silent) {
-        token         = state.push('math_inline', 'math', 0);
-        token.markup  = "$";
-        token.content = state.src.slice(start, match);
-    }
-
-    state.pos = match + 1;
-    return true;
-}
-
-function math_block(state, start, end, silent){
-    var firstLine, lastLine, next, lastPos, found = false, token,
-        pos = state.bMarks[start] + state.tShift[start],
-        max = state.eMarks[start]
-
-    if(pos + 2 > max){ return false; }
-    if(state.src.slice(pos,pos+2)!=='$$'){ return false; }
-
-    pos += 2;
-    firstLine = state.src.slice(pos,max);
-
-    if(silent){ return true; }
-    if(firstLine.trim().slice(-2)==='$$'){
-        // Single line expression
-        firstLine = firstLine.trim().slice(0, -2);
-        found = true;
-    }
-
-    for(next = start; !found; ){
-
-        next++;
-
-        if(next >= end){ break; }
-
-        pos = state.bMarks[next]+state.tShift[next];
-        max = state.eMarks[next];
-
-        if(pos < max && state.tShift[next] < state.blkIndent){
-            // non-empty line with negative indent should stop the list:
-            break;
-        }
-
-        if(state.src.slice(pos,max).trim().slice(-2)==='$$'){
-            lastPos = state.src.slice(0,max).lastIndexOf('$$');
-            lastLine = state.src.slice(pos,lastPos);
-            found = true;
-        }
-
-    }
-
-    state.line = next + 1;
-
-    token = state.push('math_block', 'math', 0);
-    token.block = true;
-    token.content = (firstLine && firstLine.trim() ? firstLine + '\n' : '')
-    + state.getLines(start + 1, next, state.tShift[start], true)
-    + (lastLine && lastLine.trim() ? lastLine : '');
-    token.map = [ start, state.line ];
-    token.markup = '$$';
-    return true;
-}
-
-module.exports = function math_plugin(md, options) {
-    // Default options
-
-    options = options || {};
-
-    // set KaTeX as the renderer for markdown-it-simplemath
-    var katexInline = function(latex){
-        options.displayMode = false;
-        try{
-            return katex.renderToString(latex, options);
-        }
-        catch(error){
-            if(options.throwOnError){ console.log(error); }
-            return latex;
-        }
-    };
-
-    var inlineRenderer = function(tokens, idx){
-        return katexInline(tokens[idx].content);
-    };
-
-    var katexBlock = function(latex){
-        options.displayMode = true;
-        try{
-            return "<p>" + katex.renderToString(latex, options) + "</p>";
-        }
-        catch(error){
-            if(options.throwOnError){ console.log(error); }
-            return latex;
-        }
-    }
-
-    var blockRenderer = function(tokens, idx){
-        return  katexBlock(tokens[idx].content) + '\n';
-    }
-
-    md.inline.ruler.after('escape', 'math_inline', math_inline);
-    md.block.ruler.after('blockquote', 'math_block', math_block, {
-        alt: [ 'paragraph', 'reference', 'blockquote', 'list' ]
-    });
-    md.renderer.rules.math_inline = inlineRenderer;
-    md.renderer.rules.math_block = blockRenderer;
-};
-
-},{"katex":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/katex.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-lazy-headers/index.js":[function(require,module,exports){
+},{"uc.micro/categories/Cc/regex":"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/categories/Cc/regex.js","uc.micro/categories/P/regex":"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/categories/P/regex.js","uc.micro/categories/Z/regex":"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/categories/Z/regex.js","uc.micro/properties/Any/regex":"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/properties/Any/regex.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-lazy-headers/index.js":[function(require,module,exports){
 // heading (#, ##, ...)
 
 'use strict';
@@ -47548,6 +48658,10 @@ MarkdownIt.prototype.use = function (plugin /*, params, ... */) {
  * and then pass updated object to renderer.
  **/
 MarkdownIt.prototype.parse = function (src, env) {
+  if (typeof src !== 'string') {
+    throw new Error('Input data should be a String');
+  }
+
   var state = new this.core.State(src, this, env);
 
   this.core.process(state);
@@ -48866,6 +49980,7 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
       ch,
       i,
       initial,
+      isOutdented,
       l,
       lastLineEmpty,
       lines,
@@ -48881,8 +49996,12 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
       terminate,
       terminatorRules,
       token,
+      oldLineMax = state.lineMax,
       pos = state.bMarks[startLine] + state.tShift[startLine],
       max = state.eMarks[startLine];
+
+  // if it's indented more than 3 spaces, it should be a code block
+  if (state.sCount[startLine] - state.blkIndent >= 4) { return false; }
 
   // check the block quote marker
   if (state.src.charCodeAt(pos++) !== 0x3E/* > */) { return false; }
@@ -48890,9 +50009,6 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
   // we know that it's going to be a valid blockquote,
   // so no point trying to find the end of it in silent mode
   if (silent) { return true; }
-
-  oldIndent = state.blkIndent;
-  state.blkIndent = 0;
 
   // skip spaces after ">" and re-calculate offset
   initial = offset = state.sCount[startLine] + pos - (state.bMarks[startLine] + state.tShift[startLine]);
@@ -48974,13 +50090,21 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
   //     >
   //     test
   //     ```
-  //  3. another tag
+  //  3. another tag:
   //     ```
   //     > test
   //      - - -
   //     ```
   for (nextLine = startLine + 1; nextLine < endLine; nextLine++) {
-    if (state.sCount[nextLine] < oldIndent) { break; }
+    // check if it's outdented, i.e. it's inside list item and indented
+    // less than said list item:
+    //
+    // ```
+    // 1. anything
+    //    > current blockquote
+    // 2. checking this line
+    // ```
+    isOutdented = state.sCount[nextLine] < state.blkIndent;
 
     pos = state.bMarks[nextLine] + state.tShift[nextLine];
     max = state.eMarks[nextLine];
@@ -48990,7 +50114,7 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
       break;
     }
 
-    if (state.src.charCodeAt(pos++) === 0x3E/* > */) {
+    if (state.src.charCodeAt(pos++) === 0x3E/* > */ && !isOutdented) {
       // This line is inside the blockquote.
 
       // skip spaces after ">" and re-calculate offset
@@ -49068,7 +50192,29 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
         break;
       }
     }
-    if (terminate) { break; }
+
+    if (terminate) {
+      // Quirk to enforce "hard termination mode" for paragraphs;
+      // normally if you call `tokenize(state, startLine, nextLine)`,
+      // paragraphs will look below nextLine for paragraph continuation,
+      // but if blockquote is terminated by another tag, they shouldn't
+      state.lineMax = nextLine;
+
+      if (state.blkIndent !== 0) {
+        // state.blkIndent was non-zero, we now set it to zero,
+        // so we need to re-calculate all offsets to appear as
+        // if indent wasn't changed
+        oldBMarks.push(state.bMarks[nextLine]);
+        oldBSCount.push(state.bsCount[nextLine]);
+        oldTShift.push(state.tShift[nextLine]);
+        oldSCount.push(state.sCount[nextLine]);
+        state.sCount[nextLine] -= state.blkIndent;
+      }
+
+      break;
+    }
+
+    if (isOutdented) break;
 
     oldBMarks.push(state.bMarks[nextLine]);
     oldBSCount.push(state.bsCount[nextLine]);
@@ -49080,6 +50226,9 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
     state.sCount[nextLine] = -1;
   }
 
+  oldIndent = state.blkIndent;
+  state.blkIndent = 0;
+
   token        = state.push('blockquote_open', 'blockquote', 1);
   token.markup = '>';
   token.map    = lines = [ startLine, 0 ];
@@ -49089,6 +50238,7 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
   token        = state.push('blockquote_close', 'blockquote', -1);
   token.markup = '>';
 
+  state.lineMax = oldLineMax;
   state.parentType = oldParentType;
   lines[1] = state.line;
 
@@ -49152,6 +50302,9 @@ module.exports = function fence(state, startLine, endLine, silent) {
       haveEndMarker = false,
       pos = state.bMarks[startLine] + state.tShift[startLine],
       max = state.eMarks[startLine];
+
+  // if it's indented more than 3 spaces, it should be a code block
+  if (state.sCount[startLine] - state.blkIndent >= 4) { return false; }
 
   if (pos + 3 > max) { return false; }
 
@@ -49247,6 +50400,9 @@ module.exports = function heading(state, startLine, endLine, silent) {
       pos = state.bMarks[startLine] + state.tShift[startLine],
       max = state.eMarks[startLine];
 
+  // if it's indented more than 3 spaces, it should be a code block
+  if (state.sCount[startLine] - state.blkIndent >= 4) { return false; }
+
   ch  = state.src.charCodeAt(pos);
 
   if (ch !== 0x23/* # */ || pos >= max) { return false; }
@@ -49300,6 +50456,9 @@ module.exports = function hr(state, startLine, endLine, silent) {
   var marker, cnt, ch, token,
       pos = state.bMarks[startLine] + state.tShift[startLine],
       max = state.eMarks[startLine];
+
+  // if it's indented more than 3 spaces, it should be a code block
+  if (state.sCount[startLine] - state.blkIndent >= 4) { return false; }
 
   marker = state.src.charCodeAt(pos++);
 
@@ -49360,6 +50519,9 @@ module.exports = function html_block(state, startLine, endLine, silent) {
       pos = state.bMarks[startLine] + state.tShift[startLine],
       max = state.eMarks[startLine];
 
+  // if it's indented more than 3 spaces, it should be a code block
+  if (state.sCount[startLine] - state.blkIndent >= 4) { return false; }
+
   if (!state.md.options.html) { return false; }
 
   if (state.src.charCodeAt(pos) !== 0x3C/* < */) { return false; }
@@ -49415,6 +50577,9 @@ module.exports = function lheading(state, startLine, endLine/*, silent*/) {
   var content, terminate, i, l, token, pos, max, level, marker,
       nextLine = startLine + 1, oldParentType,
       terminatorRules = state.md.block.ruler.getRules('paragraph');
+
+  // if it's indented more than 3 spaces, it should be a code block
+  if (state.sCount[startLine] - state.blkIndent >= 4) { return false; }
 
   oldParentType = state.parentType;
   state.parentType = 'paragraph'; // use paragraph to match terminatorRules
@@ -49618,6 +50783,9 @@ module.exports = function list(state, startLine, endLine, silent) {
       token,
       isTerminatingParagraph = false,
       tight = true;
+
+  // if it's indented more than 3 spaces, it should be a code block
+  if (state.sCount[startLine] - state.blkIndent >= 4) { return false; }
 
   // limit conditions when list can interrupt
   // a paragraph (validation mode only)
@@ -49907,6 +51075,9 @@ module.exports = function reference(state, startLine, _endLine, silent) {
       pos = state.bMarks[startLine] + state.tShift[startLine],
       max = state.eMarks[startLine],
       nextLine = startLine + 1;
+
+  // if it's indented more than 3 spaces, it should be a code block
+  if (state.sCount[startLine] - state.blkIndent >= 4) { return false; }
 
   if (state.src.charCodeAt(pos) !== 0x5B/* [ */) { return false; }
 
@@ -50378,12 +51549,15 @@ module.exports = function table(state, startLine, endLine, silent) {
   var ch, lineText, pos, i, nextLine, columns, columnCount, token,
       aligns, t, tableLines, tbodyLines;
 
-  // should have at least three lines
+  // should have at least two lines
   if (startLine + 2 > endLine) { return false; }
 
   nextLine = startLine + 1;
 
   if (state.sCount[nextLine] < state.blkIndent) { return false; }
+
+  // if it's indented more than 3 spaces, it should be a code block
+  if (state.sCount[nextLine] - state.blkIndent >= 4) { return false; }
 
   // first character of the second line should be '|', '-', ':',
   // and no other characters are allowed but spaces;
@@ -50431,6 +51605,7 @@ module.exports = function table(state, startLine, endLine, silent) {
 
   lineText = getLine(state, startLine).trim();
   if (lineText.indexOf('|') === -1) { return false; }
+  if (state.sCount[startLine] - state.blkIndent >= 4) { return false; }
   columns = escapedSplit(lineText.replace(/^\||\|$/g, ''));
 
   // header row will define an amount of columns in the entire table,
@@ -50473,12 +51648,10 @@ module.exports = function table(state, startLine, endLine, silent) {
   for (nextLine = startLine + 2; nextLine < endLine; nextLine++) {
     if (state.sCount[nextLine] < state.blkIndent) { break; }
 
-    lineText = getLine(state, nextLine);
+    lineText = getLine(state, nextLine).trim();
     if (lineText.indexOf('|') === -1) { break; }
-
-    // keep spaces at beginning of line to indicate an empty first cell, but
-    // strip trailing whitespace
-    columns = escapedSplit(lineText.replace(/^\||\|\s*$/g, ''));
+    if (state.sCount[nextLine] - state.blkIndent >= 4) { break; }
+    columns = escapedSplit(lineText.replace(/^\||\|$/g, ''));
 
     token = state.push('tr_open', 'tr', 1);
     for (i = 0; i < columnCount; i++) {
@@ -51777,6 +52950,9 @@ module.exports = function link(state, silent) {
 
 'use strict';
 
+var isSpace = require('../common/utils').isSpace;
+
+
 module.exports = function newline(state, silent) {
   var pmax, max, pos = state.pos;
 
@@ -51807,13 +52983,13 @@ module.exports = function newline(state, silent) {
   pos++;
 
   // skip heading spaces for next line
-  while (pos < max && state.src.charCodeAt(pos) === 0x20) { pos++; }
+  while (pos < max && isSpace(state.src.charCodeAt(pos))) { pos++; }
 
   state.pos = pos;
   return true;
 };
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/state_inline.js":[function(require,module,exports){
+},{"../common/utils":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/state_inline.js":[function(require,module,exports){
 // Inline parser state
 
 'use strict';
@@ -54008,9 +55184,10 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			m.parentNode.insertBefore(a, m);
 		})(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
-		ga('create', 'UA-73558830-6', 'auto');
+		ga('create', 'UA-73558830-7', 'auto');
 		ga('send', 'pageview');
 }());
+
 },{}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/markdown_import.js":[function(require,module,exports){
 // Logic for importing a Markdown document from the user's lcoal drive.
 // A hidden <input type="file"> tag i clicked and the user is prompted to choose the file.
@@ -54077,7 +55254,228 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"./document_title":"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js","./unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/modal.js":[function(require,module,exports){
+},{"./document_title":"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js","./unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/markdown_it_katex.js":[function(require,module,exports){
+/* Process inline math */
+/*
+Like markdown-it-simplemath, this is a stripped down, simplified version of:
+https://github.com/runarberg/markdown-it-math
+
+It differs in that it takes (a subset of) LaTeX as input and relies on KaTeX
+for rendering output.
+*/
+
+/*jslint node: true */
+
+'use strict';
+
+var katex = require('katex');
+
+// Test if potential opening or closing delimieter
+// Assumes that there is a "$" at state.src[pos]
+function isValidDelim(state, pos) {
+    var prevChar, nextChar,
+    max = state.posMax,
+        can_open = true,
+        can_close = true;
+
+    prevChar = pos > 0 ? state.src.charCodeAt(pos - 1) : -1;
+    nextChar = pos + 1 <= max ? state.src.charCodeAt(pos + 1) : -1;
+
+    // Check non-whitespace conditions for opening and closing, and
+    // check that closing delimeter isn't followed by a number
+    if (prevChar === 0x20 /* " " */ || prevChar === 0x09 /* \t */ || (nextChar >= 0x30 /* "0" */ && nextChar <= 0x39 /* "9" */ )) {
+        can_close = false;
+    }
+    if (nextChar === 0x20 /* " " */ || nextChar === 0x09 /* \t */ ) {
+        can_open = false;
+    }
+
+    return {
+        can_open: can_open,
+        can_close: can_close
+    };
+}
+
+function math_inline(state, silent) {
+    var start, match, token, res, pos, esc_count;
+
+    if (state.src[state.pos] !== "$") {
+        return false;
+    }
+
+    res = isValidDelim(state, state.pos);
+    if (!res.can_open) {
+        if (!silent) {
+            state.pending += "$";
+        }
+        state.pos += 1;
+        return true;
+    }
+
+    // First check for and bypass all properly escaped delimieters
+    // This loop will assume that the first leading backtick can not
+    // be the first character in state.src, which is known since
+    // we have found an opening delimieter already.
+    start = state.pos + 1;
+    match = start;
+    while ((match = state.src.indexOf("$", match)) !== -1) {
+        // Found potential $, look for escapes, pos will point to
+        // first non escape when complete
+        pos = match - 1;
+        while (state.src[pos] === "\\") {
+            pos -= 1;
+        }
+
+        // Even number of escapes, potential closing delimiter found
+        if (((match - pos) % 2) == 1) {
+            break;
+        }
+        match += 1;
+    }
+
+    // No closing delimter found.  Consume $ and continue.
+    if (match === -1) {
+        if (!silent) {
+            state.pending += "$";
+        }
+        state.pos = start;
+        return true;
+    }
+
+    // Check if we have empty content, ie: $$.  Do not parse.
+    if (match - start === 0) {
+        if (!silent) {
+            state.pending += "$$";
+        }
+        state.pos = start + 1;
+        return true;
+    }
+
+    // Check for valid closing delimiter
+    res = isValidDelim(state, match);
+    if (!res.can_close) {
+        if (!silent) {
+            state.pending += "$";
+        }
+        state.pos = start;
+        return true;
+    }
+
+    if (!silent) {
+        token = state.push('math_inline', 'math', 0);
+        token.markup = "$";
+        token.content = state.src.slice(start, match);
+    }
+
+    state.pos = match + 1;
+    return true;
+}
+
+function math_block(state, start, end, silent) {
+    var firstLine, lastLine, next, lastPos, found = false,
+        token,
+        pos = state.bMarks[start] + state.tShift[start],
+        max = state.eMarks[start]
+
+    if (pos + 2 > max) {
+        return false;
+    }
+    if (state.src.slice(pos, pos + 2) !== '$$') {
+        return false;
+    }
+
+    pos += 2;
+    firstLine = state.src.slice(pos, max);
+
+    if (silent) {
+        return true;
+    }
+    if (firstLine.trim().slice(-2) === '$$') {
+        // Single line expression
+        firstLine = firstLine.trim().slice(0, - 2);
+        found = true;
+    }
+
+    for (next = start; !found;) {
+
+        next++;
+
+        if (next >= end) {
+            break;
+        }
+
+        pos = state.bMarks[next] + state.tShift[next];
+        max = state.eMarks[next];
+
+        if (pos < max && state.tShift[next] < state.blkIndent) {
+            // non-empty line with negative indent should stop the list:
+            break;
+        }
+
+        if (state.src.slice(pos, max).trim().slice(-2) === '$$') {
+            lastPos = state.src.slice(0, max).lastIndexOf('$$');
+            lastLine = state.src.slice(pos, lastPos);
+            found = true;
+        }
+
+    }
+
+    state.line = next + 1;
+
+    token = state.push('math_block', 'math', 0);
+    token.block = true;
+    token.content = (firstLine && firstLine.trim() ? firstLine + '\n' : '') + state.getLines(start + 1, next, state.tShift[start], true) + (lastLine && lastLine.trim() ? lastLine : '');
+    token.map = [start, state.line];
+    token.markup = '$$';
+    return true;
+}
+
+module.exports = function math_plugin(md, options) {
+    // Default options
+
+    options = options || {};
+
+    // set KaTeX as the renderer for markdown-it-simplemath
+    var katexInline = function(latex) {
+        options.displayMode = false;
+        try {
+            return katex.renderToString(latex, options);
+        } catch (error) {
+            if (options.throwOnError) {
+                console.log(error);
+            }
+            return latex;
+        }
+    };
+
+    var inlineRenderer = function(tokens, idx) {
+        return katexInline(tokens[idx].content);
+    };
+
+    var katexBlock = function(latex) {
+        options.displayMode = true;
+        try {
+            return "<p>" + katex.renderToString(latex, options) + "</p>";
+        } catch (error) {
+            if (options.throwOnError) {
+                console.log(error);
+            }
+            return latex;
+        }
+    }
+
+    var blockRenderer = function(tokens, idx) {
+        return katexBlock(tokens[idx].content) + '\n';
+    }
+
+    md.inline.ruler.after('escape', 'math_inline', math_inline);
+    md.block.ruler.after('blockquote', 'math_block', math_block, {
+        alt: ['paragraph', 'reference', 'blockquote', 'list']
+    });
+    md.renderer.rules.math_inline = inlineRenderer;
+    md.renderer.rules.math_block = blockRenderer;
+};
+},{"katex":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/katex.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/modal.js":[function(require,module,exports){
 // Logic for the general modal UI.
 ;(function() {
 	const $ = require("jquery");
@@ -54810,7 +56208,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	});
 	const lazyHeaders = require("markdown-it-lazy-headers");
 	const sanitizer = require("markdown-it-sanitizer");
-	const katex = require("markdown-it-katex");
+	const katex = require("./utils/markdown_it_katex");
 	const mathjax = require("markdown-it-mathjax");
 
 	// Wait for the user to stop typing before the Markdown is rendered.
@@ -54901,7 +56299,6 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		}
 		const fontSize = settingsHelper.getSetting("viewerFontSize");
 		if (fontSize != null) {
-			$(viewer).css("font-size", fontSize);
 			const style = `#viewer { font-size: ${fontSize}; }`;
 			styleUpdater.append("viewer-styles", style);
 		}
@@ -54926,6 +56323,6 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"./utils/resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./utils/settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","./utils/style_updater":"/home/tobloef/Downloads/code/markant.io/scripts/utils/style_updater.js","highlight.js":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/index.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js","markdown-it":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/index.js","markdown-it-katex":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-katex/index.js","markdown-it-lazy-headers":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-lazy-headers/index.js","markdown-it-mathjax":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-mathjax/markdown-it-mathjax.js","markdown-it-sanitizer":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-sanitizer/index.js"}]},{},["/home/tobloef/Downloads/code/markant.io/scripts/app.js"])
+},{"./utils/markdown_it_katex":"/home/tobloef/Downloads/code/markant.io/scripts/utils/markdown_it_katex.js","./utils/resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./utils/settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","./utils/style_updater":"/home/tobloef/Downloads/code/markant.io/scripts/utils/style_updater.js","highlight.js":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/index.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js","markdown-it":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/index.js","markdown-it-lazy-headers":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-lazy-headers/index.js","markdown-it-mathjax":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-mathjax/markdown-it-mathjax.js","markdown-it-sanitizer":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-sanitizer/index.js"}]},{},["/home/tobloef/Downloads/code/markant.io/scripts/app.js"])
 
 //# sourceMappingURL=app-bundle.js.map

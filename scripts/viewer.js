@@ -10,7 +10,7 @@
 	});
 	const lazyHeaders = require("markdown-it-lazy-headers");
 	const sanitizer = require("markdown-it-sanitizer");
-	const katex = require("markdown-it-katex");
+	const katex = require("./utils/markdown_it_katex");
 	const mathjax = require("markdown-it-mathjax");
 
 	// Wait for the user to stop typing before the Markdown is rendered.
