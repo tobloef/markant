@@ -15,6 +15,7 @@ const importCss = require("gulp-import-css");
 const parentDestDir = "./build";
 const scriptEntryPoints = ["app"];
 const styleEntryPoints = ["app"];
+const viewerThemes = ["dark", "light"];
 
 gulp.task("default", ["browserify", "bundle-styles", "font-awesome", "codemirror-themes", "hljs-styles", "viewer-themes", "mathjax", "katex", "fonts"]);
 
@@ -103,8 +104,11 @@ gulp.task("hljs-styles", function() {
 
 gulp.task("viewer-themes", function() {
 	const destDir = `${parentDestDir}/viewer/themes/`;
-	gulp.src("styles/viewer/themes/*.css")
-		.pipe(gulp.dest(destDir));
+	viewerThemes.forEach(function(file) {
+		gulp.src(`./styles/viewer/themes/${file}.css`)
+			.pipe(importCss())
+			.pipe(gulp.dest(destDir));
+	});
 });
 
 gulp.task("watch", function() {
