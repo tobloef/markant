@@ -55198,8 +55198,9 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			return;
 		}
 		const content = event.target.result;
+
 		if (codemirror) {
-			documentTitle.setTitle(fileName);
+			documentTitle.setTitle(fileName.split(".")[0]);
 			codemirror.setValue(content);
 			unsavedChanges.hasChanges = false;
 		}

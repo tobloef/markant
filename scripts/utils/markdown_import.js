@@ -39,8 +39,9 @@
 			return;
 		}
 		const content = event.target.result;
+
 		if (codemirror) {
-			documentTitle.setTitle(fileName);
+			documentTitle.setTitle(fileName.split(".")[0]);
 			codemirror.setValue(content);
 			unsavedChanges.hasChanges = false;
 		}
