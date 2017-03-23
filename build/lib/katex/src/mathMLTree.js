@@ -8,7 +8,7 @@
  * domTree.js, creating namespaced DOM nodes and HTML text markup respectively.
  */
 
-const utils = require("./utils");
+var utils = require("./utils");
 
 /**
  * This node represents a general purpose MathML node of any type. The
@@ -33,16 +33,16 @@ MathNode.prototype.setAttribute = function(name, value) {
  * Converts the math node into a MathML-namespaced DOM element.
  */
 MathNode.prototype.toNode = function() {
-    const node = document.createElementNS(
+    var node = document.createElementNS(
         "http://www.w3.org/1998/Math/MathML", this.type);
 
-    for (const attr in this.attributes) {
+    for (var attr in this.attributes) {
         if (Object.prototype.hasOwnProperty.call(this.attributes, attr)) {
             node.setAttribute(attr, this.attributes[attr]);
         }
     }
 
-    for (let i = 0; i < this.children.length; i++) {
+    for (var i = 0; i < this.children.length; i++) {
         node.appendChild(this.children[i].toNode());
     }
 
@@ -53,10 +53,10 @@ MathNode.prototype.toNode = function() {
  * Converts the math node into an HTML markup string.
  */
 MathNode.prototype.toMarkup = function() {
-    let markup = "<" + this.type;
+    var markup = "<" + this.type;
 
     // Add the attributes
-    for (const attr in this.attributes) {
+    for (var attr in this.attributes) {
         if (Object.prototype.hasOwnProperty.call(this.attributes, attr)) {
             markup += " " + attr + "=\"";
             markup += utils.escape(this.attributes[attr]);
@@ -66,7 +66,7 @@ MathNode.prototype.toMarkup = function() {
 
     markup += ">";
 
-    for (let i = 0; i < this.children.length; i++) {
+    for (var i = 0; i < this.children.length; i++) {
         markup += this.children[i].toMarkup();
     }
 
@@ -98,5 +98,5 @@ TextNode.prototype.toMarkup = function() {
 
 module.exports = {
     MathNode: MathNode,
-    TextNode: TextNode,
+    TextNode: TextNode
 };

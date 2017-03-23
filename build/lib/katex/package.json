@@ -2,57 +2,49 @@
   "_args": [
     [
       {
-        "raw": "git://github.com/tobloef/katex.git",
+        "raw": "katex",
         "scope": null,
-        "escapedName": null,
-        "name": null,
-        "rawSpec": "git://github.com/tobloef/katex.git",
-        "spec": "git://github.com/tobloef/katex.git",
-        "type": "hosted",
-        "hosted": {
-          "type": "github",
-          "ssh": "git@github.com:tobloef/katex.git",
-          "sshUrl": "git+ssh://git@github.com/tobloef/katex.git",
-          "httpsUrl": "git+https://github.com/tobloef/katex.git",
-          "gitUrl": "git://github.com/tobloef/katex.git",
-          "shortcut": "github:tobloef/katex",
-          "directUrl": "https://raw.githubusercontent.com/tobloef/katex/master/package.json"
-        }
+        "escapedName": "katex",
+        "name": "katex",
+        "rawSpec": "",
+        "spec": "latest",
+        "type": "tag"
       },
       "/home/tobloef/Downloads/code/markant.io"
     ]
   ],
-  "_from": "git://github.com/tobloef/katex.git",
-  "_id": "katex@0.8.0-pre",
+  "_from": "katex@latest",
+  "_id": "katex@0.7.1",
   "_inCache": true,
   "_location": "/katex",
+  "_nodeVersion": "7.3.0",
+  "_npmOperationalInternal": {
+    "host": "packages-18-east.internal.npmjs.com",
+    "tmp": "tmp/katex-0.7.1.tgz_1485040762768_0.427634091116488"
+  },
+  "_npmUser": {
+    "name": "gagern",
+    "email": "Martin.vGagern@gmx.net"
+  },
+  "_npmVersion": "3.10.10",
   "_phantomChildren": {},
   "_requested": {
-    "raw": "git://github.com/tobloef/katex.git",
+    "raw": "katex",
     "scope": null,
-    "escapedName": null,
-    "name": null,
-    "rawSpec": "git://github.com/tobloef/katex.git",
-    "spec": "git://github.com/tobloef/katex.git",
-    "type": "hosted",
-    "hosted": {
-      "type": "github",
-      "ssh": "git@github.com:tobloef/katex.git",
-      "sshUrl": "git+ssh://git@github.com/tobloef/katex.git",
-      "httpsUrl": "git+https://github.com/tobloef/katex.git",
-      "gitUrl": "git://github.com/tobloef/katex.git",
-      "shortcut": "github:tobloef/katex",
-      "directUrl": "https://raw.githubusercontent.com/tobloef/katex/master/package.json"
-    }
+    "escapedName": "katex",
+    "name": "katex",
+    "rawSpec": "",
+    "spec": "latest",
+    "type": "tag"
   },
   "_requiredBy": [
     "#USER",
     "/"
   ],
-  "_resolved": "git://github.com/tobloef/katex.git#9819498a956d94a948a8f3ea6b041cdc08af93e4",
-  "_shasum": "6ad5f2bcaeff914824f6dfa42abb4e95bb893253",
+  "_resolved": "https://registry.npmjs.org/katex/-/katex-0.7.1.tgz",
+  "_shasum": "06bb5298efad05e1e7228035ba8e1591f3061b8f",
   "_shrinkwrap": null,
-  "_spec": "git://github.com/tobloef/katex.git",
+  "_spec": "katex",
   "_where": "/home/tobloef/Downloads/code/markant.io",
   "bin": {
     "katex": "cli.js"
@@ -65,25 +57,26 @@
   },
   "description": "Fast math typesetting for the web.",
   "devDependencies": {
-    "babel-plugin-transform-runtime": "^6.15.0",
-    "babel-preset-es2015": "^6.18.0",
-    "babelify": "^7.3.0",
-    "browserify": "^13.3.0",
-    "clean-css": "^3.4.23",
-    "eslint": "^3.13.0",
-    "express": "^4.14.0",
-    "glob": "^7.1.1",
+    "browserify": "^10.2.4",
+    "clean-css": "~2.2.15",
+    "eslint": "^1.10.3",
+    "express": "~3.3.3",
+    "glob": "^5.0.15",
     "jasmine": "^2.3.2",
     "jasmine-core": "^2.3.4",
     "js-yaml": "^3.3.1",
-    "jspngopt": "^0.2.0",
+    "jspngopt": "^0.1.0",
     "less": "~2.7.1",
-    "morgan": "^1.7.0",
     "nomnom": "^1.8.1",
-    "pako": "1.0.4",
-    "selenium-webdriver": "^2.48.2",
+    "pako": "0.2.7",
+    "selenium-webdriver": "^2.46.1",
     "sri-toolbox": "^0.2.0",
-    "uglify-js": "~2.7.5"
+    "uglify-js": "~2.4.15"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "06bb5298efad05e1e7228035ba8e1591f3061b8f",
+    "tarball": "https://registry.npmjs.org/katex/-/katex-0.7.1.tgz"
   },
   "files": [
     "katex.js",
@@ -91,14 +84,35 @@
     "src/",
     "dist/"
   ],
-  "gitHead": "9819498a956d94a948a8f3ea6b041cdc08af93e4",
+  "gitHead": "216832464034c13ec812a10f2143464b21a978c1",
   "homepage": "https://github.com/Khan/KaTeX#readme",
   "license": "MIT",
   "main": "katex.js",
+  "maintainers": [
+    {
+      "name": "gagern",
+      "email": "Martin.vGagern@gmx.net"
+    },
+    {
+      "name": "kevinbarabash",
+      "email": "kevinb7@gmail.com"
+    },
+    {
+      "name": "khanacademy",
+      "email": "opensource+npm@khanacademy.org"
+    },
+    {
+      "name": "spicyj",
+      "email": "ben@benalpert.com"
+    },
+    {
+      "name": "xymostech",
+      "email": "xymostech@gmail.com"
+    }
+  ],
   "name": "katex",
   "optionalDependencies": {},
-  "readme": "# [<img src=\"https://khan.github.io/KaTeX/katex-logo.svg\" width=\"130\" alt=\"KaTeX\">](https://khan.github.io/KaTeX/) [![Build Status](https://travis-ci.org/Khan/KaTeX.svg?branch=master)](https://travis-ci.org/Khan/KaTeX)\n\n[![Join the chat at https://gitter.im/Khan/KaTeX](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Khan/KaTeX?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)\n\nKaTeX is a fast, easy-to-use JavaScript library for TeX math rendering on the web.\n\n * **Fast:** KaTeX renders its math synchronously and doesn't need to reflow the page. See how it compares to a competitor in [this speed test](http://www.intmath.com/cg5/katex-mathjax-comparison.php).\n * **Print quality:** KaTeX’s layout is based on Donald Knuth’s TeX, the gold standard for math typesetting.\n * **Self contained:** KaTeX has no dependencies and can easily be bundled with your website resources.\n * **Server side rendering:** KaTeX produces the same output regardless of browser or environment, so you can pre-render expressions using Node.js and send them as plain HTML.\n\nKaTeX supports all major browsers, including Chrome, Safari, Firefox, Opera, and IE 8 - IE 11. A list of supported commands can be found on the [wiki](https://github.com/Khan/KaTeX/wiki/Function-Support-in-KaTeX).\n\n## Usage\n\nYou can [download KaTeX](https://github.com/khan/katex/releases) and host it on your server or include the `katex.min.js` and `katex.min.css` files on your page directly from a CDN:\n\n```html\n<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css\" integrity=\"sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0\" crossorigin=\"anonymous\">\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js\" integrity=\"sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1\" crossorigin=\"anonymous\"></script>\n```\n\n#### In-browser rendering\n\nCall `katex.render` with a TeX expression and a DOM element to render into:\n\n```js\nkatex.render(\"c = \\\\pm\\\\sqrt{a^2 + b^2}\", element);\n```\n\nIf KaTeX can't parse the expression, it throws a `katex.ParseError` error.\n\n#### Server side rendering or rendering to a string\n\nTo generate HTML on the server or to generate an HTML string of the rendered math, you can use `katex.renderToString`:\n\n```js\nvar html = katex.renderToString(\"c = \\\\pm\\\\sqrt{a^2 + b^2}\");\n// '<span class=\"katex\">...</span>'\n```\n\nMake sure to include the CSS and font files, but there is no need to include the JavaScript. Like `render`, `renderToString` throws if it can't parse the expression.\n\n#### Rendering options\n\nYou can provide an object of options as the last argument to `katex.render` and `katex.renderToString`. Available options are:\n\n- `displayMode`: `boolean`. If `true` the math will be rendered in display mode, which will put the math in display style (so `\\int` and `\\sum` are large, for example), and will center the math on the page on its own line. If `false` the math will be rendered in inline mode. (default: `false`)\n- `throwOnError`: `boolean`. If `true`, KaTeX will throw a `ParseError` when it encounters an unsupported command. If `false`, KaTeX will render the unsupported command as text in the color given by `errorColor`. (default: `true`)\n- `errorColor`: `string`. A color string given in the format `\"#XXX\"` or `\"#XXXXXX\"`. This option determines the color which unsupported commands are rendered in. (default: `#cc0000`)\n- `macros`: `object`. A collection of custom macros. Each macro is a property with a name like `\\name` (written `\"\\\\name\"` in JavaScript) which maps to a string that describes the expansion of the macro.\n\nFor example:\n\n```js\nkatex.render(\"c = \\\\pm\\\\sqrt{a^2 + b^2}\\\\in\\\\RR\", element, {\n  displayMode: true,\n  macros: {\n    \"\\\\RR\": \"\\\\mathbb{R}\"\n  }\n});\n```\n\n#### Automatic rendering of math on a page\n\nMath on the page can be automatically rendered using the auto-render extension. See [the Auto-render README](contrib/auto-render/README.md) for more information.\n\n## Contributing\n\nSee [CONTRIBUTING.md](CONTRIBUTING.md)\n\n## License\n\nKaTeX is licensed under the [MIT License](http://opensource.org/licenses/MIT).\n",
-  "readmeFilename": "README.md",
+  "readme": "ERROR: No README data found!",
   "repository": {
     "type": "git",
     "url": "git://github.com/Khan/KaTeX.git"
@@ -108,5 +122,5 @@
     "start": "node server.js",
     "test": "make lint test"
   },
-  "version": "0.8.0-pre"
+  "version": "0.7.1"
 }

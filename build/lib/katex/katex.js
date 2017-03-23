@@ -7,24 +7,24 @@
  * errors in the expression, or errors in javascript handling.
  */
 
-const ParseError = require("./src/ParseError");
-const Settings = require("./src/Settings");
+var ParseError = require("./src/ParseError");
+var Settings = require("./src/Settings");
 
-const buildTree = require("./src/buildTree");
-const parseTree = require("./src/parseTree");
-const utils = require("./src/utils");
+var buildTree = require("./src/buildTree");
+var parseTree = require("./src/parseTree");
+var utils = require("./src/utils");
 
 /**
  * Parse and build an expression, and place that expression in the DOM node
  * given.
  */
-let render = function(expression, baseNode, options) {
+var render = function(expression, baseNode, options) {
     utils.clearNode(baseNode);
 
-    const settings = new Settings(options);
+    var settings = new Settings(options);
 
-    const tree = parseTree(expression, settings);
-    const node = buildTree(tree, expression, settings).toNode();
+    var tree = parseTree(expression, settings);
+    var node = buildTree(tree, expression, settings).toNode();
 
     baseNode.appendChild(node);
 };
@@ -46,18 +46,18 @@ if (typeof document !== "undefined") {
 /**
  * Parse and build an expression, and return the markup for that.
  */
-const renderToString = function(expression, options) {
-    const settings = new Settings(options);
+var renderToString = function(expression, options) {
+    var settings = new Settings(options);
 
-    const tree = parseTree(expression, settings);
+    var tree = parseTree(expression, settings);
     return buildTree(tree, expression, settings).toMarkup();
 };
 
 /**
  * Parse an expression and return the parse tree.
  */
-const generateParseTree = function(expression, options) {
-    const settings = new Settings(options);
+var generateParseTree = function(expression, options) {
+    var settings = new Settings(options);
     return parseTree(expression, settings);
 };
 
@@ -70,5 +70,5 @@ module.exports = {
      * to change. Use at your own risk.
      */
     __parse: generateParseTree,
-    ParseError: ParseError,
+    ParseError: ParseError
 };

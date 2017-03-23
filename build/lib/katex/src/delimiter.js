@@ -20,21 +20,21 @@
  * used in `\left` and `\right`.
  */
 
-const ParseError = require("./ParseError");
-const Style = require("./Style");
+var ParseError = require("./ParseError");
+var Style = require("./Style");
 
-const buildCommon = require("./buildCommon");
-const fontMetrics = require("./fontMetrics");
-const symbols = require("./symbols");
-const utils = require("./utils");
+var buildCommon = require("./buildCommon");
+var fontMetrics = require("./fontMetrics");
+var symbols = require("./symbols");
+var utils = require("./utils");
 
-const makeSpan = buildCommon.makeSpan;
+var makeSpan = buildCommon.makeSpan;
 
 /**
  * Get the metrics for a given symbol and font, after transformation (i.e.
  * after following replacement from symbols.js)
  */
-const getMetrics = function(symbol, font) {
+var getMetrics = function(symbol, font) {
     if (symbols.math[symbol] && symbols.math[symbol].replace) {
         return fontMetrics.getCharacterMetrics(
             symbols.math[symbol].replace, font);
@@ -47,7 +47,7 @@ const getMetrics = function(symbol, font) {
 /**
  * Builds a symbol in the given font size (note size is an integer)
  */
-const mathrmSize = function(value, size, mode, options) {
+var mathrmSize = function(value, size, mode, options) {
     return buildCommon.makeSymbol(value, "Size" + size + "-Regular",
         mode, options);
 };
@@ -56,13 +56,13 @@ const mathrmSize = function(value, size, mode, options) {
  * Puts a delimiter span in a given style, and adds appropriate height, depth,
  * and maxFontSizes.
  */
-const styleWrap = function(delim, toStyle, options, classes) {
+var styleWrap = function(delim, toStyle, options, classes) {
     classes = classes || [];
-    const span = makeSpan(
+    var span = makeSpan(
         classes.concat(["style-wrap", options.style.reset(), toStyle.cls()]),
         [delim], options);
 
-    const multiplier = toStyle.sizeMultiplier / options.style.sizeMultiplier;
+    var multiplier = toStyle.sizeMultiplier / options.style.sizeMultiplier;
 
     span.height *= multiplier;
     span.depth *= multiplier;
@@ -76,13 +76,13 @@ const styleWrap = function(delim, toStyle, options, classes) {
  * font, but is restyled to either be in textstyle, scriptstyle, or
  * scriptscriptstyle.
  */
-const makeSmallDelim = function(delim, style, center, options, mode, classes) {
-    const text = buildCommon.makeSymbol(delim, "Main-Regular", mode, options);
+var makeSmallDelim = function(delim, style, center, options, mode, classes) {
+    var text = buildCommon.makeSymbol(delim, "Main-Regular", mode, options);
 
-    const span = styleWrap(text, style, options, classes);
+    var span = styleWrap(text, style, options, classes);
 
     if (center) {
-        const shift =
+        var shift =
             (1 - options.style.sizeMultiplier / style.sizeMultiplier) *
             options.style.metrics.axisHeight;
 
@@ -98,15 +98,15 @@ const makeSmallDelim = function(delim, style, center, options, mode, classes) {
  * Makes a large delimiter. This is a delimiter that comes in the Size1, Size2,
  * Size3, or Size4 fonts. It is always rendered in textstyle.
  */
-const makeLargeDelim = function(delim, size, center, options, mode, classes) {
-    const inner = mathrmSize(delim, size, mode, options);
+var makeLargeDelim = function(delim, size, center, options, mode, classes) {
+    var inner = mathrmSize(delim, size, mode, options);
 
-    const span = styleWrap(
+    var span = styleWrap(
         makeSpan(["delimsizing", "size" + size], [inner], options),
         Style.TEXT, options, classes);
 
     if (center) {
-        const shift = (1 - options.style.sizeMultiplier) *
+        var shift = (1 - options.style.sizeMultiplier) *
             options.style.metrics.axisHeight;
 
         span.style.top = shift + "em";
@@ -121,8 +121,8 @@ const makeLargeDelim = function(delim, size, center, options, mode, classes) {
  * Make an inner span with the given offset and in the given font. This is used
  * in `makeStackedDelim` to make the stacking pieces for the delimiter.
  */
-const makeInner = function(symbol, font, mode) {
-    let sizeClass;
+var makeInner = function(symbol, font, mode) {
+    var sizeClass;
     // Apply the correct CSS class to choose the right font.
     if (font === "Size1-Regular") {
         sizeClass = "delim-size1";
@@ -130,7 +130,7 @@ const makeInner = function(symbol, font, mode) {
         sizeClass = "delim-size4";
     }
 
-    const inner = makeSpan(
+    var inner = makeSpan(
         ["delimsizinginner", sizeClass],
         [makeSpan([], [buildCommon.makeSymbol(symbol, font, mode)])]);
 
@@ -143,18 +143,18 @@ const makeInner = function(symbol, font, mode) {
  * Make a stacked delimiter out of a given delimiter, with the total height at
  * least `heightTotal`. This routine is mentioned on page 442 of the TeXbook.
  */
-const makeStackedDelim = function(delim, heightTotal, center, options, mode,
+var makeStackedDelim = function(delim, heightTotal, center, options, mode,
                                 classes) {
     // There are four parts, the top, an optional middle, a repeated part, and a
     // bottom.
-    let top;
-    let middle;
-    let repeat;
-    let bottom;
+    var top;
+    var middle;
+    var repeat;
+    var bottom;
     top = repeat = bottom = delim;
     middle = null;
     // Also keep track of what font the delimiters are in
-    let font = "Size1-Regular";
+    var font = "Size1-Regular";
 
     // We set the parts and font based on the symbol. Note that we use
     // '\u23d0' instead of '|' and '\u2016' instead of '\\|' for the
@@ -251,64 +251,65 @@ const makeStackedDelim = function(delim, heightTotal, center, options, mode,
     }
 
     // Get the metrics of the four sections
-    const topMetrics = getMetrics(top, font);
-    const topHeightTotal = topMetrics.height + topMetrics.depth;
-    const repeatMetrics = getMetrics(repeat, font);
-    const repeatHeightTotal = repeatMetrics.height + repeatMetrics.depth;
-    const bottomMetrics = getMetrics(bottom, font);
-    const bottomHeightTotal = bottomMetrics.height + bottomMetrics.depth;
-    let middleHeightTotal = 0;
-    let middleFactor = 1;
+    var topMetrics = getMetrics(top, font);
+    var topHeightTotal = topMetrics.height + topMetrics.depth;
+    var repeatMetrics = getMetrics(repeat, font);
+    var repeatHeightTotal = repeatMetrics.height + repeatMetrics.depth;
+    var bottomMetrics = getMetrics(bottom, font);
+    var bottomHeightTotal = bottomMetrics.height + bottomMetrics.depth;
+    var middleHeightTotal = 0;
+    var middleFactor = 1;
     if (middle !== null) {
-        const middleMetrics = getMetrics(middle, font);
+        var middleMetrics = getMetrics(middle, font);
         middleHeightTotal = middleMetrics.height + middleMetrics.depth;
         middleFactor = 2; // repeat symmetrically above and below middle
     }
 
     // Calcuate the minimal height that the delimiter can have.
     // It is at least the size of the top, bottom, and optional middle combined.
-    const minHeight = topHeightTotal + bottomHeightTotal + middleHeightTotal;
+    var minHeight = topHeightTotal + bottomHeightTotal + middleHeightTotal;
 
     // Compute the number of copies of the repeat symbol we will need
-    const repeatCount = Math.ceil(
+    var repeatCount = Math.ceil(
         (heightTotal - minHeight) / (middleFactor * repeatHeightTotal));
 
     // Compute the total height of the delimiter including all the symbols
-    const realHeightTotal =
+    var realHeightTotal =
         minHeight + repeatCount * middleFactor * repeatHeightTotal;
 
     // The center of the delimiter is placed at the center of the axis. Note
     // that in this context, "center" means that the delimiter should be
     // centered around the axis in the current style, while normally it is
     // centered around the axis in textstyle.
-    let axisHeight = options.style.metrics.axisHeight;
+    var axisHeight = options.style.metrics.axisHeight;
     if (center) {
         axisHeight *= options.style.sizeMultiplier;
     }
     // Calculate the depth
-    const depth = realHeightTotal / 2 - axisHeight;
+    var depth = realHeightTotal / 2 - axisHeight;
 
     // Now, we start building the pieces that will go into the vlist
 
     // Keep a list of the inner pieces
-    const inners = [];
+    var inners = [];
 
     // Add the bottom symbol
     inners.push(makeInner(bottom, font, mode));
 
+    var i;
     if (middle === null) {
         // Add that many symbols
-        for (let i = 0; i < repeatCount; i++) {
+        for (i = 0; i < repeatCount; i++) {
             inners.push(makeInner(repeat, font, mode));
         }
     } else {
         // When there is a middle bit, we need the middle part and two repeated
         // sections
-        for (let i = 0; i < repeatCount; i++) {
+        for (i = 0; i < repeatCount; i++) {
             inners.push(makeInner(repeat, font, mode));
         }
         inners.push(makeInner(middle, font, mode));
-        for (let i = 0; i < repeatCount; i++) {
+        for (i = 0; i < repeatCount; i++) {
             inners.push(makeInner(repeat, font, mode));
         }
     }
@@ -317,7 +318,7 @@ const makeStackedDelim = function(delim, heightTotal, center, options, mode,
     inners.push(makeInner(top, font, mode));
 
     // Finally, build the vlist
-    const inner = buildCommon.makeVList(inners, "bottom", depth, options);
+    var inner = buildCommon.makeVList(inners, "bottom", depth, options);
 
     return styleWrap(
         makeSpan(["delimsizing", "mult"], [inner], options),
@@ -326,36 +327,36 @@ const makeStackedDelim = function(delim, heightTotal, center, options, mode,
 
 // There are three kinds of delimiters, delimiters that stack when they become
 // too large
-const stackLargeDelimiters = [
+var stackLargeDelimiters = [
     "(", ")", "[", "\\lbrack", "]", "\\rbrack",
     "\\{", "\\lbrace", "\\}", "\\rbrace",
     "\\lfloor", "\\rfloor", "\\lceil", "\\rceil",
-    "\\surd",
+    "\\surd"
 ];
 
 // delimiters that always stack
-const stackAlwaysDelimiters = [
+var stackAlwaysDelimiters = [
     "\\uparrow", "\\downarrow", "\\updownarrow",
     "\\Uparrow", "\\Downarrow", "\\Updownarrow",
     "|", "\\|", "\\vert", "\\Vert",
     "\\lvert", "\\rvert", "\\lVert", "\\rVert",
-    "\\lgroup", "\\rgroup", "\\lmoustache", "\\rmoustache",
+    "\\lgroup", "\\rgroup", "\\lmoustache", "\\rmoustache"
 ];
 
 // and delimiters that never stack
-const stackNeverDelimiters = [
-    "<", ">", "\\langle", "\\rangle", "/", "\\backslash", "\\lt", "\\gt",
+var stackNeverDelimiters = [
+    "<", ">", "\\langle", "\\rangle", "/", "\\backslash", "\\lt", "\\gt"
 ];
 
 // Metrics of the different sizes. Found by looking at TeX's output of
 // $\bigl| // \Bigl| \biggl| \Biggl| \showlists$
 // Used to create stacked delimiters of appropriate sizes in makeSizedDelim.
-const sizeToMaxHeight = [0, 1.2, 1.8, 2.4, 3.0];
+var sizeToMaxHeight = [0, 1.2, 1.8, 2.4, 3.0];
 
 /**
  * Used to create a delimiter of a specific size, where `size` is 1, 2, 3, or 4.
  */
-const makeSizedDelim = function(delim, size, options, mode, classes) {
+var makeSizedDelim = function(delim, size, options, mode, classes) {
     // < and > turn into \langle and \rangle in delimiters
     if (delim === "<" || delim === "\\lt") {
         delim = "\\langle";
@@ -388,27 +389,27 @@ const makeSizedDelim = function(delim, size, options, mode, classes) {
  */
 
 // Delimiters that never stack try small delimiters and large delimiters only
-const stackNeverDelimiterSequence = [
+var stackNeverDelimiterSequence = [
     {type: "small", style: Style.SCRIPTSCRIPT},
     {type: "small", style: Style.SCRIPT},
     {type: "small", style: Style.TEXT},
     {type: "large", size: 1},
     {type: "large", size: 2},
     {type: "large", size: 3},
-    {type: "large", size: 4},
+    {type: "large", size: 4}
 ];
 
 // Delimiters that always stack try the small delimiters first, then stack
-const stackAlwaysDelimiterSequence = [
+var stackAlwaysDelimiterSequence = [
     {type: "small", style: Style.SCRIPTSCRIPT},
     {type: "small", style: Style.SCRIPT},
     {type: "small", style: Style.TEXT},
-    {type: "stack"},
+    {type: "stack"}
 ];
 
 // Delimiters that stack when large try the small and then large delimiters, and
 // stack afterwards
-const stackLargeDelimiterSequence = [
+var stackLargeDelimiterSequence = [
     {type: "small", style: Style.SCRIPTSCRIPT},
     {type: "small", style: Style.SCRIPT},
     {type: "small", style: Style.TEXT},
@@ -416,13 +417,13 @@ const stackLargeDelimiterSequence = [
     {type: "large", size: 2},
     {type: "large", size: 3},
     {type: "large", size: 4},
-    {type: "stack"},
+    {type: "stack"}
 ];
 
 /**
  * Get the font used in a delimiter based on what kind of delimiter it is.
  */
-const delimTypeToFont = function(type) {
+var delimTypeToFont = function(type) {
     if (type.type === "small") {
         return "Main-Regular";
     } else if (type.type === "large") {
@@ -436,20 +437,20 @@ const delimTypeToFont = function(type) {
  * Traverse a sequence of types of delimiters to decide what kind of delimiter
  * should be used to create a delimiter of the given height+depth.
  */
-const traverseSequence = function(delim, height, sequence, options) {
+var traverseSequence = function(delim, height, sequence, options) {
     // Here, we choose the index we should start at in the sequences. In smaller
     // sizes (which correspond to larger numbers in style.size) we start earlier
     // in the sequence. Thus, scriptscript starts at index 3-3=0, script starts
     // at index 3-2=1, text starts at 3-1=2, and display starts at min(2,3-0)=2
-    const start = Math.min(2, 3 - options.style.size);
-    for (let i = start; i < sequence.length; i++) {
+    var start = Math.min(2, 3 - options.style.size);
+    for (var i = start; i < sequence.length; i++) {
         if (sequence[i].type === "stack") {
             // This is always the last delimiter, so we just break the loop now.
             break;
         }
 
-        const metrics = getMetrics(delim, delimTypeToFont(sequence[i]));
-        let heightDepth = metrics.height + metrics.depth;
+        var metrics = getMetrics(delim, delimTypeToFont(sequence[i]));
+        var heightDepth = metrics.height + metrics.depth;
 
         // Small delimiters are scaled down versions of the same font, so we
         // account for the style change size.
@@ -472,7 +473,7 @@ const traverseSequence = function(delim, height, sequence, options) {
  * Make a delimiter of a given height+depth, with optional centering. Here, we
  * traverse the sequences, and create a delimiter that the sequence tells us to.
  */
-const makeCustomSizedDelim = function(delim, height, center, options, mode,
+var makeCustomSizedDelim = function(delim, height, center, options, mode,
                                     classes) {
     if (delim === "<" || delim === "\\lt") {
         delim = "\\langle";
@@ -481,7 +482,7 @@ const makeCustomSizedDelim = function(delim, height, center, options, mode,
     }
 
     // Decide what sequence to use
-    let sequence;
+    var sequence;
     if (utils.contains(stackNeverDelimiters, delim)) {
         sequence = stackNeverDelimiterSequence;
     } else if (utils.contains(stackLargeDelimiters, delim)) {
@@ -491,7 +492,7 @@ const makeCustomSizedDelim = function(delim, height, center, options, mode,
     }
 
     // Look through the sequence
-    const delimType = traverseSequence(delim, height, sequence, options);
+    var delimType = traverseSequence(delim, height, sequence, options);
 
     // Depending on the sequence element we decided on, call the appropriate
     // function.
@@ -510,20 +511,20 @@ const makeCustomSizedDelim = function(delim, height, center, options, mode,
  * Make a delimiter for use with `\left` and `\right`, given a height and depth
  * of an expression that the delimiters surround.
  */
-const makeLeftRightDelim = function(delim, height, depth, options, mode,
+var makeLeftRightDelim = function(delim, height, depth, options, mode,
                                   classes) {
     // We always center \left/\right delimiters, so the axis is always shifted
-    const axisHeight =
+    var axisHeight =
         options.style.metrics.axisHeight * options.style.sizeMultiplier;
 
     // Taken from TeX source, tex.web, function make_left_right
-    const delimiterFactor = 901;
-    const delimiterExtend = 5.0 / fontMetrics.metrics.ptPerEm;
+    var delimiterFactor = 901;
+    var delimiterExtend = 5.0 / fontMetrics.metrics.ptPerEm;
 
-    const maxDistFromAxis = Math.max(
+    var maxDistFromAxis = Math.max(
         height - axisHeight, depth + axisHeight);
 
-    const totalHeight = Math.max(
+    var totalHeight = Math.max(
         // In real TeX, calculations are done using integral values which are
         // 65536 per pt, or 655360 per em. So, the division here truncates in
         // TeX but doesn't here, producing different results. If we wanted to
@@ -545,5 +546,5 @@ const makeLeftRightDelim = function(delim, height, depth, options, mode,
 module.exports = {
     sizedDelim: makeSizedDelim,
     customSizedDelim: makeCustomSizedDelim,
-    leftRightDelim: makeLeftRightDelim,
+    leftRightDelim: makeLeftRightDelim
 };

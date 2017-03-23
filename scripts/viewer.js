@@ -65,7 +65,7 @@
 			if (mathRenderer.toLowerCase() === "mathjax") {
 				markdownIt.use(mathjax);
 				const mathjaxUrl = mathjaxCdn + mathjaxConfigString;
-				resourceLoader.getScript(mathjaxUrl, function() {
+				resourceLoader.addScript(mathjaxUrl, function() {
 					MathJax.Hub.Config({
 						messageStyle: "none",
 					});

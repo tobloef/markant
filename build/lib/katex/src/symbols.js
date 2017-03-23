@@ -18,14 +18,14 @@
 
 module.exports = {
     math: {},
-    text: {},
+    text: {}
 };
 
 function defineSymbol(mode, font, group, replace, name) {
     module.exports[mode][name] = {
         font: font,
         group: group,
-        replace: replace,
+        replace: replace
     };
 }
 
@@ -33,25 +33,25 @@ function defineSymbol(mode, font, group, replace, name) {
 // This helps minify the code, and also spotting typos using jshint.
 
 // modes:
-const math = "math";
-const text = "text";
+var math = "math";
+var text = "text";
 
 // fonts:
-const main = "main";
-const ams = "ams";
+var main = "main";
+var ams = "ams";
 
 // groups:
-const accent = "accent";
-const bin = "bin";
-const close = "close";
-const inner = "inner";
-const mathord = "mathord";
-const op = "op";
-const open = "open";
-const punct = "punct";
-const rel = "rel";
-const spacing = "spacing";
-const textord = "textord";
+var accent = "accent";
+var bin = "bin";
+var close = "close";
+var inner = "inner";
+var mathord = "mathord";
+var op = "op";
+var open = "open";
+var punct = "punct";
+var rel = "rel";
+var spacing = "spacing";
+var textord = "textord";
 
 // Now comes the symbol table
 
@@ -616,48 +616,50 @@ defineSymbol(text, main, spacing, "\u00a0", " ");
 defineSymbol(text, main, spacing, "\u00a0", "~");
 
 // There are lots of symbols which are the same, so we add them in afterwards.
+var i;
+var ch;
 
 // All of these are textords in math mode
-const mathTextSymbols = "0123456789/@.\"";
-for (let i = 0; i < mathTextSymbols.length; i++) {
-    const ch = mathTextSymbols.charAt(i);
+var mathTextSymbols = "0123456789/@.\"";
+for (i = 0; i < mathTextSymbols.length; i++) {
+    ch = mathTextSymbols.charAt(i);
     defineSymbol(math, main, textord, ch, ch);
 }
 
 // All of these are textords in text mode
-const textSymbols = "0123456789!@*()-=+[]\";:?/.,";
-for (let i = 0; i < textSymbols.length; i++) {
-    const ch = textSymbols.charAt(i);
+var textSymbols = "0123456789!@*()-=+[]\";:?/.,";
+for (i = 0; i < textSymbols.length; i++) {
+    ch = textSymbols.charAt(i);
     defineSymbol(text, main, textord, ch, ch);
 }
 
 // All of these are textords in text mode, and mathords in math mode
-const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-for (let i = 0; i < letters.length; i++) {
-    const ch = letters.charAt(i);
+var letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+for (i = 0; i < letters.length; i++) {
+    ch = letters.charAt(i);
     defineSymbol(math, main, mathord, ch, ch);
     defineSymbol(text, main, textord, ch, ch);
 }
 
 // Latin-1 letters
-for (let i = 0x00C0; i <= 0x00D6; i++) {
-    const ch = String.fromCharCode(i);
+for (i = 0x00C0; i <= 0x00D6; i++) {
+    ch = String.fromCharCode(i);
     defineSymbol(text, main, textord, ch, ch);
 }
 
-for (let i = 0x00D8; i <= 0x00F6; i++) {
-    const ch = String.fromCharCode(i);
+for (i = 0x00D8; i <= 0x00F6; i++) {
+    ch = String.fromCharCode(i);
     defineSymbol(text, main, textord, ch, ch);
 }
 
-for (let i = 0x00F8; i <= 0x00FF; i++) {
-    const ch = String.fromCharCode(i);
+for (i = 0x00F8; i <= 0x00FF; i++) {
+    ch = String.fromCharCode(i);
     defineSymbol(text, main, textord, ch, ch);
 }
 
 // Cyrillic
-for (let i = 0x0410; i <= 0x044F; i++) {
-    const ch = String.fromCharCode(i);
+for (i = 0x0410; i <= 0x044F; i++) {
+    ch = String.fromCharCode(i);
     defineSymbol(text, main, textord, ch, ch);
 }
 

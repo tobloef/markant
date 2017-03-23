@@ -11,9 +11,9 @@
  * kinds.
  */
 
-const matchAt = require("match-at");
+var matchAt = require("match-at");
 
-const ParseError = require("./ParseError");
+var ParseError = require("./ParseError");
 
 // The main lexer class
 function Lexer(input) {
@@ -76,7 +76,7 @@ Token.prototype.range = function(endToken, text) {
  * If there is no matching function or symbol definition, the Parser will
  * still reject the input.
  */
-const tokenRegex = new RegExp(
+var tokenRegex = new RegExp(
     "([ \r\n\t]+)|" +                                 // whitespace
     "([!-\\[\\]-\u2027\u202A-\uD7FF\uF900-\uFFFF]" +  // single codepoint
     "|[\uD800-\uDBFF][\uDC00-\uDFFF]" +               // surrogate pair
@@ -88,21 +88,21 @@ const tokenRegex = new RegExp(
  * This function lexes a single token.
  */
 Lexer.prototype.lex = function() {
-    const input = this.input;
-    const pos = this.pos;
+    var input = this.input;
+    var pos = this.pos;
     if (pos === input.length) {
         return new Token("EOF", pos, pos, this);
     }
-    const match = matchAt(tokenRegex, input, pos);
+    var match = matchAt(tokenRegex, input, pos);
     if (match === null) {
         throw new ParseError(
             "Unexpected character: '" + input[pos] + "'",
             new Token(input[pos], pos, pos + 1, this));
     }
-    const text = match[2] || " ";
-    const start = this.pos;
+    var text = match[2] || " ";
+    var start = this.pos;
     this.pos += match[0].length;
-    const end = this.pos;
+    var end = this.pos;
     return new Token(text, start, end, this);
 };
 

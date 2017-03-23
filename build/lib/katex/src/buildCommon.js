@@ -4,32 +4,31 @@
  * different kinds of domTree nodes in a consistent manner.
  */
 
-const domTree = require("./domTree");
-const fontMetrics = require("./fontMetrics");
-const symbols = require("./symbols");
-const utils = require("./utils");
+var domTree = require("./domTree");
+var fontMetrics = require("./fontMetrics");
+var symbols = require("./symbols");
+var utils = require("./utils");
 
-// The following have to be loaded from Main-Italic font, using class mainit
-const mainitLetters = [
-    "\\imath",   // dotless i
-    "\\jmath",   // dotless j
-    "\\pounds",  // pounds symbol
+var greekCapitals = [
+    "\\Gamma",
+    "\\Delta",
+    "\\Theta",
+    "\\Lambda",
+    "\\Xi",
+    "\\Pi",
+    "\\Sigma",
+    "\\Upsilon",
+    "\\Phi",
+    "\\Psi",
+    "\\Omega"
 ];
 
-/**
- * Looks up the given symbol in fontMetrics, after applying any symbol
- * replacements defined in symbol.js
- */
-const lookupSymbol = function(value, fontFamily, mode) {
-    // Replace the value with its replaced value from symbol.js
-    if (symbols[mode][value] && symbols[mode][value].replace) {
-        value = symbols[mode][value].replace;
-    }
-    return {
-        value: value,
-        metrics: fontMetrics.getCharacterMetrics(value, fontFamily),
-    };
-};
+// The following have to be loaded from Main-Italic font, using class mainit
+var mainitLetters = [
+    "\u0131",   // dotless i, \imath
+    "\u0237",   // dotless j, \jmath
+    "\u00a3"   // \pounds
+];
 
 /**
  * Makes a symbolNode after translation via the list of symbols in symbols.js.
@@ -40,14 +39,17 @@ const lookupSymbol = function(value, fontFamily, mode) {
  * TODO: add a separate argument for math class (e.g. `mop`, `mbin`), which
  * should if present come first in `classes`.
  */
-const makeSymbol = function(value, fontFamily, mode, options, classes) {
-    const lookup = lookupSymbol(value, fontFamily, mode);
-    const metrics = lookup.metrics;
-    value = lookup.value;
+var makeSymbol = function(value, fontFamily, mode, options, classes) {
+    // Replace the value with its replaced value from symbol.js
+    if (symbols[mode][value] && symbols[mode][value].replace) {
+        value = symbols[mode][value].replace;
+    }
 
-    let symbolNode;
+    var metrics = fontMetrics.getCharacterMetrics(value, fontFamily);
+
+    var symbolNode;
     if (metrics) {
-        let italic = metrics.italic;
+        var italic = metrics.italic;
         if (mode === "text") {
             italic = 0;
         }
@@ -78,7 +80,7 @@ const makeSymbol = function(value, fontFamily, mode, options, classes) {
  * Makes a symbol in Main-Regular or AMS-Regular.
  * Used for rel, bin, open, close, inner, and punct.
  */
-const mathsym = function(value, mode, options, classes) {
+var mathsym = function(value, mode, options, classes) {
     // Decide what font to render the symbol in by its entry in the symbols
     // table.
     // Have a special case for when the value = \ because the \ is used as a
@@ -96,71 +98,58 @@ const mathsym = function(value, mode, options, classes) {
 /**
  * Makes a symbol in the default font for mathords and textords.
  */
-const mathDefault = function(value, mode, options, classes, type) {
+var mathDefault = function(value, mode, options, classes, type) {
     if (type === "mathord") {
-        const fontLookup = mathit(value, mode, options, classes);
-        return makeSymbol(value, fontLookup.fontName, mode, options,
-            classes.concat([fontLookup.fontClass]));
+        return mathit(value, mode, options, classes);
     } else if (type === "textord") {
-        const font = symbols[mode][value] && symbols[mode][value].font;
-        if (font === "ams") {
-            return makeSymbol(
-                value, "AMS-Regular", mode, options, classes.concat(["amsrm"]));
-        } else { // if (font === "main") {
-            return makeSymbol(
-                value, "Main-Regular", mode, options,
-                classes.concat(["mathrm"]));
-        }
+        return makeSymbol(
+            value, "Main-Regular", mode, options, classes.concat(["mathrm"]));
     } else {
         throw new Error("unexpected type: " + type + " in mathDefault");
     }
 };
 
 /**
- * Determines which of the two font names (Main-Italic and Math-Italic) and
- * corresponding style tags (mainit or mathit) to use for font "mathit",
- * depending on the symbol.  Use this function instead of fontMap for font
- * "mathit".
+ * Makes a symbol in the italic math font.
  */
-const mathit = function(value, mode, options, classes) {
+var mathit = function(value, mode, options, classes) {
     if (/[0-9]/.test(value.charAt(0)) ||
             // glyphs for \imath and \jmath do not exist in Math-Italic so we
             // need to use Main-Italic instead
-            utils.contains(mainitLetters, value)) {
-        return {
-            fontName: "Main-Italic",
-            fontClass: "mainit",
-        };
+            utils.contains(mainitLetters, value) ||
+            utils.contains(greekCapitals, value)) {
+        return makeSymbol(
+            value, "Main-Italic", mode, options, classes.concat(["mainit"]));
     } else {
-        return {
-            fontName: "Math-Italic",
-            fontClass: "mathit",
-        };
+        return makeSymbol(
+            value, "Math-Italic", mode, options, classes.concat(["mathit"]));
     }
 };
 
 /**
  * Makes either a mathord or textord in the correct font and color.
  */
-const makeOrd = function(group, options, type) {
-    const mode = group.mode;
-    const value = group.value;
+var makeOrd = function(group, options, type) {
+    var mode = group.mode;
+    var value = group.value;
+    if (symbols[mode][value] && symbols[mode][value].replace) {
+        value = symbols[mode][value].replace;
+    }
 
-    const classes = ["mord"];
+    var classes = ["mord"];
 
-    const font = options.font;
+    var font = options.font;
     if (font) {
-        let fontLookup;
         if (font === "mathit" || utils.contains(mainitLetters, value)) {
-            fontLookup = mathit(value, mode, options, classes);
+            return mathit(value, mode, options, classes);
         } else {
-            fontLookup = fontMap[font];
-        }
-        if (lookupSymbol(value, fontLookup.fontName, mode).metrics) {
-            return makeSymbol(value, fontLookup.fontName, mode, options,
-                classes.concat([fontLookup.fontClass || font]));
-        } else {
-            return mathDefault(value, mode, options, classes, type);
+            var fontName = fontMap[font].fontName;
+            if (fontMetrics.getCharacterMetrics(value, fontName)) {
+                return makeSymbol(
+                    value, fontName, mode, options, classes.concat([font]));
+            } else {
+                return mathDefault(value, mode, options, classes, type);
+            }
         }
     } else {
         return mathDefault(value, mode, options, classes, type);
@@ -171,13 +160,13 @@ const makeOrd = function(group, options, type) {
  * Calculate the height, depth, and maxFontSize of an element based on its
  * children.
  */
-const sizeElementFromChildren = function(elem) {
-    let height = 0;
-    let depth = 0;
-    let maxFontSize = 0;
+var sizeElementFromChildren = function(elem) {
+    var height = 0;
+    var depth = 0;
+    var maxFontSize = 0;
 
     if (elem.children) {
-        for (let i = 0; i < elem.children.length; i++) {
+        for (var i = 0; i < elem.children.length; i++) {
             if (elem.children[i].height > height) {
                 height = elem.children[i].height;
             }
@@ -203,8 +192,8 @@ const sizeElementFromChildren = function(elem) {
  * TODO: add a separate argument for math class (e.g. `mop`, `mbin`), which
  * should if present come first in `classes`.
  */
-const makeSpan = function(classes, children, options) {
-    const span = new domTree.span(classes, children, options);
+var makeSpan = function(classes, children, options) {
+    var span = new domTree.span(classes, children, options);
 
     sizeElementFromChildren(span);
 
@@ -215,7 +204,7 @@ const makeSpan = function(classes, children, options) {
  * Prepends the given children to the given span, updating height, depth, and
  * maxFontSize.
  */
-const prependChildren = function(span, children) {
+var prependChildren = function(span, children) {
     span.children = children.concat(span.children);
 
     sizeElementFromChildren(span);
@@ -224,8 +213,8 @@ const prependChildren = function(span, children) {
 /**
  * Makes a document fragment with the given list of children.
  */
-const makeFragment = function(children) {
-    const fragment = new domTree.documentFragment(children);
+var makeFragment = function(children) {
+    var fragment = new domTree.documentFragment(children);
 
     sizeElementFromChildren(fragment);
 
@@ -237,12 +226,12 @@ const makeFragment = function(children) {
  * element has the same max font size. To do this, we create a zero-width space
  * with the correct font size.
  */
-const makeFontSizer = function(options, fontSize) {
-    const fontSizeInner = makeSpan([], [new domTree.symbolNode("\u200b")]);
+var makeFontSizer = function(options, fontSize) {
+    var fontSizeInner = makeSpan([], [new domTree.symbolNode("\u200b")]);
     fontSizeInner.style.fontSize =
         (fontSize / options.style.sizeMultiplier) + "em";
 
-    const fontSizer = makeSpan(
+    var fontSizer = makeSpan(
         ["fontsize-ensurer", "reset-" + options.size, "size5"],
         [fontSizeInner]);
 
@@ -288,12 +277,12 @@ const makeFontSizer = function(options, fontSize) {
  *  - options: An Options object
  *
  */
-const makeVList = function(children, positionType, positionData, options) {
-    let depth;
-    let currPos;
-    let i;
+var makeVList = function(children, positionType, positionData, options) {
+    var depth;
+    var currPos;
+    var i;
     if (positionType === "individualShift") {
-        const oldChildren = children;
+        var oldChildren = children;
         children = [oldChildren[0]];
 
         // Add in kerns to the list of children to get each element to be
@@ -301,9 +290,9 @@ const makeVList = function(children, positionType, positionData, options) {
         depth = -oldChildren[0].shift - oldChildren[0].elem.depth;
         currPos = depth;
         for (i = 1; i < oldChildren.length; i++) {
-            const diff = -oldChildren[i].shift - currPos -
+            var diff = -oldChildren[i].shift - currPos -
                 oldChildren[i].elem.depth;
-            const size = diff -
+            var size = diff -
                 (oldChildren[i - 1].elem.height +
                  oldChildren[i - 1].elem.depth);
 
@@ -315,7 +304,7 @@ const makeVList = function(children, positionType, positionData, options) {
     } else if (positionType === "top") {
         // We always start at the bottom, so calculate the bottom by adding up
         // all the sizes
-        let bottom = positionData;
+        var bottom = positionData;
         for (i = 0; i < children.length; i++) {
             if (children[i].type === "kern") {
                 bottom -= children[i].size;
@@ -335,27 +324,27 @@ const makeVList = function(children, positionType, positionData, options) {
     }
 
     // Make the fontSizer
-    let maxFontSize = 0;
+    var maxFontSize = 0;
     for (i = 0; i < children.length; i++) {
         if (children[i].type === "elem") {
             maxFontSize = Math.max(maxFontSize, children[i].elem.maxFontSize);
         }
     }
-    const fontSizer = makeFontSizer(options, maxFontSize);
+    var fontSizer = makeFontSizer(options, maxFontSize);
 
     // Create a new list of actual children at the correct offsets
-    const realChildren = [];
+    var realChildren = [];
     currPos = depth;
     for (i = 0; i < children.length; i++) {
         if (children[i].type === "kern") {
             currPos += children[i].size;
         } else {
-            const child = children[i].elem;
+            var child = children[i].elem;
 
-            const shift = -child.depth - currPos;
+            var shift = -child.depth - currPos;
             currPos += child.height + child.depth;
 
-            const childWrap = makeSpan([], [fontSizer, child]);
+            var childWrap = makeSpan([], [fontSizer, child]);
             childWrap.height -= shift;
             childWrap.depth += shift;
             childWrap.style.top = shift + "em";
@@ -366,11 +355,11 @@ const makeVList = function(children, positionType, positionData, options) {
 
     // Add in an element at the end with no offset to fix the calculation of
     // baselines in some browsers (namely IE, sometimes safari)
-    const baselineFix = makeSpan(
+    var baselineFix = makeSpan(
         ["baseline-fix"], [fontSizer, new domTree.symbolNode("\u200b")]);
     realChildren.push(baselineFix);
 
-    const vlist = makeSpan(["vlist"], realChildren);
+    var vlist = makeSpan(["vlist"], realChildren);
     // Fix the final height and depth, in case there were kerns at the ends
     // since the makeSpan calculation won't take that in to account.
     vlist.height = Math.max(currPos, vlist.height);
@@ -379,7 +368,7 @@ const makeVList = function(children, positionType, positionData, options) {
 };
 
 // A table of size -> font size for the different sizing functions
-const sizingMultiplier = {
+var sizingMultiplier = {
     size1: 0.5,
     size2: 0.7,
     size3: 0.8,
@@ -389,40 +378,40 @@ const sizingMultiplier = {
     size7: 1.44,
     size8: 1.73,
     size9: 2.07,
-    size10: 2.49,
+    size10: 2.49
 };
 
 // A map of spacing functions to their attributes, like size and corresponding
 // CSS class
-const spacingFunctions = {
+var spacingFunctions = {
     "\\qquad": {
         size: "2em",
-        className: "qquad",
+        className: "qquad"
     },
     "\\quad": {
         size: "1em",
-        className: "quad",
+        className: "quad"
     },
     "\\enspace": {
         size: "0.5em",
-        className: "enspace",
+        className: "enspace"
     },
     "\\;": {
         size: "0.277778em",
-        className: "thickspace",
+        className: "thickspace"
     },
     "\\:": {
         size: "0.22222em",
-        className: "mediumspace",
+        className: "mediumspace"
     },
     "\\,": {
         size: "0.16667em",
-        className: "thinspace",
+        className: "thinspace"
     },
     "\\!": {
         size: "-0.16667em",
-        className: "negativethinspace",
-    },
+        className: "negativethinspace"
+    }
 };
 
 /**
@@ -431,19 +420,19 @@ const spacingFunctions = {
  * - fontName: the "style" parameter to fontMetrics.getCharacterMetrics
  */
 // A map between tex font commands an MathML mathvariant attribute values
-const fontMap = {
+var fontMap = {
     // styles
     "mathbf": {
         variant: "bold",
-        fontName: "Main-Bold",
+        fontName: "Main-Bold"
     },
     "mathrm": {
         variant: "normal",
-        fontName: "Main-Regular",
+        fontName: "Main-Regular"
     },
     "textit": {
         variant: "italic",
-        fontName: "Main-Italic",
+        fontName: "Main-Italic"
     },
 
     // "mathit" is missing because it requires the use of two fonts: Main-Italic
@@ -453,28 +442,28 @@ const fontMap = {
     // families
     "mathbb": {
         variant: "double-struck",
-        fontName: "AMS-Regular",
+        fontName: "AMS-Regular"
     },
     "mathcal": {
         variant: "script",
-        fontName: "Caligraphic-Regular",
+        fontName: "Caligraphic-Regular"
     },
     "mathfrak": {
         variant: "fraktur",
-        fontName: "Fraktur-Regular",
+        fontName: "Fraktur-Regular"
     },
     "mathscr": {
         variant: "script",
-        fontName: "Script-Regular",
+        fontName: "Script-Regular"
     },
     "mathsf": {
         variant: "sans-serif",
-        fontName: "SansSerif-Regular",
+        fontName: "SansSerif-Regular"
     },
     "mathtt": {
         variant: "monospace",
-        fontName: "Typewriter-Regular",
-    },
+        fontName: "Typewriter-Regular"
+    }
 };
 
 module.exports = {
@@ -487,5 +476,5 @@ module.exports = {
     makeOrd: makeOrd,
     prependChildren: prependChildren,
     sizingMultiplier: sizingMultiplier,
-    spacingFunctions: spacingFunctions,
+    spacingFunctions: spacingFunctions
 };

@@ -7,16 +7,16 @@
  *
  * Similar functions for working with MathML nodes exist in mathMLTree.js.
  */
-const unicodeRegexes = require("./unicodeRegexes");
-const utils = require("./utils");
+var unicodeRegexes = require("./unicodeRegexes");
+var utils = require("./utils");
 
 /**
  * Create an HTML className based on a list of classes. In addition to joining
  * with spaces, we also remove null or empty classes.
  */
-const createClass = function(classes) {
+var createClass = function(classes) {
     classes = classes.slice();
-    for (let i = classes.length - 1; i >= 0; i--) {
+    for (var i = classes.length - 1; i >= 0; i--) {
         if (!classes[i]) {
             classes.splice(i, 1);
         }
@@ -65,27 +65,27 @@ span.prototype.tryCombine = function(sibling) {
  * Convert the span into an HTML node
  */
 span.prototype.toNode = function() {
-    const span = document.createElement("span");
+    var span = document.createElement("span");
 
     // Apply the class
     span.className = createClass(this.classes);
 
     // Apply inline styles
-    for (const style in this.style) {
+    for (var style in this.style) {
         if (Object.prototype.hasOwnProperty.call(this.style, style)) {
             span.style[style] = this.style[style];
         }
     }
 
     // Apply attributes
-    for (const attr in this.attributes) {
+    for (var attr in this.attributes) {
         if (Object.prototype.hasOwnProperty.call(this.attributes, attr)) {
             span.setAttribute(attr, this.attributes[attr]);
         }
     }
 
     // Append the children, also as HTML nodes
-    for (let i = 0; i < this.children.length; i++) {
+    for (var i = 0; i < this.children.length; i++) {
         span.appendChild(this.children[i].toNode());
     }
 
@@ -96,7 +96,7 @@ span.prototype.toNode = function() {
  * Convert the span into an HTML markup string
  */
 span.prototype.toMarkup = function() {
-    let markup = "<span";
+    var markup = "<span";
 
     // Add the class
     if (this.classes.length) {
@@ -105,10 +105,10 @@ span.prototype.toMarkup = function() {
         markup += "\"";
     }
 
-    let styles = "";
+    var styles = "";
 
     // Add the styles, after hyphenation
-    for (const style in this.style) {
+    for (var style in this.style) {
         if (this.style.hasOwnProperty(style)) {
             styles += utils.hyphenate(style) + ":" + this.style[style] + ";";
         }
@@ -119,7 +119,7 @@ span.prototype.toMarkup = function() {
     }
 
     // Add the attributes
-    for (const attr in this.attributes) {
+    for (var attr in this.attributes) {
         if (Object.prototype.hasOwnProperty.call(this.attributes, attr)) {
             markup += " " + attr + "=\"";
             markup += utils.escape(this.attributes[attr]);
@@ -130,7 +130,7 @@ span.prototype.toMarkup = function() {
     markup += ">";
 
     // Add the markup of the children, also as markup
-    for (let i = 0; i < this.children.length; i++) {
+    for (var i = 0; i < this.children.length; i++) {
         markup += this.children[i].toMarkup();
     }
 
@@ -157,10 +157,10 @@ function documentFragment(children) {
  */
 documentFragment.prototype.toNode = function() {
     // Create a fragment
-    const frag = document.createDocumentFragment();
+    var frag = document.createDocumentFragment();
 
     // Append the children
-    for (let i = 0; i < this.children.length; i++) {
+    for (var i = 0; i < this.children.length; i++) {
         frag.appendChild(this.children[i].toNode());
     }
 
@@ -171,22 +171,22 @@ documentFragment.prototype.toNode = function() {
  * Convert the fragment into HTML markup
  */
 documentFragment.prototype.toMarkup = function() {
-    let markup = "";
+    var markup = "";
 
     // Simply concatenate the markup for the children together
-    for (let i = 0; i < this.children.length; i++) {
+    for (var i = 0; i < this.children.length; i++) {
         markup += this.children[i].toMarkup();
     }
 
     return markup;
 };
 
-const iCombinations = {
+var iCombinations = {
     'î': '\u0131\u0302',
     'ï': '\u0131\u0308',
     'í': '\u0131\u0301',
     // 'ī': '\u0131\u0304', // enable when we add Extended Latin
-    'ì': '\u0131\u0300',
+    'ì': '\u0131\u0300'
 };
 
 /**
@@ -233,13 +233,13 @@ symbolNode.prototype.tryCombine = function(sibling) {
         || this.maxFontSize !== sibling.maxFontSize) {
         return false;
     }
-    for (const style in this.style) {
+    for (var style in this.style) {
         if (this.style.hasOwnProperty(style)
             && this.style[style] !== sibling.style[style]) {
             return false;
         }
     }
-    for (const style in sibling.style) {
+    for (style in sibling.style) {
         if (sibling.style.hasOwnProperty(style)
             && this.style[style] !== sibling.style[style]) {
             return false;
@@ -257,8 +257,8 @@ symbolNode.prototype.tryCombine = function(sibling) {
  * created if it is needed.
  */
 symbolNode.prototype.toNode = function() {
-    const node = document.createTextNode(this.value);
-    let span = null;
+    var node = document.createTextNode(this.value);
+    var span = null;
 
     if (this.italic > 0) {
         span = document.createElement("span");
@@ -270,7 +270,7 @@ symbolNode.prototype.toNode = function() {
         span.className = createClass(this.classes);
     }
 
-    for (const style in this.style) {
+    for (var style in this.style) {
         if (this.style.hasOwnProperty(style)) {
             span = span || document.createElement("span");
             span.style[style] = this.style[style];
@@ -291,9 +291,9 @@ symbolNode.prototype.toNode = function() {
 symbolNode.prototype.toMarkup = function() {
     // TODO(alpert): More duplication than I'd like from
     // span.prototype.toMarkup and symbolNode.prototype.toNode...
-    let needsSpan = false;
+    var needsSpan = false;
 
-    let markup = "<span";
+    var markup = "<span";
 
     if (this.classes.length) {
         needsSpan = true;
@@ -302,12 +302,12 @@ symbolNode.prototype.toMarkup = function() {
         markup += "\"";
     }
 
-    let styles = "";
+    var styles = "";
 
     if (this.italic > 0) {
         styles += "margin-right:" + this.italic + "em;";
     }
-    for (const style in this.style) {
+    for (var style in this.style) {
         if (this.style.hasOwnProperty(style)) {
             styles += utils.hyphenate(style) + ":" + this.style[style] + ";";
         }
@@ -318,7 +318,7 @@ symbolNode.prototype.toMarkup = function() {
         markup += " style=\"" + utils.escape(styles) + "\"";
     }
 
-    const escaped = utils.escape(this.value);
+    var escaped = utils.escape(this.value);
     if (needsSpan) {
         markup += ">";
         markup += escaped;
@@ -332,5 +332,5 @@ symbolNode.prototype.toMarkup = function() {
 module.exports = {
     span: span,
     documentFragment: documentFragment,
-    symbolNode: symbolNode,
+    symbolNode: symbolNode
 };

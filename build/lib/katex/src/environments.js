@@ -1,37 +1,29 @@
 /* eslint no-constant-condition:0 */
-const parseData = require("./parseData");
-const ParseError = require("./ParseError");
-const Style = require("./Style");
+var parseData = require("./parseData");
+var ParseError = require("./ParseError");
+var Style = require("./Style");
 
-const ParseNode = parseData.ParseNode;
+var ParseNode = parseData.ParseNode;
 
 /**
  * Parse the body of the environment, with rows delimited by \\ and
  * columns delimited by &, and create a nested list in row-major order
- * with one group per cell.  If given an optional argument style
- * ("text", "display", etc.), then each cell is cast into that style.
+ * with one group per cell.
  */
-function parseArray(parser, result, style) {
-    let row = [];
-    const body = [row];
-    const rowGaps = [];
+function parseArray(parser, result) {
+    var row = [];
+    var body = [row];
+    var rowGaps = [];
     while (true) {
-        let cell = parser.parseExpression(false, null);
-        cell = new ParseNode("ordgroup", cell, parser.mode);
-        if (style) {
-            cell = new ParseNode("styling", {
-                style: style,
-                value: [cell],
-            }, parser.mode);
-        }
-        row.push(cell);
-        const next = parser.nextToken.text;
+        var cell = parser.parseExpression(false, null);
+        row.push(new ParseNode("ordgroup", cell, parser.mode));
+        var next = parser.nextToken.text;
         if (next === "&") {
             parser.consume();
         } else if (next === "\\end") {
             break;
         } else if (next === "\\\\" || next === "\\cr") {
-            const cr = parser.parseFunction();
+            var cr = parser.parseFunction();
             rowGaps.push(cr.value.size);
             row = [];
             body.push(row);
@@ -77,61 +69,49 @@ function defineEnvironment(names, props, handler) {
         props = { numArgs: props };
     }
     // Set default values of environments
-    const data = {
+    var data = {
         numArgs: props.numArgs || 0,
         argTypes: props.argTypes,
         greediness: 1,
         allowedInText: !!props.allowedInText,
         numOptionalArgs: props.numOptionalArgs || 0,
-        handler: handler,
+        handler: handler
     };
-    for (let i = 0; i < names.length; ++i) {
+    for (var i = 0; i < names.length; ++i) {
         module.exports[names[i]] = data;
-    }
-}
-
-// Decides on a style for cells in an array according to whether the given
-// environment name starts with the letter 'd'.
-function dCellStyle(envName) {
-    if (envName.substr(0, 1) === "d") {
-        return "display";
-    } else {
-        return "text";
     }
 }
 
 // Arrays are part of LaTeX, defined in lttab.dtx so its documentation
 // is part of the source2e.pdf file of LaTeX2e source documentation.
-// {darray} is an {array} environment where cells are set in \displaystyle,
-// as defined in nccmath.sty.
-defineEnvironment(["array", "darray"], {
-    numArgs: 1,
+defineEnvironment("array", {
+    numArgs: 1
 }, function(context, args) {
-    let colalign = args[0];
+    var colalign = args[0];
     colalign = colalign.value.map ? colalign.value : [colalign];
-    const cols = colalign.map(function(node) {
-        const ca = node.value;
+    var cols = colalign.map(function(node) {
+        var ca = node.value;
         if ("lcr".indexOf(ca) !== -1) {
             return {
                 type: "align",
-                align: ca,
+                align: ca
             };
         } else if (ca === "|") {
             return {
                 type: "separator",
-                separator: "|",
+                separator: "|"
             };
         }
         throw new ParseError(
             "Unknown column alignment: " + node.value,
             node);
     });
-    let res = {
+    var res = {
         type: "array",
         cols: cols,
-        hskipBeforeAndAfter: true, // \@preamble in lttab.dtx
+        hskipBeforeAndAfter: true // \@preamble in lttab.dtx
     };
-    res = parseArray(context.parser, res, dCellStyle(context.envName));
+    res = parseArray(context.parser, res);
     return res;
 });
 
@@ -143,27 +123,27 @@ defineEnvironment([
     "bmatrix",
     "Bmatrix",
     "vmatrix",
-    "Vmatrix",
+    "Vmatrix"
 ], {
 }, function(context) {
-    const delimiters = {
+    var delimiters = {
         "matrix": null,
         "pmatrix": ["(", ")"],
         "bmatrix": ["[", "]"],
         "Bmatrix": ["\\{", "\\}"],
         "vmatrix": ["|", "|"],
-        "Vmatrix": ["\\Vert", "\\Vert"],
+        "Vmatrix": ["\\Vert", "\\Vert"]
     }[context.envName];
-    let res = {
+    var res = {
         type: "array",
-        hskipBeforeAndAfter: false, // \hskip -\arraycolsep in amsmath
+        hskipBeforeAndAfter: false // \hskip -\arraycolsep in amsmath
     };
-    res = parseArray(context.parser, res, dCellStyle(context.envName));
+    res = parseArray(context.parser, res);
     if (delimiters) {
         res = new ParseNode("leftright", {
             body: [res],
             left: delimiters[0],
-            right: delimiters[1],
+            right: delimiters[1]
         }, context.mode);
     }
     return res;
@@ -172,14 +152,9 @@ defineEnvironment([
 // A cases environment (in amsmath.sty) is almost equivalent to
 // \def\arraystretch{1.2}%
 // \left\{\begin{array}{@{}l@{\quad}l@{}} … \end{array}\right.
-// {dcases} is a {cases} environment where cells are set in \displaystyle,
-// as defined in mathtools.sty.
-defineEnvironment([
-    "cases",
-    "dcases",
-], {
+defineEnvironment("cases", {
 }, function(context) {
-    let res = {
+    var res = {
         type: "array",
         arraystretch: 1.2,
         cols: [{
@@ -190,19 +165,19 @@ defineEnvironment([
             // For now we use the metrics for TEXT style which is what we were
             // doing before.  Before attempting to get the current style we
             // should look at TeX's behavior especially for \over and matrices.
-            postgap: Style.TEXT.metrics.quad,
+            postgap: Style.TEXT.metrics.quad
         }, {
             type: "align",
             align: "l",
             pregap: 0,
-            postgap: 0,
-        }],
+            postgap: 0
+        }]
     };
-    res = parseArray(context.parser, res, dCellStyle(context.envName));
+    res = parseArray(context.parser, res);
     res = new ParseNode("leftright", {
         body: [res],
         left: "\\{",
-        right: ".",
+        right: "."
     }, context.mode);
     return res;
 });
@@ -213,24 +188,25 @@ defineEnvironment([
 // so that \strut@ is the same as \strut.
 defineEnvironment("aligned", {
 }, function(context) {
-    let res = {
+    var res = {
         type: "array",
-        cols: [],
+        cols: []
     };
     res = parseArray(context.parser, res);
-    const emptyGroup = new ParseNode("ordgroup", [], context.mode);
-    let numCols = 0;
+    var emptyGroup = new ParseNode("ordgroup", [], context.mode);
+    var numCols = 0;
     res.value.body.forEach(function(row) {
-        for (let i = 1; i < row.length; i += 2) {
+        var i;
+        for (i = 1; i < row.length; i += 2) {
             row[i].value.unshift(emptyGroup);
         }
         if (numCols < row.length) {
             numCols = row.length;
         }
     });
-    for (let i = 0; i < numCols; ++i) {
-        let align = "r";
-        let pregap = 0;
+    for (var i = 0; i < numCols; ++i) {
+        var align = "r";
+        var pregap = 0;
         if (i % 2 === 1) {
             align = "l";
         } else if (i > 0) {
@@ -240,7 +216,7 @@ defineEnvironment("aligned", {
             type: "align",
             align: align,
             pregap: pregap,
-            postgap: 0,
+            postgap: 0
         };
     }
     return res;
