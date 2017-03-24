@@ -51,10 +51,13 @@
 
 #viewer *:not(pre) > code {
 	word-wrap: break-word;
-	white-space: pre-wrap;
 	font-family: monospace;
 	border-radius: 3px;
 	padding: 3px;
+}
+
+#viewer code {
+	white-space: pre-wrap;
 }
 
 #viewer pre {
