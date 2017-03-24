@@ -41,13 +41,13 @@
 	// Set up shortcut bindings
 	$(document).on("keydown", shortcuts.handleKeypress);
 	const bindings = {
-		"ctrl+N": functions.fileNew,
-		"ctrl+O": functions.fileOpen,
-		"ctrl+S": functions.fileSave,
-		"ctrl+K": functions.insertLink,
-		"ctrl+E": functions.insertEquation,
-		"ctrl+B": functions.formatBold,
-		"ctrl+I": functions.formatItalic,
+		"Ctrl+N": functions.fileNew,
+		"Ctrl+O": functions.fileOpen,
+		"Ctrl+S": functions.fileSave,
+		"Ctrl+K": functions.insertLink,
+		"Ctrl+E": functions.insertEquation,
+		"Ctrl+B": functions.formatBold,
+		"Ctrl+I": functions.formatItalic,
 	};
 	shortcuts.addBindings(bindings);
 

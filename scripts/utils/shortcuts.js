@@ -6,7 +6,7 @@
 	// Will convert the key-combination to a string and compare it to existing
 	// shortcut bindings. If the binding is found, call the appropriate function.
 	function handleKeypress(event) {
-		const keys = [event.key.toUpperCase()];
+		const keys = [event.key.toLowerCase()];
 		if (event.shiftKey) {
 			keys.push("shift");
 		}
@@ -28,13 +28,13 @@
 	// Shortcut is a string formatted like this: "ctrl+shift+v"
 	// Callback is the function to call when the shortcut is pressed.
 	function addBinding(shortcut, callback) {
-		bindings[shortcut] = callback;
+		bindings[shortcut.toLowerCase()] = callback;
 	}
 
 	// Add an array of bindings to the list.
 	function addBindings(newBindings) {
 		for (let binding in newBindings) {
-			bindings[binding] = newBindings[binding];
+			bindings[binding.toLowerCase()] = newBindings[binding];
 		}
 	}
 

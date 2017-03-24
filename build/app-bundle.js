@@ -54751,13 +54751,13 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	// Set up shortcut bindings
 	$(document).on("keydown", shortcuts.handleKeypress);
 	const bindings = {
-		"ctrl+N": functions.fileNew,
-		"ctrl+O": functions.fileOpen,
-		"ctrl+S": functions.fileSave,
-		"ctrl+K": functions.insertLink,
-		"ctrl+E": functions.insertEquation,
-		"ctrl+B": functions.formatBold,
-		"ctrl+I": functions.formatItalic,
+		"Ctrl+N": functions.fileNew,
+		"Ctrl+O": functions.fileOpen,
+		"Ctrl+S": functions.fileSave,
+		"Ctrl+K": functions.insertLink,
+		"Ctrl+E": functions.insertEquation,
+		"Ctrl+B": functions.formatBold,
+		"Ctrl+I": functions.formatItalic,
 	};
 	shortcuts.addBindings(bindings);
 
@@ -56069,7 +56069,7 @@ module.exports = function math_plugin(md, options) {
 	// Will convert the key-combination to a string and compare it to existing
 	// shortcut bindings. If the binding is found, call the appropriate function.
 	function handleKeypress(event) {
-		const keys = [event.key.toUpperCase()];
+		const keys = [event.key.toLowerCase()];
 		if (event.shiftKey) {
 			keys.push("shift");
 		}
@@ -56091,13 +56091,13 @@ module.exports = function math_plugin(md, options) {
 	// Shortcut is a string formatted like this: "ctrl+shift+v"
 	// Callback is the function to call when the shortcut is pressed.
 	function addBinding(shortcut, callback) {
-		bindings[shortcut] = callback;
+		bindings[shortcut.toLowerCase()] = callback;
 	}
 
 	// Add an array of bindings to the list.
 	function addBindings(newBindings) {
 		for (let binding in newBindings) {
-			bindings[binding] = newBindings[binding];
+			bindings[binding.toLowerCase()] = newBindings[binding];
 		}
 	}
 
