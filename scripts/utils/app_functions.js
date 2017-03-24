@@ -33,25 +33,23 @@
 
 			// Save the current markdown document to the user's computer
 			fileSave() {
-				if (codemirror == null) {
-					return;
+				if (codemirror) {
+					const content = codemirror.getValue();
+					const title = documentTitle.getTitle();
+					const type = ".md";
+					fileExport.saveFile(content, title, type);
+					unsavedChanges.hasChanges = false;
 				}
-				const content = codemirror.getValue();
-				const title = documentTitle.getTitle();
-				const type = ".md";
-				fileExport.saveFile(content, title, type);
-				unsavedChanges.hasChanges = false;
 			},
 
 			// Convert the current markdown to HTML and export it to the user's local drive
 			fileExportHtml() {
-				if (codemirror == null) {
-					return;
+				if (codemirror) {
+					const content = exportHtml(codemirror.getValue());
+					const title = documentTitle.getTitle();
+					const type = ".html";
+					fileExport.saveFile(content, title, type);
 				}
-				const content = exportHtml(codemirror.getValue());
-				const title = documentTitle.getTitle();
-				const type = ".html";
-				fileExport.saveFile(content, title, type);
 			},
 
 			// Set the focus on the input box for renaming the document
@@ -61,18 +59,16 @@
 
 			// Undo the last action in the editor
 			editUndo() {
-				if (codemirror == null) {
-					return;
+				if (codemirror) {
+					codemirror.undo();
 				}
-				codemirror.undo();
 			},
 
 			// Redo the last undone action in the editor
 			editRedo() {
-				if (codemirror == null) {
-					return;
+				if (codemirror) {
+					codemirror.redo();
 				}
-				codemirror.redo();
 			},
 
 			// Open the settings modal

@@ -61,7 +61,7 @@
 		markdownIt.use(lazyHeaders);
 		markdownIt.use(sanitizer);
 		const mathRenderer = settingsHelper.getSetting("viewerMathRenderer");
-		if (mathRenderer != null) {
+		if (mathRenderer) {
 			if (mathRenderer.toLowerCase() === "mathjax") {
 				markdownIt.use(mathjax);
 				const mathjaxUrl = mathjaxCdn + mathjaxConfigString;
@@ -79,13 +79,13 @@
 			}
 		}
 		const hljsTheme = settingsHelper.getSetting("viewerHljsTheme");
-		if (hljsTheme != null) {
+		if (hljsTheme) {
 			$.get(`${hljsThemeDirectory}/${hljsTheme}.css`, function(style) {
 				styleUpdater.append("viewer-styles", style);
 			});
 		}
 		const viewerTheme = settingsHelper.getSetting("viewerTheme");
-		if (viewerTheme != null) {
+		if (viewerTheme) {
 			$.get(`${viewerThemeDirectory}/${viewerTheme}.css`, function(style) {
 				styleUpdater.append("viewer-styles", style);
 			});
@@ -95,17 +95,17 @@
 	// Load the user's preferences and apply them to the existing viewer element.
 	function loadStyleSettings() {
 		const fontFamily = settingsHelper.getSetting("viewerFontFamily");
-		if (fontFamily != null && fontFamily in settingsHelper.fontFamilyMap) {
+		if (fontFamily && fontFamily in settingsHelper.fontFamilyMap) {
 			const style = `#viewer { font-family: ${settingsHelper.fontFamilyMap[fontFamily]}; }`;
 			styleUpdater.append("viewer-styles", style);
 		}
 		const fontSize = settingsHelper.getSetting("viewerFontSize");
-		if (fontSize != null) {
+		if (fontSize) {
 			const style = `#viewer { font-size: ${fontSize}; }`;
 			styleUpdater.append("viewer-styles", style);
 		}
 		const hljsTabSize = settingsHelper.getSetting("hljsTabSize");
-		if (hljsTabSize != null) {
+		if (hljsTabSize) {
 			const style = `.hljs { tab-size: ${hljsTabSize}; -moz-tab-size: ${hljsTabSize}; }`;
 			styleUpdater.append("viewer-styles", style);
 		}

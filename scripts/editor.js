@@ -35,27 +35,27 @@
 	// Load the user's preferences and apply them to the codemirror config.
 	function loadUserSettings() {
 		const indentSize = settingsHelper.getSetting("editorIndentSize");
-		if (indentSize != null) {
+		if (indentSize) {
 			codemirrorConfig.indentUnit = indentSize;
 			codemirrorConfig.tabSize = indentSize;
 		}
 		const theme = settingsHelper.getSetting("editorTheme");
-		if (theme != null) {
+		if (theme) {
 			codemirrorConfig.theme = theme;
 		}
 		const useTabs = settingsHelper.getSetting("editorUseTabs");
-		if (useTabs != null) {
+		if (useTabs) {
 			codemirrorConfig.indentWithTabs = useTabs;
 		}
 		const showLineNumbers = settingsHelper.getSetting("editorShowLineNumbers");
-		if (showLineNumbers != null) {
+		if (showLineNumbers) {
 			codemirrorConfig.lineNumbers = showLineNumbers;
 		}
-		if (codemirrorConfig.theme != null) {
+		if (codemirrorConfig.theme) {
 			resourceLoader.addStyle(`${themeDirectory}/${codemirrorConfig.theme}.css`);
 		}
 		const useBigHeaders = settingsHelper.getSetting("editorBigHeaders");
-		if (useBigHeaders != null && useBigHeaders) {
+		if (useBigHeaders && useBigHeaders) {
 			resourceLoader.addStyle(`${themeDirectory}/big_headers.css`);
 		}
 	}
@@ -63,11 +63,11 @@
 	// Load the user's preferences and apply them to the existing editor element.
 	function loadStyleSettings() {
 		const fontFamily = settingsHelper.getSetting("editorFontFamily");
-		if (fontFamily != null && fontFamily in settingsHelper.fontFamilyMap) {
+		if (fontFamily && fontFamily in settingsHelper.fontFamilyMap) {
 			$(".CodeMirror").css("font-family", `${settingsHelper.fontFamilyMap[fontFamily]}`);
 		}
 		const fontSize = settingsHelper.getSetting("editorFontSize");
-		if (fontSize != null) {
+		if (fontSize) {
 			$(".CodeMirror").css("font-size", fontSize);
 		}
 	}

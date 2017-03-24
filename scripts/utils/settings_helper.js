@@ -33,7 +33,7 @@
 		} catch (exception) {
 			// Ignored
 		}
-		if (setting == null || setting == "") {
+		if (!setting || setting == "") {
 			setting = getDefaultValue(key);
 			setSetting(key, setting);
 		}
@@ -42,7 +42,7 @@
 
 	// Set the setting with the specified key to the specified value.
 	function setSetting(key, value) {
-		if (value == null) {
+		if (!value) {
 			value = getDefaultValue(key);
 		}
 		try {

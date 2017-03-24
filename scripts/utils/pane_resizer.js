@@ -152,7 +152,7 @@
 		}
 		$editorPane.width(newLeftWidth);
 		$viewerPane.width(newRightWidth);
-		if (codemirror != null) {
+		if (codemirror) {
 			codemirror.refresh();
 		}
 
@@ -219,7 +219,7 @@
 	}
 
 	module.exports = function(newCodemirror) {
-		if (codemirror != null) {
+		if (codemirror) {
 			codemirror = newCodemirror;
 		}
 		return {
