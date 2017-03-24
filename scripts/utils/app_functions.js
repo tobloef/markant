@@ -9,6 +9,7 @@
 		const fileExport = require("./file_saver");
 		const documentTitle = require("./document_title");
 		const unsavedChanges = require("./unsaved_changes");
+		const settings = require("./settings_helper");
 		const paneResizer = require("./pane_resizer")();
 		const exportHtml = require("./exporters/html");
 
@@ -18,9 +19,11 @@
 				if (!unsavedChanges.confirmContinue()) {
 					return;
 				}
-				codemirror.setValue("");
-				documentTitle.setTitle("");
-				unsavedChanges.hasChanges = false;
+				codemirror.setValue(settings.getDefaultValue("documentContent"));
+				documentTitle.setTitle(settings.getDefaultValue("documentTitle"));
+				unsavedChanges.setHasChanges(false);
+				settings.setSetting("documentContent", settings.getDefaultValue("documentContent"));
+				settings.setSetting("documentTitle", settings.getDefaultValue("documentTitle"));
 			},
 
 			// Open a markdown file from the user's computer
@@ -38,7 +41,9 @@
 					const title = documentTitle.getTitle();
 					const type = ".md";
 					fileExport.saveFile(content, title, type);
-					unsavedChanges.hasChanges = false;
+					unsavedChanges.setHasChanges(false);
+					settings.setSetting("documentTitle", settings.getDefaultValue("documentTitle"));
+					settings.setSetting("documentContent", settings.getDefaultValue("documentContent"));
 				}
 			},
 

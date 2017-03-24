@@ -16,6 +16,8 @@
 		"viewerMathRenderer": "katex",
 		"viewerTheme": "light",
 		"hljsTabSize": 4,
+		"documentContent": "",
+		"documentTitle": "Untitled Document"
 	};
 
 	// Used for converting settings values to actual font-familys.

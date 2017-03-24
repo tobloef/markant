@@ -3,13 +3,12 @@
 ;(function() {
 	const $ = require("jquery");
 	const unsavedChanges = require("./unsaved_changes");
+	const settings = require("./settings_helper");
 
 	// Max width for the input element.
 	const maxWidth = 300;
 	// The amount of extra width to add to the input element.
 	const extraWidth = 3;
-	// The default title
-	const defaultTitle = "Untitled document";
 
 	// Set up the jQuery elements.
 	const $input = $(`.document-title-input`);
@@ -17,7 +16,7 @@
 
 	let oldTitle;
 
-	setTitle(defaultTitle);
+	setTitle(settings.getSetting("documentTitle"));
 
 	// When the input loses focus, finalize the title
 	$input.on("focusout", function(event) {
@@ -31,7 +30,7 @@
 
 	// When the input is clicked, highlight the text if it's the default title.
 	$input.on("focus", function(event) {
-		if ($input.val() === defaultTitle) {
+		if ($input.val() === settings.getDefaultValue("documentTitle")) {
 			$input.select();
 		}
 	});
@@ -56,12 +55,13 @@
 	// Set the document's title
 	function setTitle(title) {
 		if (title === null || title === "") {
-			title = defaultTitle;
+			title = settings.getDefaultValue("documentTitle");
 		}
 		$input.val(title);
 		oldTitle = title;
 		mirrorWidth($input, $mirror);
-		unsavedChanges.hasChanges = true;
+		unsavedChanges.setHasChanges(true);
+		settings.setSetting("documentTitle", title);
 	}
 
 	// Shift focus to the title input.

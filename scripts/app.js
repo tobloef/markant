@@ -6,6 +6,7 @@
 	const shortcuts = require("./utils/shortcuts");
 	const unsavedChanges = require("./utils/unsaved_changes");
 	const navbar = require("./utils/navbar");
+	const settings = require("./utils/settings_helper");
 	require("./utils/document_title");
 	require("./utils/google_analytics");
 	require("./utils/modals/modal");
@@ -25,11 +26,9 @@
 	navbar.initialize(editor.codemirror);
 	const functions = require("./utils/app_functions")(editor.codemirror);
 
-	const initialMarkdown = "";
-
 	// Before the user closes the window, warn them if they have unsaved changes.
 	$(window).on("beforeunload", function(event) {
-		if (unsavedChanges.hasChanges) {
+		if (unsavedChanges.getHasChanges()) {
 			const message = "You have unsaved changes. Are you sure you want to leave without saving?";
 			if (event) {
 				event.returnValue = message;
@@ -42,13 +41,13 @@
 	// Set up shortcut bindings
 	$(document).on("keydown", shortcuts.handleKeypress);
 	const bindings = {
-		"ctrl+n": functions.fileNew,
-		"ctrl+o": functions.fileOpen,
-		"ctrl+s": functions.fileSave,
-		"ctrl+k": functions.insertLink,
-		"ctrl+": functions.insertEquation,
-		"ctrl+b": functions.formatBold,
-		"ctrl+i": functions.formatItalic,
+		"ctrl+N": functions.fileNew,
+		"ctrl+O": functions.fileOpen,
+		"ctrl+S": functions.fileSave,
+		"ctrl+K": functions.insertLink,
+		"ctrl+E": functions.insertEquation,
+		"ctrl+B": functions.formatBold,
+		"ctrl+I": functions.formatItalic,
 	};
 	shortcuts.addBindings(bindings);
 
@@ -67,7 +66,7 @@
 	// When the text in the editor is changed, render the markdown.
 	editor.codemirror.on("change", onChangeHandler);
 
-	editor.codemirror.setValue(initialMarkdown);
+	editor.codemirror.setValue(settings.getSetting("documentContent"));
 
 	// Render any intial Markdown in the editor.
 	onChangeHandler();
@@ -75,11 +74,12 @@
 	// When the user changes the markdown in the editor.
 	function onChangeHandler() {
 		const value = editor.codemirror.getValue();
-		unsavedChanges.hasChanges = true && (value !== initialMarkdown);
+		unsavedChanges.setHasChanges(value !== settings.getDefaultValue("documentContent"));
 		// Render the Markdown to the viewer.
 		viewer.render(value, function() {
 			// Sync to the linked scrollbars to match the new content.
 			scrollSync.sync($(".CodeMirror-scroll"), $(".CodeMirror-scroll"), $(".CodeMirror-scroll, #viewer-container"), true);
 		});
+		settings.setSetting("documentContent", value);
 	}
 }());

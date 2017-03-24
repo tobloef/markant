@@ -6,7 +6,7 @@
 	// Will convert the key-combination to a string and compare it to existing
 	// shortcut bindings. If the binding is found, call the appropriate function.
 	function handleKeypress(event) {
-		const keys = [event.key.toLowerCase()];
+		const keys = [event.key.toUpperCase()];
 		if (event.shiftKey) {
 			keys.push("shift");
 		}

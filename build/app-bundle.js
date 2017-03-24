@@ -54716,6 +54716,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	const shortcuts = require("./utils/shortcuts");
 	const unsavedChanges = require("./utils/unsaved_changes");
 	const navbar = require("./utils/navbar");
+	const settings = require("./utils/settings_helper");
 	require("./utils/document_title");
 	require("./utils/google_analytics");
 	require("./utils/modals/modal");
@@ -54735,11 +54736,9 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	navbar.initialize(editor.codemirror);
 	const functions = require("./utils/app_functions")(editor.codemirror);
 
-	const initialMarkdown = "";
-
 	// Before the user closes the window, warn them if they have unsaved changes.
 	$(window).on("beforeunload", function(event) {
-		if (unsavedChanges.hasChanges) {
+		if (unsavedChanges.getHasChanges()) {
 			const message = "You have unsaved changes. Are you sure you want to leave without saving?";
 			if (event) {
 				event.returnValue = message;
@@ -54752,13 +54751,13 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	// Set up shortcut bindings
 	$(document).on("keydown", shortcuts.handleKeypress);
 	const bindings = {
-		"ctrl+n": functions.fileNew,
-		"ctrl+o": functions.fileOpen,
-		"ctrl+s": functions.fileSave,
-		"ctrl+k": functions.insertLink,
-		"ctrl+": functions.insertEquation,
-		"ctrl+b": functions.formatBold,
-		"ctrl+i": functions.formatItalic,
+		"ctrl+N": functions.fileNew,
+		"ctrl+O": functions.fileOpen,
+		"ctrl+S": functions.fileSave,
+		"ctrl+K": functions.insertLink,
+		"ctrl+E": functions.insertEquation,
+		"ctrl+B": functions.formatBold,
+		"ctrl+I": functions.formatItalic,
 	};
 	shortcuts.addBindings(bindings);
 
@@ -54777,7 +54776,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	// When the text in the editor is changed, render the markdown.
 	editor.codemirror.on("change", onChangeHandler);
 
-	editor.codemirror.setValue(initialMarkdown);
+	editor.codemirror.setValue(settings.getSetting("documentContent"));
 
 	// Render any intial Markdown in the editor.
 	onChangeHandler();
@@ -54785,16 +54784,17 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	// When the user changes the markdown in the editor.
 	function onChangeHandler() {
 		const value = editor.codemirror.getValue();
-		unsavedChanges.hasChanges = true && (value !== initialMarkdown);
+		unsavedChanges.setHasChanges(value !== settings.getDefaultValue("documentContent"));
 		// Render the Markdown to the viewer.
 		viewer.render(value, function() {
 			// Sync to the linked scrollbars to match the new content.
 			scrollSync.sync($(".CodeMirror-scroll"), $(".CodeMirror-scroll"), $(".CodeMirror-scroll, #viewer-container"), true);
 		});
+		settings.setSetting("documentContent", value);
 	}
 }());
 
-},{"./editor":"/home/tobloef/Downloads/code/markant.io/scripts/editor.js","./utils/app_functions":"/home/tobloef/Downloads/code/markant.io/scripts/utils/app_functions.js","./utils/document_title":"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js","./utils/google_analytics":"/home/tobloef/Downloads/code/markant.io/scripts/utils/google_analytics.js","./utils/modals/modal":"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/modal.js","./utils/modals/settings_modal":"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/settings_modal.js","./utils/navbar":"/home/tobloef/Downloads/code/markant.io/scripts/utils/navbar.js","./utils/pane_resizer":"/home/tobloef/Downloads/code/markant.io/scripts/utils/pane_resizer.js","./utils/resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./utils/scroll_sync":"/home/tobloef/Downloads/code/markant.io/scripts/utils/scroll_sync.js","./utils/shortcuts":"/home/tobloef/Downloads/code/markant.io/scripts/utils/shortcuts.js","./utils/unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","./viewer":"/home/tobloef/Downloads/code/markant.io/scripts/viewer.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/editor.js":[function(require,module,exports){
+},{"./editor":"/home/tobloef/Downloads/code/markant.io/scripts/editor.js","./utils/app_functions":"/home/tobloef/Downloads/code/markant.io/scripts/utils/app_functions.js","./utils/document_title":"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js","./utils/google_analytics":"/home/tobloef/Downloads/code/markant.io/scripts/utils/google_analytics.js","./utils/modals/modal":"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/modal.js","./utils/modals/settings_modal":"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/settings_modal.js","./utils/navbar":"/home/tobloef/Downloads/code/markant.io/scripts/utils/navbar.js","./utils/pane_resizer":"/home/tobloef/Downloads/code/markant.io/scripts/utils/pane_resizer.js","./utils/resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./utils/scroll_sync":"/home/tobloef/Downloads/code/markant.io/scripts/utils/scroll_sync.js","./utils/settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","./utils/shortcuts":"/home/tobloef/Downloads/code/markant.io/scripts/utils/shortcuts.js","./utils/unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","./viewer":"/home/tobloef/Downloads/code/markant.io/scripts/viewer.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/editor.js":[function(require,module,exports){
 // Main module for the editor logic.
 ;(function() {
 	const resourceLoader = require("./utils/resource_loader");
@@ -54832,27 +54832,27 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	// Load the user's preferences and apply them to the codemirror config.
 	function loadUserSettings() {
 		const indentSize = settingsHelper.getSetting("editorIndentSize");
-		if (indentSize != null) {
+		if (indentSize) {
 			codemirrorConfig.indentUnit = indentSize;
 			codemirrorConfig.tabSize = indentSize;
 		}
 		const theme = settingsHelper.getSetting("editorTheme");
-		if (theme != null) {
+		if (theme) {
 			codemirrorConfig.theme = theme;
 		}
 		const useTabs = settingsHelper.getSetting("editorUseTabs");
-		if (useTabs != null) {
+		if (useTabs) {
 			codemirrorConfig.indentWithTabs = useTabs;
 		}
 		const showLineNumbers = settingsHelper.getSetting("editorShowLineNumbers");
-		if (showLineNumbers != null) {
+		if (showLineNumbers) {
 			codemirrorConfig.lineNumbers = showLineNumbers;
 		}
-		if (codemirrorConfig.theme != null) {
+		if (codemirrorConfig.theme) {
 			resourceLoader.addStyle(`${themeDirectory}/${codemirrorConfig.theme}.css`);
 		}
 		const useBigHeaders = settingsHelper.getSetting("editorBigHeaders");
-		if (useBigHeaders != null && useBigHeaders) {
+		if (useBigHeaders && useBigHeaders) {
 			resourceLoader.addStyle(`${themeDirectory}/big_headers.css`);
 		}
 	}
@@ -54860,11 +54860,11 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	// Load the user's preferences and apply them to the existing editor element.
 	function loadStyleSettings() {
 		const fontFamily = settingsHelper.getSetting("editorFontFamily");
-		if (fontFamily != null && fontFamily in settingsHelper.fontFamilyMap) {
+		if (fontFamily && fontFamily in settingsHelper.fontFamilyMap) {
 			$(".CodeMirror").css("font-family", `${settingsHelper.fontFamilyMap[fontFamily]}`);
 		}
 		const fontSize = settingsHelper.getSetting("editorFontSize");
-		if (fontSize != null) {
+		if (fontSize) {
 			$(".CodeMirror").css("font-size", fontSize);
 		}
 	}
@@ -54895,6 +54895,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		const fileExport = require("./file_saver");
 		const documentTitle = require("./document_title");
 		const unsavedChanges = require("./unsaved_changes");
+		const settings = require("./settings_helper");
 		const paneResizer = require("./pane_resizer")();
 		const exportHtml = require("./exporters/html");
 
@@ -54904,9 +54905,11 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 				if (!unsavedChanges.confirmContinue()) {
 					return;
 				}
-				codemirror.setValue("");
-				documentTitle.setTitle("");
-				unsavedChanges.hasChanges = false;
+				codemirror.setValue(settings.getDefaultValue("documentContent"));
+				documentTitle.setTitle(settings.getDefaultValue("documentTitle"));
+				unsavedChanges.setHasChanges(false);
+				settings.setSetting("documentContent", settings.getDefaultValue("documentContent"));
+				settings.setSetting("documentTitle", settings.getDefaultValue("documentTitle"));
 			},
 
 			// Open a markdown file from the user's computer
@@ -54919,25 +54922,25 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 			// Save the current markdown document to the user's computer
 			fileSave() {
-				if (codemirror == null) {
-					return;
+				if (codemirror) {
+					const content = codemirror.getValue();
+					const title = documentTitle.getTitle();
+					const type = ".md";
+					fileExport.saveFile(content, title, type);
+					unsavedChanges.setHasChanges(false);
+					settings.setSetting("documentTitle", settings.getDefaultValue("documentTitle"));
+					settings.setSetting("documentContent", settings.getDefaultValue("documentContent"));
 				}
-				const content = codemirror.getValue();
-				const title = documentTitle.getTitle();
-				const type = ".md";
-				fileExport.saveFile(content, title, type);
-				unsavedChanges.hasChanges = false;
 			},
 
 			// Convert the current markdown to HTML and export it to the user's local drive
 			fileExportHtml() {
-				if (codemirror == null) {
-					return;
+				if (codemirror) {
+					const content = exportHtml(codemirror.getValue());
+					const title = documentTitle.getTitle();
+					const type = ".html";
+					fileExport.saveFile(content, title, type);
 				}
-				const content = exportHtml(codemirror.getValue());
-				const title = documentTitle.getTitle();
-				const type = ".html";
-				fileExport.saveFile(content, title, type);
 			},
 
 			// Set the focus on the input box for renaming the document
@@ -54947,18 +54950,16 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 			// Undo the last action in the editor
 			editUndo() {
-				if (codemirror == null) {
-					return;
+				if (codemirror) {
+					codemirror.undo();
 				}
-				codemirror.undo();
 			},
 
 			// Redo the last undone action in the editor
 			editRedo() {
-				if (codemirror == null) {
-					return;
+				if (codemirror) {
+					codemirror.redo();
 				}
-				codemirror.redo();
 			},
 
 			// Open the settings modal
@@ -55014,19 +55015,18 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		};
 	};
 }());
-},{"./document_title":"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js","./exporters/html":"/home/tobloef/Downloads/code/markant.io/scripts/utils/exporters/html.js","./file_saver":"/home/tobloef/Downloads/code/markant.io/scripts/utils/file_saver.js","./markdown_import":"/home/tobloef/Downloads/code/markant.io/scripts/utils/markdown_import.js","./pane_resizer":"/home/tobloef/Downloads/code/markant.io/scripts/utils/pane_resizer.js","./resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./text_inserter":"/home/tobloef/Downloads/code/markant.io/scripts/utils/text_inserter.js","./unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js":[function(require,module,exports){
+},{"./document_title":"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js","./exporters/html":"/home/tobloef/Downloads/code/markant.io/scripts/utils/exporters/html.js","./file_saver":"/home/tobloef/Downloads/code/markant.io/scripts/utils/file_saver.js","./markdown_import":"/home/tobloef/Downloads/code/markant.io/scripts/utils/markdown_import.js","./pane_resizer":"/home/tobloef/Downloads/code/markant.io/scripts/utils/pane_resizer.js","./resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","./text_inserter":"/home/tobloef/Downloads/code/markant.io/scripts/utils/text_inserter.js","./unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js":[function(require,module,exports){
 // Logic for the document title input field. To properly resize the input field,
 // a hidden input field is mirroring the visible's field's text.
 ;(function() {
 	const $ = require("jquery");
 	const unsavedChanges = require("./unsaved_changes");
+	const settings = require("./settings_helper");
 
 	// Max width for the input element.
 	const maxWidth = 300;
 	// The amount of extra width to add to the input element.
 	const extraWidth = 3;
-	// The default title
-	const defaultTitle = "Untitled document";
 
 	// Set up the jQuery elements.
 	const $input = $(`.document-title-input`);
@@ -55034,7 +55034,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 	let oldTitle;
 
-	setTitle(defaultTitle);
+	setTitle(settings.getSetting("documentTitle"));
 
 	// When the input loses focus, finalize the title
 	$input.on("focusout", function(event) {
@@ -55048,7 +55048,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 	// When the input is clicked, highlight the text if it's the default title.
 	$input.on("focus", function(event) {
-		if ($input.val() === defaultTitle) {
+		if ($input.val() === settings.getDefaultValue("documentTitle")) {
 			$input.select();
 		}
 	});
@@ -55073,12 +55073,13 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	// Set the document's title
 	function setTitle(title) {
 		if (title === null || title === "") {
-			title = defaultTitle;
+			title = settings.getDefaultValue("documentTitle");
 		}
 		$input.val(title);
 		oldTitle = title;
 		mirrorWidth($input, $mirror);
-		unsavedChanges.hasChanges = true;
+		unsavedChanges.setHasChanges(true);
+		settings.setSetting("documentTitle", title);
 	}
 
 	// Shift focus to the title input.
@@ -55105,7 +55106,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"./unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/exporters/html.js":[function(require,module,exports){
+},{"./settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","./unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/exporters/html.js":[function(require,module,exports){
 //
 ;(function() {
 	const $ = require("jquery");
@@ -55171,6 +55172,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	const $ = require("jquery");
 	const documentTitle = require("./document_title");
 	const unsavedChanges = require("./unsaved_changes");
+	const settings = require("./settings_helper");
 
 	let codemirror;
 
@@ -55210,7 +55212,9 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		if (codemirror) {
 			documentTitle.setTitle(fileName.replace("/\.md$/", ""));
 			codemirror.setValue(content);
-			unsavedChanges.hasChanges = false;
+			unsavedChanges.setHasChanges(false);
+			settings.setSetting("documentTitle", settings.getDefaultValue("documentTitle"));
+			settings.setSetting("documentContent", settings.getDefaultValue("documentContent"));
 		}
 	}
 
@@ -55231,7 +55235,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"./document_title":"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js","./unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/markdown_it_katex.js":[function(require,module,exports){
+},{"./document_title":"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js","./settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","./unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/markdown_it_katex.js":[function(require,module,exports){
 /* Process inline math */
 /*
 Like markdown-it-simplemath, this is a stripped down, simplified version of:
@@ -55797,7 +55801,7 @@ module.exports = function math_plugin(md, options) {
 		}
 		$editorPane.width(newLeftWidth);
 		$viewerPane.width(newRightWidth);
-		if (codemirror != null) {
+		if (codemirror) {
 			codemirror.refresh();
 		}
 
@@ -55864,7 +55868,7 @@ module.exports = function math_plugin(md, options) {
 	}
 
 	module.exports = function(newCodemirror) {
-		if (codemirror != null) {
+		if (codemirror) {
 			codemirror = newCodemirror;
 		}
 		return {
@@ -55996,6 +56000,8 @@ module.exports = function math_plugin(md, options) {
 		"viewerMathRenderer": "katex",
 		"viewerTheme": "light",
 		"hljsTabSize": 4,
+		"documentContent": "",
+		"documentTitle": "Untitled Document"
 	};
 
 	// Used for converting settings values to actual font-familys.
@@ -56013,7 +56019,7 @@ module.exports = function math_plugin(md, options) {
 		} catch (exception) {
 			// Ignored
 		}
-		if (setting == null || setting == "") {
+		if (!setting || setting == "") {
 			setting = getDefaultValue(key);
 			setSetting(key, setting);
 		}
@@ -56022,7 +56028,7 @@ module.exports = function math_plugin(md, options) {
 
 	// Set the setting with the specified key to the specified value.
 	function setSetting(key, value) {
-		if (value == null) {
+		if (!value) {
 			value = getDefaultValue(key);
 		}
 		try {
@@ -56063,7 +56069,7 @@ module.exports = function math_plugin(md, options) {
 	// Will convert the key-combination to a string and compare it to existing
 	// shortcut bindings. If the binding is found, call the appropriate function.
 	function handleKeypress(event) {
-		const keys = [event.key.toLowerCase()];
+		const keys = [event.key.toUpperCase()];
 		if (event.shiftKey) {
 			keys.push("shift");
 		}
@@ -56149,14 +56155,13 @@ module.exports = function math_plugin(md, options) {
 	// Add some emphasis, like bold (**) or underscore (~~) to the selected text.
 	// If no text is selected insert the emphasis affixes and move to cursor between them.
 	function handleEmphasis(codemirror, emphasisString) {
-		if (codemirror == null) {
-			return;
-		}
-		if (codemirror.somethingSelected()) {
-			const newString = `${emphasisString}${codemirror.getSelection()}${emphasisString}`;
-			codemirror.replaceSelection(newString);
-		} else {
-			insertText(codemirror, emphasisString + emphasisString, emphasisString.length);
+		if (codemirror) {
+			if (codemirror.somethingSelected()) {
+				const newString = `${emphasisString}${codemirror.getSelection()}${emphasisString}`;
+				codemirror.replaceSelection(newString);
+			} else {
+				insertText(codemirror, emphasisString + emphasisString, emphasisString.length);
+			}
 		}
 	}
 
@@ -56165,16 +56170,15 @@ module.exports = function math_plugin(md, options) {
 	// characters from the right. For example, if cursorOffset is 2 and the inserted
 	// text is "Hello", the cursor will end up between the two l's, like "Hel|lo".
 	function insertText(codemirror, text, cursorOffset) {
-		if (codemirror == null) {
-			return;
+		if (codemirror) {
+			const cursorPosition = codemirror.getCursor();
+			codemirror.replaceSelection(text);
+			codemirror.setCursor({
+				line: cursorPosition.line,
+				ch: cursorPosition.ch + text.length - (cursorOffset || 0),
+			});
+			codemirror.focus();
 		}
-		const cursorPosition = codemirror.getCursor();
-		codemirror.replaceSelection(text);
-		codemirror.setCursor({
-			line: cursorPosition.line,
-			ch: cursorPosition.ch + text.length - (cursorOffset || 0),
-		});
-		codemirror.focus();
 	}
 
 	module.exports = {
@@ -56188,16 +56192,27 @@ module.exports = function math_plugin(md, options) {
 ;(function() {
 	const defaultMessage = "You have unsaved changes. Are you sure you want to continue?";
 
-	let hasChanges;
+	let hasChanges = false;
 
 	// Warn the user that they're about to lose unsaved changes.
 	// Return whether they want to continue.
 	function confirmContinue(message) {
-		return !hasChanges || confirm(message || defaultMessage);
+		const res = !getHasChanges() || confirm(message || defaultMessage);
+		return res;
+	}
+
+	// Setter method for hasChanges.
+	function setHasChanges(value) {
+		hasChanges = value;
+	}
+
+	function getHasChanges() {
+		return hasChanges;
 	}
 
 	module.exports = {
-		hasChanges,
+		setHasChanges,
+		getHasChanges,
 		confirmContinue
 	};
 }());
@@ -56266,7 +56281,7 @@ module.exports = function math_plugin(md, options) {
 		markdownIt.use(lazyHeaders);
 		markdownIt.use(sanitizer);
 		const mathRenderer = settingsHelper.getSetting("viewerMathRenderer");
-		if (mathRenderer != null) {
+		if (mathRenderer) {
 			if (mathRenderer.toLowerCase() === "mathjax") {
 				markdownIt.use(mathjax);
 				const mathjaxUrl = mathjaxCdn + mathjaxConfigString;
@@ -56284,13 +56299,13 @@ module.exports = function math_plugin(md, options) {
 			}
 		}
 		const hljsTheme = settingsHelper.getSetting("viewerHljsTheme");
-		if (hljsTheme != null) {
+		if (hljsTheme) {
 			$.get(`${hljsThemeDirectory}/${hljsTheme}.css`, function(style) {
 				styleUpdater.append("viewer-styles", style);
 			});
 		}
 		const viewerTheme = settingsHelper.getSetting("viewerTheme");
-		if (viewerTheme != null) {
+		if (viewerTheme) {
 			$.get(`${viewerThemeDirectory}/${viewerTheme}.css`, function(style) {
 				styleUpdater.append("viewer-styles", style);
 			});
@@ -56300,17 +56315,17 @@ module.exports = function math_plugin(md, options) {
 	// Load the user's preferences and apply them to the existing viewer element.
 	function loadStyleSettings() {
 		const fontFamily = settingsHelper.getSetting("viewerFontFamily");
-		if (fontFamily != null && fontFamily in settingsHelper.fontFamilyMap) {
+		if (fontFamily && fontFamily in settingsHelper.fontFamilyMap) {
 			const style = `#viewer { font-family: ${settingsHelper.fontFamilyMap[fontFamily]}; }`;
 			styleUpdater.append("viewer-styles", style);
 		}
 		const fontSize = settingsHelper.getSetting("viewerFontSize");
-		if (fontSize != null) {
+		if (fontSize) {
 			const style = `#viewer { font-size: ${fontSize}; }`;
 			styleUpdater.append("viewer-styles", style);
 		}
 		const hljsTabSize = settingsHelper.getSetting("hljsTabSize");
-		if (hljsTabSize != null) {
+		if (hljsTabSize) {
 			const style = `.hljs { tab-size: ${hljsTabSize}; -moz-tab-size: ${hljsTabSize}; }`;
 			styleUpdater.append("viewer-styles", style);
 		}

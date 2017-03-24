@@ -4,6 +4,7 @@
 	const $ = require("jquery");
 	const documentTitle = require("./document_title");
 	const unsavedChanges = require("./unsaved_changes");
+	const settings = require("./settings_helper");
 
 	let codemirror;
 
@@ -43,7 +44,9 @@
 		if (codemirror) {
 			documentTitle.setTitle(fileName.replace("/\.md$/", ""));
 			codemirror.setValue(content);
-			unsavedChanges.hasChanges = false;
+			unsavedChanges.setHasChanges(false);
+			settings.setSetting("documentTitle", settings.getDefaultValue("documentTitle"));
+			settings.setSetting("documentContent", settings.getDefaultValue("documentContent"));
 		}
 	}
 
