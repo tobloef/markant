@@ -53,8 +53,16 @@
 	shortcuts.addBindings(bindings);
 
 	// Set up scroll synchronisation between the editor and the viewer.
-	const linkedDivs = $("#viewer-container, .CodeMirror-scroll");
-	scrollSync.link(linkedDivs);
+	const things = [
+		{
+			$master: $("#viewer-container")
+		},
+		{
+			$master: $(".CodeMirror-scroll"),
+			$extraEventTriggeres: $(".CodeMirror-vscrollbar")
+		}
+	];
+	scrollSync.link(things);
 
 	// When the text in the editor is changed, render the markdown.
 	editor.codemirror.on("change", onChangeHandler);
@@ -71,7 +79,7 @@
 		// Render the Markdown to the viewer.
 		viewer.render(value, function() {
 			// Sync to the linked scrollbars to match the new content.
-			scrollSync.sync($(".CodeMirror-scroll"), linkedDivs, true);
+			scrollSync.sync($(".CodeMirror-scroll"), $(".CodeMirror-scroll"), $(".CodeMirror-scroll, #viewer-container"), true);
 		});
 	}
 }());
