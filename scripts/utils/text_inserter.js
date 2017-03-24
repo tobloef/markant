@@ -6,11 +6,11 @@
 		if (codemirror == null) {
 			return;
 		}
-		const newString = `${emphasisString}${codemirror.getSelection()}${emphasisString}`;
-		const somethingSelected = codemirror.somethingSelected();
-		codemirror.replaceSelection(newString);
-		if (!somethingSelected) {
-			insertText(codemirror, emphasisString, emphasisString.length);
+		if (codemirror.somethingSelected()) {
+			const newString = `${emphasisString}${codemirror.getSelection()}${emphasisString}`;
+			codemirror.replaceSelection(newString);
+		} else {
+			insertText(codemirror, emphasisString + emphasisString, emphasisString.length);
 		}
 	}
 
