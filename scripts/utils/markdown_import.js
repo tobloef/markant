@@ -41,7 +41,7 @@
 		const content = event.target.result;
 
 		if (codemirror) {
-			documentTitle.setTitle(fileName.split(".")[0]);
+			documentTitle.setTitle(fileName.replace("/\.md$/", ""));
 			codemirror.setValue(content);
 			unsavedChanges.hasChanges = false;
 		}

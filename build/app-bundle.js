@@ -55200,7 +55200,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		const content = event.target.result;
 
 		if (codemirror) {
-			documentTitle.setTitle(fileName.split(".")[0]);
+			documentTitle.setTitle(fileName.replace("/\.md$/", ""));
 			codemirror.setValue(content);
 			unsavedChanges.hasChanges = false;
 		}
