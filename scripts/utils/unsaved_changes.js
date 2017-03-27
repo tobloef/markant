@@ -16,6 +16,7 @@
 		hasChanges = value;
 	}
 
+	// Getter method for hasChanged
 	function getHasChanges() {
 		return hasChanges;
 	}
