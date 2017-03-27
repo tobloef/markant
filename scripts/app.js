@@ -1,5 +1,11 @@
 // Main module for the app. This is where everything is initialized and all other module calls stem from.
 ;(function() {
+	// Import the error handler module and set up the global error event listener.
+	// This is done before anything else to make sure all errors are captured.
+	const errorHandler = require("./utils/error_handler");
+	errorHandler.setUpListener();
+
+	// Import other modules
 	const $ = require("jquery");
 	const scrollSync = require("./utils/scroll_sync");
 	const resourceLoader = require("./utils/resource_loader");
@@ -66,6 +72,8 @@
 	// When the text in the editor is changed, render the markdown.
 	editor.codemirror.on("change", onChangeHandler);
 
+	// Set the editor's contents to the previous unsaved markdown document.
+	// If no markdown document is found, set the contents to the default value, empty.
 	editor.codemirror.setValue(settings.getSetting("documentContent"));
 
 	// Render any intial Markdown in the editor.

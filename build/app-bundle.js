@@ -54710,6 +54710,12 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 },{}],"/home/tobloef/Downloads/code/markant.io/scripts/app.js":[function(require,module,exports){
 // Main module for the app. This is where everything is initialized and all other module calls stem from.
 ;(function() {
+	// Import the error handler module and set up the global error event listener.
+	// This is done before anything else to make sure all errors are captured.
+	const errorHandler = require("./utils/error_handler");
+	errorHandler.setUpListener();
+
+	// Import other modules
 	const $ = require("jquery");
 	const scrollSync = require("./utils/scroll_sync");
 	const resourceLoader = require("./utils/resource_loader");
@@ -54776,6 +54782,8 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	// When the text in the editor is changed, render the markdown.
 	editor.codemirror.on("change", onChangeHandler);
 
+	// Set the editor's contents to the previous unsaved markdown document.
+	// If no markdown document is found, set the contents to the default value, empty.
 	editor.codemirror.setValue(settings.getSetting("documentContent"));
 
 	// Render any intial Markdown in the editor.
@@ -54794,7 +54802,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	}
 }());
 
-},{"./editor":"/home/tobloef/Downloads/code/markant.io/scripts/editor.js","./utils/app_functions":"/home/tobloef/Downloads/code/markant.io/scripts/utils/app_functions.js","./utils/document_title":"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js","./utils/google_analytics":"/home/tobloef/Downloads/code/markant.io/scripts/utils/google_analytics.js","./utils/modals/modal":"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/modal.js","./utils/modals/settings_modal":"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/settings_modal.js","./utils/navbar":"/home/tobloef/Downloads/code/markant.io/scripts/utils/navbar.js","./utils/pane_resizer":"/home/tobloef/Downloads/code/markant.io/scripts/utils/pane_resizer.js","./utils/resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./utils/scroll_sync":"/home/tobloef/Downloads/code/markant.io/scripts/utils/scroll_sync.js","./utils/settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","./utils/shortcuts":"/home/tobloef/Downloads/code/markant.io/scripts/utils/shortcuts.js","./utils/unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","./viewer":"/home/tobloef/Downloads/code/markant.io/scripts/viewer.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/editor.js":[function(require,module,exports){
+},{"./editor":"/home/tobloef/Downloads/code/markant.io/scripts/editor.js","./utils/app_functions":"/home/tobloef/Downloads/code/markant.io/scripts/utils/app_functions.js","./utils/document_title":"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js","./utils/error_handler":"/home/tobloef/Downloads/code/markant.io/scripts/utils/error_handler.js","./utils/google_analytics":"/home/tobloef/Downloads/code/markant.io/scripts/utils/google_analytics.js","./utils/modals/modal":"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/modal.js","./utils/modals/settings_modal":"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/settings_modal.js","./utils/navbar":"/home/tobloef/Downloads/code/markant.io/scripts/utils/navbar.js","./utils/pane_resizer":"/home/tobloef/Downloads/code/markant.io/scripts/utils/pane_resizer.js","./utils/resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./utils/scroll_sync":"/home/tobloef/Downloads/code/markant.io/scripts/utils/scroll_sync.js","./utils/settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","./utils/shortcuts":"/home/tobloef/Downloads/code/markant.io/scripts/utils/shortcuts.js","./utils/unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","./viewer":"/home/tobloef/Downloads/code/markant.io/scripts/viewer.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/editor.js":[function(require,module,exports){
 // Main module for the editor logic.
 ;(function() {
 	const resourceLoader = require("./utils/resource_loader");
@@ -55106,19 +55114,55 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"./settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","./unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/exporters/html.js":[function(require,module,exports){
-//
+},{"./settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","./unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/error_handler.js":[function(require,module,exports){
+// Module for handling errors and exceptions.
 ;(function() {
-	const $ = require("jquery");
+	const debug = true;
 
-	module.exports = function(markdown) {
-		const body = `<body>${$("#viewer")[0].outerHTML}</body>`;
-		const head = `<head>${$("#viewer-styles")[0].outerHTML}</head>`;
-		const HTML = `<html>${head}${body}</html>`;
-		return HTML;
+	// Handle some exception or error message. Will print the console to the console,
+	// if debug mode is enabled. The error will also be logged to the server.
+	function handle(exception) {
+		// Todo: Send to server.
+		if (debug) {
+			console.error("Error handler cought an exception:", exception);
+		}
+	}
+
+	// Set up a gloval error listener, capturing all erros on the page.
+	function setUpListener() {
+		window.addEventListener("error", function(e) {
+			handle(e.error.toString());
+		});
+	}
+
+	module.exports = {
+		handle,
+		setUpListener
 	};
 }());
-},{"jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/file_saver.js":[function(require,module,exports){
+},{}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/exporters/html.js":[function(require,module,exports){
+// Markdown to HTML exporter
+// Todo: Currently not enabled, as various functions such as Math isn't working.
+;(function() {
+	const $ = require("jquery");
+	const errorHandler = require("../error_handler");
+
+	// The module exports the a function which takes a Markdown string and
+	// returns the corresponding HTML. This is done by taking the HTML content
+	// from the document preview.
+	module.exports = function(markdown) {
+		try {
+			const body = `<body>${$("#viewer")[0].outerHTML}</body>`;
+			const head = `<head>${$("#viewer-styles")[0].outerHTML}</head>`;
+			const HTML = `<html>${head}${body}</html>`;
+			return HTML;
+		} catch(exception) {
+			errorHandler.handle(exception);
+			alert("An error occoured while exporting the Markdown document.");
+		}
+	};
+}());
+},{"../error_handler":"/home/tobloef/Downloads/code/markant.io/scripts/utils/error_handler.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/file_saver.js":[function(require,module,exports){
 // Save a file to the user's local drive.
 ;(function() {
 	// Convert some data to a file and save it to the user's local drive with
@@ -55236,226 +55280,220 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 }());
 
 },{"./document_title":"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js","./settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","./unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/markdown_it_katex.js":[function(require,module,exports){
-/* Process inline math */
-/*
-Like markdown-it-simplemath, this is a stripped down, simplified version of:
-https://github.com/runarberg/markdown-it-math
-
-It differs in that it takes (a subset of) LaTeX as input and relies on KaTeX
-for rendering output.
-*/
-
-/*jslint node: true */
-
-'use strict';
-
-var katex = require('katex');
-
-// Test if potential opening or closing delimieter
-// Assumes that there is a "$" at state.src[pos]
-function isValidDelim(state, pos) {
-    var prevChar, nextChar,
-    max = state.posMax,
-        can_open = true,
-        can_close = true;
-
-    prevChar = pos > 0 ? state.src.charCodeAt(pos - 1) : -1;
-    nextChar = pos + 1 <= max ? state.src.charCodeAt(pos + 1) : -1;
-
-    // Check non-whitespace conditions for opening and closing, and
-    // check that closing delimeter isn't followed by a number
-    if (prevChar === 0x20 /* " " */ || prevChar === 0x09 /* \t */ || (nextChar >= 0x30 /* "0" */ && nextChar <= 0x39 /* "9" */ )) {
-        can_close = false;
-    }
-    if (nextChar === 0x20 /* " " */ || nextChar === 0x09 /* \t */ ) {
-        can_open = false;
-    }
-
-    return {
-        can_open: can_open,
-        can_close: can_close
-    };
-}
-
-function math_inline(state, silent) {
-    var start, match, token, res, pos, esc_count;
-
-    if (state.src[state.pos] !== "$") {
-        return false;
-    }
-
-    res = isValidDelim(state, state.pos);
-    if (!res.can_open) {
-        if (!silent) {
-            state.pending += "$";
-        }
-        state.pos += 1;
-        return true;
-    }
-
-    // First check for and bypass all properly escaped delimieters
-    // This loop will assume that the first leading backtick can not
-    // be the first character in state.src, which is known since
-    // we have found an opening delimieter already.
-    start = state.pos + 1;
-    match = start;
-    while ((match = state.src.indexOf("$", match)) !== -1) {
-        // Found potential $, look for escapes, pos will point to
-        // first non escape when complete
-        pos = match - 1;
-        while (state.src[pos] === "\\") {
-            pos -= 1;
-        }
-
-        // Even number of escapes, potential closing delimiter found
-        if (((match - pos) % 2) == 1) {
-            break;
-        }
-        match += 1;
-    }
-
-    // No closing delimter found.  Consume $ and continue.
-    if (match === -1) {
-        if (!silent) {
-            state.pending += "$";
-        }
-        state.pos = start;
-        return true;
-    }
-
-    // Check if we have empty content, ie: $$.  Do not parse.
-    if (match - start === 0) {
-        if (!silent) {
-            state.pending += "$$";
-        }
-        state.pos = start + 1;
-        return true;
-    }
-
-    // Check for valid closing delimiter
-    res = isValidDelim(state, match);
-    if (!res.can_close) {
-        if (!silent) {
-            state.pending += "$";
-        }
-        state.pos = start;
-        return true;
-    }
+// KaTeX plugin for Markdown-it, original code from:
+// https://github.com/waylonflinn/markdown-it-katex
+;(function() {
+	'use strict';
 
     if (!silent) {
-        token = state.push('math_inline', 'math', 0);
-        token.markup = "$";
-        token.content = state.src.slice(start, match);
-    }
 
-    state.pos = match + 1;
-    return true;
-}
+	var katex = require('katex');
 
-function math_block(state, start, end, silent) {
-    var firstLine, lastLine, next, lastPos, found = false,
-        token,
-        pos = state.bMarks[start] + state.tShift[start],
-        max = state.eMarks[start]
+	// Test if potential opening or closing delimieter
+	// Assumes that there is a "$" at state.src[pos]
+	function isValidDelim(state, pos) {
+	    var prevChar, nextChar,
+	    max = state.posMax,
+	        can_open = true,
+	        can_close = true;
 
-    if (pos + 2 > max) {
-        return false;
-    }
-    if (state.src.slice(pos, pos + 2) !== '$$') {
-        return false;
-    }
+	    prevChar = pos > 0 ? state.src.charCodeAt(pos - 1) : -1;
+	    nextChar = pos + 1 <= max ? state.src.charCodeAt(pos + 1) : -1;
 
-    pos += 2;
-    firstLine = state.src.slice(pos, max);
+	    // Check non-whitespace conditions for opening and closing, and
+	    // check that closing delimeter isn't followed by a number
+	    if (prevChar === 0x20 /* " " */ || prevChar === 0x09 /* \t */ || (nextChar >= 0x30 /* "0" */ && nextChar <= 0x39 /* "9" */ )) {
+	        can_close = false;
+	    }
+	    if (nextChar === 0x20 /* " " */ || nextChar === 0x09 /* \t */ ) {
+	        can_open = false;
+	    }
 
-    if (silent) {
-        return true;
-    }
-    if (firstLine.trim().slice(-2) === '$$') {
-        // Single line expression
-        firstLine = firstLine.trim().slice(0, - 2);
-        found = true;
-    }
+	    return {
+	        can_open: can_open,
+	        can_close: can_close
+	    };
+	}
 
-    for (next = start; !found;) {
+	function math_inline(state, silent) {
+	    var start, match, token, res, pos, esc_count;
 
-        next++;
+	    if (state.src[state.pos] !== "$") {
+	        return false;
+	    }
 
-        if (next >= end) {
-            break;
-        }
+	    res = isValidDelim(state, state.pos);
+	    if (!res.can_open) {
+	        if (!silent) {
+	            state.pending += "$";
+	        }
+	        state.pos += 1;
+	        return true;
+	    }
 
-        pos = state.bMarks[next] + state.tShift[next];
-        max = state.eMarks[next];
+	    // First check for and bypass all properly escaped delimieters
+	    // This loop will assume that the first leading backtick can not
+	    // be the first character in state.src, which is known since
+	    // we have found an opening delimieter already.
+	    start = state.pos + 1;
+	    match = start;
+	    while ((match = state.src.indexOf("$", match)) !== -1) {
+	        // Found potential $, look for escapes, pos will point to
+	        // first non escape when complete
+	        pos = match - 1;
+	        while (state.src[pos] === "\\") {
+	            pos -= 1;
+	        }
 
-        if (pos < max && state.tShift[next] < state.blkIndent) {
-            // non-empty line with negative indent should stop the list:
-            break;
-        }
+	        // Even number of escapes, potential closing delimiter found
+	        if (((match - pos) % 2) == 1) {
+	            break;
+	        }
+	        match += 1;
+	    }
 
-        if (state.src.slice(pos, max).trim().slice(-2) === '$$') {
-            lastPos = state.src.slice(0, max).lastIndexOf('$$');
-            lastLine = state.src.slice(pos, lastPos);
-            found = true;
-        }
+	    // No closing delimter found.  Consume $ and continue.
+	    if (match === -1) {
+	        if (!silent) {
+	            state.pending += "$";
+	        }
+	        state.pos = start;
+	        return true;
+	    }
 
-    }
+	    // Check if we have empty content, ie: $$.  Do not parse.
+	    if (match - start === 0) {
+	        if (!silent) {
+	            state.pending += "$$";
+	        }
+	        state.pos = start + 1;
+	        return true;
+	    }
 
-    state.line = next + 1;
+	    // Check for valid closing delimiter
+	    res = isValidDelim(state, match);
+	    if (!res.can_close) {
+	        if (!silent) {
+	            state.pending += "$";
+	        }
+	        state.pos = start;
+	        return true;
+	    }
+	        token = state.push('math_inline', 'math', 0);
+	        token.markup = "$";
+	        token.content = state.src.slice(start, match);
+	    }
 
-    token = state.push('math_block', 'math', 0);
-    token.block = true;
-    token.content = (firstLine && firstLine.trim() ? firstLine + '\n' : '') + state.getLines(start + 1, next, state.tShift[start], true) + (lastLine && lastLine.trim() ? lastLine : '');
-    token.map = [start, state.line];
-    token.markup = '$$';
-    return true;
-}
+	    state.pos = match + 1;
+	    return true;
+	}
 
-module.exports = function math_plugin(md, options) {
-    // Default options
+	function math_block(state, start, end, silent) {
+	    var firstLine, lastLine, next, lastPos, found = false,
+	        token,
+	        pos = state.bMarks[start] + state.tShift[start],
+	        max = state.eMarks[start]
 
-    options = options || {};
+	    if (pos + 2 > max) {
+	        return false;
+	    }
+	    if (state.src.slice(pos, pos + 2) !== '$$') {
+	        return false;
+	    }
 
-    // set KaTeX as the renderer for markdown-it-simplemath
-    var katexInline = function(latex) {
-        options.displayMode = false;
-        try {
-            return katex.renderToString(latex, options);
-        } catch (error) {
-            if (options.throwOnError) {
-                console.log(error);
-            }
-            return latex;
-        }
-    };
+	    pos += 2;
+	    firstLine = state.src.slice(pos, max);
 
-    var inlineRenderer = function(tokens, idx) {
-        return katexInline(tokens[idx].content);
-    };
+	    if (silent) {
+	        return true;
+	    }
+	    if (firstLine.trim().slice(-2) === '$$') {
+	        // Single line expression
+	        firstLine = firstLine.trim().slice(0, - 2);
+	        found = true;
+	    }
 
-    var katexBlock = function(latex) {
-        options.displayMode = true;
-        try {
-            return "<p>" + katex.renderToString(latex, options) + "</p>";
-        } catch (error) {
-            if (options.throwOnError) {
-                console.log(error);
-            }
-            return latex;
-        }
-    }
+	    for (next = start; !found;) {
 
-    var blockRenderer = function(tokens, idx) {
-        return katexBlock(tokens[idx].content) + '\n';
-    }
+	        next++;
 
-    md.inline.ruler.after('escape', 'math_inline', math_inline);
-    md.block.ruler.after('blockquote', 'math_block', math_block, {
-        alt: ['paragraph', 'reference', 'blockquote', 'list']
-    });
-    md.renderer.rules.math_inline = inlineRenderer;
-    md.renderer.rules.math_block = blockRenderer;
-};
+	        if (next >= end) {
+	            break;
+	        }
+
+	        pos = state.bMarks[next] + state.tShift[next];
+	        max = state.eMarks[next];
+
+	        if (pos < max && state.tShift[next] < state.blkIndent) {
+	            // non-empty line with negative indent should stop the list:
+	            break;
+	        }
+
+	        if (state.src.slice(pos, max).trim().slice(-2) === '$$') {
+	            lastPos = state.src.slice(0, max).lastIndexOf('$$');
+	            lastLine = state.src.slice(pos, lastPos);
+	            found = true;
+	        }
+
+	    }
+
+	    state.line = next + 1;
+
+	    token = state.push('math_block', 'math', 0);
+	    token.block = true;
+	    token.content = (firstLine && firstLine.trim() ? firstLine + '\n' : '') + state.getLines(start + 1, next, state.tShift[start], true) + (lastLine && lastLine.trim() ? lastLine : '');
+	    token.map = [start, state.line];
+	    token.markup = '$$';
+	    return true;
+	}
+
+	module.exports = function math_plugin(md, options) {
+	    // Default options
+
+	    options = options || {};
+
+	    // set KaTeX as the renderer for markdown-it-simplemath
+	    var katexInline = function(latex) {
+	        options.displayMode = false;
+	        try {
+	            return katex.renderToString(latex, options);
+	        } catch (error) {
+	            if (options.throwOnError) {
+	                console.log(error);
+	            }
+	            return latex;
+	        }
+	    };
+
+	    var inlineRenderer = function(tokens, idx) {
+	        return katexInline(tokens[idx].content);
+	    };
+
+	    var katexBlock = function(latex) {
+	        options.displayMode = true;
+	        try {
+	            return "<p>" + katex.renderToString(latex, options) + "</p>";
+	        } catch (error) {
+	            if (options.throwOnError) {
+	                console.log(error);
+	            }
+	            return latex;
+	        }
+	    }
+
+	    var blockRenderer = function(tokens, idx) {
+	        return katexBlock(tokens[idx].content) + '\n';
+	    }
+
+	    md.inline.ruler.after('escape', 'math_inline', math_inline);
+	    md.block.ruler.after('blockquote', 'math_block', math_block, {
+	        alt: ['paragraph', 'reference', 'blockquote', 'list']
+	    });
+	    md.renderer.rules.math_inline = inlineRenderer;
+	    md.renderer.rules.math_block = blockRenderer;
+	};
+}());
+
 },{"katex":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/katex.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/modal.js":[function(require,module,exports){
 // Logic for the general modal UI.
 ;(function() {
@@ -56134,6 +56172,7 @@ module.exports = function math_plugin(md, options) {
 ;(function() {
 	const $ = require("jquery");
 
+	// Append a style rule to the style tag with the specified ID.
 	function append(id, css) {
 		const $element = $(`#${id}`);
 		if ($element) {

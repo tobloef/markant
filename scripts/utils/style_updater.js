@@ -2,6 +2,7 @@
 ;(function() {
 	const $ = require("jquery");
 
+	// Append a style rule to the style tag with the specified ID.
 	function append(id, css) {
 		const $element = $(`#${id}`);
 		if ($element) {
