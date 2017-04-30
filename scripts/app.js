@@ -34,6 +34,7 @@
 
 	// Before the user closes the window, warn them if they have unsaved changes.
 	$(window).on("beforeunload", function(event) {
+		console.log(unsavedChanges.getHasChanges());
 		if (unsavedChanges.getHasChanges()) {
 			const message = "You have unsaved changes. Are you sure you want to leave without saving?";
 			if (event) {

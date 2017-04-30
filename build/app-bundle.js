@@ -54233,6 +54233,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 	// Before the user closes the window, warn them if they have unsaved changes.
 	$(window).on("beforeunload", function(event) {
+		console.log(unsavedChanges.getHasChanges());
 		if (unsavedChanges.getHasChanges()) {
 			const message = "You have unsaved changes. Are you sure you want to leave without saving?";
 			if (event) {
@@ -55002,12 +55003,14 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 ;(function() {
 	const $ = require("jquery");
 	const settingsHelper = require("../settings_helper");
+	const unsavedChanges = require("../unsaved_changes");
 
 	loadSettings();
 	// WHen the save button is clicked, save the user's settings and close the modal
 	$("#modal-settings-save").on("click", function() {
 		saveSettings();
 		$(this).closest(".modal").removeClass("active");
+		unsavedChanges.setHasChanges(false);
 		window.location.reload();
 	});
 	// When the reset button is clicked, reset the user's settings and load the new values.
@@ -55091,7 +55094,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	}
 }());
 
-},{"../settings_helper":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/settings_helper.js","jquery":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/jquery/dist/jquery.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/navbar.js":[function(require,module,exports){
+},{"../settings_helper":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/settings_helper.js","../unsaved_changes":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/unsaved_changes.js","jquery":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/jquery/dist/jquery.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/navbar.js":[function(require,module,exports){
 // Logic for the top navigation bar (navbar) in the app.
 ;(function() {
 	const $ = require("jquery");
@@ -55140,11 +55143,11 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 		// When the dropdown item is clicked, call the appropriate function.
 		$links.on("click", function(event) {
+			event.preventDefault();
 			const id = $(this).attr("id");
 			if (id in idFunctionMap) {
 				idFunctionMap[id]($(this));
 				closeDropdowns();
-				event.preventDefault();
 			}
 		});
 
