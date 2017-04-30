@@ -10,7 +10,7 @@
         "spec": ">=2.7.0 <3.0.0",
         "type": "range"
       },
-      "/home/tobloef/Downloads/code/markant.io"
+      "/mnt/x/Google Drive/Projekter/Code/markant.io"
     ]
   ],
   "_from": "mathjax@>=2.7.0 <3.0.0",
@@ -44,7 +44,7 @@
   "_shasum": "2c12cac72a7be2b8190f6b3344ca93801a0e5dff",
   "_shrinkwrap": null,
   "_spec": "mathjax@^2.7.0",
-  "_where": "/home/tobloef/Downloads/code/markant.io",
+  "_where": "/mnt/x/Google Drive/Projekter/Code/markant.io",
   "bugs": {
     "url": "http://github.com/mathjax/MathJax/issues"
   },

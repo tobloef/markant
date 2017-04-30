@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/addon/edit/continuelist.js":[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/codemirror/addon/edit/continuelist.js":[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -31,7 +31,7 @@
         return;
       }
       if (emptyListRE.test(line)) {
-        if (!/>\s*$/.test(line)) cm.replaceRange("", {
+        cm.replaceRange("", {
           line: pos.line, ch: 0
         }, {
           line: pos.line, ch: pos.ch + 1
@@ -51,7 +51,7 @@
   };
 });
 
-},{"../../lib/codemirror":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/lib/codemirror.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/addon/mode/overlay.js":[function(require,module,exports){
+},{"../../lib/codemirror":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/codemirror/lib/codemirror.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/codemirror/addon/mode/overlay.js":[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -143,7 +143,7 @@ CodeMirror.overlayMode = function(base, overlay, combine) {
 
 });
 
-},{"../../lib/codemirror":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/lib/codemirror.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/lib/codemirror.js":[function(require,module,exports){
+},{"../../lib/codemirror":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/codemirror/lib/codemirror.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/codemirror/lib/codemirror.js":[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -167,18 +167,17 @@ var platform = navigator.platform
 var gecko = /gecko\/\d/i.test(userAgent)
 var ie_upto10 = /MSIE \d/.test(userAgent)
 var ie_11up = /Trident\/(?:[7-9]|\d{2,})\..*rv:(\d+)/.exec(userAgent)
-var edge = /Edge\/(\d+)/.exec(userAgent)
-var ie = ie_upto10 || ie_11up || edge
-var ie_version = ie && (ie_upto10 ? document.documentMode || 6 : +(edge || ie_11up)[1])
-var webkit = !edge && /WebKit\//.test(userAgent)
+var ie = ie_upto10 || ie_11up
+var ie_version = ie && (ie_upto10 ? document.documentMode || 6 : ie_11up[1])
+var webkit = /WebKit\//.test(userAgent)
 var qtwebkit = webkit && /Qt\/\d+\.\d+/.test(userAgent)
-var chrome = !edge && /Chrome\//.test(userAgent)
+var chrome = /Chrome\//.test(userAgent)
 var presto = /Opera\//.test(userAgent)
 var safari = /Apple Computer/.test(navigator.vendor)
 var mac_geMountainLion = /Mac OS X 1\d\D([8-9]|\d\d)\D/.test(userAgent)
 var phantom = /PhantomJS/.test(userAgent)
 
-var ios = !edge && /AppleWebKit/.test(userAgent) && /Mobile\/\w+/.test(userAgent)
+var ios = /AppleWebKit/.test(userAgent) && /Mobile\/\w+/.test(userAgent)
 // This is woefully incomplete. Suggestions for alternative methods welcome.
 var mobile = ios || /Android|webOS|BlackBerry|Opera Mini|Opera Mobi|IEMobile/i.test(userAgent)
 var mac = ios || /Mac/.test(platform)
@@ -312,11 +311,11 @@ function countColumn(string, end, tabSize, startIndex, startValue) {
   }
 }
 
-var Delayed = function() {this.id = null};
-Delayed.prototype.set = function (ms, f) {
+function Delayed() {this.id = null}
+Delayed.prototype.set = function(ms, f) {
   clearTimeout(this.id)
   this.id = setTimeout(f, ms)
-};
+}
 
 function indexOf(array, elt) {
   for (var i = 0; i < array.length; ++i)
@@ -409,23 +408,6 @@ function isEmpty(obj) {
 // of code points as a group.
 var extendingChars = /[\u0300-\u036f\u0483-\u0489\u0591-\u05bd\u05bf\u05c1\u05c2\u05c4\u05c5\u05c7\u0610-\u061a\u064b-\u065e\u0670\u06d6-\u06dc\u06de-\u06e4\u06e7\u06e8\u06ea-\u06ed\u0711\u0730-\u074a\u07a6-\u07b0\u07eb-\u07f3\u0816-\u0819\u081b-\u0823\u0825-\u0827\u0829-\u082d\u0900-\u0902\u093c\u0941-\u0948\u094d\u0951-\u0955\u0962\u0963\u0981\u09bc\u09be\u09c1-\u09c4\u09cd\u09d7\u09e2\u09e3\u0a01\u0a02\u0a3c\u0a41\u0a42\u0a47\u0a48\u0a4b-\u0a4d\u0a51\u0a70\u0a71\u0a75\u0a81\u0a82\u0abc\u0ac1-\u0ac5\u0ac7\u0ac8\u0acd\u0ae2\u0ae3\u0b01\u0b3c\u0b3e\u0b3f\u0b41-\u0b44\u0b4d\u0b56\u0b57\u0b62\u0b63\u0b82\u0bbe\u0bc0\u0bcd\u0bd7\u0c3e-\u0c40\u0c46-\u0c48\u0c4a-\u0c4d\u0c55\u0c56\u0c62\u0c63\u0cbc\u0cbf\u0cc2\u0cc6\u0ccc\u0ccd\u0cd5\u0cd6\u0ce2\u0ce3\u0d3e\u0d41-\u0d44\u0d4d\u0d57\u0d62\u0d63\u0dca\u0dcf\u0dd2-\u0dd4\u0dd6\u0ddf\u0e31\u0e34-\u0e3a\u0e47-\u0e4e\u0eb1\u0eb4-\u0eb9\u0ebb\u0ebc\u0ec8-\u0ecd\u0f18\u0f19\u0f35\u0f37\u0f39\u0f71-\u0f7e\u0f80-\u0f84\u0f86\u0f87\u0f90-\u0f97\u0f99-\u0fbc\u0fc6\u102d-\u1030\u1032-\u1037\u1039\u103a\u103d\u103e\u1058\u1059\u105e-\u1060\u1071-\u1074\u1082\u1085\u1086\u108d\u109d\u135f\u1712-\u1714\u1732-\u1734\u1752\u1753\u1772\u1773\u17b7-\u17bd\u17c6\u17c9-\u17d3\u17dd\u180b-\u180d\u18a9\u1920-\u1922\u1927\u1928\u1932\u1939-\u193b\u1a17\u1a18\u1a56\u1a58-\u1a5e\u1a60\u1a62\u1a65-\u1a6c\u1a73-\u1a7c\u1a7f\u1b00-\u1b03\u1b34\u1b36-\u1b3a\u1b3c\u1b42\u1b6b-\u1b73\u1b80\u1b81\u1ba2-\u1ba5\u1ba8\u1ba9\u1c2c-\u1c33\u1c36\u1c37\u1cd0-\u1cd2\u1cd4-\u1ce0\u1ce2-\u1ce8\u1ced\u1dc0-\u1de6\u1dfd-\u1dff\u200c\u200d\u20d0-\u20f0\u2cef-\u2cf1\u2de0-\u2dff\u302a-\u302f\u3099\u309a\ua66f-\ua672\ua67c\ua67d\ua6f0\ua6f1\ua802\ua806\ua80b\ua825\ua826\ua8c4\ua8e0-\ua8f1\ua926-\ua92d\ua947-\ua951\ua980-\ua982\ua9b3\ua9b6-\ua9b9\ua9bc\uaa29-\uaa2e\uaa31\uaa32\uaa35\uaa36\uaa43\uaa4c\uaab0\uaab2-\uaab4\uaab7\uaab8\uaabe\uaabf\uaac1\uabe5\uabe8\uabed\udc00-\udfff\ufb1e\ufe00-\ufe0f\ufe20-\ufe26\uff9e\uff9f]/
 function isExtendingChar(ch) { return ch.charCodeAt(0) >= 768 && extendingChars.test(ch) }
-
-// Returns a number from the range [`0`; `str.length`] unless `pos` is outside that range.
-function skipExtendingChars(str, pos, dir) {
-  while ((dir < 0 ? pos > 0 : pos < str.length) && isExtendingChar(str.charAt(pos))) { pos += dir }
-  return pos
-}
-
-// Returns the value from the range [`from`; `to`] that satisfies
-// `pred` and is closest to `from`. Assumes that at least `to` satisfies `pred`.
-function findFirst(pred, from, to) {
-  for (;;) {
-    if (Math.abs(from - to) <= 1) { return pred(from) ? from : to }
-    var mid = Math.floor((from + to) / 2)
-    if (pred(mid)) { to = mid }
-    else { from = mid }
-  }
-}
 
 // The display handles the DOM integration, both for input reading
 // and content drawing. It holds references to DOM nodes and
@@ -614,20 +596,14 @@ function lineNumberFor(options, i) {
 }
 
 // A Pos instance represents a position within the text.
-function Pos(line, ch, sticky) {
-  if ( sticky === void 0 ) sticky = null;
-
-  if (!(this instanceof Pos)) { return new Pos(line, ch, sticky) }
-  this.line = line
-  this.ch = ch
-  this.sticky = sticky
+function Pos (line, ch) {
+  if (!(this instanceof Pos)) { return new Pos(line, ch) }
+  this.line = line; this.ch = ch
 }
 
 // Compare two positions, return 0 if they are the same, a negative
 // number when a is less, and a positive number otherwise.
 function cmp(a, b) { return a.line - b.line || a.ch - b.ch }
-
-function equalCursorPos(a, b) { return a.sticky == b.sticky && cmp(a, b) == 0 }
 
 function copyPos(x) {return Pos(x.line, x.ch)}
 function maxPos(a, b) { return cmp(a, b) < 0 ? b : a }
@@ -824,7 +800,7 @@ function removeReadOnlyRanges(doc, from, to) {
       if (dto > 0 || !mk.inclusiveRight && !dto)
         { newParts.push({from: m.to, to: p.to}) }
       parts.splice.apply(parts, newParts)
-      j += newParts.length - 3
+      j += newParts.length - 1
     }
   }
   return parts
@@ -906,13 +882,6 @@ function visualLine(line) {
   var merged
   while (merged = collapsedSpanAtStart(line))
     { line = merged.find(-1, true).line }
-  return line
-}
-
-function visualLineEnd(line) {
-  var merged
-  while (merged = collapsedSpanAtEnd(line))
-    { line = merged.find(1, true).line }
   return line
 }
 
@@ -1047,23 +1016,84 @@ function iterateBidiSections(order, from, to, f) {
   if (!found) { f(from, to, "ltr") }
 }
 
+function bidiLeft(part) { return part.level % 2 ? part.to : part.from }
+function bidiRight(part) { return part.level % 2 ? part.from : part.to }
+
+function lineLeft(line) { var order = getOrder(line); return order ? bidiLeft(order[0]) : 0 }
+function lineRight(line) {
+  var order = getOrder(line)
+  if (!order) { return line.text.length }
+  return bidiRight(lst(order))
+}
+
+function compareBidiLevel(order, a, b) {
+  var linedir = order[0].level
+  if (a == linedir) { return true }
+  if (b == linedir) { return false }
+  return a < b
+}
+
 var bidiOther = null
-function getBidiPartAt(order, ch, sticky) {
+function getBidiPartAt(order, pos) {
   var found
   bidiOther = null
   for (var i = 0; i < order.length; ++i) {
     var cur = order[i]
-    if (cur.from < ch && cur.to > ch) { return i }
-    if (cur.to == ch) {
-      if (cur.from != cur.to && sticky == "before") { found = i }
-      else { bidiOther = i }
-    }
-    if (cur.from == ch) {
-      if (cur.from != cur.to && sticky != "before") { found = i }
-      else { bidiOther = i }
+    if (cur.from < pos && cur.to > pos) { return i }
+    if ((cur.from == pos || cur.to == pos)) {
+      if (found == null) {
+        found = i
+      } else if (compareBidiLevel(order, cur.level, order[found].level)) {
+        if (cur.from != cur.to) { bidiOther = found }
+        return i
+      } else {
+        if (cur.from != cur.to) { bidiOther = i }
+        return found
+      }
     }
   }
-  return found != null ? found : bidiOther
+  return found
+}
+
+function moveInLine(line, pos, dir, byUnit) {
+  if (!byUnit) { return pos + dir }
+  do { pos += dir }
+  while (pos > 0 && isExtendingChar(line.text.charAt(pos)))
+  return pos
+}
+
+// This is needed in order to move 'visually' through bi-directional
+// text -- i.e., pressing left should make the cursor go left, even
+// when in RTL text. The tricky part is the 'jumps', where RTL and
+// LTR text touch each other. This often requires the cursor offset
+// to move more than one unit, in order to visually move one unit.
+function moveVisually(line, start, dir, byUnit) {
+  var bidi = getOrder(line)
+  if (!bidi) { return moveLogically(line, start, dir, byUnit) }
+  var pos = getBidiPartAt(bidi, start), part = bidi[pos]
+  var target = moveInLine(line, start, part.level % 2 ? -dir : dir, byUnit)
+
+  for (;;) {
+    if (target > part.from && target < part.to) { return target }
+    if (target == part.from || target == part.to) {
+      if (getBidiPartAt(bidi, target) == pos) { return target }
+      part = bidi[pos += dir]
+      return (dir > 0) == part.level % 2 ? part.to : part.from
+    } else {
+      part = bidi[pos += dir]
+      if (!part) { return null }
+      if ((dir > 0) == part.level % 2)
+        { target = moveInLine(line, part.to, -1, byUnit) }
+      else
+        { target = moveInLine(line, part.from, 1, byUnit) }
+    }
+  }
+}
+
+function moveLogically(line, start, dir, byUnit) {
+  var target = start + dir
+  if (byUnit) { while (target > 0 && isExtendingChar(line.text.charAt(target))) { target += dir } }
+  return target < 0 || target > line.text.length ? null : target
 }
 
 // Bidirectional ordering algorithm
@@ -1229,6 +1259,10 @@ var bidiOrdering = (function() {
       lst(order).to -= m[0].length
       order.push(new BidiSpan(0, len - m[0].length, len))
     }
+    if (order[0].level == 2)
+      { order.unshift(new BidiSpan(1, order[0].to, order[0].to)) }
+    if (order[0].level != lst(order).level)
+      { order.push(new BidiSpan(order[0].level, len, len)) }
 
     return order
   }
@@ -1241,111 +1275,6 @@ function getOrder(line) {
   var order = line.order
   if (order == null) { order = line.order = bidiOrdering(line.text) }
   return order
-}
-
-function moveCharLogically(line, ch, dir) {
-  var target = skipExtendingChars(line.text, ch + dir, dir)
-  return target < 0 || target > line.text.length ? null : target
-}
-
-function moveLogically(line, start, dir) {
-  var ch = moveCharLogically(line, start.ch, dir)
-  return ch == null ? null : new Pos(start.line, ch, dir < 0 ? "after" : "before")
-}
-
-function endOfLine(visually, cm, lineObj, lineNo, dir) {
-  if (visually) {
-    var order = getOrder(lineObj)
-    if (order) {
-      var part = dir < 0 ? lst(order) : order[0]
-      var moveInStorageOrder = (dir < 0) == (part.level == 1)
-      var sticky = moveInStorageOrder ? "after" : "before"
-      var ch
-      // With a wrapped rtl chunk (possibly spanning multiple bidi parts),
-      // it could be that the last bidi part is not on the last visual line,
-      // since visual lines contain content order-consecutive chunks.
-      // Thus, in rtl, we are looking for the first (content-order) character
-      // in the rtl chunk that is on the last line (that is, the same line
-      // as the last (content-order) character).
-      if (part.level > 0) {
-        var prep = prepareMeasureForLine(cm, lineObj)
-        ch = dir < 0 ? lineObj.text.length - 1 : 0
-        var targetTop = measureCharPrepared(cm, prep, ch).top
-        ch = findFirst(function (ch) { return measureCharPrepared(cm, prep, ch).top == targetTop; }, (dir < 0) == (part.level == 1) ? part.from : part.to - 1, ch)
-        if (sticky == "before") { ch = moveCharLogically(lineObj, ch, 1, true) }
-      } else { ch = dir < 0 ? part.to : part.from }
-      return new Pos(lineNo, ch, sticky)
-    }
-  }
-  return new Pos(lineNo, dir < 0 ? lineObj.text.length : 0, dir < 0 ? "before" : "after")
-}
-
-function moveVisually(cm, line, start, dir) {
-  var bidi = getOrder(line)
-  if (!bidi) { return moveLogically(line, start, dir) }
-  if (start.ch >= line.text.length) {
-    start.ch = line.text.length
-    start.sticky = "before"
-  } else if (start.ch <= 0) {
-    start.ch = 0
-    start.sticky = "after"
-  }
-  var partPos = getBidiPartAt(bidi, start.ch, start.sticky), part = bidi[partPos]
-  if (part.level % 2 == 0 && (dir > 0 ? part.to > start.ch : part.from < start.ch)) {
-    // Case 1: We move within an ltr part. Even with wrapped lines,
-    // nothing interesting happens.
-    return moveLogically(line, start, dir)
-  }
-
-  var mv = function (pos, dir) { return moveCharLogically(line, pos instanceof Pos ? pos.ch : pos, dir); }
-  var prep
-  var getWrappedLineExtent = function (ch) {
-    if (!cm.options.lineWrapping) { return {begin: 0, end: line.text.length} }
-    prep = prep || prepareMeasureForLine(cm, line)
-    return wrappedLineExtentChar(cm, line, prep, ch)
-  }
-  var wrappedLineExtent = getWrappedLineExtent(start.sticky == "before" ? mv(start, -1) : start.ch)
-
-  if (part.level % 2 == 1) {
-    var ch = mv(start, -dir)
-    if (ch != null && (dir > 0 ? ch >= part.from && ch >= wrappedLineExtent.begin : ch <= part.to && ch <= wrappedLineExtent.end)) {
-      // Case 2: We move within an rtl part on the same visual line
-      var sticky = dir < 0 ? "before" : "after"
-      return new Pos(start.line, ch, sticky)
-    }
-  }
-
-  // Case 3: Could not move within this bidi part in this visual line, so leave
-  // the current bidi part
-
-  var searchInVisualLine = function (partPos, dir, wrappedLineExtent) {
-    var getRes = function (ch, moveInStorageOrder) { return moveInStorageOrder
-      ? new Pos(start.line, mv(ch, 1), "before")
-      : new Pos(start.line, ch, "after"); }
-
-    for (; partPos >= 0 && partPos < bidi.length; partPos += dir) {
-      var part = bidi[partPos]
-      var moveInStorageOrder = (dir > 0) == (part.level != 1)
-      var ch = moveInStorageOrder ? wrappedLineExtent.begin : mv(wrappedLineExtent.end, -1)
-      if (part.from <= ch && ch < part.to) { return getRes(ch, moveInStorageOrder) }
-      ch = moveInStorageOrder ? part.from : mv(part.to, -1)
-      if (wrappedLineExtent.begin <= ch && ch < wrappedLineExtent.end) { return getRes(ch, moveInStorageOrder) }
-    }
-  }
-
-  // Case 3a: Look for other bidi parts on the same visual line
-  var res = searchInVisualLine(partPos + dir, dir, wrappedLineExtent)
-  if (res) { return res }
-
-  // Case 3b: Look for other bidi parts on the next visual line
-  var nextCh = dir > 0 ? wrappedLineExtent.end : mv(wrappedLineExtent.begin, -1)
-  if (nextCh != null && !(dir > 0 && nextCh == line.text.length)) {
-    res = searchInVisualLine(dir > 0 ? 0 : bidi.length - 1, dir, getWrappedLineExtent(nextCh))
-    if (res) { return res }
-  }
-
-  // Case 4: Nowhere to move
-  return null
 }
 
 // EVENT HANDLING
@@ -1636,72 +1565,74 @@ var StringStream = function(string, tabSize) {
   this.tabSize = tabSize || 8
   this.lastColumnPos = this.lastColumnValue = 0
   this.lineStart = 0
-};
+}
 
-StringStream.prototype.eol = function () {return this.pos >= this.string.length};
-StringStream.prototype.sol = function () {return this.pos == this.lineStart};
-StringStream.prototype.peek = function () {return this.string.charAt(this.pos) || undefined};
-StringStream.prototype.next = function () {
-  if (this.pos < this.string.length)
-    { return this.string.charAt(this.pos++) }
-};
-StringStream.prototype.eat = function (match) {
-  var ch = this.string.charAt(this.pos)
-  var ok
-  if (typeof match == "string") { ok = ch == match }
-  else { ok = ch && (match.test ? match.test(ch) : match(ch)) }
-  if (ok) {++this.pos; return ch}
-};
-StringStream.prototype.eatWhile = function (match) {
-  var start = this.pos
-  while (this.eat(match)){}
-  return this.pos > start
-};
-StringStream.prototype.eatSpace = function () {
+StringStream.prototype = {
+  eol: function() {return this.pos >= this.string.length},
+  sol: function() {return this.pos == this.lineStart},
+  peek: function() {return this.string.charAt(this.pos) || undefined},
+  next: function() {
+    if (this.pos < this.string.length)
+      { return this.string.charAt(this.pos++) }
+  },
+  eat: function(match) {
+    var ch = this.string.charAt(this.pos)
+    var ok
+    if (typeof match == "string") { ok = ch == match }
+    else { ok = ch && (match.test ? match.test(ch) : match(ch)) }
+    if (ok) {++this.pos; return ch}
+  },
+  eatWhile: function(match) {
+    var start = this.pos
+    while (this.eat(match)){}
+    return this.pos > start
+  },
+  eatSpace: function() {
     var this$1 = this;
 
-  var start = this.pos
-  while (/[\s\u00a0]/.test(this.string.charAt(this.pos))) { ++this$1.pos }
-  return this.pos > start
-};
-StringStream.prototype.skipToEnd = function () {this.pos = this.string.length};
-StringStream.prototype.skipTo = function (ch) {
-  var found = this.string.indexOf(ch, this.pos)
-  if (found > -1) {this.pos = found; return true}
-};
-StringStream.prototype.backUp = function (n) {this.pos -= n};
-StringStream.prototype.column = function () {
-  if (this.lastColumnPos < this.start) {
-    this.lastColumnValue = countColumn(this.string, this.start, this.tabSize, this.lastColumnPos, this.lastColumnValue)
-    this.lastColumnPos = this.start
-  }
-  return this.lastColumnValue - (this.lineStart ? countColumn(this.string, this.lineStart, this.tabSize) : 0)
-};
-StringStream.prototype.indentation = function () {
-  return countColumn(this.string, null, this.tabSize) -
-    (this.lineStart ? countColumn(this.string, this.lineStart, this.tabSize) : 0)
-};
-StringStream.prototype.match = function (pattern, consume, caseInsensitive) {
-  if (typeof pattern == "string") {
-    var cased = function (str) { return caseInsensitive ? str.toLowerCase() : str; }
-    var substr = this.string.substr(this.pos, pattern.length)
-    if (cased(substr) == cased(pattern)) {
-      if (consume !== false) { this.pos += pattern.length }
-      return true
+    var start = this.pos
+    while (/[\s\u00a0]/.test(this.string.charAt(this.pos))) { ++this$1.pos }
+    return this.pos > start
+  },
+  skipToEnd: function() {this.pos = this.string.length},
+  skipTo: function(ch) {
+    var found = this.string.indexOf(ch, this.pos)
+    if (found > -1) {this.pos = found; return true}
+  },
+  backUp: function(n) {this.pos -= n},
+  column: function() {
+    if (this.lastColumnPos < this.start) {
+      this.lastColumnValue = countColumn(this.string, this.start, this.tabSize, this.lastColumnPos, this.lastColumnValue)
+      this.lastColumnPos = this.start
     }
-  } else {
-    var match = this.string.slice(this.pos).match(pattern)
-    if (match && match.index > 0) { return null }
-    if (match && consume !== false) { this.pos += match[0].length }
-    return match
+    return this.lastColumnValue - (this.lineStart ? countColumn(this.string, this.lineStart, this.tabSize) : 0)
+  },
+  indentation: function() {
+    return countColumn(this.string, null, this.tabSize) -
+      (this.lineStart ? countColumn(this.string, this.lineStart, this.tabSize) : 0)
+  },
+  match: function(pattern, consume, caseInsensitive) {
+    if (typeof pattern == "string") {
+      var cased = function (str) { return caseInsensitive ? str.toLowerCase() : str; }
+      var substr = this.string.substr(this.pos, pattern.length)
+      if (cased(substr) == cased(pattern)) {
+        if (consume !== false) { this.pos += pattern.length }
+        return true
+      }
+    } else {
+      var match = this.string.slice(this.pos).match(pattern)
+      if (match && match.index > 0) { return null }
+      if (match && consume !== false) { this.pos += match[0].length }
+      return match
+    }
+  },
+  current: function(){return this.string.slice(this.start, this.pos)},
+  hideFirstChars: function(n, inner) {
+    this.lineStart += n
+    try { return inner() }
+    finally { this.lineStart -= n }
   }
-};
-StringStream.prototype.current = function (){return this.string.slice(this.start, this.pos)};
-StringStream.prototype.hideFirstChars = function (n, inner) {
-  this.lineStart += n
-  try { return inner() }
-  finally { this.lineStart -= n }
-};
+}
 
 // Compute a style array (an array starting with a mode generation
 // -- for invalidation -- followed by pairs of end positions and
@@ -1906,14 +1837,13 @@ function findStartLine(cm, n, precise) {
 
 // Line objects. These hold state related to a line, including
 // highlighting info (the styles array).
-var Line = function(text, markedSpans, estimateHeight) {
+function Line(text, markedSpans, estimateHeight) {
   this.text = text
   attachMarkedSpans(this, markedSpans)
   this.height = estimateHeight ? estimateHeight(this) : 1
-};
-
-Line.prototype.lineNo = function () { return lineNo(this) };
+}
 eventMixin(Line)
+Line.prototype.lineNo = function() { return lineNo(this) }
 
 // Change the content (text, markers) of a line. Automatically
 // invalidates cached information and tries to re-estimate the
@@ -1961,9 +1891,6 @@ function buildLineContent(cm, lineView) {
                  col: 0, pos: 0, cm: cm,
                  trailingSpace: false,
                  splitSpaces: (ie || webkit) && cm.getOption("lineWrapping")}
-  // hide from accessibility tree
-  content.setAttribute("role", "presentation")
-  builder.pre.setAttribute("role", "presentation")
   lineView.measure = {}
 
   // Iterate over the logical lines that make up this visual line.
@@ -2833,19 +2760,6 @@ function charCoords(cm, pos, context, lineObj, bias) {
 // Returns a box for a given cursor position, which may have an
 // 'other' property containing the position of the secondary cursor
 // on a bidi boundary.
-// A cursor Pos(line, char, "before") is on the same visual line as `char - 1`
-// and after `char - 1` in writing order of `char - 1`
-// A cursor Pos(line, char, "after") is on the same visual line as `char`
-// and before `char` in writing order of `char`
-// Examples (upper-case letters are RTL, lower-case are LTR):
-//     Pos(0, 1, ...)
-//     before   after
-// ab     a|b     a|b
-// aB     a|B     aB|
-// Ab     |Ab     A|b
-// AB     B|A     B|A
-// Every position after the last character on a line is considered to stick
-// to the last character on the line.
 function cursorCoords(cm, pos, context, lineObj, preparedMeasure, varHeight) {
   lineObj = lineObj || getLine(cm.doc, pos.line)
   if (!preparedMeasure) { preparedMeasure = prepareMeasureForLine(cm, lineObj) }
@@ -2854,24 +2768,25 @@ function cursorCoords(cm, pos, context, lineObj, preparedMeasure, varHeight) {
     if (right) { m.left = m.right; } else { m.right = m.left }
     return intoCoordSystem(cm, lineObj, m, context)
   }
-  var order = getOrder(lineObj), ch = pos.ch, sticky = pos.sticky
-  if (ch >= lineObj.text.length) {
-    ch = lineObj.text.length
-    sticky = "before"
-  } else if (ch <= 0) {
-    ch = 0
-    sticky = "after"
+  function getBidi(ch, partPos) {
+    var part = order[partPos], right = part.level % 2
+    if (ch == bidiLeft(part) && partPos && part.level < order[partPos - 1].level) {
+      part = order[--partPos]
+      ch = bidiRight(part) - (part.level % 2 ? 0 : 1)
+      right = true
+    } else if (ch == bidiRight(part) && partPos < order.length - 1 && part.level < order[partPos + 1].level) {
+      part = order[++partPos]
+      ch = bidiLeft(part) - part.level % 2
+      right = false
+    }
+    if (right && ch == part.to && ch > part.from) { return get(ch - 1) }
+    return get(ch, right)
   }
-  if (!order) { return get(sticky == "before" ? ch - 1 : ch, sticky == "before") }
-
-  function getBidi(ch, partPos, invert) {
-    var part = order[partPos], right = (part.level % 2) != 0
-    return get(invert ? ch - 1 : ch, right != invert)
-  }
-  var partPos = getBidiPartAt(order, ch, sticky)
-  var other = bidiOther
-  var val = getBidi(ch, partPos, sticky == "before")
-  if (other != null) { val.other = getBidi(ch, other, sticky != "before") }
+  var order = getOrder(lineObj), ch = pos.ch
+  if (!order) { return get(ch) }
+  var partPos = getBidiPartAt(order, ch)
+  var val = getBidi(ch, partPos)
+  if (bidiOther != null) { val.other = getBidi(ch, bidiOther) }
   return val
 }
 
@@ -2892,8 +2807,8 @@ function estimateCoords(cm, pos) {
 // the right of the character position, for example). When outside
 // is true, that means the coordinates lie outside the line's
 // vertical range.
-function PosWithInfo(line, ch, sticky, outside, xRel) {
-  var pos = Pos(line, ch, sticky)
+function PosWithInfo(line, ch, outside, xRel) {
+  var pos = Pos(line, ch)
   pos.xRel = xRel
   if (outside) { pos.outside = true }
   return pos
@@ -2904,10 +2819,10 @@ function PosWithInfo(line, ch, sticky, outside, xRel) {
 function coordsChar(cm, x, y) {
   var doc = cm.doc
   y += cm.display.viewOffset
-  if (y < 0) { return PosWithInfo(doc.first, 0, null, true, -1) }
+  if (y < 0) { return PosWithInfo(doc.first, 0, true, -1) }
   var lineN = lineAtHeight(doc, y), last = doc.first + doc.size - 1
   if (lineN > last)
-    { return PosWithInfo(doc.first + doc.size - 1, getLine(doc, last).text.length, null, true, 1) }
+    { return PosWithInfo(doc.first + doc.size - 1, getLine(doc, last).text.length, true, 1) }
   if (x < 0) { x = 0 }
 
   var lineObj = getLine(doc, lineN)
@@ -2922,68 +2837,57 @@ function coordsChar(cm, x, y) {
   }
 }
 
-function wrappedLineExtent(cm, lineObj, preparedMeasure, y) {
-  var measure = function (ch) { return intoCoordSystem(cm, lineObj, measureCharPrepared(cm, preparedMeasure, ch), "line"); }
-  var end = lineObj.text.length
-  var begin = findFirst(function (ch) { return measure(ch - 1).bottom <= y; }, end, 0)
-  end = findFirst(function (ch) { return measure(ch).top > y; }, begin, end)
-  return {begin: begin, end: end}
-}
-
-function wrappedLineExtentChar(cm, lineObj, preparedMeasure, target) {
-  var targetTop = intoCoordSystem(cm, lineObj, measureCharPrepared(cm, preparedMeasure, target), "line").top
-  return wrappedLineExtent(cm, lineObj, preparedMeasure, targetTop)
-}
-
 function coordsCharInner(cm, lineObj, lineNo, x, y) {
-  y -= heightAtLine(lineObj)
-  var begin = 0, end = lineObj.text.length
+  var innerOff = y - heightAtLine(lineObj)
+  var wrongLine = false, adjust = 2 * cm.display.wrapper.clientWidth
   var preparedMeasure = prepareMeasureForLine(cm, lineObj)
-  var pos
-  var order = getOrder(lineObj)
-  if (order) {
-    if (cm.options.lineWrapping) {
-      ;var assign;
-      ((assign = wrappedLineExtent(cm, lineObj, preparedMeasure, y), begin = assign.begin, end = assign.end, assign))
-    }
-    pos = new Pos(lineNo, begin)
-    var beginLeft = cursorCoords(cm, pos, "line", lineObj, preparedMeasure).left
-    var dir = beginLeft < x ? 1 : -1
-    var prevDiff, diff = beginLeft - x, prevPos
-    do {
-      prevDiff = diff
-      prevPos = pos
-      pos = moveVisually(cm, lineObj, pos, dir)
-      if (pos == null || pos.ch < begin || end <= (pos.sticky == "before" ? pos.ch - 1 : pos.ch)) {
-        pos = prevPos
-        break
-      }
-      diff = cursorCoords(cm, pos, "line", lineObj, preparedMeasure).left - x
-    } while ((dir < 0) != (diff < 0) && (Math.abs(diff) <= Math.abs(prevDiff)))
-    if (Math.abs(diff) > Math.abs(prevDiff)) {
-      if ((diff < 0) == (prevDiff < 0)) { throw new Error("Broke out of infinite loop in coordsCharInner") }
-      pos = prevPos
-    }
-  } else {
-    var ch = findFirst(function (ch) {
-      var box = intoCoordSystem(cm, lineObj, measureCharPrepared(cm, preparedMeasure, ch), "line")
-      if (box.top > y) {
-        // For the cursor stickiness
-        end = Math.min(ch, end)
-        return true
-      }
-      else if (box.bottom <= y) { return false }
-      else if (box.left > x) { return true }
-      else if (box.right < x) { return false }
-      else { return (x - box.left < box.right - x) }
-    }, begin, end)
-    ch = skipExtendingChars(lineObj.text, ch, 1)
-    pos = new Pos(lineNo, ch, ch == end ? "before" : "after")
+
+  function getX(ch) {
+    var sp = cursorCoords(cm, Pos(lineNo, ch), "line", lineObj, preparedMeasure)
+    wrongLine = true
+    if (innerOff > sp.bottom) { return sp.left - adjust }
+    else if (innerOff < sp.top) { return sp.left + adjust }
+    else { wrongLine = false }
+    return sp.left
   }
-  var coords = cursorCoords(cm, pos, "line", lineObj, preparedMeasure)
-  if (y < coords.top || coords.bottom < y) { pos.outside = true }
-  pos.xRel = x < coords.left ? -1 : (x > coords.right ? 1 : 0)
-  return pos
+
+  var bidi = getOrder(lineObj), dist = lineObj.text.length
+  var from = lineLeft(lineObj), to = lineRight(lineObj)
+  var fromX = getX(from), fromOutside = wrongLine, toX = getX(to), toOutside = wrongLine
+
+  if (x > toX) { return PosWithInfo(lineNo, to, toOutside, 1) }
+  // Do a binary search between these bounds.
+  for (;;) {
+    if (bidi ? to == from || to == moveVisually(lineObj, from, 1) : to - from <= 1) {
+      var ch = x < fromX || x - fromX <= toX - x ? from : to
+      var outside = ch == from ? fromOutside : toOutside
+      var xDiff = x - (ch == from ? fromX : toX)
+      // This is a kludge to handle the case where the coordinates
+      // are after a line-wrapped line. We should replace it with a
+      // more general handling of cursor positions around line
+      // breaks. (Issue #4078)
+      if (toOutside && !bidi && !/\s/.test(lineObj.text.charAt(ch)) && xDiff > 0 &&
+          ch < lineObj.text.length && preparedMeasure.view.measure.heights.length > 1) {
+        var charSize = measureCharPrepared(cm, preparedMeasure, ch, "right")
+        if (innerOff <= charSize.bottom && innerOff >= charSize.top && Math.abs(x - charSize.right) < xDiff) {
+          outside = false
+          ch++
+          xDiff = x - charSize.right
+        }
+      }
+      while (isExtendingChar(lineObj.text.charAt(ch))) { ++ch }
+      var pos = PosWithInfo(lineNo, ch, outside, xDiff < -1 ? -1 : xDiff > 1 ? 1 : 0)
+      return pos
+    }
+    var step = Math.ceil(dist / 2), middle = from + step
+    if (bidi) {
+      middle = from
+      for (var i = 0; i < step; ++i) { middle = moveVisually(lineObj, middle, 1) }
+    }
+    var middleX = getX(middle)
+    if (middleX > x) {to = middle; toX = middleX; if (toOutside = wrongLine) { toX += 1000; } dist = step}
+    else {from = middle; fromX = middleX; fromOutside = wrongLine; dist -= step}
+  }
 }
 
 var measureText
@@ -3570,7 +3474,7 @@ NativeScrollbars.prototype.update = function (measure) {
     this.horiz.style.left = measure.barLeft + "px"
     var totalWidth = measure.viewWidth - measure.barLeft - (needsV ? sWidth : 0)
     this.horiz.firstChild.style.width =
-      Math.max(0, measure.scrollWidth - measure.clientWidth + totalWidth) + "px"
+      (measure.scrollWidth - measure.clientWidth + totalWidth) + "px"
   } else {
     this.horiz.style.display = ""
     this.horiz.firstChild.style.width = "0"
@@ -4455,61 +4359,63 @@ function setGuttersForLineNumbers(options) {
 // (and non-touching) ranges, sorted, and an integer that indicates
 // which one is the primary selection (the one that's scrolled into
 // view, that getCursor returns, etc).
-var Selection = function(ranges, primIndex) {
+function Selection(ranges, primIndex) {
   this.ranges = ranges
   this.primIndex = primIndex
-};
+}
 
-Selection.prototype.primary = function () { return this.ranges[this.primIndex] };
-
-Selection.prototype.equals = function (other) {
+Selection.prototype = {
+  primary: function() { return this.ranges[this.primIndex] },
+  equals: function(other) {
     var this$1 = this;
 
-  if (other == this) { return true }
-  if (other.primIndex != this.primIndex || other.ranges.length != this.ranges.length) { return false }
-  for (var i = 0; i < this.ranges.length; i++) {
-    var here = this$1.ranges[i], there = other.ranges[i]
-    if (!equalCursorPos(here.anchor, there.anchor) || !equalCursorPos(here.head, there.head)) { return false }
+    if (other == this) { return true }
+    if (other.primIndex != this.primIndex || other.ranges.length != this.ranges.length) { return false }
+    for (var i = 0; i < this.ranges.length; i++) {
+      var here = this$1.ranges[i], there = other.ranges[i]
+      if (cmp(here.anchor, there.anchor) != 0 || cmp(here.head, there.head) != 0) { return false }
+    }
+    return true
+  },
+  deepCopy: function() {
+    var this$1 = this;
+
+    var out = []
+    for (var i = 0; i < this.ranges.length; i++)
+      { out[i] = new Range(copyPos(this$1.ranges[i].anchor), copyPos(this$1.ranges[i].head)) }
+    return new Selection(out, this.primIndex)
+  },
+  somethingSelected: function() {
+    var this$1 = this;
+
+    for (var i = 0; i < this.ranges.length; i++)
+      { if (!this$1.ranges[i].empty()) { return true } }
+    return false
+  },
+  contains: function(pos, end) {
+    var this$1 = this;
+
+    if (!end) { end = pos }
+    for (var i = 0; i < this.ranges.length; i++) {
+      var range = this$1.ranges[i]
+      if (cmp(end, range.from()) >= 0 && cmp(pos, range.to()) <= 0)
+        { return i }
+    }
+    return -1
   }
-  return true
-};
+}
 
-Selection.prototype.deepCopy = function () {
-    var this$1 = this;
-
-  var out = []
-  for (var i = 0; i < this.ranges.length; i++)
-    { out[i] = new Range(copyPos(this$1.ranges[i].anchor), copyPos(this$1.ranges[i].head)) }
-  return new Selection(out, this.primIndex)
-};
-
-Selection.prototype.somethingSelected = function () {
-    var this$1 = this;
-
-  for (var i = 0; i < this.ranges.length; i++)
-    { if (!this$1.ranges[i].empty()) { return true } }
-  return false
-};
-
-Selection.prototype.contains = function (pos, end) {
-    var this$1 = this;
-
-  if (!end) { end = pos }
-  for (var i = 0; i < this.ranges.length; i++) {
-    var range = this$1.ranges[i]
-    if (cmp(end, range.from()) >= 0 && cmp(pos, range.to()) <= 0)
-      { return i }
-  }
-  return -1
-};
-
-var Range = function(anchor, head) {
+function Range(anchor, head) {
   this.anchor = anchor; this.head = head
-};
+}
 
-Range.prototype.from = function () { return minPos(this.anchor, this.head) };
-Range.prototype.to = function () { return maxPos(this.anchor, this.head) };
-Range.prototype.empty = function () { return this.head.line == this.anchor.line && this.head.ch == this.anchor.ch };
+Range.prototype = {
+  from: function() { return minPos(this.anchor, this.head) },
+  to: function() { return maxPos(this.anchor, this.head) },
+  empty: function() {
+    return this.head.line == this.anchor.line && this.head.ch == this.anchor.ch
+  }
+}
 
 // Take an unsorted, potentially overlapping set of ranges, and
 // build a selection out of it. 'Consumes' ranges array (modifying
@@ -5448,7 +5354,7 @@ function changeLine(doc, handle, changeType, op) {
 //
 // See also http://marijnhaverbeke.nl/blog/codemirror-line-tree.html
 
-var LeafChunk = function(lines) {
+function LeafChunk(lines) {
   var this$1 = this;
 
   this.lines = lines
@@ -5459,47 +5365,45 @@ var LeafChunk = function(lines) {
     height += lines[i].height
   }
   this.height = height
-};
+}
 
-LeafChunk.prototype.chunkSize = function () { return this.lines.length };
-
-// Remove the n lines at offset 'at'.
-LeafChunk.prototype.removeInner = function (at, n) {
+LeafChunk.prototype = {
+  chunkSize: function() { return this.lines.length },
+  // Remove the n lines at offset 'at'.
+  removeInner: function(at, n) {
     var this$1 = this;
 
-  for (var i = at, e = at + n; i < e; ++i) {
-    var line = this$1.lines[i]
-    this$1.height -= line.height
-    cleanUpLine(line)
-    signalLater(line, "delete")
+    for (var i = at, e = at + n; i < e; ++i) {
+      var line = this$1.lines[i]
+      this$1.height -= line.height
+      cleanUpLine(line)
+      signalLater(line, "delete")
+    }
+    this.lines.splice(at, n)
+  },
+  // Helper used to collapse a small branch into a single leaf.
+  collapse: function(lines) {
+    lines.push.apply(lines, this.lines)
+  },
+  // Insert the given array of lines at offset 'at', count them as
+  // having the given height.
+  insertInner: function(at, lines, height) {
+    var this$1 = this;
+
+    this.height += height
+    this.lines = this.lines.slice(0, at).concat(lines).concat(this.lines.slice(at))
+    for (var i = 0; i < lines.length; ++i) { lines[i].parent = this$1 }
+  },
+  // Used to iterate over a part of the tree.
+  iterN: function(at, n, op) {
+    var this$1 = this;
+
+    for (var e = at + n; at < e; ++at)
+      { if (op(this$1.lines[at])) { return true } }
   }
-  this.lines.splice(at, n)
-};
+}
 
-// Helper used to collapse a small branch into a single leaf.
-LeafChunk.prototype.collapse = function (lines) {
-  lines.push.apply(lines, this.lines)
-};
-
-// Insert the given array of lines at offset 'at', count them as
-// having the given height.
-LeafChunk.prototype.insertInner = function (at, lines, height) {
-    var this$1 = this;
-
-  this.height += height
-  this.lines = this.lines.slice(0, at).concat(lines).concat(this.lines.slice(at))
-  for (var i = 0; i < lines.length; ++i) { lines[i].parent = this$1 }
-};
-
-// Used to iterate over a part of the tree.
-LeafChunk.prototype.iterN = function (at, n, op) {
-    var this$1 = this;
-
-  for (var e = at + n; at < e; ++at)
-    { if (op(this$1.lines[at])) { return true } }
-};
-
-var BranchChunk = function(children) {
+function BranchChunk(children) {
   var this$1 = this;
 
   this.children = children
@@ -5512,120 +5416,123 @@ var BranchChunk = function(children) {
   this.size = size
   this.height = height
   this.parent = null
-};
+}
 
-BranchChunk.prototype.chunkSize = function () { return this.size };
-
-BranchChunk.prototype.removeInner = function (at, n) {
+BranchChunk.prototype = {
+  chunkSize: function() { return this.size },
+  removeInner: function(at, n) {
     var this$1 = this;
 
-  this.size -= n
-  for (var i = 0; i < this.children.length; ++i) {
-    var child = this$1.children[i], sz = child.chunkSize()
-    if (at < sz) {
-      var rm = Math.min(n, sz - at), oldHeight = child.height
-      child.removeInner(at, rm)
-      this$1.height -= oldHeight - child.height
-      if (sz == rm) { this$1.children.splice(i--, 1); child.parent = null }
-      if ((n -= rm) == 0) { break }
-      at = 0
-    } else { at -= sz }
-  }
-  // If the result is smaller than 25 lines, ensure that it is a
-  // single leaf node.
-  if (this.size - n < 25 &&
-      (this.children.length > 1 || !(this.children[0] instanceof LeafChunk))) {
-    var lines = []
-    this.collapse(lines)
-    this.children = [new LeafChunk(lines)]
-    this.children[0].parent = this
-  }
-};
-
-BranchChunk.prototype.collapse = function (lines) {
+    this.size -= n
+    for (var i = 0; i < this.children.length; ++i) {
+      var child = this$1.children[i], sz = child.chunkSize()
+      if (at < sz) {
+        var rm = Math.min(n, sz - at), oldHeight = child.height
+        child.removeInner(at, rm)
+        this$1.height -= oldHeight - child.height
+        if (sz == rm) { this$1.children.splice(i--, 1); child.parent = null }
+        if ((n -= rm) == 0) { break }
+        at = 0
+      } else { at -= sz }
+    }
+    // If the result is smaller than 25 lines, ensure that it is a
+    // single leaf node.
+    if (this.size - n < 25 &&
+        (this.children.length > 1 || !(this.children[0] instanceof LeafChunk))) {
+      var lines = []
+      this.collapse(lines)
+      this.children = [new LeafChunk(lines)]
+      this.children[0].parent = this
+    }
+  },
+  collapse: function(lines) {
     var this$1 = this;
 
-  for (var i = 0; i < this.children.length; ++i) { this$1.children[i].collapse(lines) }
-};
-
-BranchChunk.prototype.insertInner = function (at, lines, height) {
+    for (var i = 0; i < this.children.length; ++i) { this$1.children[i].collapse(lines) }
+  },
+  insertInner: function(at, lines, height) {
     var this$1 = this;
 
-  this.size += lines.length
-  this.height += height
-  for (var i = 0; i < this.children.length; ++i) {
-    var child = this$1.children[i], sz = child.chunkSize()
-    if (at <= sz) {
-      child.insertInner(at, lines, height)
-      if (child.lines && child.lines.length > 50) {
-        // To avoid memory thrashing when child.lines is huge (e.g. first view of a large file), it's never spliced.
-        // Instead, small slices are taken. They're taken in order because sequential memory accesses are fastest.
-        var remaining = child.lines.length % 25 + 25
-        for (var pos = remaining; pos < child.lines.length;) {
-          var leaf = new LeafChunk(child.lines.slice(pos, pos += 25))
-          child.height -= leaf.height
-          this$1.children.splice(++i, 0, leaf)
-          leaf.parent = this$1
+    this.size += lines.length
+    this.height += height
+    for (var i = 0; i < this.children.length; ++i) {
+      var child = this$1.children[i], sz = child.chunkSize()
+      if (at <= sz) {
+        child.insertInner(at, lines, height)
+        if (child.lines && child.lines.length > 50) {
+          // To avoid memory thrashing when child.lines is huge (e.g. first view of a large file), it's never spliced.
+          // Instead, small slices are taken. They're taken in order because sequential memory accesses are fastest.
+          var remaining = child.lines.length % 25 + 25
+          for (var pos = remaining; pos < child.lines.length;) {
+            var leaf = new LeafChunk(child.lines.slice(pos, pos += 25))
+            child.height -= leaf.height
+            this$1.children.splice(++i, 0, leaf)
+            leaf.parent = this$1
+          }
+          child.lines = child.lines.slice(0, remaining)
+          this$1.maybeSpill()
         }
-        child.lines = child.lines.slice(0, remaining)
-        this$1.maybeSpill()
+        break
       }
-      break
+      at -= sz
     }
-    at -= sz
-  }
-};
-
-// When a node has grown, check whether it should be split.
-BranchChunk.prototype.maybeSpill = function () {
-  if (this.children.length <= 10) { return }
-  var me = this
-  do {
-    var spilled = me.children.splice(me.children.length - 5, 5)
-    var sibling = new BranchChunk(spilled)
-    if (!me.parent) { // Become the parent node
-      var copy = new BranchChunk(me.children)
-      copy.parent = me
-      me.children = [copy, sibling]
-      me = copy
-   } else {
-      me.size -= sibling.size
-      me.height -= sibling.height
-      var myIndex = indexOf(me.parent.children, me)
-      me.parent.children.splice(myIndex + 1, 0, sibling)
-    }
-    sibling.parent = me.parent
-  } while (me.children.length > 10)
-  me.parent.maybeSpill()
-};
-
-BranchChunk.prototype.iterN = function (at, n, op) {
+  },
+  // When a node has grown, check whether it should be split.
+  maybeSpill: function() {
+    if (this.children.length <= 10) { return }
+    var me = this
+    do {
+      var spilled = me.children.splice(me.children.length - 5, 5)
+      var sibling = new BranchChunk(spilled)
+      if (!me.parent) { // Become the parent node
+        var copy = new BranchChunk(me.children)
+        copy.parent = me
+        me.children = [copy, sibling]
+        me = copy
+     } else {
+        me.size -= sibling.size
+        me.height -= sibling.height
+        var myIndex = indexOf(me.parent.children, me)
+        me.parent.children.splice(myIndex + 1, 0, sibling)
+      }
+      sibling.parent = me.parent
+    } while (me.children.length > 10)
+    me.parent.maybeSpill()
+  },
+  iterN: function(at, n, op) {
     var this$1 = this;
 
-  for (var i = 0; i < this.children.length; ++i) {
-    var child = this$1.children[i], sz = child.chunkSize()
-    if (at < sz) {
-      var used = Math.min(n, sz - at)
-      if (child.iterN(at, used, op)) { return true }
-      if ((n -= used) == 0) { break }
-      at = 0
-    } else { at -= sz }
+    for (var i = 0; i < this.children.length; ++i) {
+      var child = this$1.children[i], sz = child.chunkSize()
+      if (at < sz) {
+        var used = Math.min(n, sz - at)
+        if (child.iterN(at, used, op)) { return true }
+        if ((n -= used) == 0) { break }
+        at = 0
+      } else { at -= sz }
+    }
   }
-};
+}
 
 // Line widgets are block elements displayed above or below a line.
 
-var LineWidget = function(doc, node, options) {
+function LineWidget(doc, node, options) {
   var this$1 = this;
 
   if (options) { for (var opt in options) { if (options.hasOwnProperty(opt))
     { this$1[opt] = options[opt] } } }
   this.doc = doc
   this.node = node
-};
+}
+eventMixin(LineWidget)
 
-LineWidget.prototype.clear = function () {
-    var this$1 = this;
+function adjustScrollWhenAboveVisible(cm, line, diff) {
+  if (heightAtLine(line) < ((cm.curOp && cm.curOp.scrollTop) || cm.doc.scrollTop))
+    { addToScrollPos(cm, null, diff) }
+}
+
+LineWidget.prototype.clear = function() {
+  var this$1 = this;
 
   var cm = this.doc.cm, ws = this.line.widgets, line = this.line, no = lineNo(line)
   if (no == null || !ws) { return }
@@ -5633,36 +5540,21 @@ LineWidget.prototype.clear = function () {
   if (!ws.length) { line.widgets = null }
   var height = widgetHeight(this)
   updateLineHeight(line, Math.max(0, line.height - height))
-  if (cm) {
-    runInOp(cm, function () {
-      adjustScrollWhenAboveVisible(cm, line, -height)
-      regLineChange(cm, no, "widget")
-    })
-    signalLater(cm, "lineWidgetCleared", cm, this, no)
-  }
-};
-
-LineWidget.prototype.changed = function () {
-    var this$1 = this;
-
+  if (cm) { runInOp(cm, function () {
+    adjustScrollWhenAboveVisible(cm, line, -height)
+    regLineChange(cm, no, "widget")
+  }) }
+}
+LineWidget.prototype.changed = function() {
   var oldH = this.height, cm = this.doc.cm, line = this.line
   this.height = null
   var diff = widgetHeight(this) - oldH
   if (!diff) { return }
   updateLineHeight(line, line.height + diff)
-  if (cm) {
-    runInOp(cm, function () {
-      cm.curOp.forceUpdate = true
-      adjustScrollWhenAboveVisible(cm, line, diff)
-      signalLater(cm, "lineWidgetChanged", cm, this$1, lineNo(line))
-    })
-  }
-};
-eventMixin(LineWidget)
-
-function adjustScrollWhenAboveVisible(cm, line, diff) {
-  if (heightAtLine(line) < ((cm.curOp && cm.curOp.scrollTop) || cm.doc.scrollTop))
-    { addToScrollPos(cm, null, diff) }
+  if (cm) { runInOp(cm, function () {
+    cm.curOp.forceUpdate = true
+    adjustScrollWhenAboveVisible(cm, line, diff)
+  }) }
 }
 
 function addLineWidget(doc, handle, node, options) {
@@ -5682,7 +5574,6 @@ function addLineWidget(doc, handle, node, options) {
     }
     return true
   })
-  signalLater(cm, "lineWidgetAdded", cm, widget, typeof handle == "number" ? handle : lineNo(handle))
   return widget
 }
 
@@ -5703,16 +5594,17 @@ function addLineWidget(doc, handle, node, options) {
 // when they overlap (they may nest, but not partially overlap).
 var nextMarkerId = 0
 
-var TextMarker = function(doc, type) {
+function TextMarker(doc, type) {
   this.lines = []
   this.type = type
   this.doc = doc
   this.id = ++nextMarkerId
-};
+}
+eventMixin(TextMarker)
 
 // Clear the marker.
-TextMarker.prototype.clear = function () {
-    var this$1 = this;
+TextMarker.prototype.clear = function() {
+  var this$1 = this;
 
   if (this.explicitlyCleared) { return }
   var cm = this.doc.cm, withOp = cm && !cm.curOp
@@ -5750,18 +5642,18 @@ TextMarker.prototype.clear = function () {
     this.doc.cantEdit = false
     if (cm) { reCheckSelection(cm.doc) }
   }
-  if (cm) { signalLater(cm, "markerCleared", cm, this, min, max) }
+  if (cm) { signalLater(cm, "markerCleared", cm, this) }
   if (withOp) { endOperation(cm) }
   if (this.parent) { this.parent.clear() }
-};
+}
 
 // Find the position of the marker in the document. Returns a {from,
 // to} object by default. Side can be passed to get a specific side
 // -- 0 (both), -1 (left), or 1 (right). When lineObj is true, the
 // Pos objects returned contain a line object, rather than a line
 // number (used to prevent looking up the same line twice).
-TextMarker.prototype.find = function (side, lineObj) {
-    var this$1 = this;
+TextMarker.prototype.find = function(side, lineObj) {
+  var this$1 = this;
 
   if (side == null && this.type == "bookmark") { side = 1 }
   var from, to
@@ -5778,13 +5670,11 @@ TextMarker.prototype.find = function (side, lineObj) {
     }
   }
   return from && {from: from, to: to}
-};
+}
 
 // Signals that the marker's widget changed, and surrounding layout
 // should be recomputed.
-TextMarker.prototype.changed = function () {
-    var this$1 = this;
-
+TextMarker.prototype.changed = function() {
   var pos = this.find(-1, true), widget = this, cm = this.doc.cm
   if (!pos || !cm) { return }
   runInOp(cm, function () {
@@ -5802,27 +5692,24 @@ TextMarker.prototype.changed = function () {
       if (dHeight)
         { updateLineHeight(line, line.height + dHeight) }
     }
-    signalLater(cm, "markerChanged", cm, this$1)
   })
-};
+}
 
-TextMarker.prototype.attachLine = function (line) {
+TextMarker.prototype.attachLine = function(line) {
   if (!this.lines.length && this.doc.cm) {
     var op = this.doc.cm.curOp
     if (!op.maybeHiddenMarkers || indexOf(op.maybeHiddenMarkers, this) == -1)
       { (op.maybeUnhiddenMarkers || (op.maybeUnhiddenMarkers = [])).push(this) }
   }
   this.lines.push(line)
-};
-
-TextMarker.prototype.detachLine = function (line) {
+}
+TextMarker.prototype.detachLine = function(line) {
   this.lines.splice(indexOf(this.lines, line), 1)
   if (!this.lines.length && this.doc.cm) {
     var op = this.doc.cm.curOp
     ;(op.maybeHiddenMarkers || (op.maybeHiddenMarkers = [])).push(this)
   }
-};
-eventMixin(TextMarker)
+}
 
 // Create a marker, wire it up to the right lines, and
 function markText(doc, from, to, options, type) {
@@ -5842,7 +5729,6 @@ function markText(doc, from, to, options, type) {
     // Showing up as a widget implies collapsed (widget replaces text)
     marker.collapsed = true
     marker.widgetNode = elt("span", [marker.replacedWith], "CodeMirror-widget")
-    marker.widgetNode.setAttribute("role", "presentation") // hide from accessibility tree
     if (!options.handleMouseEvents) { marker.widgetNode.setAttribute("cm-ignore-events", "true") }
     if (options.insertLeft) { marker.widgetNode.insertLeft = true }
   }
@@ -5900,29 +5786,28 @@ function markText(doc, from, to, options, type) {
 // A shared marker spans multiple linked documents. It is
 // implemented as a meta-marker-object controlling multiple normal
 // markers.
-var SharedTextMarker = function(markers, primary) {
+function SharedTextMarker(markers, primary) {
   var this$1 = this;
 
   this.markers = markers
   this.primary = primary
   for (var i = 0; i < markers.length; ++i)
     { markers[i].parent = this$1 }
-};
+}
+eventMixin(SharedTextMarker)
 
-SharedTextMarker.prototype.clear = function () {
-    var this$1 = this;
+SharedTextMarker.prototype.clear = function() {
+  var this$1 = this;
 
   if (this.explicitlyCleared) { return }
   this.explicitlyCleared = true
   for (var i = 0; i < this.markers.length; ++i)
     { this$1.markers[i].clear() }
   signalLater(this, "clear")
-};
-
-SharedTextMarker.prototype.find = function (side, lineObj) {
+}
+SharedTextMarker.prototype.find = function(side, lineObj) {
   return this.primary.find(side, lineObj)
-};
-eventMixin(SharedTextMarker)
+}
 
 function markTextShared(doc, from, to, options, type) {
   options = copyObj(options)
@@ -6191,6 +6076,7 @@ Doc.prototype = createObj(BranchChunk.prototype, {
   clearGutter: docMethodOp(function(gutterID) {
     var this$1 = this;
 
+    var i = this.first
     this.iter(function (line) {
       if (line.gutterMarkers && line.gutterMarkers[gutterID]) {
         changeLine(this$1, line, "gutter", function () {
@@ -6199,6 +6085,7 @@ Doc.prototype = createObj(BranchChunk.prototype, {
           return true
         })
       }
+      ++i
     })
   }),
 
@@ -6857,13 +6744,19 @@ function lineStart(cm, lineN) {
   var line = getLine(cm.doc, lineN)
   var visual = visualLine(line)
   if (visual != line) { lineN = lineNo(visual) }
-  return endOfLine(true, cm, visual, lineN, 1)
+  var order = getOrder(visual)
+  var ch = !order ? 0 : order[0].level % 2 ? lineRight(visual) : lineLeft(visual)
+  return Pos(lineN, ch)
 }
 function lineEnd(cm, lineN) {
-  var line = getLine(cm.doc, lineN)
-  var visual = visualLineEnd(line)
-  if (visual != line) { lineN = lineNo(visual) }
-  return endOfLine(true, cm, line, lineN, -1)
+  var merged, line = getLine(cm.doc, lineN)
+  while (merged = collapsedSpanAtEnd(line)) {
+    line = merged.find(1, true).line
+    lineN = null
+  }
+  var order = getOrder(line)
+  var ch = !order ? line.text.length : order[0].level % 2 ? lineLeft(line) : lineRight(line)
+  return Pos(lineN == null ? lineNo(line) : lineN, ch)
 }
 function lineStartSmart(cm, pos) {
   var start = lineStart(cm, pos.line)
@@ -6872,7 +6765,7 @@ function lineStartSmart(cm, pos) {
   if (!order || order[0].level == 0) {
     var firstNonWS = Math.max(0, line.text.search(/\S/))
     var inWS = pos.line == start.line && pos.ch <= firstNonWS && pos.ch
-    return Pos(start.line, inWS ? 0 : firstNonWS, start.sticky)
+    return Pos(start.line, inWS ? 0 : firstNonWS)
   }
   return start
 }
@@ -8064,7 +7957,7 @@ function addEditorMethods(CodeMirror) {
       } else {
         lineObj = line
       }
-      return intoCoordSystem(this, lineObj, {top: 0, left: 0}, mode || "page", includeWidgets || end).top +
+      return intoCoordSystem(this, lineObj, {top: 0, left: 0}, mode || "page", includeWidgets).top +
         (end ? this.doc.height - heightAtLine(lineObj) : 0)
     },
 
@@ -8196,7 +8089,7 @@ function addEditorMethods(CodeMirror) {
       var start = pos.ch, end = pos.ch
       if (line) {
         var helper = this.getHelper(pos, "wordChars")
-        if ((pos.sticky == "before" || end == line.length) && start) { --start; } else { ++end }
+        if ((pos.xRel < 0 || end == line.length) && start) { --start; } else { ++end }
         var startChar = line.charAt(start)
         var check = isWordChar(startChar, helper)
           ? function (ch) { return isWordChar(ch, helper); }
@@ -8327,30 +8220,22 @@ function addEditorMethods(CodeMirror) {
 // position. The resulting position will have a hitSide=true
 // property if it reached the end of the document.
 function findPosH(doc, pos, dir, unit, visually) {
-  var oldPos = pos
-  var origDir = dir
-  var lineObj = getLine(doc, pos.line)
+  var line = pos.line, ch = pos.ch, origDir = dir
+  var lineObj = getLine(doc, line)
   function findNextLine() {
-    var l = pos.line + dir
+    var l = line + dir
     if (l < doc.first || l >= doc.first + doc.size) { return false }
-    pos = new Pos(l, pos.ch, pos.sticky)
+    line = l
     return lineObj = getLine(doc, l)
   }
   function moveOnce(boundToLine) {
-    var next
-    if (visually) {
-      next = moveVisually(doc.cm, lineObj, pos, dir)
-    } else {
-      next = moveLogically(lineObj, pos, dir)
-    }
+    var next = (visually ? moveVisually : moveLogically)(lineObj, ch, dir, true)
     if (next == null) {
-      if (!boundToLine && findNextLine())
-        { pos = endOfLine(visually, doc.cm, lineObj, pos.line, dir) }
-      else
-        { return false }
-    } else {
-      pos = next
-    }
+      if (!boundToLine && findNextLine()) {
+        if (visually) { ch = (dir < 0 ? lineRight : lineLeft)(lineObj) }
+        else { ch = dir < 0 ? lineObj.text.length : 0 }
+      } else { return false }
+    } else { ch = next }
     return true
   }
 
@@ -8363,14 +8248,14 @@ function findPosH(doc, pos, dir, unit, visually) {
     var helper = doc.cm && doc.cm.getHelper(pos, "wordChars")
     for (var first = true;; first = false) {
       if (dir < 0 && !moveOnce(!first)) { break }
-      var cur = lineObj.text.charAt(pos.ch) || "\n"
+      var cur = lineObj.text.charAt(ch) || "\n"
       var type = isWordChar(cur, helper) ? "w"
         : group && cur == "\n" ? "n"
         : !group || /\s/.test(cur) ? null
         : "p"
       if (group && !first && !type) { type = "s" }
       if (sawType && sawType != type) {
-        if (dir < 0) {dir = 1; moveOnce(); pos.sticky = "after"}
+        if (dir < 0) {dir = 1; moveOnce()}
         break
       }
 
@@ -8378,8 +8263,8 @@ function findPosH(doc, pos, dir, unit, visually) {
       if (dir > 0 && !moveOnce(!first)) { break }
     }
   }
-  var result = skipAtomic(doc, pos, oldPos, origDir, true)
-  if (equalCursorPos(oldPos, result)) { result.hitSide = true }
+  var result = skipAtomic(doc, Pos(line, ch), pos, origDir, true)
+  if (!cmp(pos, result)) { result.hitSide = true }
   return result
 }
 
@@ -8722,7 +8607,6 @@ ContentEditableInput.prototype.setUneditable = function (node) {
 };
 
 ContentEditableInput.prototype.onKeyPress = function (e) {
-  if (e.charCode == 0) { return }
   e.preventDefault()
   if (!this.cm.isReadOnly())
     { operation(this.cm, applyTextInput)(this.cm, String.fromCharCode(e.charCode == null ? e.keyCode : e.charCode), 0) }
@@ -9187,14 +9071,10 @@ TextareaInput.prototype.onContextMenu = function (e) {
       if (!ie || (ie && ie_version < 9)) { prepareSelectAllHack() }
       var i = 0, poll = function () {
         if (display.selForContextMenu == cm.doc.sel && te.selectionStart == 0 &&
-            te.selectionEnd > 0 && input.prevInput == "\u200b") {
-          operation(cm, selectAll)(cm)
-        } else if (i++ < 10) {
-          display.detectingSelectAll = setTimeout(poll, 500)
-        } else {
-          display.selForContextMenu = null
-          display.input.reset()
-        }
+            te.selectionEnd > 0 && input.prevInput == "\u200b")
+          { operation(cm, selectAll)(cm) }
+        else if (i++ < 10) { display.detectingSelectAll = setTimeout(poll, 500) }
+        else { display.input.reset() }
       }
       display.detectingSelectAll = setTimeout(poll, 200)
     }
@@ -9370,12 +9250,12 @@ CodeMirror.fromTextArea = fromTextArea
 
 addLegacyProps(CodeMirror)
 
-CodeMirror.version = "5.24.2"
+CodeMirror.version = "5.22.0"
 
 return CodeMirror;
 
 })));
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/mode/gfm/gfm.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/codemirror/mode/gfm/gfm.js":[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -9507,7 +9387,7 @@ CodeMirror.defineMode("gfm", function(config, modeConfig) {
   CodeMirror.defineMIME("text/x-gfm", "gfm");
 });
 
-},{"../../addon/mode/overlay":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/addon/mode/overlay.js","../../lib/codemirror":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/lib/codemirror.js","../markdown/markdown":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/mode/markdown/markdown.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/mode/markdown/markdown.js":[function(require,module,exports){
+},{"../../addon/mode/overlay":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/codemirror/addon/mode/overlay.js","../../lib/codemirror":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/codemirror/lib/codemirror.js","../markdown/markdown":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/codemirror/mode/markdown/markdown.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/codemirror/mode/markdown/markdown.js":[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -9749,13 +9629,10 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
   }
 
   function local(stream, state) {
-    if (state.fencedChars && stream.match(state.fencedChars)) {
-      if (modeCfg.highlightFormatting) state.formatting = "code-block";
+    if (state.fencedChars && stream.match(state.fencedChars, false)) {
       state.localMode = state.localState = null;
       state.f = state.block = leavingLocal;
-      return getType(state)
-    } else if (state.fencedChars && stream.skipTo(state.fencedChars)) {
-      return "comment"
+      return null;
     } else if (state.localMode) {
       return state.localMode.token(stream, state.localState);
     } else {
@@ -10003,7 +9880,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       return type + tokenTypes.linkEmail;
     }
 
-    if (ch === '<' && stream.match(/^(!--|[a-z]+(?:\s+[a-z_:.\-]+(?:\s*=\s*[^ >]+)?)*\s*>)/i, false)) {
+    if (ch === '<' && stream.match(/^(!--|\w)/, false)) {
       var end = stream.string.indexOf(">", stream.pos);
       if (end != -1) {
         var atts = stream.string.substring(stream.start, end);
@@ -10325,7 +10202,7 @@ CodeMirror.defineMIME("text/x-markdown", "markdown");
 
 });
 
-},{"../../lib/codemirror":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/lib/codemirror.js","../meta":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/mode/meta.js","../xml/xml":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/mode/xml/xml.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/mode/meta.js":[function(require,module,exports){
+},{"../../lib/codemirror":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/codemirror/lib/codemirror.js","../meta":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/codemirror/mode/meta.js","../xml/xml":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/codemirror/mode/xml/xml.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/codemirror/mode/meta.js":[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -10483,7 +10360,7 @@ CodeMirror.defineMIME("text/x-markdown", "markdown");
     {name: "Verilog", mime: "text/x-verilog", mode: "verilog", ext: ["v"]},
     {name: "VHDL", mime: "text/x-vhdl", mode: "vhdl", ext: ["vhd", "vhdl"]},
     {name: "Vue.js Component", mimes: ["script/x-vue", "text/x-vue"], mode: "vue", ext: ["vue"]},
-    {name: "XML", mimes: ["application/xml", "text/xml"], mode: "xml", ext: ["xml", "xsl", "xsd", "svg"], alias: ["rss", "wsdl", "xsd"]},
+    {name: "XML", mimes: ["application/xml", "text/xml"], mode: "xml", ext: ["xml", "xsl", "xsd"], alias: ["rss", "wsdl", "xsd"]},
     {name: "XQuery", mime: "application/xquery", mode: "xquery", ext: ["xy", "xquery"]},
     {name: "Yacas", mime: "text/x-yacas", mode: "yacas", ext: ["ys"]},
     {name: "YAML", mimes: ["text/x-yaml", "text/yaml"], mode: "yaml", ext: ["yaml", "yml"], alias: ["yml"]},
@@ -10506,8 +10383,6 @@ CodeMirror.defineMIME("text/x-markdown", "markdown");
       if (info.mimes) for (var j = 0; j < info.mimes.length; j++)
         if (info.mimes[j] == mime) return info;
     }
-    if (/\+xml$/.test(mime)) return CodeMirror.findModeByMIME("application/xml")
-    if (/\+json$/.test(mime)) return CodeMirror.findModeByMIME("application/json")
   };
 
   CodeMirror.findModeByExtension = function(ext) {
@@ -10539,7 +10414,7 @@ CodeMirror.defineMIME("text/x-markdown", "markdown");
   };
 });
 
-},{"../lib/codemirror":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/lib/codemirror.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/mode/xml/xml.js":[function(require,module,exports){
+},{"../lib/codemirror":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/codemirror/lib/codemirror.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/codemirror/mode/xml/xml.js":[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -10935,9 +10810,9 @@ if (!CodeMirror.mimeModes.hasOwnProperty("text/html"))
 
 });
 
-},{"../../lib/codemirror":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/lib/codemirror.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/entities/maps/entities.json":[function(require,module,exports){
+},{"../../lib/codemirror":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/codemirror/lib/codemirror.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/entities/maps/entities.json":[function(require,module,exports){
 module.exports={"Aacute":"\u00C1","aacute":"\u00E1","Abreve":"\u0102","abreve":"\u0103","ac":"\u223E","acd":"\u223F","acE":"\u223E\u0333","Acirc":"\u00C2","acirc":"\u00E2","acute":"\u00B4","Acy":"\u0410","acy":"\u0430","AElig":"\u00C6","aelig":"\u00E6","af":"\u2061","Afr":"\uD835\uDD04","afr":"\uD835\uDD1E","Agrave":"\u00C0","agrave":"\u00E0","alefsym":"\u2135","aleph":"\u2135","Alpha":"\u0391","alpha":"\u03B1","Amacr":"\u0100","amacr":"\u0101","amalg":"\u2A3F","amp":"&","AMP":"&","andand":"\u2A55","And":"\u2A53","and":"\u2227","andd":"\u2A5C","andslope":"\u2A58","andv":"\u2A5A","ang":"\u2220","ange":"\u29A4","angle":"\u2220","angmsdaa":"\u29A8","angmsdab":"\u29A9","angmsdac":"\u29AA","angmsdad":"\u29AB","angmsdae":"\u29AC","angmsdaf":"\u29AD","angmsdag":"\u29AE","angmsdah":"\u29AF","angmsd":"\u2221","angrt":"\u221F","angrtvb":"\u22BE","angrtvbd":"\u299D","angsph":"\u2222","angst":"\u00C5","angzarr":"\u237C","Aogon":"\u0104","aogon":"\u0105","Aopf":"\uD835\uDD38","aopf":"\uD835\uDD52","apacir":"\u2A6F","ap":"\u2248","apE":"\u2A70","ape":"\u224A","apid":"\u224B","apos":"'","ApplyFunction":"\u2061","approx":"\u2248","approxeq":"\u224A","Aring":"\u00C5","aring":"\u00E5","Ascr":"\uD835\uDC9C","ascr":"\uD835\uDCB6","Assign":"\u2254","ast":"*","asymp":"\u2248","asympeq":"\u224D","Atilde":"\u00C3","atilde":"\u00E3","Auml":"\u00C4","auml":"\u00E4","awconint":"\u2233","awint":"\u2A11","backcong":"\u224C","backepsilon":"\u03F6","backprime":"\u2035","backsim":"\u223D","backsimeq":"\u22CD","Backslash":"\u2216","Barv":"\u2AE7","barvee":"\u22BD","barwed":"\u2305","Barwed":"\u2306","barwedge":"\u2305","bbrk":"\u23B5","bbrktbrk":"\u23B6","bcong":"\u224C","Bcy":"\u0411","bcy":"\u0431","bdquo":"\u201E","becaus":"\u2235","because":"\u2235","Because":"\u2235","bemptyv":"\u29B0","bepsi":"\u03F6","bernou":"\u212C","Bernoullis":"\u212C","Beta":"\u0392","beta":"\u03B2","beth":"\u2136","between":"\u226C","Bfr":"\uD835\uDD05","bfr":"\uD835\uDD1F","bigcap":"\u22C2","bigcirc":"\u25EF","bigcup":"\u22C3","bigodot":"\u2A00","bigoplus":"\u2A01","bigotimes":"\u2A02","bigsqcup":"\u2A06","bigstar":"\u2605","bigtriangledown":"\u25BD","bigtriangleup":"\u25B3","biguplus":"\u2A04","bigvee":"\u22C1","bigwedge":"\u22C0","bkarow":"\u290D","blacklozenge":"\u29EB","blacksquare":"\u25AA","blacktriangle":"\u25B4","blacktriangledown":"\u25BE","blacktriangleleft":"\u25C2","blacktriangleright":"\u25B8","blank":"\u2423","blk12":"\u2592","blk14":"\u2591","blk34":"\u2593","block":"\u2588","bne":"=\u20E5","bnequiv":"\u2261\u20E5","bNot":"\u2AED","bnot":"\u2310","Bopf":"\uD835\uDD39","bopf":"\uD835\uDD53","bot":"\u22A5","bottom":"\u22A5","bowtie":"\u22C8","boxbox":"\u29C9","boxdl":"\u2510","boxdL":"\u2555","boxDl":"\u2556","boxDL":"\u2557","boxdr":"\u250C","boxdR":"\u2552","boxDr":"\u2553","boxDR":"\u2554","boxh":"\u2500","boxH":"\u2550","boxhd":"\u252C","boxHd":"\u2564","boxhD":"\u2565","boxHD":"\u2566","boxhu":"\u2534","boxHu":"\u2567","boxhU":"\u2568","boxHU":"\u2569","boxminus":"\u229F","boxplus":"\u229E","boxtimes":"\u22A0","boxul":"\u2518","boxuL":"\u255B","boxUl":"\u255C","boxUL":"\u255D","boxur":"\u2514","boxuR":"\u2558","boxUr":"\u2559","boxUR":"\u255A","boxv":"\u2502","boxV":"\u2551","boxvh":"\u253C","boxvH":"\u256A","boxVh":"\u256B","boxVH":"\u256C","boxvl":"\u2524","boxvL":"\u2561","boxVl":"\u2562","boxVL":"\u2563","boxvr":"\u251C","boxvR":"\u255E","boxVr":"\u255F","boxVR":"\u2560","bprime":"\u2035","breve":"\u02D8","Breve":"\u02D8","brvbar":"\u00A6","bscr":"\uD835\uDCB7","Bscr":"\u212C","bsemi":"\u204F","bsim":"\u223D","bsime":"\u22CD","bsolb":"\u29C5","bsol":"\\","bsolhsub":"\u27C8","bull":"\u2022","bullet":"\u2022","bump":"\u224E","bumpE":"\u2AAE","bumpe":"\u224F","Bumpeq":"\u224E","bumpeq":"\u224F","Cacute":"\u0106","cacute":"\u0107","capand":"\u2A44","capbrcup":"\u2A49","capcap":"\u2A4B","cap":"\u2229","Cap":"\u22D2","capcup":"\u2A47","capdot":"\u2A40","CapitalDifferentialD":"\u2145","caps":"\u2229\uFE00","caret":"\u2041","caron":"\u02C7","Cayleys":"\u212D","ccaps":"\u2A4D","Ccaron":"\u010C","ccaron":"\u010D","Ccedil":"\u00C7","ccedil":"\u00E7","Ccirc":"\u0108","ccirc":"\u0109","Cconint":"\u2230","ccups":"\u2A4C","ccupssm":"\u2A50","Cdot":"\u010A","cdot":"\u010B","cedil":"\u00B8","Cedilla":"\u00B8","cemptyv":"\u29B2","cent":"\u00A2","centerdot":"\u00B7","CenterDot":"\u00B7","cfr":"\uD835\uDD20","Cfr":"\u212D","CHcy":"\u0427","chcy":"\u0447","check":"\u2713","checkmark":"\u2713","Chi":"\u03A7","chi":"\u03C7","circ":"\u02C6","circeq":"\u2257","circlearrowleft":"\u21BA","circlearrowright":"\u21BB","circledast":"\u229B","circledcirc":"\u229A","circleddash":"\u229D","CircleDot":"\u2299","circledR":"\u00AE","circledS":"\u24C8","CircleMinus":"\u2296","CirclePlus":"\u2295","CircleTimes":"\u2297","cir":"\u25CB","cirE":"\u29C3","cire":"\u2257","cirfnint":"\u2A10","cirmid":"\u2AEF","cirscir":"\u29C2","ClockwiseContourIntegral":"\u2232","CloseCurlyDoubleQuote":"\u201D","CloseCurlyQuote":"\u2019","clubs":"\u2663","clubsuit":"\u2663","colon":":","Colon":"\u2237","Colone":"\u2A74","colone":"\u2254","coloneq":"\u2254","comma":",","commat":"@","comp":"\u2201","compfn":"\u2218","complement":"\u2201","complexes":"\u2102","cong":"\u2245","congdot":"\u2A6D","Congruent":"\u2261","conint":"\u222E","Conint":"\u222F","ContourIntegral":"\u222E","copf":"\uD835\uDD54","Copf":"\u2102","coprod":"\u2210","Coproduct":"\u2210","copy":"\u00A9","COPY":"\u00A9","copysr":"\u2117","CounterClockwiseContourIntegral":"\u2233","crarr":"\u21B5","cross":"\u2717","Cross":"\u2A2F","Cscr":"\uD835\uDC9E","cscr":"\uD835\uDCB8","csub":"\u2ACF","csube":"\u2AD1","csup":"\u2AD0","csupe":"\u2AD2","ctdot":"\u22EF","cudarrl":"\u2938","cudarrr":"\u2935","cuepr":"\u22DE","cuesc":"\u22DF","cularr":"\u21B6","cularrp":"\u293D","cupbrcap":"\u2A48","cupcap":"\u2A46","CupCap":"\u224D","cup":"\u222A","Cup":"\u22D3","cupcup":"\u2A4A","cupdot":"\u228D","cupor":"\u2A45","cups":"\u222A\uFE00","curarr":"\u21B7","curarrm":"\u293C","curlyeqprec":"\u22DE","curlyeqsucc":"\u22DF","curlyvee":"\u22CE","curlywedge":"\u22CF","curren":"\u00A4","curvearrowleft":"\u21B6","curvearrowright":"\u21B7","cuvee":"\u22CE","cuwed":"\u22CF","cwconint":"\u2232","cwint":"\u2231","cylcty":"\u232D","dagger":"\u2020","Dagger":"\u2021","daleth":"\u2138","darr":"\u2193","Darr":"\u21A1","dArr":"\u21D3","dash":"\u2010","Dashv":"\u2AE4","dashv":"\u22A3","dbkarow":"\u290F","dblac":"\u02DD","Dcaron":"\u010E","dcaron":"\u010F","Dcy":"\u0414","dcy":"\u0434","ddagger":"\u2021","ddarr":"\u21CA","DD":"\u2145","dd":"\u2146","DDotrahd":"\u2911","ddotseq":"\u2A77","deg":"\u00B0","Del":"\u2207","Delta":"\u0394","delta":"\u03B4","demptyv":"\u29B1","dfisht":"\u297F","Dfr":"\uD835\uDD07","dfr":"\uD835\uDD21","dHar":"\u2965","dharl":"\u21C3","dharr":"\u21C2","DiacriticalAcute":"\u00B4","DiacriticalDot":"\u02D9","DiacriticalDoubleAcute":"\u02DD","DiacriticalGrave":"`","DiacriticalTilde":"\u02DC","diam":"\u22C4","diamond":"\u22C4","Diamond":"\u22C4","diamondsuit":"\u2666","diams":"\u2666","die":"\u00A8","DifferentialD":"\u2146","digamma":"\u03DD","disin":"\u22F2","div":"\u00F7","divide":"\u00F7","divideontimes":"\u22C7","divonx":"\u22C7","DJcy":"\u0402","djcy":"\u0452","dlcorn":"\u231E","dlcrop":"\u230D","dollar":"$","Dopf":"\uD835\uDD3B","dopf":"\uD835\uDD55","Dot":"\u00A8","dot":"\u02D9","DotDot":"\u20DC","doteq":"\u2250","doteqdot":"\u2251","DotEqual":"\u2250","dotminus":"\u2238","dotplus":"\u2214","dotsquare":"\u22A1","doublebarwedge":"\u2306","DoubleContourIntegral":"\u222F","DoubleDot":"\u00A8","DoubleDownArrow":"\u21D3","DoubleLeftArrow":"\u21D0","DoubleLeftRightArrow":"\u21D4","DoubleLeftTee":"\u2AE4","DoubleLongLeftArrow":"\u27F8","DoubleLongLeftRightArrow":"\u27FA","DoubleLongRightArrow":"\u27F9","DoubleRightArrow":"\u21D2","DoubleRightTee":"\u22A8","DoubleUpArrow":"\u21D1","DoubleUpDownArrow":"\u21D5","DoubleVerticalBar":"\u2225","DownArrowBar":"\u2913","downarrow":"\u2193","DownArrow":"\u2193","Downarrow":"\u21D3","DownArrowUpArrow":"\u21F5","DownBreve":"\u0311","downdownarrows":"\u21CA","downharpoonleft":"\u21C3","downharpoonright":"\u21C2","DownLeftRightVector":"\u2950","DownLeftTeeVector":"\u295E","DownLeftVectorBar":"\u2956","DownLeftVector":"\u21BD","DownRightTeeVector":"\u295F","DownRightVectorBar":"\u2957","DownRightVector":"\u21C1","DownTeeArrow":"\u21A7","DownTee":"\u22A4","drbkarow":"\u2910","drcorn":"\u231F","drcrop":"\u230C","Dscr":"\uD835\uDC9F","dscr":"\uD835\uDCB9","DScy":"\u0405","dscy":"\u0455","dsol":"\u29F6","Dstrok":"\u0110","dstrok":"\u0111","dtdot":"\u22F1","dtri":"\u25BF","dtrif":"\u25BE","duarr":"\u21F5","duhar":"\u296F","dwangle":"\u29A6","DZcy":"\u040F","dzcy":"\u045F","dzigrarr":"\u27FF","Eacute":"\u00C9","eacute":"\u00E9","easter":"\u2A6E","Ecaron":"\u011A","ecaron":"\u011B","Ecirc":"\u00CA","ecirc":"\u00EA","ecir":"\u2256","ecolon":"\u2255","Ecy":"\u042D","ecy":"\u044D","eDDot":"\u2A77","Edot":"\u0116","edot":"\u0117","eDot":"\u2251","ee":"\u2147","efDot":"\u2252","Efr":"\uD835\uDD08","efr":"\uD835\uDD22","eg":"\u2A9A","Egrave":"\u00C8","egrave":"\u00E8","egs":"\u2A96","egsdot":"\u2A98","el":"\u2A99","Element":"\u2208","elinters":"\u23E7","ell":"\u2113","els":"\u2A95","elsdot":"\u2A97","Emacr":"\u0112","emacr":"\u0113","empty":"\u2205","emptyset":"\u2205","EmptySmallSquare":"\u25FB","emptyv":"\u2205","EmptyVerySmallSquare":"\u25AB","emsp13":"\u2004","emsp14":"\u2005","emsp":"\u2003","ENG":"\u014A","eng":"\u014B","ensp":"\u2002","Eogon":"\u0118","eogon":"\u0119","Eopf":"\uD835\uDD3C","eopf":"\uD835\uDD56","epar":"\u22D5","eparsl":"\u29E3","eplus":"\u2A71","epsi":"\u03B5","Epsilon":"\u0395","epsilon":"\u03B5","epsiv":"\u03F5","eqcirc":"\u2256","eqcolon":"\u2255","eqsim":"\u2242","eqslantgtr":"\u2A96","eqslantless":"\u2A95","Equal":"\u2A75","equals":"=","EqualTilde":"\u2242","equest":"\u225F","Equilibrium":"\u21CC","equiv":"\u2261","equivDD":"\u2A78","eqvparsl":"\u29E5","erarr":"\u2971","erDot":"\u2253","escr":"\u212F","Escr":"\u2130","esdot":"\u2250","Esim":"\u2A73","esim":"\u2242","Eta":"\u0397","eta":"\u03B7","ETH":"\u00D0","eth":"\u00F0","Euml":"\u00CB","euml":"\u00EB","euro":"\u20AC","excl":"!","exist":"\u2203","Exists":"\u2203","expectation":"\u2130","exponentiale":"\u2147","ExponentialE":"\u2147","fallingdotseq":"\u2252","Fcy":"\u0424","fcy":"\u0444","female":"\u2640","ffilig":"\uFB03","fflig":"\uFB00","ffllig":"\uFB04","Ffr":"\uD835\uDD09","ffr":"\uD835\uDD23","filig":"\uFB01","FilledSmallSquare":"\u25FC","FilledVerySmallSquare":"\u25AA","fjlig":"fj","flat":"\u266D","fllig":"\uFB02","fltns":"\u25B1","fnof":"\u0192","Fopf":"\uD835\uDD3D","fopf":"\uD835\uDD57","forall":"\u2200","ForAll":"\u2200","fork":"\u22D4","forkv":"\u2AD9","Fouriertrf":"\u2131","fpartint":"\u2A0D","frac12":"\u00BD","frac13":"\u2153","frac14":"\u00BC","frac15":"\u2155","frac16":"\u2159","frac18":"\u215B","frac23":"\u2154","frac25":"\u2156","frac34":"\u00BE","frac35":"\u2157","frac38":"\u215C","frac45":"\u2158","frac56":"\u215A","frac58":"\u215D","frac78":"\u215E","frasl":"\u2044","frown":"\u2322","fscr":"\uD835\uDCBB","Fscr":"\u2131","gacute":"\u01F5","Gamma":"\u0393","gamma":"\u03B3","Gammad":"\u03DC","gammad":"\u03DD","gap":"\u2A86","Gbreve":"\u011E","gbreve":"\u011F","Gcedil":"\u0122","Gcirc":"\u011C","gcirc":"\u011D","Gcy":"\u0413","gcy":"\u0433","Gdot":"\u0120","gdot":"\u0121","ge":"\u2265","gE":"\u2267","gEl":"\u2A8C","gel":"\u22DB","geq":"\u2265","geqq":"\u2267","geqslant":"\u2A7E","gescc":"\u2AA9","ges":"\u2A7E","gesdot":"\u2A80","gesdoto":"\u2A82","gesdotol":"\u2A84","gesl":"\u22DB\uFE00","gesles":"\u2A94","Gfr":"\uD835\uDD0A","gfr":"\uD835\uDD24","gg":"\u226B","Gg":"\u22D9","ggg":"\u22D9","gimel":"\u2137","GJcy":"\u0403","gjcy":"\u0453","gla":"\u2AA5","gl":"\u2277","glE":"\u2A92","glj":"\u2AA4","gnap":"\u2A8A","gnapprox":"\u2A8A","gne":"\u2A88","gnE":"\u2269","gneq":"\u2A88","gneqq":"\u2269","gnsim":"\u22E7","Gopf":"\uD835\uDD3E","gopf":"\uD835\uDD58","grave":"`","GreaterEqual":"\u2265","GreaterEqualLess":"\u22DB","GreaterFullEqual":"\u2267","GreaterGreater":"\u2AA2","GreaterLess":"\u2277","GreaterSlantEqual":"\u2A7E","GreaterTilde":"\u2273","Gscr":"\uD835\uDCA2","gscr":"\u210A","gsim":"\u2273","gsime":"\u2A8E","gsiml":"\u2A90","gtcc":"\u2AA7","gtcir":"\u2A7A","gt":">","GT":">","Gt":"\u226B","gtdot":"\u22D7","gtlPar":"\u2995","gtquest":"\u2A7C","gtrapprox":"\u2A86","gtrarr":"\u2978","gtrdot":"\u22D7","gtreqless":"\u22DB","gtreqqless":"\u2A8C","gtrless":"\u2277","gtrsim":"\u2273","gvertneqq":"\u2269\uFE00","gvnE":"\u2269\uFE00","Hacek":"\u02C7","hairsp":"\u200A","half":"\u00BD","hamilt":"\u210B","HARDcy":"\u042A","hardcy":"\u044A","harrcir":"\u2948","harr":"\u2194","hArr":"\u21D4","harrw":"\u21AD","Hat":"^","hbar":"\u210F","Hcirc":"\u0124","hcirc":"\u0125","hearts":"\u2665","heartsuit":"\u2665","hellip":"\u2026","hercon":"\u22B9","hfr":"\uD835\uDD25","Hfr":"\u210C","HilbertSpace":"\u210B","hksearow":"\u2925","hkswarow":"\u2926","hoarr":"\u21FF","homtht":"\u223B","hookleftarrow":"\u21A9","hookrightarrow":"\u21AA","hopf":"\uD835\uDD59","Hopf":"\u210D","horbar":"\u2015","HorizontalLine":"\u2500","hscr":"\uD835\uDCBD","Hscr":"\u210B","hslash":"\u210F","Hstrok":"\u0126","hstrok":"\u0127","HumpDownHump":"\u224E","HumpEqual":"\u224F","hybull":"\u2043","hyphen":"\u2010","Iacute":"\u00CD","iacute":"\u00ED","ic":"\u2063","Icirc":"\u00CE","icirc":"\u00EE","Icy":"\u0418","icy":"\u0438","Idot":"\u0130","IEcy":"\u0415","iecy":"\u0435","iexcl":"\u00A1","iff":"\u21D4","ifr":"\uD835\uDD26","Ifr":"\u2111","Igrave":"\u00CC","igrave":"\u00EC","ii":"\u2148","iiiint":"\u2A0C","iiint":"\u222D","iinfin":"\u29DC","iiota":"\u2129","IJlig":"\u0132","ijlig":"\u0133","Imacr":"\u012A","imacr":"\u012B","image":"\u2111","ImaginaryI":"\u2148","imagline":"\u2110","imagpart":"\u2111","imath":"\u0131","Im":"\u2111","imof":"\u22B7","imped":"\u01B5","Implies":"\u21D2","incare":"\u2105","in":"\u2208","infin":"\u221E","infintie":"\u29DD","inodot":"\u0131","intcal":"\u22BA","int":"\u222B","Int":"\u222C","integers":"\u2124","Integral":"\u222B","intercal":"\u22BA","Intersection":"\u22C2","intlarhk":"\u2A17","intprod":"\u2A3C","InvisibleComma":"\u2063","InvisibleTimes":"\u2062","IOcy":"\u0401","iocy":"\u0451","Iogon":"\u012E","iogon":"\u012F","Iopf":"\uD835\uDD40","iopf":"\uD835\uDD5A","Iota":"\u0399","iota":"\u03B9","iprod":"\u2A3C","iquest":"\u00BF","iscr":"\uD835\uDCBE","Iscr":"\u2110","isin":"\u2208","isindot":"\u22F5","isinE":"\u22F9","isins":"\u22F4","isinsv":"\u22F3","isinv":"\u2208","it":"\u2062","Itilde":"\u0128","itilde":"\u0129","Iukcy":"\u0406","iukcy":"\u0456","Iuml":"\u00CF","iuml":"\u00EF","Jcirc":"\u0134","jcirc":"\u0135","Jcy":"\u0419","jcy":"\u0439","Jfr":"\uD835\uDD0D","jfr":"\uD835\uDD27","jmath":"\u0237","Jopf":"\uD835\uDD41","jopf":"\uD835\uDD5B","Jscr":"\uD835\uDCA5","jscr":"\uD835\uDCBF","Jsercy":"\u0408","jsercy":"\u0458","Jukcy":"\u0404","jukcy":"\u0454","Kappa":"\u039A","kappa":"\u03BA","kappav":"\u03F0","Kcedil":"\u0136","kcedil":"\u0137","Kcy":"\u041A","kcy":"\u043A","Kfr":"\uD835\uDD0E","kfr":"\uD835\uDD28","kgreen":"\u0138","KHcy":"\u0425","khcy":"\u0445","KJcy":"\u040C","kjcy":"\u045C","Kopf":"\uD835\uDD42","kopf":"\uD835\uDD5C","Kscr":"\uD835\uDCA6","kscr":"\uD835\uDCC0","lAarr":"\u21DA","Lacute":"\u0139","lacute":"\u013A","laemptyv":"\u29B4","lagran":"\u2112","Lambda":"\u039B","lambda":"\u03BB","lang":"\u27E8","Lang":"\u27EA","langd":"\u2991","langle":"\u27E8","lap":"\u2A85","Laplacetrf":"\u2112","laquo":"\u00AB","larrb":"\u21E4","larrbfs":"\u291F","larr":"\u2190","Larr":"\u219E","lArr":"\u21D0","larrfs":"\u291D","larrhk":"\u21A9","larrlp":"\u21AB","larrpl":"\u2939","larrsim":"\u2973","larrtl":"\u21A2","latail":"\u2919","lAtail":"\u291B","lat":"\u2AAB","late":"\u2AAD","lates":"\u2AAD\uFE00","lbarr":"\u290C","lBarr":"\u290E","lbbrk":"\u2772","lbrace":"{","lbrack":"[","lbrke":"\u298B","lbrksld":"\u298F","lbrkslu":"\u298D","Lcaron":"\u013D","lcaron":"\u013E","Lcedil":"\u013B","lcedil":"\u013C","lceil":"\u2308","lcub":"{","Lcy":"\u041B","lcy":"\u043B","ldca":"\u2936","ldquo":"\u201C","ldquor":"\u201E","ldrdhar":"\u2967","ldrushar":"\u294B","ldsh":"\u21B2","le":"\u2264","lE":"\u2266","LeftAngleBracket":"\u27E8","LeftArrowBar":"\u21E4","leftarrow":"\u2190","LeftArrow":"\u2190","Leftarrow":"\u21D0","LeftArrowRightArrow":"\u21C6","leftarrowtail":"\u21A2","LeftCeiling":"\u2308","LeftDoubleBracket":"\u27E6","LeftDownTeeVector":"\u2961","LeftDownVectorBar":"\u2959","LeftDownVector":"\u21C3","LeftFloor":"\u230A","leftharpoondown":"\u21BD","leftharpoonup":"\u21BC","leftleftarrows":"\u21C7","leftrightarrow":"\u2194","LeftRightArrow":"\u2194","Leftrightarrow":"\u21D4","leftrightarrows":"\u21C6","leftrightharpoons":"\u21CB","leftrightsquigarrow":"\u21AD","LeftRightVector":"\u294E","LeftTeeArrow":"\u21A4","LeftTee":"\u22A3","LeftTeeVector":"\u295A","leftthreetimes":"\u22CB","LeftTriangleBar":"\u29CF","LeftTriangle":"\u22B2","LeftTriangleEqual":"\u22B4","LeftUpDownVector":"\u2951","LeftUpTeeVector":"\u2960","LeftUpVectorBar":"\u2958","LeftUpVector":"\u21BF","LeftVectorBar":"\u2952","LeftVector":"\u21BC","lEg":"\u2A8B","leg":"\u22DA","leq":"\u2264","leqq":"\u2266","leqslant":"\u2A7D","lescc":"\u2AA8","les":"\u2A7D","lesdot":"\u2A7F","lesdoto":"\u2A81","lesdotor":"\u2A83","lesg":"\u22DA\uFE00","lesges":"\u2A93","lessapprox":"\u2A85","lessdot":"\u22D6","lesseqgtr":"\u22DA","lesseqqgtr":"\u2A8B","LessEqualGreater":"\u22DA","LessFullEqual":"\u2266","LessGreater":"\u2276","lessgtr":"\u2276","LessLess":"\u2AA1","lesssim":"\u2272","LessSlantEqual":"\u2A7D","LessTilde":"\u2272","lfisht":"\u297C","lfloor":"\u230A","Lfr":"\uD835\uDD0F","lfr":"\uD835\uDD29","lg":"\u2276","lgE":"\u2A91","lHar":"\u2962","lhard":"\u21BD","lharu":"\u21BC","lharul":"\u296A","lhblk":"\u2584","LJcy":"\u0409","ljcy":"\u0459","llarr":"\u21C7","ll":"\u226A","Ll":"\u22D8","llcorner":"\u231E","Lleftarrow":"\u21DA","llhard":"\u296B","lltri":"\u25FA","Lmidot":"\u013F","lmidot":"\u0140","lmoustache":"\u23B0","lmoust":"\u23B0","lnap":"\u2A89","lnapprox":"\u2A89","lne":"\u2A87","lnE":"\u2268","lneq":"\u2A87","lneqq":"\u2268","lnsim":"\u22E6","loang":"\u27EC","loarr":"\u21FD","lobrk":"\u27E6","longleftarrow":"\u27F5","LongLeftArrow":"\u27F5","Longleftarrow":"\u27F8","longleftrightarrow":"\u27F7","LongLeftRightArrow":"\u27F7","Longleftrightarrow":"\u27FA","longmapsto":"\u27FC","longrightarrow":"\u27F6","LongRightArrow":"\u27F6","Longrightarrow":"\u27F9","looparrowleft":"\u21AB","looparrowright":"\u21AC","lopar":"\u2985","Lopf":"\uD835\uDD43","lopf":"\uD835\uDD5D","loplus":"\u2A2D","lotimes":"\u2A34","lowast":"\u2217","lowbar":"_","LowerLeftArrow":"\u2199","LowerRightArrow":"\u2198","loz":"\u25CA","lozenge":"\u25CA","lozf":"\u29EB","lpar":"(","lparlt":"\u2993","lrarr":"\u21C6","lrcorner":"\u231F","lrhar":"\u21CB","lrhard":"\u296D","lrm":"\u200E","lrtri":"\u22BF","lsaquo":"\u2039","lscr":"\uD835\uDCC1","Lscr":"\u2112","lsh":"\u21B0","Lsh":"\u21B0","lsim":"\u2272","lsime":"\u2A8D","lsimg":"\u2A8F","lsqb":"[","lsquo":"\u2018","lsquor":"\u201A","Lstrok":"\u0141","lstrok":"\u0142","ltcc":"\u2AA6","ltcir":"\u2A79","lt":"<","LT":"<","Lt":"\u226A","ltdot":"\u22D6","lthree":"\u22CB","ltimes":"\u22C9","ltlarr":"\u2976","ltquest":"\u2A7B","ltri":"\u25C3","ltrie":"\u22B4","ltrif":"\u25C2","ltrPar":"\u2996","lurdshar":"\u294A","luruhar":"\u2966","lvertneqq":"\u2268\uFE00","lvnE":"\u2268\uFE00","macr":"\u00AF","male":"\u2642","malt":"\u2720","maltese":"\u2720","Map":"\u2905","map":"\u21A6","mapsto":"\u21A6","mapstodown":"\u21A7","mapstoleft":"\u21A4","mapstoup":"\u21A5","marker":"\u25AE","mcomma":"\u2A29","Mcy":"\u041C","mcy":"\u043C","mdash":"\u2014","mDDot":"\u223A","measuredangle":"\u2221","MediumSpace":"\u205F","Mellintrf":"\u2133","Mfr":"\uD835\uDD10","mfr":"\uD835\uDD2A","mho":"\u2127","micro":"\u00B5","midast":"*","midcir":"\u2AF0","mid":"\u2223","middot":"\u00B7","minusb":"\u229F","minus":"\u2212","minusd":"\u2238","minusdu":"\u2A2A","MinusPlus":"\u2213","mlcp":"\u2ADB","mldr":"\u2026","mnplus":"\u2213","models":"\u22A7","Mopf":"\uD835\uDD44","mopf":"\uD835\uDD5E","mp":"\u2213","mscr":"\uD835\uDCC2","Mscr":"\u2133","mstpos":"\u223E","Mu":"\u039C","mu":"\u03BC","multimap":"\u22B8","mumap":"\u22B8","nabla":"\u2207","Nacute":"\u0143","nacute":"\u0144","nang":"\u2220\u20D2","nap":"\u2249","napE":"\u2A70\u0338","napid":"\u224B\u0338","napos":"\u0149","napprox":"\u2249","natural":"\u266E","naturals":"\u2115","natur":"\u266E","nbsp":"\u00A0","nbump":"\u224E\u0338","nbumpe":"\u224F\u0338","ncap":"\u2A43","Ncaron":"\u0147","ncaron":"\u0148","Ncedil":"\u0145","ncedil":"\u0146","ncong":"\u2247","ncongdot":"\u2A6D\u0338","ncup":"\u2A42","Ncy":"\u041D","ncy":"\u043D","ndash":"\u2013","nearhk":"\u2924","nearr":"\u2197","neArr":"\u21D7","nearrow":"\u2197","ne":"\u2260","nedot":"\u2250\u0338","NegativeMediumSpace":"\u200B","NegativeThickSpace":"\u200B","NegativeThinSpace":"\u200B","NegativeVeryThinSpace":"\u200B","nequiv":"\u2262","nesear":"\u2928","nesim":"\u2242\u0338","NestedGreaterGreater":"\u226B","NestedLessLess":"\u226A","NewLine":"\n","nexist":"\u2204","nexists":"\u2204","Nfr":"\uD835\uDD11","nfr":"\uD835\uDD2B","ngE":"\u2267\u0338","nge":"\u2271","ngeq":"\u2271","ngeqq":"\u2267\u0338","ngeqslant":"\u2A7E\u0338","nges":"\u2A7E\u0338","nGg":"\u22D9\u0338","ngsim":"\u2275","nGt":"\u226B\u20D2","ngt":"\u226F","ngtr":"\u226F","nGtv":"\u226B\u0338","nharr":"\u21AE","nhArr":"\u21CE","nhpar":"\u2AF2","ni":"\u220B","nis":"\u22FC","nisd":"\u22FA","niv":"\u220B","NJcy":"\u040A","njcy":"\u045A","nlarr":"\u219A","nlArr":"\u21CD","nldr":"\u2025","nlE":"\u2266\u0338","nle":"\u2270","nleftarrow":"\u219A","nLeftarrow":"\u21CD","nleftrightarrow":"\u21AE","nLeftrightarrow":"\u21CE","nleq":"\u2270","nleqq":"\u2266\u0338","nleqslant":"\u2A7D\u0338","nles":"\u2A7D\u0338","nless":"\u226E","nLl":"\u22D8\u0338","nlsim":"\u2274","nLt":"\u226A\u20D2","nlt":"\u226E","nltri":"\u22EA","nltrie":"\u22EC","nLtv":"\u226A\u0338","nmid":"\u2224","NoBreak":"\u2060","NonBreakingSpace":"\u00A0","nopf":"\uD835\uDD5F","Nopf":"\u2115","Not":"\u2AEC","not":"\u00AC","NotCongruent":"\u2262","NotCupCap":"\u226D","NotDoubleVerticalBar":"\u2226","NotElement":"\u2209","NotEqual":"\u2260","NotEqualTilde":"\u2242\u0338","NotExists":"\u2204","NotGreater":"\u226F","NotGreaterEqual":"\u2271","NotGreaterFullEqual":"\u2267\u0338","NotGreaterGreater":"\u226B\u0338","NotGreaterLess":"\u2279","NotGreaterSlantEqual":"\u2A7E\u0338","NotGreaterTilde":"\u2275","NotHumpDownHump":"\u224E\u0338","NotHumpEqual":"\u224F\u0338","notin":"\u2209","notindot":"\u22F5\u0338","notinE":"\u22F9\u0338","notinva":"\u2209","notinvb":"\u22F7","notinvc":"\u22F6","NotLeftTriangleBar":"\u29CF\u0338","NotLeftTriangle":"\u22EA","NotLeftTriangleEqual":"\u22EC","NotLess":"\u226E","NotLessEqual":"\u2270","NotLessGreater":"\u2278","NotLessLess":"\u226A\u0338","NotLessSlantEqual":"\u2A7D\u0338","NotLessTilde":"\u2274","NotNestedGreaterGreater":"\u2AA2\u0338","NotNestedLessLess":"\u2AA1\u0338","notni":"\u220C","notniva":"\u220C","notnivb":"\u22FE","notnivc":"\u22FD","NotPrecedes":"\u2280","NotPrecedesEqual":"\u2AAF\u0338","NotPrecedesSlantEqual":"\u22E0","NotReverseElement":"\u220C","NotRightTriangleBar":"\u29D0\u0338","NotRightTriangle":"\u22EB","NotRightTriangleEqual":"\u22ED","NotSquareSubset":"\u228F\u0338","NotSquareSubsetEqual":"\u22E2","NotSquareSuperset":"\u2290\u0338","NotSquareSupersetEqual":"\u22E3","NotSubset":"\u2282\u20D2","NotSubsetEqual":"\u2288","NotSucceeds":"\u2281","NotSucceedsEqual":"\u2AB0\u0338","NotSucceedsSlantEqual":"\u22E1","NotSucceedsTilde":"\u227F\u0338","NotSuperset":"\u2283\u20D2","NotSupersetEqual":"\u2289","NotTilde":"\u2241","NotTildeEqual":"\u2244","NotTildeFullEqual":"\u2247","NotTildeTilde":"\u2249","NotVerticalBar":"\u2224","nparallel":"\u2226","npar":"\u2226","nparsl":"\u2AFD\u20E5","npart":"\u2202\u0338","npolint":"\u2A14","npr":"\u2280","nprcue":"\u22E0","nprec":"\u2280","npreceq":"\u2AAF\u0338","npre":"\u2AAF\u0338","nrarrc":"\u2933\u0338","nrarr":"\u219B","nrArr":"\u21CF","nrarrw":"\u219D\u0338","nrightarrow":"\u219B","nRightarrow":"\u21CF","nrtri":"\u22EB","nrtrie":"\u22ED","nsc":"\u2281","nsccue":"\u22E1","nsce":"\u2AB0\u0338","Nscr":"\uD835\uDCA9","nscr":"\uD835\uDCC3","nshortmid":"\u2224","nshortparallel":"\u2226","nsim":"\u2241","nsime":"\u2244","nsimeq":"\u2244","nsmid":"\u2224","nspar":"\u2226","nsqsube":"\u22E2","nsqsupe":"\u22E3","nsub":"\u2284","nsubE":"\u2AC5\u0338","nsube":"\u2288","nsubset":"\u2282\u20D2","nsubseteq":"\u2288","nsubseteqq":"\u2AC5\u0338","nsucc":"\u2281","nsucceq":"\u2AB0\u0338","nsup":"\u2285","nsupE":"\u2AC6\u0338","nsupe":"\u2289","nsupset":"\u2283\u20D2","nsupseteq":"\u2289","nsupseteqq":"\u2AC6\u0338","ntgl":"\u2279","Ntilde":"\u00D1","ntilde":"\u00F1","ntlg":"\u2278","ntriangleleft":"\u22EA","ntrianglelefteq":"\u22EC","ntriangleright":"\u22EB","ntrianglerighteq":"\u22ED","Nu":"\u039D","nu":"\u03BD","num":"#","numero":"\u2116","numsp":"\u2007","nvap":"\u224D\u20D2","nvdash":"\u22AC","nvDash":"\u22AD","nVdash":"\u22AE","nVDash":"\u22AF","nvge":"\u2265\u20D2","nvgt":">\u20D2","nvHarr":"\u2904","nvinfin":"\u29DE","nvlArr":"\u2902","nvle":"\u2264\u20D2","nvlt":"<\u20D2","nvltrie":"\u22B4\u20D2","nvrArr":"\u2903","nvrtrie":"\u22B5\u20D2","nvsim":"\u223C\u20D2","nwarhk":"\u2923","nwarr":"\u2196","nwArr":"\u21D6","nwarrow":"\u2196","nwnear":"\u2927","Oacute":"\u00D3","oacute":"\u00F3","oast":"\u229B","Ocirc":"\u00D4","ocirc":"\u00F4","ocir":"\u229A","Ocy":"\u041E","ocy":"\u043E","odash":"\u229D","Odblac":"\u0150","odblac":"\u0151","odiv":"\u2A38","odot":"\u2299","odsold":"\u29BC","OElig":"\u0152","oelig":"\u0153","ofcir":"\u29BF","Ofr":"\uD835\uDD12","ofr":"\uD835\uDD2C","ogon":"\u02DB","Ograve":"\u00D2","ograve":"\u00F2","ogt":"\u29C1","ohbar":"\u29B5","ohm":"\u03A9","oint":"\u222E","olarr":"\u21BA","olcir":"\u29BE","olcross":"\u29BB","oline":"\u203E","olt":"\u29C0","Omacr":"\u014C","omacr":"\u014D","Omega":"\u03A9","omega":"\u03C9","Omicron":"\u039F","omicron":"\u03BF","omid":"\u29B6","ominus":"\u2296","Oopf":"\uD835\uDD46","oopf":"\uD835\uDD60","opar":"\u29B7","OpenCurlyDoubleQuote":"\u201C","OpenCurlyQuote":"\u2018","operp":"\u29B9","oplus":"\u2295","orarr":"\u21BB","Or":"\u2A54","or":"\u2228","ord":"\u2A5D","order":"\u2134","orderof":"\u2134","ordf":"\u00AA","ordm":"\u00BA","origof":"\u22B6","oror":"\u2A56","orslope":"\u2A57","orv":"\u2A5B","oS":"\u24C8","Oscr":"\uD835\uDCAA","oscr":"\u2134","Oslash":"\u00D8","oslash":"\u00F8","osol":"\u2298","Otilde":"\u00D5","otilde":"\u00F5","otimesas":"\u2A36","Otimes":"\u2A37","otimes":"\u2297","Ouml":"\u00D6","ouml":"\u00F6","ovbar":"\u233D","OverBar":"\u203E","OverBrace":"\u23DE","OverBracket":"\u23B4","OverParenthesis":"\u23DC","para":"\u00B6","parallel":"\u2225","par":"\u2225","parsim":"\u2AF3","parsl":"\u2AFD","part":"\u2202","PartialD":"\u2202","Pcy":"\u041F","pcy":"\u043F","percnt":"%","period":".","permil":"\u2030","perp":"\u22A5","pertenk":"\u2031","Pfr":"\uD835\uDD13","pfr":"\uD835\uDD2D","Phi":"\u03A6","phi":"\u03C6","phiv":"\u03D5","phmmat":"\u2133","phone":"\u260E","Pi":"\u03A0","pi":"\u03C0","pitchfork":"\u22D4","piv":"\u03D6","planck":"\u210F","planckh":"\u210E","plankv":"\u210F","plusacir":"\u2A23","plusb":"\u229E","pluscir":"\u2A22","plus":"+","plusdo":"\u2214","plusdu":"\u2A25","pluse":"\u2A72","PlusMinus":"\u00B1","plusmn":"\u00B1","plussim":"\u2A26","plustwo":"\u2A27","pm":"\u00B1","Poincareplane":"\u210C","pointint":"\u2A15","popf":"\uD835\uDD61","Popf":"\u2119","pound":"\u00A3","prap":"\u2AB7","Pr":"\u2ABB","pr":"\u227A","prcue":"\u227C","precapprox":"\u2AB7","prec":"\u227A","preccurlyeq":"\u227C","Precedes":"\u227A","PrecedesEqual":"\u2AAF","PrecedesSlantEqual":"\u227C","PrecedesTilde":"\u227E","preceq":"\u2AAF","precnapprox":"\u2AB9","precneqq":"\u2AB5","precnsim":"\u22E8","pre":"\u2AAF","prE":"\u2AB3","precsim":"\u227E","prime":"\u2032","Prime":"\u2033","primes":"\u2119","prnap":"\u2AB9","prnE":"\u2AB5","prnsim":"\u22E8","prod":"\u220F","Product":"\u220F","profalar":"\u232E","profline":"\u2312","profsurf":"\u2313","prop":"\u221D","Proportional":"\u221D","Proportion":"\u2237","propto":"\u221D","prsim":"\u227E","prurel":"\u22B0","Pscr":"\uD835\uDCAB","pscr":"\uD835\uDCC5","Psi":"\u03A8","psi":"\u03C8","puncsp":"\u2008","Qfr":"\uD835\uDD14","qfr":"\uD835\uDD2E","qint":"\u2A0C","qopf":"\uD835\uDD62","Qopf":"\u211A","qprime":"\u2057","Qscr":"\uD835\uDCAC","qscr":"\uD835\uDCC6","quaternions":"\u210D","quatint":"\u2A16","quest":"?","questeq":"\u225F","quot":"\"","QUOT":"\"","rAarr":"\u21DB","race":"\u223D\u0331","Racute":"\u0154","racute":"\u0155","radic":"\u221A","raemptyv":"\u29B3","rang":"\u27E9","Rang":"\u27EB","rangd":"\u2992","range":"\u29A5","rangle":"\u27E9","raquo":"\u00BB","rarrap":"\u2975","rarrb":"\u21E5","rarrbfs":"\u2920","rarrc":"\u2933","rarr":"\u2192","Rarr":"\u21A0","rArr":"\u21D2","rarrfs":"\u291E","rarrhk":"\u21AA","rarrlp":"\u21AC","rarrpl":"\u2945","rarrsim":"\u2974","Rarrtl":"\u2916","rarrtl":"\u21A3","rarrw":"\u219D","ratail":"\u291A","rAtail":"\u291C","ratio":"\u2236","rationals":"\u211A","rbarr":"\u290D","rBarr":"\u290F","RBarr":"\u2910","rbbrk":"\u2773","rbrace":"}","rbrack":"]","rbrke":"\u298C","rbrksld":"\u298E","rbrkslu":"\u2990","Rcaron":"\u0158","rcaron":"\u0159","Rcedil":"\u0156","rcedil":"\u0157","rceil":"\u2309","rcub":"}","Rcy":"\u0420","rcy":"\u0440","rdca":"\u2937","rdldhar":"\u2969","rdquo":"\u201D","rdquor":"\u201D","rdsh":"\u21B3","real":"\u211C","realine":"\u211B","realpart":"\u211C","reals":"\u211D","Re":"\u211C","rect":"\u25AD","reg":"\u00AE","REG":"\u00AE","ReverseElement":"\u220B","ReverseEquilibrium":"\u21CB","ReverseUpEquilibrium":"\u296F","rfisht":"\u297D","rfloor":"\u230B","rfr":"\uD835\uDD2F","Rfr":"\u211C","rHar":"\u2964","rhard":"\u21C1","rharu":"\u21C0","rharul":"\u296C","Rho":"\u03A1","rho":"\u03C1","rhov":"\u03F1","RightAngleBracket":"\u27E9","RightArrowBar":"\u21E5","rightarrow":"\u2192","RightArrow":"\u2192","Rightarrow":"\u21D2","RightArrowLeftArrow":"\u21C4","rightarrowtail":"\u21A3","RightCeiling":"\u2309","RightDoubleBracket":"\u27E7","RightDownTeeVector":"\u295D","RightDownVectorBar":"\u2955","RightDownVector":"\u21C2","RightFloor":"\u230B","rightharpoondown":"\u21C1","rightharpoonup":"\u21C0","rightleftarrows":"\u21C4","rightleftharpoons":"\u21CC","rightrightarrows":"\u21C9","rightsquigarrow":"\u219D","RightTeeArrow":"\u21A6","RightTee":"\u22A2","RightTeeVector":"\u295B","rightthreetimes":"\u22CC","RightTriangleBar":"\u29D0","RightTriangle":"\u22B3","RightTriangleEqual":"\u22B5","RightUpDownVector":"\u294F","RightUpTeeVector":"\u295C","RightUpVectorBar":"\u2954","RightUpVector":"\u21BE","RightVectorBar":"\u2953","RightVector":"\u21C0","ring":"\u02DA","risingdotseq":"\u2253","rlarr":"\u21C4","rlhar":"\u21CC","rlm":"\u200F","rmoustache":"\u23B1","rmoust":"\u23B1","rnmid":"\u2AEE","roang":"\u27ED","roarr":"\u21FE","robrk":"\u27E7","ropar":"\u2986","ropf":"\uD835\uDD63","Ropf":"\u211D","roplus":"\u2A2E","rotimes":"\u2A35","RoundImplies":"\u2970","rpar":")","rpargt":"\u2994","rppolint":"\u2A12","rrarr":"\u21C9","Rrightarrow":"\u21DB","rsaquo":"\u203A","rscr":"\uD835\uDCC7","Rscr":"\u211B","rsh":"\u21B1","Rsh":"\u21B1","rsqb":"]","rsquo":"\u2019","rsquor":"\u2019","rthree":"\u22CC","rtimes":"\u22CA","rtri":"\u25B9","rtrie":"\u22B5","rtrif":"\u25B8","rtriltri":"\u29CE","RuleDelayed":"\u29F4","ruluhar":"\u2968","rx":"\u211E","Sacute":"\u015A","sacute":"\u015B","sbquo":"\u201A","scap":"\u2AB8","Scaron":"\u0160","scaron":"\u0161","Sc":"\u2ABC","sc":"\u227B","sccue":"\u227D","sce":"\u2AB0","scE":"\u2AB4","Scedil":"\u015E","scedil":"\u015F","Scirc":"\u015C","scirc":"\u015D","scnap":"\u2ABA","scnE":"\u2AB6","scnsim":"\u22E9","scpolint":"\u2A13","scsim":"\u227F","Scy":"\u0421","scy":"\u0441","sdotb":"\u22A1","sdot":"\u22C5","sdote":"\u2A66","searhk":"\u2925","searr":"\u2198","seArr":"\u21D8","searrow":"\u2198","sect":"\u00A7","semi":";","seswar":"\u2929","setminus":"\u2216","setmn":"\u2216","sext":"\u2736","Sfr":"\uD835\uDD16","sfr":"\uD835\uDD30","sfrown":"\u2322","sharp":"\u266F","SHCHcy":"\u0429","shchcy":"\u0449","SHcy":"\u0428","shcy":"\u0448","ShortDownArrow":"\u2193","ShortLeftArrow":"\u2190","shortmid":"\u2223","shortparallel":"\u2225","ShortRightArrow":"\u2192","ShortUpArrow":"\u2191","shy":"\u00AD","Sigma":"\u03A3","sigma":"\u03C3","sigmaf":"\u03C2","sigmav":"\u03C2","sim":"\u223C","simdot":"\u2A6A","sime":"\u2243","simeq":"\u2243","simg":"\u2A9E","simgE":"\u2AA0","siml":"\u2A9D","simlE":"\u2A9F","simne":"\u2246","simplus":"\u2A24","simrarr":"\u2972","slarr":"\u2190","SmallCircle":"\u2218","smallsetminus":"\u2216","smashp":"\u2A33","smeparsl":"\u29E4","smid":"\u2223","smile":"\u2323","smt":"\u2AAA","smte":"\u2AAC","smtes":"\u2AAC\uFE00","SOFTcy":"\u042C","softcy":"\u044C","solbar":"\u233F","solb":"\u29C4","sol":"/","Sopf":"\uD835\uDD4A","sopf":"\uD835\uDD64","spades":"\u2660","spadesuit":"\u2660","spar":"\u2225","sqcap":"\u2293","sqcaps":"\u2293\uFE00","sqcup":"\u2294","sqcups":"\u2294\uFE00","Sqrt":"\u221A","sqsub":"\u228F","sqsube":"\u2291","sqsubset":"\u228F","sqsubseteq":"\u2291","sqsup":"\u2290","sqsupe":"\u2292","sqsupset":"\u2290","sqsupseteq":"\u2292","square":"\u25A1","Square":"\u25A1","SquareIntersection":"\u2293","SquareSubset":"\u228F","SquareSubsetEqual":"\u2291","SquareSuperset":"\u2290","SquareSupersetEqual":"\u2292","SquareUnion":"\u2294","squarf":"\u25AA","squ":"\u25A1","squf":"\u25AA","srarr":"\u2192","Sscr":"\uD835\uDCAE","sscr":"\uD835\uDCC8","ssetmn":"\u2216","ssmile":"\u2323","sstarf":"\u22C6","Star":"\u22C6","star":"\u2606","starf":"\u2605","straightepsilon":"\u03F5","straightphi":"\u03D5","strns":"\u00AF","sub":"\u2282","Sub":"\u22D0","subdot":"\u2ABD","subE":"\u2AC5","sube":"\u2286","subedot":"\u2AC3","submult":"\u2AC1","subnE":"\u2ACB","subne":"\u228A","subplus":"\u2ABF","subrarr":"\u2979","subset":"\u2282","Subset":"\u22D0","subseteq":"\u2286","subseteqq":"\u2AC5","SubsetEqual":"\u2286","subsetneq":"\u228A","subsetneqq":"\u2ACB","subsim":"\u2AC7","subsub":"\u2AD5","subsup":"\u2AD3","succapprox":"\u2AB8","succ":"\u227B","succcurlyeq":"\u227D","Succeeds":"\u227B","SucceedsEqual":"\u2AB0","SucceedsSlantEqual":"\u227D","SucceedsTilde":"\u227F","succeq":"\u2AB0","succnapprox":"\u2ABA","succneqq":"\u2AB6","succnsim":"\u22E9","succsim":"\u227F","SuchThat":"\u220B","sum":"\u2211","Sum":"\u2211","sung":"\u266A","sup1":"\u00B9","sup2":"\u00B2","sup3":"\u00B3","sup":"\u2283","Sup":"\u22D1","supdot":"\u2ABE","supdsub":"\u2AD8","supE":"\u2AC6","supe":"\u2287","supedot":"\u2AC4","Superset":"\u2283","SupersetEqual":"\u2287","suphsol":"\u27C9","suphsub":"\u2AD7","suplarr":"\u297B","supmult":"\u2AC2","supnE":"\u2ACC","supne":"\u228B","supplus":"\u2AC0","supset":"\u2283","Supset":"\u22D1","supseteq":"\u2287","supseteqq":"\u2AC6","supsetneq":"\u228B","supsetneqq":"\u2ACC","supsim":"\u2AC8","supsub":"\u2AD4","supsup":"\u2AD6","swarhk":"\u2926","swarr":"\u2199","swArr":"\u21D9","swarrow":"\u2199","swnwar":"\u292A","szlig":"\u00DF","Tab":"\t","target":"\u2316","Tau":"\u03A4","tau":"\u03C4","tbrk":"\u23B4","Tcaron":"\u0164","tcaron":"\u0165","Tcedil":"\u0162","tcedil":"\u0163","Tcy":"\u0422","tcy":"\u0442","tdot":"\u20DB","telrec":"\u2315","Tfr":"\uD835\uDD17","tfr":"\uD835\uDD31","there4":"\u2234","therefore":"\u2234","Therefore":"\u2234","Theta":"\u0398","theta":"\u03B8","thetasym":"\u03D1","thetav":"\u03D1","thickapprox":"\u2248","thicksim":"\u223C","ThickSpace":"\u205F\u200A","ThinSpace":"\u2009","thinsp":"\u2009","thkap":"\u2248","thksim":"\u223C","THORN":"\u00DE","thorn":"\u00FE","tilde":"\u02DC","Tilde":"\u223C","TildeEqual":"\u2243","TildeFullEqual":"\u2245","TildeTilde":"\u2248","timesbar":"\u2A31","timesb":"\u22A0","times":"\u00D7","timesd":"\u2A30","tint":"\u222D","toea":"\u2928","topbot":"\u2336","topcir":"\u2AF1","top":"\u22A4","Topf":"\uD835\uDD4B","topf":"\uD835\uDD65","topfork":"\u2ADA","tosa":"\u2929","tprime":"\u2034","trade":"\u2122","TRADE":"\u2122","triangle":"\u25B5","triangledown":"\u25BF","triangleleft":"\u25C3","trianglelefteq":"\u22B4","triangleq":"\u225C","triangleright":"\u25B9","trianglerighteq":"\u22B5","tridot":"\u25EC","trie":"\u225C","triminus":"\u2A3A","TripleDot":"\u20DB","triplus":"\u2A39","trisb":"\u29CD","tritime":"\u2A3B","trpezium":"\u23E2","Tscr":"\uD835\uDCAF","tscr":"\uD835\uDCC9","TScy":"\u0426","tscy":"\u0446","TSHcy":"\u040B","tshcy":"\u045B","Tstrok":"\u0166","tstrok":"\u0167","twixt":"\u226C","twoheadleftarrow":"\u219E","twoheadrightarrow":"\u21A0","Uacute":"\u00DA","uacute":"\u00FA","uarr":"\u2191","Uarr":"\u219F","uArr":"\u21D1","Uarrocir":"\u2949","Ubrcy":"\u040E","ubrcy":"\u045E","Ubreve":"\u016C","ubreve":"\u016D","Ucirc":"\u00DB","ucirc":"\u00FB","Ucy":"\u0423","ucy":"\u0443","udarr":"\u21C5","Udblac":"\u0170","udblac":"\u0171","udhar":"\u296E","ufisht":"\u297E","Ufr":"\uD835\uDD18","ufr":"\uD835\uDD32","Ugrave":"\u00D9","ugrave":"\u00F9","uHar":"\u2963","uharl":"\u21BF","uharr":"\u21BE","uhblk":"\u2580","ulcorn":"\u231C","ulcorner":"\u231C","ulcrop":"\u230F","ultri":"\u25F8","Umacr":"\u016A","umacr":"\u016B","uml":"\u00A8","UnderBar":"_","UnderBrace":"\u23DF","UnderBracket":"\u23B5","UnderParenthesis":"\u23DD","Union":"\u22C3","UnionPlus":"\u228E","Uogon":"\u0172","uogon":"\u0173","Uopf":"\uD835\uDD4C","uopf":"\uD835\uDD66","UpArrowBar":"\u2912","uparrow":"\u2191","UpArrow":"\u2191","Uparrow":"\u21D1","UpArrowDownArrow":"\u21C5","updownarrow":"\u2195","UpDownArrow":"\u2195","Updownarrow":"\u21D5","UpEquilibrium":"\u296E","upharpoonleft":"\u21BF","upharpoonright":"\u21BE","uplus":"\u228E","UpperLeftArrow":"\u2196","UpperRightArrow":"\u2197","upsi":"\u03C5","Upsi":"\u03D2","upsih":"\u03D2","Upsilon":"\u03A5","upsilon":"\u03C5","UpTeeArrow":"\u21A5","UpTee":"\u22A5","upuparrows":"\u21C8","urcorn":"\u231D","urcorner":"\u231D","urcrop":"\u230E","Uring":"\u016E","uring":"\u016F","urtri":"\u25F9","Uscr":"\uD835\uDCB0","uscr":"\uD835\uDCCA","utdot":"\u22F0","Utilde":"\u0168","utilde":"\u0169","utri":"\u25B5","utrif":"\u25B4","uuarr":"\u21C8","Uuml":"\u00DC","uuml":"\u00FC","uwangle":"\u29A7","vangrt":"\u299C","varepsilon":"\u03F5","varkappa":"\u03F0","varnothing":"\u2205","varphi":"\u03D5","varpi":"\u03D6","varpropto":"\u221D","varr":"\u2195","vArr":"\u21D5","varrho":"\u03F1","varsigma":"\u03C2","varsubsetneq":"\u228A\uFE00","varsubsetneqq":"\u2ACB\uFE00","varsupsetneq":"\u228B\uFE00","varsupsetneqq":"\u2ACC\uFE00","vartheta":"\u03D1","vartriangleleft":"\u22B2","vartriangleright":"\u22B3","vBar":"\u2AE8","Vbar":"\u2AEB","vBarv":"\u2AE9","Vcy":"\u0412","vcy":"\u0432","vdash":"\u22A2","vDash":"\u22A8","Vdash":"\u22A9","VDash":"\u22AB","Vdashl":"\u2AE6","veebar":"\u22BB","vee":"\u2228","Vee":"\u22C1","veeeq":"\u225A","vellip":"\u22EE","verbar":"|","Verbar":"\u2016","vert":"|","Vert":"\u2016","VerticalBar":"\u2223","VerticalLine":"|","VerticalSeparator":"\u2758","VerticalTilde":"\u2240","VeryThinSpace":"\u200A","Vfr":"\uD835\uDD19","vfr":"\uD835\uDD33","vltri":"\u22B2","vnsub":"\u2282\u20D2","vnsup":"\u2283\u20D2","Vopf":"\uD835\uDD4D","vopf":"\uD835\uDD67","vprop":"\u221D","vrtri":"\u22B3","Vscr":"\uD835\uDCB1","vscr":"\uD835\uDCCB","vsubnE":"\u2ACB\uFE00","vsubne":"\u228A\uFE00","vsupnE":"\u2ACC\uFE00","vsupne":"\u228B\uFE00","Vvdash":"\u22AA","vzigzag":"\u299A","Wcirc":"\u0174","wcirc":"\u0175","wedbar":"\u2A5F","wedge":"\u2227","Wedge":"\u22C0","wedgeq":"\u2259","weierp":"\u2118","Wfr":"\uD835\uDD1A","wfr":"\uD835\uDD34","Wopf":"\uD835\uDD4E","wopf":"\uD835\uDD68","wp":"\u2118","wr":"\u2240","wreath":"\u2240","Wscr":"\uD835\uDCB2","wscr":"\uD835\uDCCC","xcap":"\u22C2","xcirc":"\u25EF","xcup":"\u22C3","xdtri":"\u25BD","Xfr":"\uD835\uDD1B","xfr":"\uD835\uDD35","xharr":"\u27F7","xhArr":"\u27FA","Xi":"\u039E","xi":"\u03BE","xlarr":"\u27F5","xlArr":"\u27F8","xmap":"\u27FC","xnis":"\u22FB","xodot":"\u2A00","Xopf":"\uD835\uDD4F","xopf":"\uD835\uDD69","xoplus":"\u2A01","xotime":"\u2A02","xrarr":"\u27F6","xrArr":"\u27F9","Xscr":"\uD835\uDCB3","xscr":"\uD835\uDCCD","xsqcup":"\u2A06","xuplus":"\u2A04","xutri":"\u25B3","xvee":"\u22C1","xwedge":"\u22C0","Yacute":"\u00DD","yacute":"\u00FD","YAcy":"\u042F","yacy":"\u044F","Ycirc":"\u0176","ycirc":"\u0177","Ycy":"\u042B","ycy":"\u044B","yen":"\u00A5","Yfr":"\uD835\uDD1C","yfr":"\uD835\uDD36","YIcy":"\u0407","yicy":"\u0457","Yopf":"\uD835\uDD50","yopf":"\uD835\uDD6A","Yscr":"\uD835\uDCB4","yscr":"\uD835\uDCCE","YUcy":"\u042E","yucy":"\u044E","yuml":"\u00FF","Yuml":"\u0178","Zacute":"\u0179","zacute":"\u017A","Zcaron":"\u017D","zcaron":"\u017E","Zcy":"\u0417","zcy":"\u0437","Zdot":"\u017B","zdot":"\u017C","zeetrf":"\u2128","ZeroWidthSpace":"\u200B","Zeta":"\u0396","zeta":"\u03B6","zfr":"\uD835\uDD37","Zfr":"\u2128","ZHcy":"\u0416","zhcy":"\u0436","zigrarr":"\u21DD","zopf":"\uD835\uDD6B","Zopf":"\u2124","Zscr":"\uD835\uDCB5","zscr":"\uD835\uDCCF","zwj":"\u200D","zwnj":"\u200C"}
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/highlight.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/highlight.js":[function(require,module,exports){
 /*
 Syntax highlighting with language autodetection.
 https://highlightjs.org/
@@ -11042,17 +10917,15 @@ https://highlightjs.org/
     }
   }
 
-  function inherit(parent) {  // inherit(parent, override_obj, override_obj, ...)
+  function inherit(parent, obj) {
     var key;
     var result = {};
-    var objects = Array.prototype.slice.call(arguments, 1);
 
     for (key in parent)
       result[key] = parent[key];
-    objects.forEach(function(obj) {
+    if (obj)
       for (key in obj)
         result[key] = obj[key];
-    });
     return result;
   }
 
@@ -11163,15 +11036,6 @@ https://highlightjs.org/
 
   /* Initialization */
 
-  function expand_mode(mode) {
-    if (mode.variants && !mode.cached_variants) {
-      mode.cached_variants = mode.variants.map(function(variant) {
-        return inherit(mode, {variants: null}, variant);
-      });
-    }
-    return mode.cached_variants || (mode.endsWithParent && [inherit(mode)]) || [mode];
-  }
-
   function compileLanguage(language) {
 
     function reStr(re) {
@@ -11237,9 +11101,15 @@ https://highlightjs.org/
       if (!mode.contains) {
         mode.contains = [];
       }
-      mode.contains = Array.prototype.concat.apply([], mode.contains.map(function(c) {
-        return expand_mode(c === 'self' ? mode : c)
-      }));
+      var expanded_contains = [];
+      mode.contains.forEach(function(c) {
+        if (c.variants) {
+          c.variants.forEach(function(v) {expanded_contains.push(inherit(c, v));});
+        } else {
+          expanded_contains.push(c === 'self' ? mode : c);
+        }
+      });
+      mode.contains = expanded_contains;
       mode.contains.forEach(function(c) {compileMode(c, mode);});
 
       if (mode.starts) {
@@ -11538,7 +11408,6 @@ https://highlightjs.org/
           } else if (options.tabReplace) {
             return p1.replace(/\t/g, options.tabReplace);
           }
-          return '';
       });
   }
 
@@ -11763,7 +11632,7 @@ https://highlightjs.org/
   return hljs;
 }));
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/index.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/index.js":[function(require,module,exports){
 var hljs = require('./highlight');
 
 hljs.registerLanguage('1c', require('./languages/1c'));
@@ -11843,7 +11712,6 @@ hljs.registerLanguage('haxe', require('./languages/haxe'));
 hljs.registerLanguage('hsp', require('./languages/hsp'));
 hljs.registerLanguage('htmlbars', require('./languages/htmlbars'));
 hljs.registerLanguage('http', require('./languages/http'));
-hljs.registerLanguage('hy', require('./languages/hy'));
 hljs.registerLanguage('inform7', require('./languages/inform7'));
 hljs.registerLanguage('ini', require('./languages/ini'));
 hljs.registerLanguage('irpf90', require('./languages/irpf90'));
@@ -11854,7 +11722,6 @@ hljs.registerLanguage('julia', require('./languages/julia'));
 hljs.registerLanguage('kotlin', require('./languages/kotlin'));
 hljs.registerLanguage('lasso', require('./languages/lasso'));
 hljs.registerLanguage('ldif', require('./languages/ldif'));
-hljs.registerLanguage('leaf', require('./languages/leaf'));
 hljs.registerLanguage('less', require('./languages/less'));
 hljs.registerLanguage('lisp', require('./languages/lisp'));
 hljs.registerLanguage('livecodeserver', require('./languages/livecodeserver'));
@@ -11874,7 +11741,6 @@ hljs.registerLanguage('perl', require('./languages/perl'));
 hljs.registerLanguage('mojolicious', require('./languages/mojolicious'));
 hljs.registerLanguage('monkey', require('./languages/monkey'));
 hljs.registerLanguage('moonscript', require('./languages/moonscript'));
-hljs.registerLanguage('n1ql', require('./languages/n1ql'));
 hljs.registerLanguage('nginx', require('./languages/nginx'));
 hljs.registerLanguage('nimrod', require('./languages/nimrod'));
 hljs.registerLanguage('nix', require('./languages/nix'));
@@ -11940,7 +11806,7 @@ hljs.registerLanguage('xquery', require('./languages/xquery'));
 hljs.registerLanguage('zephir', require('./languages/zephir'));
 
 module.exports = hljs;
-},{"./highlight":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/highlight.js","./languages/1c":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/1c.js","./languages/abnf":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/abnf.js","./languages/accesslog":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/accesslog.js","./languages/actionscript":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/actionscript.js","./languages/ada":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ada.js","./languages/apache":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/apache.js","./languages/applescript":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/applescript.js","./languages/arduino":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/arduino.js","./languages/armasm":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/armasm.js","./languages/asciidoc":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/asciidoc.js","./languages/aspectj":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/aspectj.js","./languages/autohotkey":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/autohotkey.js","./languages/autoit":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/autoit.js","./languages/avrasm":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/avrasm.js","./languages/awk":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/awk.js","./languages/axapta":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/axapta.js","./languages/bash":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/bash.js","./languages/basic":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/basic.js","./languages/bnf":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/bnf.js","./languages/brainfuck":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/brainfuck.js","./languages/cal":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/cal.js","./languages/capnproto":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/capnproto.js","./languages/ceylon":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ceylon.js","./languages/clean":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/clean.js","./languages/clojure":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/clojure.js","./languages/clojure-repl":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/clojure-repl.js","./languages/cmake":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/cmake.js","./languages/coffeescript":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/coffeescript.js","./languages/coq":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/coq.js","./languages/cos":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/cos.js","./languages/cpp":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/cpp.js","./languages/crmsh":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/crmsh.js","./languages/crystal":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/crystal.js","./languages/cs":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/cs.js","./languages/csp":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/csp.js","./languages/css":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/css.js","./languages/d":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/d.js","./languages/dart":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/dart.js","./languages/delphi":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/delphi.js","./languages/diff":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/diff.js","./languages/django":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/django.js","./languages/dns":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/dns.js","./languages/dockerfile":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/dockerfile.js","./languages/dos":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/dos.js","./languages/dsconfig":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/dsconfig.js","./languages/dts":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/dts.js","./languages/dust":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/dust.js","./languages/ebnf":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ebnf.js","./languages/elixir":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/elixir.js","./languages/elm":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/elm.js","./languages/erb":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/erb.js","./languages/erlang":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/erlang.js","./languages/erlang-repl":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/erlang-repl.js","./languages/excel":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/excel.js","./languages/fix":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/fix.js","./languages/flix":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/flix.js","./languages/fortran":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/fortran.js","./languages/fsharp":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/fsharp.js","./languages/gams":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/gams.js","./languages/gauss":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/gauss.js","./languages/gcode":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/gcode.js","./languages/gherkin":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/gherkin.js","./languages/glsl":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/glsl.js","./languages/go":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/go.js","./languages/golo":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/golo.js","./languages/gradle":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/gradle.js","./languages/groovy":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/groovy.js","./languages/haml":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/haml.js","./languages/handlebars":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/handlebars.js","./languages/haskell":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/haskell.js","./languages/haxe":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/haxe.js","./languages/hsp":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/hsp.js","./languages/htmlbars":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/htmlbars.js","./languages/http":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/http.js","./languages/hy":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/hy.js","./languages/inform7":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/inform7.js","./languages/ini":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ini.js","./languages/irpf90":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/irpf90.js","./languages/java":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/java.js","./languages/javascript":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/javascript.js","./languages/json":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/json.js","./languages/julia":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/julia.js","./languages/kotlin":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/kotlin.js","./languages/lasso":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/lasso.js","./languages/ldif":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ldif.js","./languages/leaf":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/leaf.js","./languages/less":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/less.js","./languages/lisp":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/lisp.js","./languages/livecodeserver":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/livecodeserver.js","./languages/livescript":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/livescript.js","./languages/llvm":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/llvm.js","./languages/lsl":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/lsl.js","./languages/lua":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/lua.js","./languages/makefile":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/makefile.js","./languages/markdown":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/markdown.js","./languages/mathematica":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/mathematica.js","./languages/matlab":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/matlab.js","./languages/maxima":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/maxima.js","./languages/mel":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/mel.js","./languages/mercury":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/mercury.js","./languages/mipsasm":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/mipsasm.js","./languages/mizar":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/mizar.js","./languages/mojolicious":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/mojolicious.js","./languages/monkey":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/monkey.js","./languages/moonscript":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/moonscript.js","./languages/n1ql":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/n1ql.js","./languages/nginx":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/nginx.js","./languages/nimrod":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/nimrod.js","./languages/nix":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/nix.js","./languages/nsis":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/nsis.js","./languages/objectivec":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/objectivec.js","./languages/ocaml":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ocaml.js","./languages/openscad":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/openscad.js","./languages/oxygene":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/oxygene.js","./languages/parser3":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/parser3.js","./languages/perl":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/perl.js","./languages/pf":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/pf.js","./languages/php":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/php.js","./languages/pony":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/pony.js","./languages/powershell":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/powershell.js","./languages/processing":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/processing.js","./languages/profile":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/profile.js","./languages/prolog":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/prolog.js","./languages/protobuf":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/protobuf.js","./languages/puppet":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/puppet.js","./languages/purebasic":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/purebasic.js","./languages/python":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/python.js","./languages/q":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/q.js","./languages/qml":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/qml.js","./languages/r":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/r.js","./languages/rib":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/rib.js","./languages/roboconf":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/roboconf.js","./languages/rsl":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/rsl.js","./languages/ruby":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ruby.js","./languages/ruleslanguage":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ruleslanguage.js","./languages/rust":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/rust.js","./languages/scala":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/scala.js","./languages/scheme":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/scheme.js","./languages/scilab":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/scilab.js","./languages/scss":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/scss.js","./languages/smali":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/smali.js","./languages/smalltalk":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/smalltalk.js","./languages/sml":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/sml.js","./languages/sqf":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/sqf.js","./languages/sql":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/sql.js","./languages/stan":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/stan.js","./languages/stata":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/stata.js","./languages/step21":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/step21.js","./languages/stylus":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/stylus.js","./languages/subunit":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/subunit.js","./languages/swift":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/swift.js","./languages/taggerscript":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/taggerscript.js","./languages/tap":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/tap.js","./languages/tcl":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/tcl.js","./languages/tex":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/tex.js","./languages/thrift":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/thrift.js","./languages/tp":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/tp.js","./languages/twig":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/twig.js","./languages/typescript":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/typescript.js","./languages/vala":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/vala.js","./languages/vbnet":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/vbnet.js","./languages/vbscript":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/vbscript.js","./languages/vbscript-html":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/vbscript-html.js","./languages/verilog":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/verilog.js","./languages/vhdl":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/vhdl.js","./languages/vim":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/vim.js","./languages/x86asm":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/x86asm.js","./languages/xl":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/xl.js","./languages/xml":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/xml.js","./languages/xquery":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/xquery.js","./languages/yaml":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/yaml.js","./languages/zephir":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/zephir.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/1c.js":[function(require,module,exports){
+},{"./highlight":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/highlight.js","./languages/1c":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/1c.js","./languages/abnf":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/abnf.js","./languages/accesslog":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/accesslog.js","./languages/actionscript":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/actionscript.js","./languages/ada":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/ada.js","./languages/apache":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/apache.js","./languages/applescript":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/applescript.js","./languages/arduino":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/arduino.js","./languages/armasm":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/armasm.js","./languages/asciidoc":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/asciidoc.js","./languages/aspectj":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/aspectj.js","./languages/autohotkey":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/autohotkey.js","./languages/autoit":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/autoit.js","./languages/avrasm":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/avrasm.js","./languages/awk":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/awk.js","./languages/axapta":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/axapta.js","./languages/bash":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/bash.js","./languages/basic":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/basic.js","./languages/bnf":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/bnf.js","./languages/brainfuck":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/brainfuck.js","./languages/cal":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/cal.js","./languages/capnproto":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/capnproto.js","./languages/ceylon":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/ceylon.js","./languages/clean":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/clean.js","./languages/clojure":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/clojure.js","./languages/clojure-repl":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/clojure-repl.js","./languages/cmake":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/cmake.js","./languages/coffeescript":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/coffeescript.js","./languages/coq":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/coq.js","./languages/cos":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/cos.js","./languages/cpp":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/cpp.js","./languages/crmsh":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/crmsh.js","./languages/crystal":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/crystal.js","./languages/cs":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/cs.js","./languages/csp":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/csp.js","./languages/css":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/css.js","./languages/d":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/d.js","./languages/dart":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/dart.js","./languages/delphi":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/delphi.js","./languages/diff":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/diff.js","./languages/django":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/django.js","./languages/dns":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/dns.js","./languages/dockerfile":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/dockerfile.js","./languages/dos":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/dos.js","./languages/dsconfig":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/dsconfig.js","./languages/dts":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/dts.js","./languages/dust":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/dust.js","./languages/ebnf":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/ebnf.js","./languages/elixir":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/elixir.js","./languages/elm":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/elm.js","./languages/erb":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/erb.js","./languages/erlang":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/erlang.js","./languages/erlang-repl":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/erlang-repl.js","./languages/excel":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/excel.js","./languages/fix":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/fix.js","./languages/flix":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/flix.js","./languages/fortran":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/fortran.js","./languages/fsharp":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/fsharp.js","./languages/gams":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/gams.js","./languages/gauss":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/gauss.js","./languages/gcode":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/gcode.js","./languages/gherkin":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/gherkin.js","./languages/glsl":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/glsl.js","./languages/go":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/go.js","./languages/golo":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/golo.js","./languages/gradle":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/gradle.js","./languages/groovy":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/groovy.js","./languages/haml":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/haml.js","./languages/handlebars":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/handlebars.js","./languages/haskell":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/haskell.js","./languages/haxe":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/haxe.js","./languages/hsp":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/hsp.js","./languages/htmlbars":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/htmlbars.js","./languages/http":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/http.js","./languages/inform7":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/inform7.js","./languages/ini":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/ini.js","./languages/irpf90":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/irpf90.js","./languages/java":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/java.js","./languages/javascript":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/javascript.js","./languages/json":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/json.js","./languages/julia":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/julia.js","./languages/kotlin":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/kotlin.js","./languages/lasso":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/lasso.js","./languages/ldif":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/ldif.js","./languages/less":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/less.js","./languages/lisp":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/lisp.js","./languages/livecodeserver":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/livecodeserver.js","./languages/livescript":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/livescript.js","./languages/llvm":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/llvm.js","./languages/lsl":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/lsl.js","./languages/lua":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/lua.js","./languages/makefile":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/makefile.js","./languages/markdown":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/markdown.js","./languages/mathematica":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/mathematica.js","./languages/matlab":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/matlab.js","./languages/maxima":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/maxima.js","./languages/mel":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/mel.js","./languages/mercury":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/mercury.js","./languages/mipsasm":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/mipsasm.js","./languages/mizar":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/mizar.js","./languages/mojolicious":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/mojolicious.js","./languages/monkey":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/monkey.js","./languages/moonscript":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/moonscript.js","./languages/nginx":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/nginx.js","./languages/nimrod":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/nimrod.js","./languages/nix":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/nix.js","./languages/nsis":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/nsis.js","./languages/objectivec":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/objectivec.js","./languages/ocaml":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/ocaml.js","./languages/openscad":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/openscad.js","./languages/oxygene":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/oxygene.js","./languages/parser3":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/parser3.js","./languages/perl":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/perl.js","./languages/pf":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/pf.js","./languages/php":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/php.js","./languages/pony":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/pony.js","./languages/powershell":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/powershell.js","./languages/processing":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/processing.js","./languages/profile":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/profile.js","./languages/prolog":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/prolog.js","./languages/protobuf":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/protobuf.js","./languages/puppet":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/puppet.js","./languages/purebasic":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/purebasic.js","./languages/python":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/python.js","./languages/q":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/q.js","./languages/qml":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/qml.js","./languages/r":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/r.js","./languages/rib":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/rib.js","./languages/roboconf":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/roboconf.js","./languages/rsl":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/rsl.js","./languages/ruby":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/ruby.js","./languages/ruleslanguage":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/ruleslanguage.js","./languages/rust":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/rust.js","./languages/scala":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/scala.js","./languages/scheme":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/scheme.js","./languages/scilab":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/scilab.js","./languages/scss":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/scss.js","./languages/smali":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/smali.js","./languages/smalltalk":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/smalltalk.js","./languages/sml":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/sml.js","./languages/sqf":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/sqf.js","./languages/sql":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/sql.js","./languages/stan":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/stan.js","./languages/stata":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/stata.js","./languages/step21":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/step21.js","./languages/stylus":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/stylus.js","./languages/subunit":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/subunit.js","./languages/swift":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/swift.js","./languages/taggerscript":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/taggerscript.js","./languages/tap":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/tap.js","./languages/tcl":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/tcl.js","./languages/tex":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/tex.js","./languages/thrift":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/thrift.js","./languages/tp":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/tp.js","./languages/twig":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/twig.js","./languages/typescript":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/typescript.js","./languages/vala":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/vala.js","./languages/vbnet":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/vbnet.js","./languages/vbscript":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/vbscript.js","./languages/vbscript-html":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/vbscript-html.js","./languages/verilog":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/verilog.js","./languages/vhdl":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/vhdl.js","./languages/vim":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/vim.js","./languages/x86asm":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/x86asm.js","./languages/xl":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/xl.js","./languages/xml":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/xml.js","./languages/xquery":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/xquery.js","./languages/yaml":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/yaml.js","./languages/zephir":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/zephir.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/1c.js":[function(require,module,exports){
 module.exports = function(hljs){
   var IDENT_RE_RU = '[a-zA-Zа-яА-Я][a-zA-Z0-9_а-яА-Я]*';
   var OneS_KEYWORDS = 'возврат дата для если и или иначе иначеесли исключение конецесли ' +
@@ -12019,7 +11885,7 @@ module.exports = function(hljs){
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/abnf.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/abnf.js":[function(require,module,exports){
 module.exports = function(hljs) {
     var regexes = {
         ruleDeclaration: "^[a-zA-Z][a-zA-Z0-9-]*",
@@ -12090,7 +11956,7 @@ module.exports = function(hljs) {
       ]
     };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/accesslog.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/accesslog.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     contains: [
@@ -12128,7 +11994,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/actionscript.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/actionscript.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var IDENT_RE = '[a-zA-Z_$][a-zA-Z0-9_$]*';
   var IDENT_FUNC_RETURN_TYPE_RE = '([*]|[a-zA-Z_$][a-zA-Z0-9_$]*)';
@@ -12202,7 +12068,7 @@ module.exports = function(hljs) {
     illegal: /#/
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ada.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/ada.js":[function(require,module,exports){
 module.exports = // We try to support full Ada2012
 //
 // We highlight all appearances of types, keywords, literals (string, char, number, bool)
@@ -12375,7 +12241,7 @@ function(hljs) {
         ]
     };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/apache.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/apache.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var NUMBER = {className: 'number', begin: '[\\$%]\\d+'};
   return {
@@ -12421,7 +12287,7 @@ module.exports = function(hljs) {
     illegal: /\S/
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/applescript.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/applescript.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var STRING = hljs.inherit(hljs.QUOTE_STRING_MODE, {illegal: ''});
   var PARAMS = {
@@ -12507,7 +12373,7 @@ module.exports = function(hljs) {
     illegal: '//|->|=>|\\[\\['
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/arduino.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/arduino.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var CPP = hljs.getLanguage('cpp').exports;
 	return {
@@ -12607,7 +12473,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/armasm.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/armasm.js":[function(require,module,exports){
 module.exports = function(hljs) {
     //local labels: %?[FB]?[AT]?\d{1,2}\w+
   return {
@@ -12699,7 +12565,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/asciidoc.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/asciidoc.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['adoc'],
@@ -12887,7 +12753,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/aspectj.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/aspectj.js":[function(require,module,exports){
 module.exports = function (hljs) {
   var KEYWORDS =
     'false synchronized int abstract float private char boolean static null if const ' +
@@ -13031,7 +12897,7 @@ module.exports = function (hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/autohotkey.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/autohotkey.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var BACKTICK_ESCAPE = {
     begin: /`[\s\S]/
@@ -13079,7 +12945,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/autoit.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/autoit.js":[function(require,module,exports){
 module.exports = function(hljs) {
     var KEYWORDS = 'ByRef Case Const ContinueCase ContinueLoop ' +
         'Default Dim Do Else ElseIf EndFunc EndIf EndSelect ' +
@@ -13215,7 +13081,7 @@ module.exports = function(hljs) {
         ]
     }
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/avrasm.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/avrasm.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     case_insensitive: true,
@@ -13277,7 +13143,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/awk.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/awk.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var VARIABLE = {
     className: 'variable',
@@ -13330,7 +13196,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/axapta.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/axapta.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords: 'false int abstract private char boolean static null if for true ' +
@@ -13361,7 +13227,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/bash.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/bash.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var VAR = {
     className: 'variable',
@@ -13436,7 +13302,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/basic.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/basic.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     case_insensitive: true,
@@ -13487,7 +13353,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/bnf.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/bnf.js":[function(require,module,exports){
 module.exports = function(hljs){
   return {
     contains: [
@@ -13516,7 +13382,7 @@ module.exports = function(hljs){
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/brainfuck.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/brainfuck.js":[function(require,module,exports){
 module.exports = function(hljs){
   var LITERAL = {
     className: 'literal',
@@ -13553,7 +13419,7 @@ module.exports = function(hljs){
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/cal.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/cal.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS =
     'div mod in and or not xor asserterror begin case do downto else end exit for if of repeat then to ' +
@@ -13633,7 +13499,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/capnproto.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/capnproto.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['capnp'],
@@ -13682,7 +13548,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ceylon.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/ceylon.js":[function(require,module,exports){
 module.exports = function(hljs) {
   // 2.3. Identifiers and keywords
   var KEYWORDS =
@@ -13749,7 +13615,7 @@ module.exports = function(hljs) {
     ].concat(EXPRESSIONS)
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/clean.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/clean.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['clean','icl','dcl'],
@@ -13774,7 +13640,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/clojure-repl.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/clojure-repl.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     contains: [
@@ -13789,7 +13655,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/clojure.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/clojure.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var keywords = {
     'builtin-name':
@@ -13884,7 +13750,7 @@ module.exports = function(hljs) {
     contains: [LIST, STRING, HINT, HINT_COL, COMMENT, KEY, COLLECTION, NUMBER, LITERAL]
   }
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/cmake.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/cmake.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['cmake.in'],
@@ -13922,7 +13788,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/coffeescript.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/coffeescript.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
     keyword:
@@ -14068,7 +13934,7 @@ module.exports = function(hljs) {
     ])
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/coq.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/coq.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords: {
@@ -14135,7 +14001,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/cos.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/cos.js":[function(require,module,exports){
 module.exports = function cos (hljs) {
 
   var STRINGS = {
@@ -14259,7 +14125,7 @@ module.exports = function cos (hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/cpp.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/cpp.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var CPP_PRIMITIVE_TYPES = {
     className: 'keyword',
@@ -14310,7 +14176,7 @@ module.exports = function(hljs) {
       hljs.inherit(STRINGS, {className: 'meta-string'}),
       {
         className: 'meta-string',
-        begin: /<[^\n>]*>/, end: /$/,
+        begin: '<', end: '>',
         illegal: '\\n',
       },
       hljs.C_LINE_COMMENT_MODE,
@@ -14425,7 +14291,7 @@ module.exports = function(hljs) {
     }
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/crmsh.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/crmsh.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var RESOURCES = 'primitive rsc_template';
 
@@ -14519,7 +14385,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/crystal.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/crystal.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var NUM_SUFFIX = '(_[uif](8|16|32|64))?';
   var CRYSTAL_IDENT_RE = '[a-zA-Z_]\\w*[!?=]?';
@@ -14696,7 +14562,7 @@ module.exports = function(hljs) {
     contains: CRYSTAL_DEFAULT_CONTAINS
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/cs.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/cs.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
     keyword:
@@ -14863,7 +14729,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/csp.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/csp.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     case_insensitive: false,
@@ -14885,7 +14751,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/css.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/css.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var IDENT_RE = '[a-zA-Z-][a-zA-Z0-9_-]*';
   var RULE = {
@@ -14990,7 +14856,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/d.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/d.js":[function(require,module,exports){
 module.exports = /**
  * Known issues:
  *
@@ -15248,7 +15114,7 @@ function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/dart.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/dart.js":[function(require,module,exports){
 module.exports = function (hljs) {
   var SUBST = {
     className: 'subst',
@@ -15349,7 +15215,7 @@ module.exports = function (hljs) {
     ]
   }
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/delphi.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/delphi.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS =
     'exports register file shl array record property for mod while set ally label uses raise not ' +
@@ -15418,7 +15284,7 @@ module.exports = function(hljs) {
     ].concat(COMMENT_MODES)
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/diff.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/diff.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['patch'],
@@ -15458,7 +15324,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/django.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/django.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var FILTER = {
     begin: /\|[A-Za-z]+:?/,
@@ -15522,7 +15388,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/dns.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/dns.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['bind', 'zone'],
@@ -15551,7 +15417,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/dockerfile.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/dockerfile.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['docker'],
@@ -15573,7 +15439,7 @@ module.exports = function(hljs) {
     illegal: '</'
   }
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/dos.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/dos.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var COMMENT = hljs.COMMENT(
     /^\s*@?rem\b/, /$/,
@@ -15625,7 +15491,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/dsconfig.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/dsconfig.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var QUOTED_PROPERTY = {
     className: 'string',
@@ -15672,7 +15538,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/dts.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/dts.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var STRINGS = {
     className: 'string',
@@ -15796,7 +15662,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/dust.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/dust.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var EXPRESSION_KEYWORDS = 'if eq ne lt lte gt gte select default math sep';
   return {
@@ -15828,7 +15694,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ebnf.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/ebnf.js":[function(require,module,exports){
 module.exports = function(hljs) {
     var commentMode = hljs.COMMENT(/\(\*/, /\*\)/);
 
@@ -15861,7 +15727,7 @@ module.exports = function(hljs) {
         ]
     };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/elixir.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/elixir.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var ELIXIR_IDENT_RE = '[a-zA-Z_][a-zA-Z0-9_]*(\\!|\\?)?';
   var ELIXIR_METHOD_RE = '[a-zA-Z_]\\w*[!?=]?|[-+~]\\@|<<|>>|=~|===?|<=>|[<>]=?|\\*\\*|[-/+%^&*~`|]|\\[\\]=?';
@@ -15958,7 +15824,7 @@ module.exports = function(hljs) {
     contains: ELIXIR_DEFAULT_CONTAINS
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/elm.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/elm.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var COMMENT = {
     variants: [
@@ -16041,7 +15907,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/erb.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/erb.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     subLanguage: 'xml',
@@ -16056,7 +15922,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/erlang-repl.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/erlang-repl.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords: {
@@ -16102,7 +15968,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/erlang.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/erlang.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var BASIC_ATOM_RE = '[a-z\'][a-zA-Z0-9_\']*';
   var FUNCTION_NAME_RE = '(' + BASIC_ATOM_RE + ':' + BASIC_ATOM_RE + '|' + BASIC_ATOM_RE + ')';
@@ -16248,7 +16114,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/excel.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/excel.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['xlsx', 'xls'],
@@ -16296,7 +16162,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/fix.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/fix.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     contains: [
@@ -16325,7 +16191,7 @@ module.exports = function(hljs) {
     case_insensitive: true
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/flix.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/flix.js":[function(require,module,exports){
 module.exports = function (hljs) {
 
     var CHAR = {
@@ -16370,7 +16236,7 @@ module.exports = function (hljs) {
         ]
     };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/fortran.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/fortran.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var PARAMS = {
     className: 'params',
@@ -16441,7 +16307,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/fsharp.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/fsharp.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var TYPEPARAM = {
     begin: '<', end: '>',
@@ -16500,7 +16366,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/gams.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/gams.js":[function(require,module,exports){
 module.exports = function (hljs) {
   var KEYWORDS = {
     'keyword':
@@ -16654,7 +16520,7 @@ module.exports = function (hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/gauss.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/gauss.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
     keyword: 'and bool break call callexe checkinterrupt clear clearg closeall cls comlog compile ' +
@@ -16707,7 +16573,7 @@ module.exports = function(hljs) {
               'getpath getPreviousTradingDay getPreviousWeekDay getRow getscalar3D getscalar4D getTrRow getwind glm gradcplx gradMT ' +
               'gradMTm gradMTT gradMTTm gradp graphprt graphset hasimag header headermt hess hessMT hessMTg hessMTgw hessMTm ' +
               'hessMTmw hessMTT hessMTTg hessMTTgw hessMTTm hessMTw hessp hist histf histp hsec imag indcv indexcat indices indices2 ' +
-              'indicesf indicesfn indnv indsav integrate1d integrateControlCreate intgrat2 intgrat3 inthp1 inthp2 inthp3 inthp4 ' +
+              'indicesf indicesfn indnv indsav indx integrate1d integrateControlCreate intgrat2 intgrat3 inthp1 inthp2 inthp3 inthp4 ' +
               'inthpControlCreate intquad1 intquad2 intquad3 intrleav intrleavsa intrsect intsimp inv invpd invswp iscplx iscplxf ' +
               'isden isinfnanmiss ismiss key keyav keyw lag lag1 lagn lapEighb lapEighi lapEighvb lapEighvi lapgEig lapgEigh lapgEighv ' +
               'lapgEigv lapgSchur lapgSvdcst lapgSvds lapgSvdst lapSvdcusv lapSvds lapSvdusv ldlp ldlsol linSolve listwise ln lncdfbvn ' +
@@ -16747,9 +16613,7 @@ module.exports = function(hljs) {
               'utctodtv utrisol vals varCovMS varCovXS varget vargetl varmall varmares varput varputl vartypef vcm vcms vcx vcxs ' +
               'vec vech vecr vector vget view viewxyz vlist vnamecv volume vput vread vtypecv wait waitc walkindex where window ' +
               'writer xlabel xlsGetSheetCount xlsGetSheetSize xlsGetSheetTypes xlsMakeRange xlsReadM xlsReadSA xlsWrite xlsWriteM ' +
-              'xlsWriteSA xpnd xtics xy xyz ylabel ytics zeros zeta zlabel ztics cdfEmpirical dot h5create h5open h5read h5readAttribute ' +
-              'h5write h5writeAttribute ldl plotAddErrorBar plotAddSurface plotCDFEmpirical plotSetColormap plotSetContourLabels ' +
-              'plotSetLegendFont plotSetTextInterpreter plotSetXTicCount plotSetYTicCount plotSetZLevels powerm strjoin strtrim sylvester',
+              'xlsWriteSA xpnd xtics xy xyz ylabel ytics zeros zeta zlabel ztics',
     literal: 'DB_AFTER_LAST_ROW DB_ALL_TABLES DB_BATCH_OPERATIONS DB_BEFORE_FIRST_ROW DB_BLOB DB_EVENT_NOTIFICATIONS ' +
              'DB_FINISH_QUERY DB_HIGH_PRECISION DB_LAST_INSERT_ID DB_LOW_PRECISION_DOUBLE DB_LOW_PRECISION_INT32 ' +
              'DB_LOW_PRECISION_INT64 DB_LOW_PRECISION_NUMBERS DB_MULTIPLE_RESULT_SETS DB_NAMED_PLACEHOLDERS ' +
@@ -16878,7 +16742,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/gcode.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/gcode.js":[function(require,module,exports){
 module.exports = function(hljs) {
     var GCODE_IDENT_RE = '[A-Z_][A-Z0-9_.]*';
     var GCODE_CLOSE_RE = '\\%';
@@ -16945,7 +16809,7 @@ module.exports = function(hljs) {
         ].concat(GCODE_CODE)
     };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/gherkin.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/gherkin.js":[function(require,module,exports){
 module.exports = function (hljs) {
   return {
     aliases: ['feature'],
@@ -16982,7 +16846,7 @@ module.exports = function (hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/glsl.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/glsl.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords: {
@@ -17099,7 +16963,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/go.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/go.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var GO_KEYWORDS = {
     keyword:
@@ -17153,7 +17017,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/golo.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/golo.js":[function(require,module,exports){
 module.exports = function(hljs) {
     return {
       keywords: {
@@ -17176,7 +17040,7 @@ module.exports = function(hljs) {
       ]
     }
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/gradle.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/gradle.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     case_insensitive: true,
@@ -17211,7 +17075,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/groovy.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/groovy.js":[function(require,module,exports){
 module.exports = function(hljs) {
     return {
         keywords: {
@@ -17305,7 +17169,7 @@ module.exports = function(hljs) {
         illegal: /#|<\//
     }
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/haml.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/haml.js":[function(require,module,exports){
 module.exports = // TODO support filter tags like :javascript, support inline HTML
 function(hljs) {
   return {
@@ -17412,7 +17276,7 @@ function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/handlebars.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/handlebars.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var BUILT_INS = {'builtin-name': 'each in with if else unless bindattr action collection debugger log outlet template unbound view yield'};
   return {
@@ -17446,7 +17310,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/haskell.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/haskell.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var COMMENT = {
     variants: [
@@ -17568,7 +17432,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/haxe.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/haxe.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var IDENT_RE = '[a-zA-Z_$][a-zA-Z0-9_$]*';
   var IDENT_FUNC_RETURN_TYPE_RE = '([*]|[a-zA-Z_$][a-zA-Z0-9_$]*)';
@@ -17680,7 +17544,7 @@ module.exports = function(hljs) {
     illegal: /<\//
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/hsp.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/hsp.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     case_insensitive: true,
@@ -17726,7 +17590,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/htmlbars.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/htmlbars.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var BUILT_INS = 'action collection component concat debugger each each-in else get hash if input link-to loc log mut outlet partial query-params render textarea unbound unless with yield view';
 
@@ -17797,7 +17661,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/http.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/http.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var VERSION = 'HTTP/[0-9\\.]+';
   return {
@@ -17838,109 +17702,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/hy.js":[function(require,module,exports){
-module.exports = function(hljs) {
-  var keywords = {
-    'builtin-name':
-      // keywords
-      '!= % %= & &= * ** **= *= *map ' +
-      '+ += , --build-class-- --import-- -= . / // //= ' +
-      '/= < << <<= <= = > >= >> >>= ' +
-      '@ @= ^ ^= abs accumulate all and any ap-compose ' +
-      'ap-dotimes ap-each ap-each-while ap-filter ap-first ap-if ap-last ap-map ap-map-when ap-pipe ' +
-      'ap-reduce ap-reject apply as-> ascii assert assoc bin break butlast ' +
-      'callable calling-module-name car case cdr chain chr coll? combinations compile ' +
-      'compress cond cons cons? continue count curry cut cycle dec ' +
-      'def default-method defclass defmacro defmacro-alias defmacro/g! defmain defmethod defmulti defn ' +
-      'defn-alias defnc defnr defreader defseq del delattr delete-route dict-comp dir ' +
-      'disassemble dispatch-reader-macro distinct divmod do doto drop drop-last drop-while empty? ' +
-      'end-sequence eval eval-and-compile eval-when-compile even? every? except exec filter first ' +
-      'flatten float? fn fnc fnr for for* format fraction genexpr ' +
-      'gensym get getattr global globals group-by hasattr hash hex id ' +
-      'identity if if* if-not if-python2 import in inc input instance? ' +
-      'integer integer-char? integer? interleave interpose is is-coll is-cons is-empty is-even ' +
-      'is-every is-float is-instance is-integer is-integer-char is-iterable is-iterator is-keyword is-neg is-none ' +
-      'is-not is-numeric is-odd is-pos is-string is-symbol is-zero isinstance islice issubclass ' +
-      'iter iterable? iterate iterator? keyword keyword? lambda last len let ' +
-      'lif lif-not list* list-comp locals loop macro-error macroexpand macroexpand-1 macroexpand-all ' +
-      'map max merge-with method-decorator min multi-decorator multicombinations name neg? next ' +
-      'none? nonlocal not not-in not? nth numeric? oct odd? open ' +
-      'or ord partition permutations pos? post-route postwalk pow prewalk print ' +
-      'product profile/calls profile/cpu put-route quasiquote quote raise range read read-str ' +
-      'recursive-replace reduce remove repeat repeatedly repr require rest round route ' +
-      'route-with-methods rwm second seq set-comp setattr setv some sorted string ' +
-      'string? sum switch symbol? take take-nth take-while tee try unless ' +
-      'unquote unquote-splicing vars walk when while with with* with-decorator with-gensyms ' +
-      'xi xor yield yield-from zero? zip zip-longest | |= ~'
-   };
-
-  var SYMBOLSTART = 'a-zA-Z_\\-!.?+*=<>&#\'';
-  var SYMBOL_RE = '[' + SYMBOLSTART + '][' + SYMBOLSTART + '0-9/;:]*';
-  var SIMPLE_NUMBER_RE = '[-+]?\\d+(\\.\\d+)?';
-
-  var SHEBANG = {
-    className: 'meta',
-    begin: '^#!', end: '$'
-  };
-
-  var SYMBOL = {
-    begin: SYMBOL_RE,
-    relevance: 0
-  };
-  var NUMBER = {
-    className: 'number', begin: SIMPLE_NUMBER_RE,
-    relevance: 0
-  };
-  var STRING = hljs.inherit(hljs.QUOTE_STRING_MODE, {illegal: null});
-  var COMMENT = hljs.COMMENT(
-    ';',
-    '$',
-    {
-      relevance: 0
-    }
-  );
-  var LITERAL = {
-    className: 'literal',
-    begin: /\b([Tt]rue|[Ff]alse|nil|None)\b/
-  };
-  var COLLECTION = {
-    begin: '[\\[\\{]', end: '[\\]\\}]'
-  };
-  var HINT = {
-    className: 'comment',
-    begin: '\\^' + SYMBOL_RE
-  };
-  var HINT_COL = hljs.COMMENT('\\^\\{', '\\}');
-  var KEY = {
-    className: 'symbol',
-    begin: '[:]{1,2}' + SYMBOL_RE
-  };
-  var LIST = {
-    begin: '\\(', end: '\\)'
-  };
-  var BODY = {
-    endsWithParent: true,
-    relevance: 0
-  };
-  var NAME = {
-    keywords: keywords,
-    lexemes: SYMBOL_RE,
-    className: 'name', begin: SYMBOL_RE,
-    starts: BODY
-  };
-  var DEFAULT_CONTAINS = [LIST, STRING, HINT, HINT_COL, COMMENT, KEY, COLLECTION, NUMBER, LITERAL, SYMBOL];
-
-  LIST.contains = [hljs.COMMENT('comment', ''), NAME, BODY];
-  BODY.contains = DEFAULT_CONTAINS;
-  COLLECTION.contains = DEFAULT_CONTAINS;
-
-  return {
-    aliases: ['hylang'],
-    illegal: /\S/,
-    contains: [SHEBANG, LIST, STRING, HINT, HINT_COL, COMMENT, KEY, COLLECTION, NUMBER, LITERAL]
-  }
-};
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/inform7.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/inform7.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var START_BRACKET = '\\[';
   var END_BRACKET = '\\]';
@@ -17997,7 +17759,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ini.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/ini.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var STRING = {
     className: "string",
@@ -18063,7 +17825,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/irpf90.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/irpf90.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var PARAMS = {
     className: 'params',
@@ -18139,7 +17901,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/java.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/java.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var JAVA_IDENT_RE = '[\u00C0-\u02B8a-zA-Z_$][\u00C0-\u02B8a-zA-Z_$0-9]*';
   var GENERIC_IDENT_RE = JAVA_IDENT_RE + '(<' + JAVA_IDENT_RE + '(\\s*,\\s*' + JAVA_IDENT_RE + ')*>)?';
@@ -18247,7 +18009,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/javascript.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/javascript.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var IDENT_RE = '[A-Za-z$_][0-9A-Za-z$_]*';
   var KEYWORDS = {
@@ -18418,7 +18180,7 @@ module.exports = function(hljs) {
     illegal: /#(?!!)/
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/json.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/json.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var LITERALS = {literal: 'true false null'};
   var TYPES = [
@@ -18455,7 +18217,7 @@ module.exports = function(hljs) {
     illegal: '\\S'
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/julia.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/julia.js":[function(require,module,exports){
 module.exports = function(hljs) {
   // Since there are numerous special names in Julia, it is too much trouble
   // to maintain them by hand. Hence these names (i.e. keywords, literals and
@@ -18633,13 +18395,13 @@ module.exports = function(hljs) {
 
   return DEFAULT;
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/kotlin.js":[function(require,module,exports){
-module.exports = function(hljs) {
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/kotlin.js":[function(require,module,exports){
+module.exports = function (hljs) {
   var KEYWORDS = {
     keyword:
       'abstract as val var vararg get set class object open private protected public noinline ' +
       'crossinline dynamic final enum if else do while for when throw try catch finally ' +
-      'import package is in fun override companion reified inline lateinit init' +
+      'import package is in fun override companion reified inline ' +
       'interface annotation data sealed internal infix operator out by constructor super ' +
       // to be deleted soon
       'trait volatile transient native default',
@@ -18807,7 +18569,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/lasso.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/lasso.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var LASSO_IDENT_RE = '[a-zA-Z_][\\w.]*';
   var LASSO_ANGLE_RE = '<\\?(lasso(script)?|=)';
@@ -18970,7 +18732,7 @@ module.exports = function(hljs) {
     ].concat(LASSO_CODE)
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ldif.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/ldif.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     contains: [
@@ -18993,47 +18755,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/leaf.js":[function(require,module,exports){
-module.exports = function (hljs) {
-  return {
-    contains: [
-      {
-        className: 'function',
-        begin: '#+' + '[A-Za-z_0-9]*' + '\\(',
-        end:' {',
-        returnBegin: true,
-        excludeEnd: true,
-        contains : [
-          {
-            className: 'keyword',
-            begin: '#+'
-          },
-          {
-            className: 'title',
-            begin: '[A-Za-z_][A-Za-z_0-9]*'
-          },
-          {
-            className: 'params',
-            begin: '\\(', end: '\\)',
-            endsParent: true,
-            contains: [
-              {
-                className: 'string',
-                begin: '"',
-                end: '"'
-              },
-              {
-                className: 'variable',
-                begin: '[A-Za-z_][A-Za-z_0-9]*'
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  };
-};
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/less.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/less.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var IDENT_RE        = '[\\w-]+'; // yes, Less identifiers may begin with a digit
   var INTERP_IDENT_RE = '(' + IDENT_RE + '|@{' + IDENT_RE + '})';
@@ -19173,7 +18895,7 @@ module.exports = function(hljs) {
     contains: RULES
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/lisp.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/lisp.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var LISP_IDENT_RE = '[a-zA-Z_\\-\\+\\*\\/\\<\\=\\>\\&\\#][a-zA-Z0-9_\\-\\+\\*\\/\\<\\=\\>\\&\\#!]*';
   var MEC_RE = '\\|[^]*?\\|';
@@ -19276,7 +18998,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/livecodeserver.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/livecodeserver.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var VARIABLE = {
     begin: '\\b[gtps][A-Z]+[A-Za-z0-9_\\-]*\\b|\\$_[A-Z]+',
@@ -19433,7 +19155,7 @@ module.exports = function(hljs) {
     illegal: ';$|^\\[|^=|&|{'
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/livescript.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/livescript.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
     keyword:
@@ -19582,7 +19304,7 @@ module.exports = function(hljs) {
     ])
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/llvm.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/llvm.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var identifier = '([-a-zA-Z$._][\\w\\-$.]*)';
   return {
@@ -19671,7 +19393,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/lsl.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/lsl.js":[function(require,module,exports){
 module.exports = function(hljs) {
 
     var LSL_STRING_ESCAPE_CHARS = {
@@ -19754,7 +19476,7 @@ module.exports = function(hljs) {
         ]
     };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/lua.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/lua.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var OPENING_LONG_BRACKET = '\\[=*\\[';
   var CLOSING_LONG_BRACKET = '\\]=*\\]';
@@ -19776,24 +19498,14 @@ module.exports = function(hljs) {
   return {
     lexemes: hljs.UNDERSCORE_IDENT_RE,
     keywords: {
-      literal: "true false nil",
-      keyword: "and break do else elseif end for goto if in local not or repeat return then until while",
+      keyword:
+        'and break do else elseif end false for if in local nil not or repeat return then ' +
+        'true until while',
       built_in:
-        //Metatags and globals:
-        '_G _ENV _VERSION __index __newindex __mode __call __metatable __tostring __len ' +
-        '__gc __add __sub __mul __div __mod __pow __concat __unm __eq __lt __le assert ' +
-        //Standard methods and properties:
-        'collectgarbage dofile error getfenv getmetatable ipairs load loadfile loadstring' +
-        'module next pairs pcall print rawequal rawget rawset require select setfenv' +
-        'setmetatable tonumber tostring type unpack xpcall arg self' +
-        //Library methods and properties (one line per library):
-        'coroutine resume yield status wrap create running debug getupvalue' +
-        'debug sethook getmetatable gethook setmetatable setlocal traceback setfenv getinfo setupvalue getlocal getregistry getfenv' +
-        'io lines write close flush open output type read stderr stdin input stdout popen tmpfile' +
-        'math, log, max, acos, huge, ldexp, pi, cos, tanh, pow, deg, tan, cosh, sinh, random, randomseed, frexp, ceil, floor, rad, abs, sqrt, modf, asin, min, mod, fmod, log10, atan2, exp, sin, atan' +
-        'os, exit, setlocale, date, getenv, difftime, remove, time, clock, tmpname, rename, execute, package, preload, loadlib, loaded, loaders, cpath, config path, seeall' +
-        'string, sub, upper, len, gfind, rep, find, match, char, dump, gmatch, reverse, byte, format, gsub, lower' +
-        'table, setn, insert, getn, foreachi, maxn, foreach, concat, sort, remove'
+        '_G _VERSION assert collectgarbage dofile error getfenv getmetatable ipairs load ' +
+        'loadfile loadstring module next pairs pcall print rawequal rawget rawset require ' +
+        'select setfenv setmetatable tonumber tostring type unpack xpcall coroutine debug ' +
+        'io math os package string table'
     },
     contains: COMMENTS.concat([
       {
@@ -19820,7 +19532,7 @@ module.exports = function(hljs) {
     ])
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/makefile.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/makefile.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var VARIABLE = {
     className: 'variable',
@@ -19865,7 +19577,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/markdown.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/markdown.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['md', 'mkdown', 'mkd'],
@@ -19973,7 +19685,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/mathematica.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/mathematica.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['mma'],
@@ -20031,7 +19743,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/matlab.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/matlab.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var COMMON_CONTAINS = [
     hljs.C_NUMBER_MODE,
@@ -20119,7 +19831,7 @@ module.exports = function(hljs) {
     ].concat(COMMON_CONTAINS)
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/maxima.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/maxima.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = 'if then else elseif for thru do while unless step in and or not';
   var LITERALS = 'true false unknown inf minf ind und %e %i %pi %phi %gamma';
@@ -20525,7 +20237,7 @@ module.exports = function(hljs) {
     illegal: /@/
   }
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/mel.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/mel.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords:
@@ -20750,7 +20462,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/mercury.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/mercury.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
     keyword:
@@ -20832,7 +20544,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/mipsasm.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/mipsasm.js":[function(require,module,exports){
 module.exports = function(hljs) {
     //local labels: %?[FB]?[AT]?\d{1,2}\w+
   return {
@@ -20918,7 +20630,7 @@ module.exports = function(hljs) {
     illegal: '\/'
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/mizar.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/mizar.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords:
@@ -20937,7 +20649,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/mojolicious.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/mojolicious.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     subLanguage: 'xml',
@@ -20962,7 +20674,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/monkey.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/monkey.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var NUMBER = {
     className: 'number', relevance: 0,
@@ -21037,7 +20749,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/moonscript.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/moonscript.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
     keyword:
@@ -21149,76 +20861,7 @@ module.exports = function(hljs) {
     ])
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/n1ql.js":[function(require,module,exports){
-module.exports = function(hljs) {
-  return {
-    case_insensitive: true,
-    contains: [
-      {
-        beginKeywords:
-          'build create index delete drop explain infer|10 insert merge prepare select update upsert|10',
-        end: /;/, endsWithParent: true,
-        keywords: {
-          // Taken from http://developer.couchbase.com/documentation/server/current/n1ql/n1ql-language-reference/reservedwords.html
-          keyword:
-            'all alter analyze and any array as asc begin between binary boolean break bucket build by call ' +
-            'case cast cluster collate collection commit connect continue correlate cover create database ' +
-            'dataset datastore declare decrement delete derived desc describe distinct do drop each element ' +
-            'else end every except exclude execute exists explain fetch first flatten for force from ' +
-            'function grant group gsi having if ignore ilike in include increment index infer inline inner ' +
-            'insert intersect into is join key keys keyspace known last left let letting like limit lsm map ' +
-            'mapping matched materialized merge minus namespace nest not number object offset on ' +
-            'option or order outer over parse partition password path pool prepare primary private privilege ' +
-            'procedure public raw realm reduce rename return returning revoke right role rollback satisfies ' +
-            'schema select self semi set show some start statistics string system then to transaction trigger ' +
-            'truncate under union unique unknown unnest unset update upsert use user using validate value ' +
-            'valued values via view when where while with within work xor',
-          // Taken from http://developer.couchbase.com/documentation/server/4.5/n1ql/n1ql-language-reference/literals.html
-          literal:
-            'true false null missing|5',
-          // Taken from http://developer.couchbase.com/documentation/server/4.5/n1ql/n1ql-language-reference/functions.html
-          built_in:
-            'array_agg array_append array_concat array_contains array_count array_distinct array_ifnull array_length ' +
-            'array_max array_min array_position array_prepend array_put array_range array_remove array_repeat array_replace ' +
-            'array_reverse array_sort array_sum avg count max min sum greatest least ifmissing ifmissingornull ifnull ' +
-            'missingif nullif ifinf ifnan ifnanorinf naninf neginfif posinfif clock_millis clock_str date_add_millis ' +
-            'date_add_str date_diff_millis date_diff_str date_part_millis date_part_str date_trunc_millis date_trunc_str ' +
-            'duration_to_str millis str_to_millis millis_to_str millis_to_utc millis_to_zone_name now_millis now_str ' +
-            'str_to_duration str_to_utc str_to_zone_name decode_json encode_json encoded_size poly_length base64 base64_encode ' +
-            'base64_decode meta uuid abs acos asin atan atan2 ceil cos degrees e exp ln log floor pi power radians random ' +
-            'round sign sin sqrt tan trunc object_length object_names object_pairs object_inner_pairs object_values ' +
-            'object_inner_values object_add object_put object_remove object_unwrap regexp_contains regexp_like regexp_position ' +
-            'regexp_replace contains initcap length lower ltrim position repeat replace rtrim split substr title trim upper ' +
-            'isarray isatom isboolean isnumber isobject isstring type toarray toatom toboolean tonumber toobject tostring'
-        },
-        contains: [
-          {
-            className: 'string',
-            begin: '\'', end: '\'',
-            contains: [hljs.BACKSLASH_ESCAPE],
-            relevance: 0
-          },
-          {
-            className: 'string',
-            begin: '"', end: '"',
-            contains: [hljs.BACKSLASH_ESCAPE],
-            relevance: 0
-          },
-          {
-            className: 'symbol',
-            begin: '`', end: '`',
-            contains: [hljs.BACKSLASH_ESCAPE],
-            relevance: 2
-          },
-          hljs.C_NUMBER_MODE,
-          hljs.C_BLOCK_COMMENT_MODE
-        ]
-      },
-      hljs.C_BLOCK_COMMENT_MODE
-    ]
-  };
-};
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/nginx.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/nginx.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var VAR = {
     className: 'variable',
@@ -21311,7 +20954,7 @@ module.exports = function(hljs) {
     illegal: '[^\\s\\}]'
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/nimrod.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/nimrod.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['nim'],
@@ -21366,7 +21009,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/nix.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/nix.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var NIX_KEYWORDS = {
     keyword:
@@ -21415,7 +21058,7 @@ module.exports = function(hljs) {
     contains: EXPRESSIONS
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/nsis.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/nsis.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var CONSTANTS = {
     className: 'variable',
@@ -21521,7 +21164,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/objectivec.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/objectivec.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var API_CLASS = {
     className: 'built_in',
@@ -21612,7 +21255,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ocaml.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/ocaml.js":[function(require,module,exports){
 module.exports = function(hljs) {
   /* missing support for heredoc-like string (OCaml 4.0.2+) */
   return {
@@ -21683,7 +21326,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/openscad.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/openscad.js":[function(require,module,exports){
 module.exports = function(hljs) {
 	var SPECIAL_VARS = {
 		className: 'keyword',
@@ -21740,7 +21383,7 @@ module.exports = function(hljs) {
 		]
 	}
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/oxygene.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/oxygene.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var OXYGENE_KEYWORDS = 'abstract add and array as asc aspect assembly async begin break block by case class concat const copy constructor continue '+
     'create default delegate desc distinct div do downto dynamic each else empty end ensure enum equals event except exit extension external false '+
@@ -21810,7 +21453,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/parser3.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/parser3.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var CURLY_SUBCOMMENT = hljs.COMMENT(
     '{',
@@ -21858,7 +21501,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/perl.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/perl.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var PERL_KEYWORDS = 'getpwent getservent quotemeta msgrcv scalar kill dbmclose undef lc ' +
     'ma syswrite tr send umask sysopen shmwrite vec qx utime local oct semctl localtime ' +
@@ -22015,7 +21658,7 @@ module.exports = function(hljs) {
     contains: PERL_DEFAULT_CONTAINS
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/pf.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/pf.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var MACRO = {
     className: 'variable',
@@ -22067,7 +21710,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/php.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/php.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var VARIABLE = {
     begin: '\\$+[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*'
@@ -22194,7 +21837,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/pony.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/pony.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
     keyword:
@@ -22285,7 +21928,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/powershell.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/powershell.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var BACKTICK_ESCAPE = {
     begin: '`[\\s\\S]',
@@ -22366,7 +22009,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/processing.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/processing.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords: {
@@ -22414,7 +22057,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/profile.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/profile.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     contains: [
@@ -22444,7 +22087,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/prolog.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/prolog.js":[function(require,module,exports){
 module.exports = function(hljs) {
 
   var ATOM = {
@@ -22532,7 +22175,7 @@ module.exports = function(hljs) {
     ])
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/protobuf.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/protobuf.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords: {
@@ -22568,7 +22211,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/puppet.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/puppet.js":[function(require,module,exports){
 module.exports = function(hljs) {
 
   var PUPPET_KEYWORDS = {
@@ -22683,7 +22326,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/purebasic.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/purebasic.js":[function(require,module,exports){
 module.exports = // Base deafult colors in PB IDE: background: #FFFFDF; foreground: #000000;
 
 function(hljs) {
@@ -22741,24 +22384,10 @@ function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/python.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/python.js":[function(require,module,exports){
 module.exports = function(hljs) {
-  var KEYWORDS = {
-    keyword:
-      'and elif is global as in if from raise for except finally print import pass return ' +
-      'exec else break not with class assert yield try while continue del or def lambda ' +
-      'async await nonlocal|10 None True False',
-    built_in:
-      'Ellipsis NotImplemented'
-  };
   var PROMPT = {
     className: 'meta',  begin: /^(>>>|\.\.\.) /
-  };
-  var SUBST = {
-    className: 'subst',
-    begin: /\{/, end: /\}/,
-    keywords: KEYWORDS,
-    illegal: /#/
   };
   var STRING = {
     className: 'string',
@@ -22775,14 +22404,6 @@ module.exports = function(hljs) {
         relevance: 10
       },
       {
-        begin: /(fr|rf|f)'''/, end: /'''/,
-        contains: [PROMPT, SUBST]
-      },
-      {
-        begin: /(fr|rf|f)"""/, end: /"""/,
-        contains: [PROMPT, SUBST]
-      },
-      {
         begin: /(u|r|ur)'/, end: /'/,
         relevance: 10
       },
@@ -22795,14 +22416,6 @@ module.exports = function(hljs) {
       },
       {
         begin: /(b|br)"/, end: /"/
-      },
-      {
-        begin: /(fr|rf|f)'/, end: /'/,
-        contains: [SUBST]
-      },
-      {
-        begin: /(fr|rf|f)"/, end: /"/,
-        contains: [SUBST]
       },
       hljs.APOS_STRING_MODE,
       hljs.QUOTE_STRING_MODE
@@ -22821,10 +22434,16 @@ module.exports = function(hljs) {
     begin: /\(/, end: /\)/,
     contains: ['self', PROMPT, NUMBER, STRING]
   };
-  SUBST.contains = [STRING, NUMBER, PROMPT];
   return {
     aliases: ['py', 'gyp'],
-    keywords: KEYWORDS,
+    keywords: {
+      keyword:
+        'and elif is global as in if from raise for except finally print import pass return ' +
+        'exec else break not with class assert yield try while continue del or def lambda ' +
+        'async await nonlocal|10 None True False',
+      built_in:
+        'Ellipsis NotImplemented'
+    },
     illegal: /(<\/|->|\?)|=>/,
     contains: [
       PROMPT,
@@ -22857,7 +22476,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/q.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/q.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var Q_KEYWORDS = {
   keyword:
@@ -22880,7 +22499,7 @@ module.exports = function(hljs) {
      ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/qml.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/qml.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
       keyword:
@@ -23049,7 +22668,7 @@ module.exports = function(hljs) {
     illegal: /#/
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/r.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/r.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var IDENT_RE = '([a-zA-Z]|\\.[a-zA-Z.])[a-zA-Z0-9._]*';
 
@@ -23119,7 +22738,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/rib.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/rib.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords:
@@ -23146,7 +22765,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/roboconf.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/roboconf.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var IDENTIFIER = '[a-zA-Z-_][^\\n{]+\\{';
 
@@ -23213,7 +22832,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/rsl.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/rsl.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords: {
@@ -23249,7 +22868,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ruby.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/ruby.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var RUBY_METHOD_RE = '[a-zA-Z_]\\w*[!?=]?|[-+~]\\@|<<|>>|=~|===?|<=>|[<>]=?|\\*\\*|[-/+%^&*~`|]|\\[\\]=?';
   var RUBY_KEYWORDS = {
@@ -23425,7 +23044,7 @@ module.exports = function(hljs) {
     contains: COMMENT_MODES.concat(IRB_DEFAULT).concat(RUBY_DEFAULT_CONTAINS)
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/ruleslanguage.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/ruleslanguage.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords: {
@@ -23486,34 +23105,30 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/rust.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/rust.js":[function(require,module,exports){
 module.exports = function(hljs) {
-  var NUM_SUFFIX = '([ui](8|16|32|64|128|size)|f(32|64))\?';
+  var NUM_SUFFIX = '([uif](8|16|32|64|size))\?';
   var KEYWORDS =
     'alignof as be box break const continue crate do else enum extern ' +
     'false fn for if impl in let loop match mod mut offsetof once priv ' +
     'proc pub pure ref return self Self sizeof static struct super trait true ' +
-    'type typeof unsafe unsized use virtual while where yield move default';
+    'type typeof unsafe unsized use virtual while where yield move default ' +
+    'int i8 i16 i32 i64 isize ' +
+    'uint u8 u32 u64 usize ' +
+    'float f32 f64 ' +
+    'str char bool'
   var BUILTINS =
-    // functions
-    'drop ' +
-    // types
-    'i8 i16 i32 i64 i128 isize ' +
-    'u8 u16 u32 u64 u128 usize ' +
-    'f32 f64 ' +
-    'str char bool ' +
-    'Box Option Result String Vec ' +
-    // traits
-    'Copy Send Sized Sync Drop Fn FnMut FnOnce ToOwned Clone Debug ' +
+    // prelude
+    'Copy Send Sized Sync Drop Fn FnMut FnOnce drop Box ToOwned Clone ' +
     'PartialEq PartialOrd Eq Ord AsRef AsMut Into From Default Iterator ' +
-    'Extend IntoIterator DoubleEndedIterator ExactSizeIterator ' +
-    'SliceConcatExt ToString ' +
+    'Extend IntoIterator DoubleEndedIterator ExactSizeIterator Option ' +
+    'Result SliceConcatExt String ToString Vec ' +
     // macros
     'assert! assert_eq! bitflags! bytes! cfg! col! concat! concat_idents! ' +
     'debug_assert! debug_assert_eq! env! panic! file! format! format_args! ' +
     'include_bin! include_str! line! local_data_key! module_path! ' +
     'option_env! print! println! select! stringify! try! unimplemented! ' +
-    'unreachable! vec! write! writeln! macro_rules! assert_ne! debug_assert_ne!';
+    'unreachable! vec! write! writeln! macro_rules!';
   return {
     aliases: ['rs'],
     keywords: {
@@ -23578,7 +23193,7 @@ module.exports = function(hljs) {
       },
       {
         className: 'class',
-        beginKeywords: 'trait enum struct union', end: '{',
+        beginKeywords: 'trait enum struct', end: '{',
         contains: [
           hljs.inherit(hljs.UNDERSCORE_TITLE_MODE, {endsParent: true})
         ],
@@ -23594,7 +23209,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/scala.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/scala.js":[function(require,module,exports){
 module.exports = function(hljs) {
 
   var ANNOTATION = { className: 'meta', begin: '@[A-Za-z]+' };
@@ -23709,7 +23324,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/scheme.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/scheme.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var SCHEME_IDENT_RE = '[^\\(\\)\\[\\]\\{\\}",\'`;#|\\\\\\s]+';
   var SCHEME_SIMPLE_NUMBER_RE = '(\\-|\\+)?\\d+([./]\\d+)?';
@@ -23808,10 +23423,7 @@ module.exports = function(hljs) {
   };
 
   var QUOTED_LIST = {
-    variants: [
-      { begin: /'/ },
-      { begin: '`' }
-    ],
+    begin: /'/,
     contains: [
       {
         begin: '\\(', end: '\\)',
@@ -23853,7 +23465,7 @@ module.exports = function(hljs) {
     contains: [SHEBANG, NUMBER, STRING, QUOTED_IDENT, QUOTED_LIST, LIST].concat(COMMENT_MODES)
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/scilab.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/scilab.js":[function(require,module,exports){
 module.exports = function(hljs) {
 
   var COMMON_CONTAINS = [
@@ -23907,7 +23519,7 @@ module.exports = function(hljs) {
     ].concat(COMMON_CONTAINS)
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/scss.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/scss.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var IDENT_RE = '[a-zA-Z-][a-zA-Z0-9_-]*';
   var VARIABLE = {
@@ -24005,7 +23617,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/smali.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/smali.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var smali_instr_low_prio = ['add', 'and', 'cmp', 'cmpg', 'cmpl', 'const', 'div', 'double', 'float', 'goto', 'if', 'int', 'long', 'move', 'mul', 'neg', 'new', 'nop', 'not', 'or', 'rem', 'return', 'shl', 'shr', 'sput', 'sub', 'throw', 'ushr', 'xor'];
   var smali_instr_high_prio = ['aget', 'aput', 'array', 'check', 'execute', 'fill', 'filled', 'goto/16', 'goto/32', 'iget', 'instance', 'invoke', 'iput', 'monitor', 'packed', 'sget', 'sparse'];
@@ -24061,7 +23673,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/smalltalk.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/smalltalk.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var VAR_IDENT_RE = '[a-z][a-zA-Z0-9_]*';
   var CHAR = {
@@ -24111,7 +23723,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/sml.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/sml.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['ml'],
@@ -24177,7 +23789,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/sqf.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/sqf.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var CPP = hljs.getLanguage('cpp').exports;
 
@@ -24548,7 +24160,7 @@ module.exports = function(hljs) {
     illegal: /#/
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/sql.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/sql.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var COMMENT_MODE = hljs.COMMENT('--', '$');
   return {
@@ -24708,7 +24320,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/stan.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/stan.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     contains: [
@@ -24791,7 +24403,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/stata.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/stata.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['do', 'ado'],
@@ -24829,7 +24441,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/step21.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/step21.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var STEP21_IDENT_RE = '[A-Z_][A-Z0-9_.]*';
   var STEP21_KEYWORDS = {
@@ -24876,7 +24488,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/stylus.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/stylus.js":[function(require,module,exports){
 module.exports = function(hljs) {
 
   var VARIABLE = {
@@ -25330,7 +24942,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/subunit.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/subunit.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var DETAILS = {
     className: 'string',
@@ -25364,7 +24976,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/swift.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/swift.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var SWIFT_KEYWORDS = {
       keyword: '__COLUMN__ __FILE__ __FUNCTION__ __LINE__ as as! as? associativity ' +
@@ -25481,7 +25093,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/taggerscript.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/taggerscript.js":[function(require,module,exports){
 module.exports = function(hljs) {
 
   var COMMENT = {
@@ -25525,7 +25137,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/tap.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/tap.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     case_insensitive: true,
@@ -25561,7 +25173,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/tcl.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/tcl.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['tk'],
@@ -25622,7 +25234,7 @@ module.exports = function(hljs) {
     ]
   }
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/tex.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/tex.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var COMMAND = {
     className: 'tag',
@@ -25684,7 +25296,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/thrift.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/thrift.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var BUILT_IN_TYPES = 'bool byte i16 i32 i64 double string binary';
   return {
@@ -25719,7 +25331,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/tp.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/tp.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var TPID = {
     className: 'number',
@@ -25803,7 +25415,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/twig.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/twig.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var PARAMS = {
     className: 'params',
@@ -25869,15 +25481,14 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/typescript.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/typescript.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = {
     keyword:
       'in if for while finally var new function do return void else break catch ' +
       'instanceof with throw case default try this switch continue typeof delete ' +
       'let yield const class public private protected get set super ' +
-      'static implements enum export import declare type namespace abstract ' +
-      'as from extends async await',
+      'static implements enum export import declare type namespace abstract',
     literal:
       'true false null undefined NaN Infinity',
     built_in:
@@ -25887,7 +25498,7 @@ module.exports = function(hljs) {
       'TypeError URIError Number Math Date String RegExp Array Float32Array ' +
       'Float64Array Int16Array Int32Array Int8Array Uint16Array Uint32Array ' +
       'Uint8Array Uint8ClampedArray ArrayBuffer DataView JSON Intl arguments require ' +
-      'module console window document any number boolean string void Promise'
+      'module console window document any number boolean string void'
   };
 
   return {
@@ -25928,35 +25539,7 @@ module.exports = function(hljs) {
         contains: [
           hljs.C_LINE_COMMENT_MODE,
           hljs.C_BLOCK_COMMENT_MODE,
-          hljs.REGEXP_MODE,
-          {
-            className: 'function',
-            begin: '(\\(.*?\\)|' + hljs.IDENT_RE + ')\\s*=>', returnBegin: true,
-            end: '\\s*=>',
-            contains: [
-              {
-                className: 'params',
-                variants: [
-                  {
-                    begin: hljs.IDENT_RE
-                  },
-                  {
-                    begin: /\(\s*\)/,
-                  },
-                  {
-                    begin: /\(/, end: /\)/,
-                    excludeBegin: true, excludeEnd: true,
-                    keywords: KEYWORDS,
-                    contains: [
-                      'self',
-                      hljs.C_LINE_COMMENT_MODE,
-                      hljs.C_BLOCK_COMMENT_MODE
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
+          hljs.REGEXP_MODE
         ],
         relevance: 0
       },
@@ -26025,7 +25608,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/vala.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/vala.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     keywords: {
@@ -26075,7 +25658,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/vbnet.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/vbnet.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['vb'],
@@ -26131,7 +25714,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/vbscript-html.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/vbscript-html.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     subLanguage: 'xml',
@@ -26143,7 +25726,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/vbscript.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/vbscript.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     aliases: ['vbs'],
@@ -26182,7 +25765,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/verilog.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/verilog.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var SV_KEYWORDS = {
     keyword:
@@ -26281,7 +25864,7 @@ module.exports = function(hljs) {
     ]
   }; // return
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/vhdl.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/vhdl.js":[function(require,module,exports){
 module.exports = function(hljs) {
   // Regular expression for VHDL numeric literals.
 
@@ -26342,7 +25925,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/vim.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/vim.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     lexemes: /[!#@\w]+/,
@@ -26448,7 +26031,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/x86asm.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/x86asm.js":[function(require,module,exports){
 module.exports = function(hljs) {
   return {
     case_insensitive: true,
@@ -26584,7 +26167,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/xl.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/xl.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var BUILTIN_MODULES =
     'ObjectLoader Animate MovieCredits Slides Filters Shading Materials LensFlare Mapping VLCAudioVideo ' +
@@ -26657,7 +26240,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/xml.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/xml.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var XML_IDENT_RE = '[A-Za-z0-9\\._:-]+';
   var TAG_INTERNALS = {
@@ -26760,7 +26343,7 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/xquery.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/xquery.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var KEYWORDS = 'for let if while then else return where group by xquery encoding version' +
     'module namespace boundary-space preserve strip default collation base-uri ordering' +
@@ -26831,9 +26414,9 @@ module.exports = function(hljs) {
     contains: CONTAINS
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/yaml.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/yaml.js":[function(require,module,exports){
 module.exports = function(hljs) {
-  var LITERALS = 'true false yes no null';
+  var LITERALS = {literal: '{ } true false yes no Yes No True False null'};
 
   var keyPrefix = '^[ \\-]*';
   var keyName =  '[a-zA-Z_][\\w\\-]*';
@@ -26858,8 +26441,7 @@ module.exports = function(hljs) {
     relevance: 0,
     variants: [
       {begin: /'/, end: /'/},
-      {begin: /"/, end: /"/},
-      {begin: /\S+/}
+      {begin: /"/, end: /"/}
     ],
     contains: [
       hljs.BACKSLASH_ESCAPE,
@@ -26909,17 +26491,14 @@ module.exports = function(hljs) {
         begin: '^ *-',
         relevance: 0
       },
+      STRING,
       hljs.HASH_COMMENT_MODE,
-      {
-        beginKeywords: LITERALS,
-        keywords: {literal: LITERALS}
-      },
-      hljs.C_NUMBER_MODE,
-      STRING
-    ]
+      hljs.C_NUMBER_MODE
+    ],
+    keywords: LITERALS
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/languages/zephir.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/languages/zephir.js":[function(require,module,exports){
 module.exports = function(hljs) {
   var STRING = {
     className: 'string',
@@ -27026,19 +26605,19 @@ module.exports = function(hljs) {
     ]
   };
 };
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/jquery/dist/jquery.js":[function(require,module,exports){
 /*!
- * jQuery JavaScript Library v3.2.0
+ * jQuery JavaScript Library v3.1.1
  * https://jquery.com/
  *
  * Includes Sizzle.js
  * https://sizzlejs.com/
  *
- * Copyright JS Foundation and other contributors
+ * Copyright jQuery Foundation and other contributors
  * Released under the MIT license
  * https://jquery.org/license
  *
- * Date: 2017-03-16T21:26Z
+ * Date: 2016-09-22T22:30Z
  */
 ( function( global, factory ) {
 
@@ -27117,7 +26696,7 @@ var support = {};
 
 
 var
-	version = "3.2.0",
+	version = "3.1.1",
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
@@ -27265,11 +26844,11 @@ jQuery.extend = jQuery.fn.extend = function() {
 
 				// Recurse if we're merging plain objects or arrays
 				if ( deep && copy && ( jQuery.isPlainObject( copy ) ||
-					( copyIsArray = Array.isArray( copy ) ) ) ) {
+					( copyIsArray = jQuery.isArray( copy ) ) ) ) {
 
 					if ( copyIsArray ) {
 						copyIsArray = false;
-						clone = src && Array.isArray( src ) ? src : [];
+						clone = src && jQuery.isArray( src ) ? src : [];
 
 					} else {
 						clone = src && jQuery.isPlainObject( src ) ? src : {};
@@ -27307,6 +26886,8 @@ jQuery.extend( {
 	isFunction: function( obj ) {
 		return jQuery.type( obj ) === "function";
 	},
+
+	isArray: Array.isArray,
 
 	isWindow: function( obj ) {
 		return obj != null && obj === obj.window;
@@ -27380,6 +26961,10 @@ jQuery.extend( {
 	// Microsoft forgot to hump their vendor prefix (#9572)
 	camelCase: function( string ) {
 		return string.replace( rmsPrefix, "ms-" ).replace( rdashAlpha, fcamelCase );
+	},
+
+	nodeName: function( elem, name ) {
+		return elem.nodeName && elem.nodeName.toLowerCase() === name.toLowerCase();
 	},
 
 	each: function( obj, callback ) {
@@ -29866,13 +29451,6 @@ var siblings = function( n, elem ) {
 
 var rneedsContext = jQuery.expr.match.needsContext;
 
-
-
-function nodeName( elem, name ) {
-
-  return elem.nodeName && elem.nodeName.toLowerCase() === name.toLowerCase();
-
-};
 var rsingleTag = ( /^<([a-z][^\/\0>:\x20\t\r\n\f]*)[\x20\t\r\n\f]*\/?>(?:<\/\1>|)$/i );
 
 
@@ -30224,18 +29802,7 @@ jQuery.each( {
 		return siblings( elem.firstChild );
 	},
 	contents: function( elem ) {
-        if ( nodeName( elem, "iframe" ) ) {
-            return elem.contentDocument;
-        }
-
-        // Support: IE 9 - 11 only, iOS 7 only, Android Browser <=4.3 only
-        // Treat the template element as a regular one in browsers that
-        // don't support it.
-        if ( nodeName( elem, "template" ) ) {
-            elem = elem.content || elem;
-        }
-
-        return jQuery.merge( [], elem.childNodes );
+		return elem.contentDocument || jQuery.merge( [], elem.childNodes );
 	}
 }, function( name, fn ) {
 	jQuery.fn[ name ] = function( until, selector ) {
@@ -30333,7 +29900,7 @@ jQuery.Callbacks = function( options ) {
 		fire = function() {
 
 			// Enforce single-firing
-			locked = locked || options.once;
+			locked = options.once;
 
 			// Execute callbacks for all pending executions,
 			// respecting firingIndex overrides and runtime changes
@@ -30502,7 +30069,7 @@ function Thrower( ex ) {
 	throw ex;
 }
 
-function adoptValue( value, resolve, reject, noValue ) {
+function adoptValue( value, resolve, reject ) {
 	var method;
 
 	try {
@@ -30518,10 +30085,9 @@ function adoptValue( value, resolve, reject, noValue ) {
 		// Other non-thenables
 		} else {
 
-			// Control `resolve` arguments by letting Array#slice cast boolean `noValue` to integer:
-			// * false: [ value ].slice( 0 ) => resolve( value )
-			// * true: [ value ].slice( 1 ) => resolve()
-			resolve.apply( undefined, [ value ].slice( noValue ) );
+			// Support: Android 4.0 only
+			// Strict mode functions invoked without .call/.apply get global-object context
+			resolve.call( undefined, value );
 		}
 
 	// For Promises/A+, convert exceptions into rejections
@@ -30531,7 +30097,7 @@ function adoptValue( value, resolve, reject, noValue ) {
 
 		// Support: Android 4.0 only
 		// Strict mode functions invoked without .call/.apply get global-object context
-		reject.apply( undefined, [ value ] );
+		reject.call( undefined, value );
 	}
 }
 
@@ -30856,8 +30422,7 @@ jQuery.extend( {
 
 		// Single- and empty arguments are adopted like Promise.resolve
 		if ( remaining <= 1 ) {
-			adoptValue( singleValue, master.done( updateFunc( i ) ).resolve, master.reject,
-				!remaining );
+			adoptValue( singleValue, master.done( updateFunc( i ) ).resolve, master.reject );
 
 			// Use .then() to unwrap secondary thenables (cf. gh-3000)
 			if ( master.state() === "pending" ||
@@ -30928,6 +30493,15 @@ jQuery.extend( {
 	// A counter to track how many items to wait for before
 	// the ready event fires. See #6781
 	readyWait: 1,
+
+	// Hold (or release) the ready event
+	holdReady: function( hold ) {
+		if ( hold ) {
+			jQuery.readyWait++;
+		} else {
+			jQuery.ready( true );
+		}
+	},
 
 	// Handle when the DOM is ready
 	ready: function( wait ) {
@@ -31164,7 +30738,7 @@ Data.prototype = {
 		if ( key !== undefined ) {
 
 			// Support array or space separated string of keys
-			if ( Array.isArray( key ) ) {
+			if ( jQuery.isArray( key ) ) {
 
 				// If key is an array of keys...
 				// We always set camelCase keys, so remove that.
@@ -31390,7 +30964,7 @@ jQuery.extend( {
 
 			// Speed up dequeue by getting out quickly if this is just a lookup
 			if ( data ) {
-				if ( !queue || Array.isArray( data ) ) {
+				if ( !queue || jQuery.isArray( data ) ) {
 					queue = dataPriv.access( elem, type, jQuery.makeArray( data ) );
 				} else {
 					queue.push( data );
@@ -31767,7 +31341,7 @@ function getAll( context, tag ) {
 		ret = [];
 	}
 
-	if ( tag === undefined || tag && nodeName( context, tag ) ) {
+	if ( tag === undefined || tag && jQuery.nodeName( context, tag ) ) {
 		return jQuery.merge( [ context ], ret );
 	}
 
@@ -32372,11 +31946,9 @@ jQuery.event = {
 		},
 		click: {
 
-			// For checkable types, fire native event so checked state will be right
+			// For checkbox, fire native event so checked state will be right
 			trigger: function() {
-				if ( rcheckableType.test( this.type ) &&
-					this.click && nodeName( this, "input" ) ) {
-
+				if ( this.type === "checkbox" && this.click && jQuery.nodeName( this, "input" ) ) {
 					this.click();
 					return false;
 				}
@@ -32384,7 +31956,7 @@ jQuery.event = {
 
 			// For cross-browser consistency, don't fire native .click() on links
 			_default: function( event ) {
-				return nodeName( event.target, "a" );
+				return jQuery.nodeName( event.target, "a" );
 			}
 		},
 
@@ -32661,12 +32233,11 @@ var
 	rscriptTypeMasked = /^true\/(.*)/,
 	rcleanScript = /^\s*<!(?:\[CDATA\[|--)|(?:\]\]|--)>\s*$/g;
 
-// Prefer a tbody over its parent table for containing new rows
 function manipulationTarget( elem, content ) {
-	if ( nodeName( elem, "table" ) &&
-		nodeName( content.nodeType !== 11 ? content : content.firstChild, "tr" ) ) {
+	if ( jQuery.nodeName( elem, "table" ) &&
+		jQuery.nodeName( content.nodeType !== 11 ? content : content.firstChild, "tr" ) ) {
 
-		return jQuery( ">tbody", elem )[ 0 ] || elem;
+		return elem.getElementsByTagName( "tbody" )[ 0 ] || elem;
 	}
 
 	return elem;
@@ -33200,9 +32771,8 @@ function curCSS( elem, name, computed ) {
 
 	computed = computed || getStyles( elem );
 
-	// getPropertyValue is needed for:
-	//   .css('filter') (IE 9 only, #12537)
-	//   .css('--customProperty) (#3144)
+	// Support: IE <=9 only
+	// getPropertyValue is only needed for .css('filter') (#12537)
 	if ( computed ) {
 		ret = computed.getPropertyValue( name ) || computed[ name ];
 
@@ -33268,7 +32838,6 @@ var
 	// except "table", "table-cell", or "table-caption"
 	// See here for display values: https://developer.mozilla.org/en-US/docs/CSS/display
 	rdisplayswap = /^(none|table(?!-c[ea]).+)/,
-	rcustomProp = /^--/,
 	cssShow = { position: "absolute", visibility: "hidden", display: "block" },
 	cssNormalTransform = {
 		letterSpacing: "0",
@@ -33296,16 +32865,6 @@ function vendorPropName( name ) {
 			return name;
 		}
 	}
-}
-
-// Return a property mapped along what jQuery.cssProps suggests or to
-// a vendor prefixed property.
-function finalPropName( name ) {
-	var ret = jQuery.cssProps[ name ];
-	if ( !ret ) {
-		ret = jQuery.cssProps[ name ] = vendorPropName( name ) || name;
-	}
-	return ret;
 }
 
 function setPositiveNumber( elem, value, subtract ) {
@@ -33368,24 +32927,43 @@ function augmentWidthOrHeight( elem, name, extra, isBorderBox, styles ) {
 
 function getWidthOrHeight( elem, name, extra ) {
 
-	// Start with computed style
-	var valueIsBorderBox,
+	// Start with offset property, which is equivalent to the border-box value
+	var val,
+		valueIsBorderBox = true,
 		styles = getStyles( elem ),
-		val = curCSS( elem, name, styles ),
 		isBorderBox = jQuery.css( elem, "boxSizing", false, styles ) === "border-box";
 
-	// Computed unit is not pixels. Stop here and return.
-	if ( rnumnonpx.test( val ) ) {
-		return val;
+	// Support: IE <=11 only
+	// Running getBoundingClientRect on a disconnected node
+	// in IE throws an error.
+	if ( elem.getClientRects().length ) {
+		val = elem.getBoundingClientRect()[ name ];
 	}
 
-	// Check for style in case a browser which returns unreliable values
-	// for getComputedStyle silently falls back to the reliable elem.style
-	valueIsBorderBox = isBorderBox &&
-		( support.boxSizingReliable() || val === elem.style[ name ] );
+	// Some non-html elements return undefined for offsetWidth, so check for null/undefined
+	// svg - https://bugzilla.mozilla.org/show_bug.cgi?id=649285
+	// MathML - https://bugzilla.mozilla.org/show_bug.cgi?id=491668
+	if ( val <= 0 || val == null ) {
 
-	// Normalize "", auto, and prepare for extra
-	val = parseFloat( val ) || 0;
+		// Fall back to computed then uncomputed css if necessary
+		val = curCSS( elem, name, styles );
+		if ( val < 0 || val == null ) {
+			val = elem.style[ name ];
+		}
+
+		// Computed unit is not pixels. Stop here and return.
+		if ( rnumnonpx.test( val ) ) {
+			return val;
+		}
+
+		// Check for style in case a browser which returns unreliable values
+		// for getComputedStyle silently falls back to the reliable elem.style
+		valueIsBorderBox = isBorderBox &&
+			( support.boxSizingReliable() || val === elem.style[ name ] );
+
+		// Normalize "", auto, and prepare for extra
+		val = parseFloat( val ) || 0;
+	}
 
 	// Use the active box-sizing model to add/subtract irrelevant styles
 	return ( val +
@@ -33450,15 +33028,10 @@ jQuery.extend( {
 		// Make sure that we're working with the right name
 		var ret, type, hooks,
 			origName = jQuery.camelCase( name ),
-			isCustomProp = rcustomProp.test( name ),
 			style = elem.style;
 
-		// Make sure that we're working with the right name. We don't
-		// want to query the value if it is a CSS custom property
-		// since they are user-defined.
-		if ( !isCustomProp ) {
-			name = finalPropName( origName );
-		}
+		name = jQuery.cssProps[ origName ] ||
+			( jQuery.cssProps[ origName ] = vendorPropName( origName ) || origName );
 
 		// Gets hook for the prefixed version, then unprefixed version
 		hooks = jQuery.cssHooks[ name ] || jQuery.cssHooks[ origName ];
@@ -33494,11 +33067,7 @@ jQuery.extend( {
 			if ( !hooks || !( "set" in hooks ) ||
 				( value = hooks.set( elem, value, extra ) ) !== undefined ) {
 
-				if ( isCustomProp ) {
-					style.setProperty( name, value );
-				} else {
-					style[ name ] = value;
-				}
+				style[ name ] = value;
 			}
 
 		} else {
@@ -33517,15 +33086,11 @@ jQuery.extend( {
 
 	css: function( elem, name, extra, styles ) {
 		var val, num, hooks,
-			origName = jQuery.camelCase( name ),
-			isCustomProp = rcustomProp.test( name );
+			origName = jQuery.camelCase( name );
 
-		// Make sure that we're working with the right name. We don't
-		// want to modify the value if it is a CSS custom property
-		// since they are user-defined.
-		if ( !isCustomProp ) {
-			name = finalPropName( origName );
-		}
+		// Make sure that we're working with the right name
+		name = jQuery.cssProps[ origName ] ||
+			( jQuery.cssProps[ origName ] = vendorPropName( origName ) || origName );
 
 		// Try prefixed name followed by the unprefixed name
 		hooks = jQuery.cssHooks[ name ] || jQuery.cssHooks[ origName ];
@@ -33550,7 +33115,6 @@ jQuery.extend( {
 			num = parseFloat( val );
 			return extra === true || isFinite( num ) ? num || 0 : val;
 		}
-
 		return val;
 	}
 } );
@@ -33650,7 +33214,7 @@ jQuery.fn.extend( {
 				map = {},
 				i = 0;
 
-			if ( Array.isArray( name ) ) {
+			if ( jQuery.isArray( name ) ) {
 				styles = getStyles( elem );
 				len = name.length;
 
@@ -33788,18 +33352,13 @@ jQuery.fx.step = {};
 
 
 var
-	fxNow, inProgress,
+	fxNow, timerId,
 	rfxtypes = /^(?:toggle|show|hide)$/,
 	rrun = /queueHooks$/;
 
-function schedule() {
-	if ( inProgress ) {
-		if ( document.hidden === false && window.requestAnimationFrame ) {
-			window.requestAnimationFrame( schedule );
-		} else {
-			window.setTimeout( schedule, jQuery.fx.interval );
-		}
-
+function raf() {
+	if ( timerId ) {
+		window.requestAnimationFrame( raf );
 		jQuery.fx.tick();
 	}
 }
@@ -34026,7 +33585,7 @@ function propFilter( props, specialEasing ) {
 		name = jQuery.camelCase( index );
 		easing = specialEasing[ name ];
 		value = props[ index ];
-		if ( Array.isArray( value ) ) {
+		if ( jQuery.isArray( value ) ) {
 			easing = value[ 1 ];
 			value = props[ index ] = value[ 0 ];
 		}
@@ -34085,19 +33644,12 @@ function Animation( elem, properties, options ) {
 
 			deferred.notifyWith( elem, [ animation, percent, remaining ] );
 
-			// If there's more to do, yield
 			if ( percent < 1 && length ) {
 				return remaining;
+			} else {
+				deferred.resolveWith( elem, [ animation ] );
+				return false;
 			}
-
-			// If this was an empty animation, synthesize a final progress notification
-			if ( !length ) {
-				deferred.notifyWith( elem, [ animation, 1, 0 ] );
-			}
-
-			// Resolve the animation and report its conclusion
-			deferred.resolveWith( elem, [ animation ] );
-			return false;
 		},
 		animation = deferred.promise( {
 			elem: elem,
@@ -34162,13 +33714,6 @@ function Animation( elem, properties, options ) {
 		animation.opts.start.call( elem, animation );
 	}
 
-	// Attach callbacks from options
-	animation
-		.progress( animation.opts.progress )
-		.done( animation.opts.done, animation.opts.complete )
-		.fail( animation.opts.fail )
-		.always( animation.opts.always );
-
 	jQuery.fx.timer(
 		jQuery.extend( tick, {
 			elem: elem,
@@ -34177,7 +33722,11 @@ function Animation( elem, properties, options ) {
 		} )
 	);
 
-	return animation;
+	// attach callbacks from options
+	return animation.progress( animation.opts.progress )
+		.done( animation.opts.done, animation.opts.complete )
+		.fail( animation.opts.fail )
+		.always( animation.opts.always );
 }
 
 jQuery.Animation = jQuery.extend( Animation, {
@@ -34228,8 +33777,8 @@ jQuery.speed = function( speed, easing, fn ) {
 		easing: fn && easing || easing && !jQuery.isFunction( easing ) && easing
 	};
 
-	// Go to the end state if fx are off
-	if ( jQuery.fx.off ) {
+	// Go to the end state if fx are off or if document is hidden
+	if ( jQuery.fx.off || document.hidden ) {
 		opt.duration = 0;
 
 	} else {
@@ -34421,7 +33970,7 @@ jQuery.fx.tick = function() {
 	for ( ; i < timers.length; i++ ) {
 		timer = timers[ i ];
 
-		// Run the timer and safely remove it when done (allowing for external removal)
+		// Checks the timer has not already been removed
 		if ( !timer() && timers[ i ] === timer ) {
 			timers.splice( i--, 1 );
 		}
@@ -34435,21 +33984,30 @@ jQuery.fx.tick = function() {
 
 jQuery.fx.timer = function( timer ) {
 	jQuery.timers.push( timer );
-	jQuery.fx.start();
+	if ( timer() ) {
+		jQuery.fx.start();
+	} else {
+		jQuery.timers.pop();
+	}
 };
 
 jQuery.fx.interval = 13;
 jQuery.fx.start = function() {
-	if ( inProgress ) {
-		return;
+	if ( !timerId ) {
+		timerId = window.requestAnimationFrame ?
+			window.requestAnimationFrame( raf ) :
+			window.setInterval( jQuery.fx.tick, jQuery.fx.interval );
 	}
-
-	inProgress = true;
-	schedule();
 };
 
 jQuery.fx.stop = function() {
-	inProgress = null;
+	if ( window.cancelAnimationFrame ) {
+		window.cancelAnimationFrame( timerId );
+	} else {
+		window.clearInterval( timerId );
+	}
+
+	timerId = null;
 };
 
 jQuery.fx.speeds = {
@@ -34566,7 +34124,7 @@ jQuery.extend( {
 		type: {
 			set: function( elem, value ) {
 				if ( !support.radioValue && value === "radio" &&
-					nodeName( elem, "input" ) ) {
+					jQuery.nodeName( elem, "input" ) ) {
 					var val = elem.value;
 					elem.setAttribute( "type", value );
 					if ( val ) {
@@ -34997,7 +34555,7 @@ jQuery.fn.extend( {
 			} else if ( typeof val === "number" ) {
 				val += "";
 
-			} else if ( Array.isArray( val ) ) {
+			} else if ( jQuery.isArray( val ) ) {
 				val = jQuery.map( val, function( value ) {
 					return value == null ? "" : value + "";
 				} );
@@ -35056,7 +34614,7 @@ jQuery.extend( {
 							// Don't return options that are disabled or in a disabled optgroup
 							!option.disabled &&
 							( !option.parentNode.disabled ||
-								!nodeName( option.parentNode, "optgroup" ) ) ) {
+								!jQuery.nodeName( option.parentNode, "optgroup" ) ) ) {
 
 						// Get the specific value for the option
 						value = jQuery( option ).val();
@@ -35108,7 +34666,7 @@ jQuery.extend( {
 jQuery.each( [ "radio", "checkbox" ], function() {
 	jQuery.valHooks[ this ] = {
 		set: function( elem, value ) {
-			if ( Array.isArray( value ) ) {
+			if ( jQuery.isArray( value ) ) {
 				return ( elem.checked = jQuery.inArray( jQuery( elem ).val(), value ) > -1 );
 			}
 		}
@@ -35403,7 +34961,7 @@ var
 function buildParams( prefix, obj, traditional, add ) {
 	var name;
 
-	if ( Array.isArray( obj ) ) {
+	if ( jQuery.isArray( obj ) ) {
 
 		// Serialize array item.
 		jQuery.each( obj, function( i, v ) {
@@ -35455,7 +35013,7 @@ jQuery.param = function( a, traditional ) {
 		};
 
 	// If an array was passed in, assume that it is an array of form elements.
-	if ( Array.isArray( a ) || ( a.jquery && !jQuery.isPlainObject( a ) ) ) {
+	if ( jQuery.isArray( a ) || ( a.jquery && !jQuery.isPlainObject( a ) ) ) {
 
 		// Serialize the form elements
 		jQuery.each( a, function() {
@@ -35501,7 +35059,7 @@ jQuery.fn.extend( {
 				return null;
 			}
 
-			if ( Array.isArray( val ) ) {
+			if ( jQuery.isArray( val ) ) {
 				return jQuery.map( val, function( val ) {
 					return { name: elem.name, value: val.replace( rCRLF, "\r\n" ) };
 				} );
@@ -36926,6 +36484,13 @@ jQuery.expr.pseudos.animated = function( elem ) {
 
 
 
+/**
+ * Gets a window from an element
+ */
+function getWindow( elem ) {
+	return jQuery.isWindow( elem ) ? elem : elem.nodeType === 9 && elem.defaultView;
+}
+
 jQuery.offset = {
 	setOffset: function( elem, options, i ) {
 		var curPosition, curLeft, curCSSTop, curTop, curOffset, curCSSLeft, calculatePosition,
@@ -36990,14 +36555,13 @@ jQuery.fn.extend( {
 				} );
 		}
 
-		var doc, docElem, rect, win,
+		var docElem, win, rect, doc,
 			elem = this[ 0 ];
 
 		if ( !elem ) {
 			return;
 		}
 
-		// Return zeros for disconnected and hidden (display: none) elements (gh-2310)
 		// Support: IE <=11 only
 		// Running getBoundingClientRect on a
 		// disconnected node in IE throws an error
@@ -37007,14 +36571,20 @@ jQuery.fn.extend( {
 
 		rect = elem.getBoundingClientRect();
 
-		doc = elem.ownerDocument;
-		docElem = doc.documentElement;
-		win = doc.defaultView;
+		// Make sure element is not hidden (display: none)
+		if ( rect.width || rect.height ) {
+			doc = elem.ownerDocument;
+			win = getWindow( doc );
+			docElem = doc.documentElement;
 
-		return {
-			top: rect.top + win.pageYOffset - docElem.clientTop,
-			left: rect.left + win.pageXOffset - docElem.clientLeft
-		};
+			return {
+				top: rect.top + win.pageYOffset - docElem.clientTop,
+				left: rect.left + win.pageXOffset - docElem.clientLeft
+			};
+		}
+
+		// Return zeros for disconnected and hidden elements (gh-2310)
+		return rect;
 	},
 
 	position: function() {
@@ -37040,7 +36610,7 @@ jQuery.fn.extend( {
 
 			// Get correct offsets
 			offset = this.offset();
-			if ( !nodeName( offsetParent[ 0 ], "html" ) ) {
+			if ( !jQuery.nodeName( offsetParent[ 0 ], "html" ) ) {
 				parentOffset = offsetParent.offset();
 			}
 
@@ -37087,14 +36657,7 @@ jQuery.each( { scrollLeft: "pageXOffset", scrollTop: "pageYOffset" }, function( 
 
 	jQuery.fn[ method ] = function( val ) {
 		return access( this, function( elem, method, val ) {
-
-			// Coalesce documents and windows
-			var win;
-			if ( jQuery.isWindow( elem ) ) {
-				win = elem;
-			} else if ( elem.nodeType === 9 ) {
-				win = elem.defaultView;
-			}
+			var win = getWindow( elem );
 
 			if ( val === undefined ) {
 				return win ? win[ prop ] : elem[ method ];
@@ -37200,19 +36763,10 @@ jQuery.fn.extend( {
 		return arguments.length === 1 ?
 			this.off( selector, "**" ) :
 			this.off( types, selector || "**", fn );
-	},
-	holdReady: function( hold ) {
-		if ( hold ) {
-			jQuery.readyWait++;
-		} else {
-			jQuery.ready( true );
-		}
 	}
 } );
 
-jQuery.isArray = Array.isArray;
 jQuery.parseJSON = JSON.parse;
-jQuery.nodeName = nodeName;
 
 
 
@@ -37269,10 +36823,11 @@ if ( !noGlobal ) {
 
 
 
+
 return jQuery;
 } );
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/katex.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/katex.js":[function(require,module,exports){
 /* eslint no-console:0 */
 /**
  * This is the main entry point for KaTeX. Here, we expose functions for
@@ -37348,7 +36903,7 @@ module.exports = {
     ParseError: ParseError
 };
 
-},{"./src/ParseError":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/ParseError.js","./src/Settings":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/Settings.js","./src/buildTree":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/buildTree.js","./src/parseTree":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/parseTree.js","./src/utils":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/Lexer.js":[function(require,module,exports){
+},{"./src/ParseError":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/ParseError.js","./src/Settings":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/Settings.js","./src/buildTree":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/buildTree.js","./src/parseTree":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/parseTree.js","./src/utils":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/utils.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/Lexer.js":[function(require,module,exports){
 /**
  * The Lexer class handles tokenizing the input in various ways. Since our
  * parser expects us to be able to backtrack, the lexer allows lexing from any
@@ -37459,7 +37014,7 @@ Lexer.prototype.lex = function() {
 
 module.exports = Lexer;
 
-},{"./ParseError":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/ParseError.js","match-at":"/home/tobloef/Downloads/code/markant.io/node_modules/match-at/lib/matchAt.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/MacroExpander.js":[function(require,module,exports){
+},{"./ParseError":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/ParseError.js","match-at":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/match-at/lib/matchAt.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/MacroExpander.js":[function(require,module,exports){
 /**
  * This file contains the “gullet” where macros are expanded
  * until only non-macro tokens remain.
@@ -37531,7 +37086,7 @@ MacroExpander.prototype.unget = function(token) {
 
 module.exports = MacroExpander;
 
-},{"./Lexer":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/Lexer.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/Options.js":[function(require,module,exports){
+},{"./Lexer":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/Lexer.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/Options.js":[function(require,module,exports){
 /**
  * This file contains information about the options that the Parser carries
  * around with it while parsing. Data is held in an `Options` object, and when
@@ -37722,7 +37277,7 @@ Options.prototype.getColor = function() {
 
 module.exports = Options;
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/ParseError.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/ParseError.js":[function(require,module,exports){
 /**
  * This is the ParseError class, which is the main error thrown by KaTeX
  * functions when something has gone wrong. This is used to distinguish internal
@@ -37788,7 +37343,7 @@ ParseError.prototype.__proto__ = Error.prototype;
 
 module.exports = ParseError;
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/Parser.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/Parser.js":[function(require,module,exports){
 /* eslint no-constant-condition:0 */
 var functions = require("./functions");
 var environments = require("./environments");
@@ -38639,7 +38194,7 @@ Parser.prototype.ParseNode = ParseNode;
 
 module.exports = Parser;
 
-},{"./MacroExpander":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/MacroExpander.js","./ParseError":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/ParseError.js","./environments":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/environments.js","./functions":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/functions.js","./parseData":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/parseData.js","./symbols":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/symbols.js","./unicodeRegexes":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/unicodeRegexes.js","./utils":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/Settings.js":[function(require,module,exports){
+},{"./MacroExpander":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/MacroExpander.js","./ParseError":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/ParseError.js","./environments":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/environments.js","./functions":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/functions.js","./parseData":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/parseData.js","./symbols":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/symbols.js","./unicodeRegexes":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/unicodeRegexes.js","./utils":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/utils.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/Settings.js":[function(require,module,exports){
 /**
  * This is a module for storing settings passed into KaTeX. It correctly handles
  * default settings.
@@ -38670,7 +38225,7 @@ function Settings(options) {
 
 module.exports = Settings;
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/Style.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/Style.js":[function(require,module,exports){
 /**
  * This file contains information and classes for the various kinds of styles
  * used in TeX. It provides a generic `Style` class, which holds information
@@ -38821,7 +38376,7 @@ module.exports = {
     SCRIPTSCRIPT: styles[SS]
 };
 
-},{"./fontMetrics.js":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/fontMetrics.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/buildCommon.js":[function(require,module,exports){
+},{"./fontMetrics.js":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/fontMetrics.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/buildCommon.js":[function(require,module,exports){
 /* eslint no-console:0 */
 /**
  * This module contains general functions that can be used for building
@@ -39303,7 +38858,7 @@ module.exports = {
     spacingFunctions: spacingFunctions
 };
 
-},{"./domTree":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/domTree.js","./fontMetrics":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/fontMetrics.js","./symbols":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/symbols.js","./utils":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/buildHTML.js":[function(require,module,exports){
+},{"./domTree":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/domTree.js","./fontMetrics":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/fontMetrics.js","./symbols":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/symbols.js","./utils":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/utils.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/buildHTML.js":[function(require,module,exports){
 /* eslint no-console:0 */
 /**
  * This file does the main work of building a domTree structure from a parse
@@ -40874,7 +40429,7 @@ var buildHTML = function(tree, options) {
 
 module.exports = buildHTML;
 
-},{"./ParseError":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/ParseError.js","./Style":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/Style.js","./buildCommon":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/buildCommon.js","./delimiter":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/delimiter.js","./domTree":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/domTree.js","./fontMetrics":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/fontMetrics.js","./utils":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/buildMathML.js":[function(require,module,exports){
+},{"./ParseError":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/ParseError.js","./Style":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/Style.js","./buildCommon":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/buildCommon.js","./delimiter":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/delimiter.js","./domTree":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/domTree.js","./fontMetrics":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/fontMetrics.js","./utils":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/utils.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/buildMathML.js":[function(require,module,exports){
 /**
  * This file converts a parse tree into a cooresponding MathML tree. The main
  * entry point is the `buildMathML` function, which takes a parse tree from the
@@ -41457,7 +41012,7 @@ var buildMathML = function(tree, texExpression, options) {
 
 module.exports = buildMathML;
 
-},{"./ParseError":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/ParseError.js","./buildCommon":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/buildCommon.js","./fontMetrics":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/fontMetrics.js","./mathMLTree":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/mathMLTree.js","./symbols":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/symbols.js","./utils":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/buildTree.js":[function(require,module,exports){
+},{"./ParseError":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/ParseError.js","./buildCommon":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/buildCommon.js","./fontMetrics":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/fontMetrics.js","./mathMLTree":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/mathMLTree.js","./symbols":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/symbols.js","./utils":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/utils.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/buildTree.js":[function(require,module,exports){
 var buildHTML = require("./buildHTML");
 var buildMathML = require("./buildMathML");
 var buildCommon = require("./buildCommon");
@@ -41499,7 +41054,7 @@ var buildTree = function(tree, expression, settings) {
 
 module.exports = buildTree;
 
-},{"./Options":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/Options.js","./Settings":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/Settings.js","./Style":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/Style.js","./buildCommon":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/buildCommon.js","./buildHTML":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/buildHTML.js","./buildMathML":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/buildMathML.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/delimiter.js":[function(require,module,exports){
+},{"./Options":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/Options.js","./Settings":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/Settings.js","./Style":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/Style.js","./buildCommon":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/buildCommon.js","./buildHTML":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/buildHTML.js","./buildMathML":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/buildMathML.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/delimiter.js":[function(require,module,exports){
 /**
  * This file deals with creating delimiters of various sizes. The TeXbook
  * discusses these routines on page 441-442, in the "Another subroutine sets box
@@ -42051,7 +41606,7 @@ module.exports = {
     leftRightDelim: makeLeftRightDelim
 };
 
-},{"./ParseError":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/ParseError.js","./Style":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/Style.js","./buildCommon":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/buildCommon.js","./fontMetrics":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/fontMetrics.js","./symbols":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/symbols.js","./utils":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/domTree.js":[function(require,module,exports){
+},{"./ParseError":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/ParseError.js","./Style":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/Style.js","./buildCommon":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/buildCommon.js","./fontMetrics":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/fontMetrics.js","./symbols":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/symbols.js","./utils":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/utils.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/domTree.js":[function(require,module,exports){
 /**
  * These objects store the data about the DOM nodes we create, as well as some
  * extra data. They can then be transformed into real DOM nodes with the
@@ -42389,7 +41944,7 @@ module.exports = {
     symbolNode: symbolNode
 };
 
-},{"./unicodeRegexes":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/unicodeRegexes.js","./utils":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/environments.js":[function(require,module,exports){
+},{"./unicodeRegexes":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/unicodeRegexes.js","./utils":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/utils.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/environments.js":[function(require,module,exports){
 /* eslint no-constant-condition:0 */
 var parseData = require("./parseData");
 var ParseError = require("./ParseError");
@@ -42614,7 +42169,7 @@ defineEnvironment("aligned", {
     return res;
 });
 
-},{"./ParseError":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/ParseError.js","./Style":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/Style.js","./parseData":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/parseData.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/fontMetrics.js":[function(require,module,exports){
+},{"./ParseError":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/ParseError.js","./Style":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/Style.js","./parseData":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/parseData.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/fontMetrics.js":[function(require,module,exports){
 /* eslint no-unused-vars:0 */
 
 var Style = require("./Style");
@@ -42894,7 +42449,7 @@ module.exports = {
     getCharacterMetrics: getCharacterMetrics
 };
 
-},{"./Style":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/Style.js","./fontMetricsData":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/fontMetricsData.js","./unicodeRegexes":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/unicodeRegexes.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/fontMetricsData.js":[function(require,module,exports){
+},{"./Style":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/Style.js","./fontMetricsData":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/fontMetricsData.js","./unicodeRegexes":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/unicodeRegexes.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/fontMetricsData.js":[function(require,module,exports){
 module.exports = {
     "AMS-Regular": {
         "65": [0, 0.68889, 0, 0],
@@ -44648,7 +44203,7 @@ module.exports = {
     }
 };
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/functions.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/functions.js":[function(require,module,exports){
 var utils = require("./utils");
 var ParseError = require("./ParseError");
 var parseData = require("./parseData");
@@ -45343,7 +44898,7 @@ defineFunction(["\\begin", "\\end"], {
     };
 });
 
-},{"./ParseError":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/ParseError.js","./parseData":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/parseData.js","./utils":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/mathMLTree.js":[function(require,module,exports){
+},{"./ParseError":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/ParseError.js","./parseData":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/parseData.js","./utils":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/utils.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/mathMLTree.js":[function(require,module,exports){
 /**
  * These objects store data about MathML nodes. This is the MathML equivalent
  * of the types in domTree.js. Since MathML handles its own rendering, and
@@ -45447,7 +45002,7 @@ module.exports = {
     TextNode: TextNode
 };
 
-},{"./utils":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/parseData.js":[function(require,module,exports){
+},{"./utils":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/utils.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/parseData.js":[function(require,module,exports){
 /**
  * The resulting parse tree nodes of the parse tree.
  *
@@ -45481,7 +45036,7 @@ module.exports = {
 };
 
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/parseTree.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/parseTree.js":[function(require,module,exports){
 /**
  * Provides a single function for parsing an expression using a Parser
  * TODO(emily): Remove this
@@ -45503,7 +45058,7 @@ var parseTree = function(toParse, settings) {
 
 module.exports = parseTree;
 
-},{"./Parser":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/Parser.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/symbols.js":[function(require,module,exports){
+},{"./Parser":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/Parser.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/symbols.js":[function(require,module,exports){
 /**
  * This file holds a list of all no-argument functions and single-character
  * symbols (like 'a' or ';').
@@ -46177,7 +45732,7 @@ defineSymbol(text, main, textord, "\u2019", "’");
 defineSymbol(text, main, textord, "\u201c", "“");
 defineSymbol(text, main, textord, "\u201d", "”");
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/unicodeRegexes.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/unicodeRegexes.js":[function(require,module,exports){
 var hangulRegex = /[\uAC00-\uD7AF]/;
 
 // This regex combines
@@ -46194,7 +45749,7 @@ module.exports = {
     hangulRegex: hangulRegex
 };
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/katex/src/utils.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/src/utils.js":[function(require,module,exports){
 /**
  * This file contains a list of utility functions which are useful in other
  * files.
@@ -46302,7 +45857,7 @@ module.exports = {
     clearNode: clearNode
 };
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/linkify-it/index.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/linkify-it/index.js":[function(require,module,exports){
 'use strict';
 
 
@@ -46941,7 +46496,7 @@ LinkifyIt.prototype.onCompile = function onCompile() {
 
 module.exports = LinkifyIt;
 
-},{"./lib/re":"/home/tobloef/Downloads/code/markant.io/node_modules/linkify-it/lib/re.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/linkify-it/lib/re.js":[function(require,module,exports){
+},{"./lib/re":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/linkify-it/lib/re.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/linkify-it/lib/re.js":[function(require,module,exports){
 'use strict';
 
 
@@ -47120,7 +46675,7 @@ module.exports = function (opts) {
   return re;
 };
 
-},{"uc.micro/categories/Cc/regex":"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/categories/Cc/regex.js","uc.micro/categories/P/regex":"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/categories/P/regex.js","uc.micro/categories/Z/regex":"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/categories/Z/regex.js","uc.micro/properties/Any/regex":"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/properties/Any/regex.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-lazy-headers/index.js":[function(require,module,exports){
+},{"uc.micro/categories/Cc/regex":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/uc.micro/categories/Cc/regex.js","uc.micro/categories/P/regex":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/uc.micro/categories/P/regex.js","uc.micro/categories/Z/regex":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/uc.micro/categories/Z/regex.js","uc.micro/properties/Any/regex":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/uc.micro/properties/Any/regex.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it-lazy-headers/index.js":[function(require,module,exports){
 // heading (#, ##, ...)
 
 'use strict';
@@ -47177,7 +46732,7 @@ module.exports = function lazy_headers_plugin(md) {
   });
 };
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-mathjax/markdown-it-mathjax.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it-mathjax/markdown-it-mathjax.js":[function(require,module,exports){
 ;(function (root, factory) {
   if (typeof exports === 'object') {
     module.exports = factory()
@@ -47291,7 +46846,7 @@ module.exports = function lazy_headers_plugin(md) {
   }
 })
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-sanitizer/index.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it-sanitizer/index.js":[function(require,module,exports){
 // Sanitizer
 
 'use strict';
@@ -47517,13 +47072,13 @@ module.exports = function sanitizer_plugin(md, options) {
   md.core.ruler.after('sanitize_inline', 'sanitize_balance', balance);
 };
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/index.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/index.js":[function(require,module,exports){
 'use strict';
 
 
 module.exports = require('./lib/');
 
-},{"./lib/":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/index.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/entities.js":[function(require,module,exports){
+},{"./lib/":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/index.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/common/entities.js":[function(require,module,exports){
 // HTML5 entities map: { name -> utf16string }
 //
 'use strict';
@@ -47531,7 +47086,7 @@ module.exports = require('./lib/');
 /*eslint quotes:0*/
 module.exports = require('entities/maps/entities.json');
 
-},{"entities/maps/entities.json":"/home/tobloef/Downloads/code/markant.io/node_modules/entities/maps/entities.json"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/html_blocks.js":[function(require,module,exports){
+},{"entities/maps/entities.json":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/entities/maps/entities.json"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/common/html_blocks.js":[function(require,module,exports){
 // List of valid html blocks names, accorting to commonmark spec
 // http://jgm.github.io/CommonMark/spec.html#html-blocks
 
@@ -47606,7 +47161,7 @@ module.exports = [
   'ul'
 ];
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/html_re.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/common/html_re.js":[function(require,module,exports){
 // Regexps to match html elements
 
 'use strict';
@@ -47636,7 +47191,7 @@ var HTML_OPEN_CLOSE_TAG_RE = new RegExp('^(?:' + open_tag + '|' + close_tag + ')
 module.exports.HTML_TAG_RE = HTML_TAG_RE;
 module.exports.HTML_OPEN_CLOSE_TAG_RE = HTML_OPEN_CLOSE_TAG_RE;
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/utils.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/common/utils.js":[function(require,module,exports){
 // Utilities
 //
 'use strict';
@@ -47913,7 +47468,7 @@ exports.isPunctChar         = isPunctChar;
 exports.escapeRE            = escapeRE;
 exports.normalizeReference  = normalizeReference;
 
-},{"./entities":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/entities.js","mdurl":"/home/tobloef/Downloads/code/markant.io/node_modules/mdurl/index.js","uc.micro":"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/index.js","uc.micro/categories/P/regex":"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/categories/P/regex.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/helpers/index.js":[function(require,module,exports){
+},{"./entities":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/common/entities.js","mdurl":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/mdurl/index.js","uc.micro":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/uc.micro/index.js","uc.micro/categories/P/regex":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/uc.micro/categories/P/regex.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/helpers/index.js":[function(require,module,exports){
 // Just a shortcut for bulk export
 'use strict';
 
@@ -47922,7 +47477,7 @@ exports.parseLinkLabel       = require('./parse_link_label');
 exports.parseLinkDestination = require('./parse_link_destination');
 exports.parseLinkTitle       = require('./parse_link_title');
 
-},{"./parse_link_destination":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/helpers/parse_link_destination.js","./parse_link_label":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/helpers/parse_link_label.js","./parse_link_title":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/helpers/parse_link_title.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/helpers/parse_link_destination.js":[function(require,module,exports){
+},{"./parse_link_destination":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/helpers/parse_link_destination.js","./parse_link_label":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/helpers/parse_link_label.js","./parse_link_title":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/helpers/parse_link_title.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/helpers/parse_link_destination.js":[function(require,module,exports){
 // Parse link destination
 //
 'use strict';
@@ -48004,7 +47559,7 @@ module.exports = function parseLinkDestination(str, pos, max) {
   return result;
 };
 
-},{"../common/utils":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/helpers/parse_link_label.js":[function(require,module,exports){
+},{"../common/utils":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/helpers/parse_link_label.js":[function(require,module,exports){
 // Parse link label
 //
 // this function assumes that first character ("[") already matches;
@@ -48054,7 +47609,7 @@ module.exports = function parseLinkLabel(state, start, disableNested) {
   return labelEnd;
 };
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/helpers/parse_link_title.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/helpers/parse_link_title.js":[function(require,module,exports){
 // Parse link title
 //
 'use strict';
@@ -48109,7 +47664,7 @@ module.exports = function parseLinkTitle(str, pos, max) {
   return result;
 };
 
-},{"../common/utils":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/index.js":[function(require,module,exports){
+},{"../common/utils":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/index.js":[function(require,module,exports){
 // Main parser class
 
 'use strict';
@@ -48626,10 +48181,6 @@ MarkdownIt.prototype.use = function (plugin /*, params, ... */) {
  * and then pass updated object to renderer.
  **/
 MarkdownIt.prototype.parse = function (src, env) {
-  if (typeof src !== 'string') {
-    throw new Error('Input data should be a String');
-  }
-
   var state = new this.core.State(src, this, env);
 
   this.core.process(state);
@@ -48692,7 +48243,7 @@ MarkdownIt.prototype.renderInline = function (src, env) {
 
 module.exports = MarkdownIt;
 
-},{"./common/utils":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/utils.js","./helpers":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/helpers/index.js","./parser_block":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/parser_block.js","./parser_core":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/parser_core.js","./parser_inline":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/parser_inline.js","./presets/commonmark":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/presets/commonmark.js","./presets/default":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/presets/default.js","./presets/zero":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/presets/zero.js","./renderer":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/renderer.js","linkify-it":"/home/tobloef/Downloads/code/markant.io/node_modules/linkify-it/index.js","mdurl":"/home/tobloef/Downloads/code/markant.io/node_modules/mdurl/index.js","punycode":"/home/tobloef/Downloads/code/markant.io/node_modules/punycode/punycode.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/parser_block.js":[function(require,module,exports){
+},{"./common/utils":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/common/utils.js","./helpers":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/helpers/index.js","./parser_block":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/parser_block.js","./parser_core":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/parser_core.js","./parser_inline":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/parser_inline.js","./presets/commonmark":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/presets/commonmark.js","./presets/default":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/presets/default.js","./presets/zero":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/presets/zero.js","./renderer":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/renderer.js","linkify-it":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/linkify-it/index.js","mdurl":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/mdurl/index.js","punycode":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/punycode/punycode.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/parser_block.js":[function(require,module,exports){
 /** internal
  * class ParserBlock
  *
@@ -48816,7 +48367,7 @@ ParserBlock.prototype.State = require('./rules_block/state_block');
 
 module.exports = ParserBlock;
 
-},{"./ruler":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/ruler.js","./rules_block/blockquote":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_block/blockquote.js","./rules_block/code":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_block/code.js","./rules_block/fence":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_block/fence.js","./rules_block/heading":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_block/heading.js","./rules_block/hr":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_block/hr.js","./rules_block/html_block":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_block/html_block.js","./rules_block/lheading":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_block/lheading.js","./rules_block/list":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_block/list.js","./rules_block/paragraph":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_block/paragraph.js","./rules_block/reference":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_block/reference.js","./rules_block/state_block":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_block/state_block.js","./rules_block/table":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_block/table.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/parser_core.js":[function(require,module,exports){
+},{"./ruler":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/ruler.js","./rules_block/blockquote":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_block/blockquote.js","./rules_block/code":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_block/code.js","./rules_block/fence":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_block/fence.js","./rules_block/heading":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_block/heading.js","./rules_block/hr":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_block/hr.js","./rules_block/html_block":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_block/html_block.js","./rules_block/lheading":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_block/lheading.js","./rules_block/list":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_block/list.js","./rules_block/paragraph":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_block/paragraph.js","./rules_block/reference":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_block/reference.js","./rules_block/state_block":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_block/state_block.js","./rules_block/table":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_block/table.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/parser_core.js":[function(require,module,exports){
 /** internal
  * class Core
  *
@@ -48876,7 +48427,7 @@ Core.prototype.State = require('./rules_core/state_core');
 
 module.exports = Core;
 
-},{"./ruler":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/ruler.js","./rules_core/block":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_core/block.js","./rules_core/inline":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_core/inline.js","./rules_core/linkify":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_core/linkify.js","./rules_core/normalize":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_core/normalize.js","./rules_core/replacements":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_core/replacements.js","./rules_core/smartquotes":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_core/smartquotes.js","./rules_core/state_core":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_core/state_core.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/parser_inline.js":[function(require,module,exports){
+},{"./ruler":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/ruler.js","./rules_core/block":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_core/block.js","./rules_core/inline":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_core/inline.js","./rules_core/linkify":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_core/linkify.js","./rules_core/normalize":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_core/normalize.js","./rules_core/replacements":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_core/replacements.js","./rules_core/smartquotes":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_core/smartquotes.js","./rules_core/state_core":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_core/state_core.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/parser_inline.js":[function(require,module,exports){
 /** internal
  * class ParserInline
  *
@@ -49055,7 +48606,7 @@ ParserInline.prototype.State = require('./rules_inline/state_inline');
 
 module.exports = ParserInline;
 
-},{"./ruler":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/ruler.js","./rules_inline/autolink":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/autolink.js","./rules_inline/backticks":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/backticks.js","./rules_inline/balance_pairs":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/balance_pairs.js","./rules_inline/emphasis":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/emphasis.js","./rules_inline/entity":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/entity.js","./rules_inline/escape":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/escape.js","./rules_inline/html_inline":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/html_inline.js","./rules_inline/image":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/image.js","./rules_inline/link":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/link.js","./rules_inline/newline":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/newline.js","./rules_inline/state_inline":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/state_inline.js","./rules_inline/strikethrough":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/strikethrough.js","./rules_inline/text":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/text.js","./rules_inline/text_collapse":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/text_collapse.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/presets/commonmark.js":[function(require,module,exports){
+},{"./ruler":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/ruler.js","./rules_inline/autolink":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_inline/autolink.js","./rules_inline/backticks":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_inline/backticks.js","./rules_inline/balance_pairs":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_inline/balance_pairs.js","./rules_inline/emphasis":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_inline/emphasis.js","./rules_inline/entity":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_inline/entity.js","./rules_inline/escape":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_inline/escape.js","./rules_inline/html_inline":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_inline/html_inline.js","./rules_inline/image":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_inline/image.js","./rules_inline/link":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_inline/link.js","./rules_inline/newline":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_inline/newline.js","./rules_inline/state_inline":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_inline/state_inline.js","./rules_inline/strikethrough":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_inline/strikethrough.js","./rules_inline/text":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_inline/text.js","./rules_inline/text_collapse":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_inline/text_collapse.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/presets/commonmark.js":[function(require,module,exports){
 // Commonmark default options
 
 'use strict';
@@ -49137,7 +48688,7 @@ module.exports = {
   }
 };
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/presets/default.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/presets/default.js":[function(require,module,exports){
 // markdown-it default options
 
 'use strict';
@@ -49180,7 +48731,7 @@ module.exports = {
   }
 };
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/presets/zero.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/presets/zero.js":[function(require,module,exports){
 // "Zero" preset, with nothing enabled. Useful for manual configuring of simple
 // modes. For example, to parse bold/italic only.
 
@@ -49244,7 +48795,7 @@ module.exports = {
   }
 };
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/renderer.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/renderer.js":[function(require,module,exports){
 /**
  * class Renderer
  *
@@ -49581,7 +49132,7 @@ Renderer.prototype.render = function (tokens, options, env) {
 
 module.exports = Renderer;
 
-},{"./common/utils":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/ruler.js":[function(require,module,exports){
+},{"./common/utils":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/ruler.js":[function(require,module,exports){
 /**
  * class Ruler
  *
@@ -49935,7 +49486,7 @@ Ruler.prototype.getRules = function (chainName) {
 
 module.exports = Ruler;
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_block/blockquote.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_block/blockquote.js":[function(require,module,exports){
 // Block quotes
 
 'use strict';
@@ -49948,7 +49499,6 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
       ch,
       i,
       initial,
-      isOutdented,
       l,
       lastLineEmpty,
       lines,
@@ -49964,12 +49514,8 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
       terminate,
       terminatorRules,
       token,
-      oldLineMax = state.lineMax,
       pos = state.bMarks[startLine] + state.tShift[startLine],
       max = state.eMarks[startLine];
-
-  // if it's indented more than 3 spaces, it should be a code block
-  if (state.sCount[startLine] - state.blkIndent >= 4) { return false; }
 
   // check the block quote marker
   if (state.src.charCodeAt(pos++) !== 0x3E/* > */) { return false; }
@@ -49977,6 +49523,9 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
   // we know that it's going to be a valid blockquote,
   // so no point trying to find the end of it in silent mode
   if (silent) { return true; }
+
+  oldIndent = state.blkIndent;
+  state.blkIndent = 0;
 
   // skip spaces after ">" and re-calculate offset
   initial = offset = state.sCount[startLine] + pos - (state.bMarks[startLine] + state.tShift[startLine]);
@@ -50058,21 +49607,13 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
   //     >
   //     test
   //     ```
-  //  3. another tag:
+  //  3. another tag
   //     ```
   //     > test
   //      - - -
   //     ```
   for (nextLine = startLine + 1; nextLine < endLine; nextLine++) {
-    // check if it's outdented, i.e. it's inside list item and indented
-    // less than said list item:
-    //
-    // ```
-    // 1. anything
-    //    > current blockquote
-    // 2. checking this line
-    // ```
-    isOutdented = state.sCount[nextLine] < state.blkIndent;
+    if (state.sCount[nextLine] < oldIndent) { break; }
 
     pos = state.bMarks[nextLine] + state.tShift[nextLine];
     max = state.eMarks[nextLine];
@@ -50082,7 +49623,7 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
       break;
     }
 
-    if (state.src.charCodeAt(pos++) === 0x3E/* > */ && !isOutdented) {
+    if (state.src.charCodeAt(pos++) === 0x3E/* > */) {
       // This line is inside the blockquote.
 
       // skip spaces after ">" and re-calculate offset
@@ -50160,29 +49701,7 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
         break;
       }
     }
-
-    if (terminate) {
-      // Quirk to enforce "hard termination mode" for paragraphs;
-      // normally if you call `tokenize(state, startLine, nextLine)`,
-      // paragraphs will look below nextLine for paragraph continuation,
-      // but if blockquote is terminated by another tag, they shouldn't
-      state.lineMax = nextLine;
-
-      if (state.blkIndent !== 0) {
-        // state.blkIndent was non-zero, we now set it to zero,
-        // so we need to re-calculate all offsets to appear as
-        // if indent wasn't changed
-        oldBMarks.push(state.bMarks[nextLine]);
-        oldBSCount.push(state.bsCount[nextLine]);
-        oldTShift.push(state.tShift[nextLine]);
-        oldSCount.push(state.sCount[nextLine]);
-        state.sCount[nextLine] -= state.blkIndent;
-      }
-
-      break;
-    }
-
-    if (isOutdented) break;
+    if (terminate) { break; }
 
     oldBMarks.push(state.bMarks[nextLine]);
     oldBSCount.push(state.bsCount[nextLine]);
@@ -50194,9 +49713,6 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
     state.sCount[nextLine] = -1;
   }
 
-  oldIndent = state.blkIndent;
-  state.blkIndent = 0;
-
   token        = state.push('blockquote_open', 'blockquote', 1);
   token.markup = '>';
   token.map    = lines = [ startLine, 0 ];
@@ -50206,7 +49722,6 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
   token        = state.push('blockquote_close', 'blockquote', -1);
   token.markup = '>';
 
-  state.lineMax = oldLineMax;
   state.parentType = oldParentType;
   lines[1] = state.line;
 
@@ -50223,7 +49738,7 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
   return true;
 };
 
-},{"../common/utils":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_block/code.js":[function(require,module,exports){
+},{"../common/utils":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_block/code.js":[function(require,module,exports){
 // Code block (4 spaces padded)
 
 'use strict';
@@ -50259,7 +49774,7 @@ module.exports = function code(state, startLine, endLine/*, silent*/) {
   return true;
 };
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_block/fence.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_block/fence.js":[function(require,module,exports){
 // fences (``` lang, ~~~ lang)
 
 'use strict';
@@ -50270,9 +49785,6 @@ module.exports = function fence(state, startLine, endLine, silent) {
       haveEndMarker = false,
       pos = state.bMarks[startLine] + state.tShift[startLine],
       max = state.eMarks[startLine];
-
-  // if it's indented more than 3 spaces, it should be a code block
-  if (state.sCount[startLine] - state.blkIndent >= 4) { return false; }
 
   if (pos + 3 > max) { return false; }
 
@@ -50355,7 +49867,7 @@ module.exports = function fence(state, startLine, endLine, silent) {
   return true;
 };
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_block/heading.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_block/heading.js":[function(require,module,exports){
 // heading (#, ##, ...)
 
 'use strict';
@@ -50367,9 +49879,6 @@ module.exports = function heading(state, startLine, endLine, silent) {
   var ch, level, tmp, token,
       pos = state.bMarks[startLine] + state.tShift[startLine],
       max = state.eMarks[startLine];
-
-  // if it's indented more than 3 spaces, it should be a code block
-  if (state.sCount[startLine] - state.blkIndent >= 4) { return false; }
 
   ch  = state.src.charCodeAt(pos);
 
@@ -50412,7 +49921,7 @@ module.exports = function heading(state, startLine, endLine, silent) {
   return true;
 };
 
-},{"../common/utils":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_block/hr.js":[function(require,module,exports){
+},{"../common/utils":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_block/hr.js":[function(require,module,exports){
 // Horizontal rule
 
 'use strict';
@@ -50424,9 +49933,6 @@ module.exports = function hr(state, startLine, endLine, silent) {
   var marker, cnt, ch, token,
       pos = state.bMarks[startLine] + state.tShift[startLine],
       max = state.eMarks[startLine];
-
-  // if it's indented more than 3 spaces, it should be a code block
-  if (state.sCount[startLine] - state.blkIndent >= 4) { return false; }
 
   marker = state.src.charCodeAt(pos++);
 
@@ -50459,7 +49965,7 @@ module.exports = function hr(state, startLine, endLine, silent) {
   return true;
 };
 
-},{"../common/utils":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_block/html_block.js":[function(require,module,exports){
+},{"../common/utils":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_block/html_block.js":[function(require,module,exports){
 // HTML block
 
 'use strict';
@@ -50486,9 +49992,6 @@ module.exports = function html_block(state, startLine, endLine, silent) {
   var i, nextLine, token, lineText,
       pos = state.bMarks[startLine] + state.tShift[startLine],
       max = state.eMarks[startLine];
-
-  // if it's indented more than 3 spaces, it should be a code block
-  if (state.sCount[startLine] - state.blkIndent >= 4) { return false; }
 
   if (!state.md.options.html) { return false; }
 
@@ -50535,7 +50038,7 @@ module.exports = function html_block(state, startLine, endLine, silent) {
   return true;
 };
 
-},{"../common/html_blocks":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/html_blocks.js","../common/html_re":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/html_re.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_block/lheading.js":[function(require,module,exports){
+},{"../common/html_blocks":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/common/html_blocks.js","../common/html_re":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/common/html_re.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_block/lheading.js":[function(require,module,exports){
 // lheading (---, ===)
 
 'use strict';
@@ -50545,9 +50048,6 @@ module.exports = function lheading(state, startLine, endLine/*, silent*/) {
   var content, terminate, i, l, token, pos, max, level, marker,
       nextLine = startLine + 1, oldParentType,
       terminatorRules = state.md.block.ruler.getRules('paragraph');
-
-  // if it's indented more than 3 spaces, it should be a code block
-  if (state.sCount[startLine] - state.blkIndent >= 4) { return false; }
 
   oldParentType = state.parentType;
   state.parentType = 'paragraph'; // use paragraph to match terminatorRules
@@ -50620,7 +50120,7 @@ module.exports = function lheading(state, startLine, endLine/*, silent*/) {
   return true;
 };
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_block/list.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_block/list.js":[function(require,module,exports){
 // Lists
 
 'use strict';
@@ -50751,9 +50251,6 @@ module.exports = function list(state, startLine, endLine, silent) {
       token,
       isTerminatingParagraph = false,
       tight = true;
-
-  // if it's indented more than 3 spaces, it should be a code block
-  if (state.sCount[startLine] - state.blkIndent >= 4) { return false; }
 
   // limit conditions when list can interrupt
   // a paragraph (validation mode only)
@@ -50960,7 +50457,7 @@ module.exports = function list(state, startLine, endLine, silent) {
   return true;
 };
 
-},{"../common/utils":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_block/paragraph.js":[function(require,module,exports){
+},{"../common/utils":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_block/paragraph.js":[function(require,module,exports){
 // Paragraph
 
 'use strict';
@@ -51014,7 +50511,7 @@ module.exports = function paragraph(state, startLine/*, endLine*/) {
   return true;
 };
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_block/reference.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_block/reference.js":[function(require,module,exports){
 'use strict';
 
 
@@ -51043,9 +50540,6 @@ module.exports = function reference(state, startLine, _endLine, silent) {
       pos = state.bMarks[startLine] + state.tShift[startLine],
       max = state.eMarks[startLine],
       nextLine = startLine + 1;
-
-  // if it's indented more than 3 spaces, it should be a code block
-  if (state.sCount[startLine] - state.blkIndent >= 4) { return false; }
 
   if (state.src.charCodeAt(pos) !== 0x5B/* [ */) { return false; }
 
@@ -51214,7 +50708,7 @@ module.exports = function reference(state, startLine, _endLine, silent) {
   return true;
 };
 
-},{"../common/utils":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_block/state_block.js":[function(require,module,exports){
+},{"../common/utils":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_block/state_block.js":[function(require,module,exports){
 // Parser state class
 
 'use strict';
@@ -51446,7 +50940,7 @@ StateBlock.prototype.Token = Token;
 
 module.exports = StateBlock;
 
-},{"../common/utils":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/utils.js","../token":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/token.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_block/table.js":[function(require,module,exports){
+},{"../common/utils":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/common/utils.js","../token":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/token.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_block/table.js":[function(require,module,exports){
 // GFM table, non-standard
 
 'use strict';
@@ -51517,15 +51011,12 @@ module.exports = function table(state, startLine, endLine, silent) {
   var ch, lineText, pos, i, nextLine, columns, columnCount, token,
       aligns, t, tableLines, tbodyLines;
 
-  // should have at least two lines
+  // should have at least three lines
   if (startLine + 2 > endLine) { return false; }
 
   nextLine = startLine + 1;
 
   if (state.sCount[nextLine] < state.blkIndent) { return false; }
-
-  // if it's indented more than 3 spaces, it should be a code block
-  if (state.sCount[nextLine] - state.blkIndent >= 4) { return false; }
 
   // first character of the second line should be '|', '-', ':',
   // and no other characters are allowed but spaces;
@@ -51573,7 +51064,6 @@ module.exports = function table(state, startLine, endLine, silent) {
 
   lineText = getLine(state, startLine).trim();
   if (lineText.indexOf('|') === -1) { return false; }
-  if (state.sCount[startLine] - state.blkIndent >= 4) { return false; }
   columns = escapedSplit(lineText.replace(/^\||\|$/g, ''));
 
   // header row will define an amount of columns in the entire table,
@@ -51616,10 +51106,12 @@ module.exports = function table(state, startLine, endLine, silent) {
   for (nextLine = startLine + 2; nextLine < endLine; nextLine++) {
     if (state.sCount[nextLine] < state.blkIndent) { break; }
 
-    lineText = getLine(state, nextLine).trim();
+    lineText = getLine(state, nextLine);
     if (lineText.indexOf('|') === -1) { break; }
-    if (state.sCount[nextLine] - state.blkIndent >= 4) { break; }
-    columns = escapedSplit(lineText.replace(/^\||\|$/g, ''));
+
+    // keep spaces at beginning of line to indicate an empty first cell, but
+    // strip trailing whitespace
+    columns = escapedSplit(lineText.replace(/^\||\|\s*$/g, ''));
 
     token = state.push('tr_open', 'tr', 1);
     for (i = 0; i < columnCount; i++) {
@@ -51644,7 +51136,7 @@ module.exports = function table(state, startLine, endLine, silent) {
   return true;
 };
 
-},{"../common/utils":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_core/block.js":[function(require,module,exports){
+},{"../common/utils":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_core/block.js":[function(require,module,exports){
 'use strict';
 
 
@@ -51662,7 +51154,7 @@ module.exports = function block(state) {
   }
 };
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_core/inline.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_core/inline.js":[function(require,module,exports){
 'use strict';
 
 module.exports = function inline(state) {
@@ -51677,7 +51169,7 @@ module.exports = function inline(state) {
   }
 };
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_core/linkify.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_core/linkify.js":[function(require,module,exports){
 // Replace link-like texts with link nodes.
 //
 // Currently restricted by `md.validateLink()` to http/https/ftp
@@ -51812,7 +51304,7 @@ module.exports = function linkify(state) {
   }
 };
 
-},{"../common/utils":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_core/normalize.js":[function(require,module,exports){
+},{"../common/utils":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_core/normalize.js":[function(require,module,exports){
 // Normalize input string
 
 'use strict';
@@ -51834,7 +51326,7 @@ module.exports = function inline(state) {
   state.src = str;
 };
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_core/replacements.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_core/replacements.js":[function(require,module,exports){
 // Simple typographyc replacements
 //
 // (c) (C) → ©
@@ -51943,7 +51435,7 @@ module.exports = function replace(state) {
   }
 };
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_core/smartquotes.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_core/smartquotes.js":[function(require,module,exports){
 // Convert straight quotation marks to typographic ones
 //
 'use strict';
@@ -52138,7 +51630,7 @@ module.exports = function smartquotes(state) {
   }
 };
 
-},{"../common/utils":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_core/state_core.js":[function(require,module,exports){
+},{"../common/utils":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_core/state_core.js":[function(require,module,exports){
 // Core state object
 //
 'use strict';
@@ -52160,7 +51652,7 @@ StateCore.prototype.Token = Token;
 
 module.exports = StateCore;
 
-},{"../token":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/token.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/autolink.js":[function(require,module,exports){
+},{"../token":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/token.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_inline/autolink.js":[function(require,module,exports){
 // Process autolinks '<protocol:...>'
 
 'use strict';
@@ -52234,7 +51726,7 @@ module.exports = function autolink(state, silent) {
   return false;
 };
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/backticks.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_inline/backticks.js":[function(require,module,exports){
 // Parse backticks
 
 'use strict';
@@ -52279,7 +51771,7 @@ module.exports = function backtick(state, silent) {
   return true;
 };
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/balance_pairs.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_inline/balance_pairs.js":[function(require,module,exports){
 // For each opening emphasis-like marker find a matching closing one
 //
 'use strict';
@@ -52325,7 +51817,7 @@ module.exports = function link_pairs(state) {
   }
 };
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/emphasis.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_inline/emphasis.js":[function(require,module,exports){
 // Process *this* and _that_
 //
 'use strict';
@@ -52454,7 +51946,7 @@ module.exports.postProcess = function emphasis(state) {
   }
 };
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/entity.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_inline/entity.js":[function(require,module,exports){
 // Process html entity - &#123;, &#xAF;, &quot;, ...
 
 'use strict';
@@ -52504,7 +51996,7 @@ module.exports = function entity(state, silent) {
   return true;
 };
 
-},{"../common/entities":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/entities.js","../common/utils":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/escape.js":[function(require,module,exports){
+},{"../common/entities":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/common/entities.js","../common/utils":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_inline/escape.js":[function(require,module,exports){
 // Proceess escaped chars and hardbreaks
 
 'use strict';
@@ -52558,7 +52050,7 @@ module.exports = function escape(state, silent) {
   return true;
 };
 
-},{"../common/utils":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/html_inline.js":[function(require,module,exports){
+},{"../common/utils":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_inline/html_inline.js":[function(require,module,exports){
 // Process html tags
 
 'use strict';
@@ -52607,7 +52099,7 @@ module.exports = function html_inline(state, silent) {
   return true;
 };
 
-},{"../common/html_re":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/html_re.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/image.js":[function(require,module,exports){
+},{"../common/html_re":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/common/html_re.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_inline/image.js":[function(require,module,exports){
 // Process ![image](<src> "title")
 
 'use strict';
@@ -52761,7 +52253,7 @@ module.exports = function image(state, silent) {
   return true;
 };
 
-},{"../common/utils":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/link.js":[function(require,module,exports){
+},{"../common/utils":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_inline/link.js":[function(require,module,exports){
 // Process [link](<to> "stuff")
 
 'use strict';
@@ -52913,13 +52405,10 @@ module.exports = function link(state, silent) {
   return true;
 };
 
-},{"../common/utils":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/newline.js":[function(require,module,exports){
+},{"../common/utils":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_inline/newline.js":[function(require,module,exports){
 // Proceess '\n'
 
 'use strict';
-
-var isSpace = require('../common/utils').isSpace;
-
 
 module.exports = function newline(state, silent) {
   var pmax, max, pos = state.pos;
@@ -52951,13 +52440,13 @@ module.exports = function newline(state, silent) {
   pos++;
 
   // skip heading spaces for next line
-  while (pos < max && isSpace(state.src.charCodeAt(pos))) { pos++; }
+  while (pos < max && state.src.charCodeAt(pos) === 0x20) { pos++; }
 
   state.pos = pos;
   return true;
 };
 
-},{"../common/utils":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/utils.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/state_inline.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_inline/state_inline.js":[function(require,module,exports){
 // Inline parser state
 
 'use strict';
@@ -53089,7 +52578,7 @@ StateInline.prototype.Token = Token;
 
 module.exports = StateInline;
 
-},{"../common/utils":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/common/utils.js","../token":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/token.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/strikethrough.js":[function(require,module,exports){
+},{"../common/utils":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/common/utils.js","../token":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/token.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_inline/strikethrough.js":[function(require,module,exports){
 // ~~strike through~~
 //
 'use strict';
@@ -53208,7 +52697,7 @@ module.exports.postProcess = function strikethrough(state) {
   }
 };
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/text.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_inline/text.js":[function(require,module,exports){
 // Skip text characters for text token, place those to pending buffer
 // and increment current pos
 
@@ -53299,7 +52788,7 @@ module.exports = function text(state, silent) {
   return true;
 };*/
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/rules_inline/text_collapse.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/rules_inline/text_collapse.js":[function(require,module,exports){
 // Merge adjacent text nodes into one, and re-calculate all token levels
 //
 'use strict';
@@ -53334,7 +52823,7 @@ module.exports = function text_collapse(state) {
   }
 };
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/lib/token.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/lib/token.js":[function(require,module,exports){
 // Token class
 
 'use strict';
@@ -53533,7 +53022,7 @@ Token.prototype.attrJoin = function attrJoin(name, value) {
 
 module.exports = Token;
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/match-at/lib/matchAt.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/match-at/lib/matchAt.js":[function(require,module,exports){
 /** @flow */
 
 "use strict";
@@ -53576,7 +53065,7 @@ function matchAt(re, str, pos) {
 }
 
 module.exports = matchAt;
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/mdurl/decode.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/mdurl/decode.js":[function(require,module,exports){
 
 'use strict';
 
@@ -53700,7 +53189,7 @@ decode.componentChars = '';
 
 module.exports = decode;
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/mdurl/encode.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/mdurl/encode.js":[function(require,module,exports){
 
 'use strict';
 
@@ -53800,7 +53289,7 @@ encode.componentChars = "-_.!~*'()";
 
 module.exports = encode;
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/mdurl/format.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/mdurl/format.js":[function(require,module,exports){
 
 'use strict';
 
@@ -53827,7 +53316,7 @@ module.exports = function format(url) {
   return result;
 };
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/mdurl/index.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/mdurl/index.js":[function(require,module,exports){
 'use strict';
 
 
@@ -53836,7 +53325,7 @@ module.exports.decode = require('./decode');
 module.exports.format = require('./format');
 module.exports.parse  = require('./parse');
 
-},{"./decode":"/home/tobloef/Downloads/code/markant.io/node_modules/mdurl/decode.js","./encode":"/home/tobloef/Downloads/code/markant.io/node_modules/mdurl/encode.js","./format":"/home/tobloef/Downloads/code/markant.io/node_modules/mdurl/format.js","./parse":"/home/tobloef/Downloads/code/markant.io/node_modules/mdurl/parse.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/mdurl/parse.js":[function(require,module,exports){
+},{"./decode":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/mdurl/decode.js","./encode":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/mdurl/encode.js","./format":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/mdurl/format.js","./parse":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/mdurl/parse.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/mdurl/parse.js":[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -54150,7 +53639,7 @@ Url.prototype.parseHost = function(host) {
 
 module.exports = urlParse;
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/punycode/punycode.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/punycode/punycode.js":[function(require,module,exports){
 (function (global){
 /*! https://mths.be/punycode v1.4.1 by @mathias */
 ;(function(root) {
@@ -54688,15 +54177,15 @@ module.exports = urlParse;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/categories/Cc/regex.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/uc.micro/categories/Cc/regex.js":[function(require,module,exports){
 module.exports=/[\0-\x1F\x7F-\x9F]/
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/categories/Cf/regex.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/uc.micro/categories/Cf/regex.js":[function(require,module,exports){
 module.exports=/[\xAD\u0600-\u0605\u061C\u06DD\u070F\u08E2\u180E\u200B-\u200F\u202A-\u202E\u2060-\u2064\u2066-\u206F\uFEFF\uFFF9-\uFFFB]|\uD804\uDCBD|\uD82F[\uDCA0-\uDCA3]|\uD834[\uDD73-\uDD7A]|\uDB40[\uDC01\uDC20-\uDC7F]/
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/categories/P/regex.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/uc.micro/categories/P/regex.js":[function(require,module,exports){
 module.exports=/[!-#%-\*,-/:;\?@\[-\]_\{\}\xA1\xA7\xAB\xB6\xB7\xBB\xBF\u037E\u0387\u055A-\u055F\u0589\u058A\u05BE\u05C0\u05C3\u05C6\u05F3\u05F4\u0609\u060A\u060C\u060D\u061B\u061E\u061F\u066A-\u066D\u06D4\u0700-\u070D\u07F7-\u07F9\u0830-\u083E\u085E\u0964\u0965\u0970\u0AF0\u0DF4\u0E4F\u0E5A\u0E5B\u0F04-\u0F12\u0F14\u0F3A-\u0F3D\u0F85\u0FD0-\u0FD4\u0FD9\u0FDA\u104A-\u104F\u10FB\u1360-\u1368\u1400\u166D\u166E\u169B\u169C\u16EB-\u16ED\u1735\u1736\u17D4-\u17D6\u17D8-\u17DA\u1800-\u180A\u1944\u1945\u1A1E\u1A1F\u1AA0-\u1AA6\u1AA8-\u1AAD\u1B5A-\u1B60\u1BFC-\u1BFF\u1C3B-\u1C3F\u1C7E\u1C7F\u1CC0-\u1CC7\u1CD3\u2010-\u2027\u2030-\u2043\u2045-\u2051\u2053-\u205E\u207D\u207E\u208D\u208E\u2308-\u230B\u2329\u232A\u2768-\u2775\u27C5\u27C6\u27E6-\u27EF\u2983-\u2998\u29D8-\u29DB\u29FC\u29FD\u2CF9-\u2CFC\u2CFE\u2CFF\u2D70\u2E00-\u2E2E\u2E30-\u2E44\u3001-\u3003\u3008-\u3011\u3014-\u301F\u3030\u303D\u30A0\u30FB\uA4FE\uA4FF\uA60D-\uA60F\uA673\uA67E\uA6F2-\uA6F7\uA874-\uA877\uA8CE\uA8CF\uA8F8-\uA8FA\uA8FC\uA92E\uA92F\uA95F\uA9C1-\uA9CD\uA9DE\uA9DF\uAA5C-\uAA5F\uAADE\uAADF\uAAF0\uAAF1\uABEB\uFD3E\uFD3F\uFE10-\uFE19\uFE30-\uFE52\uFE54-\uFE61\uFE63\uFE68\uFE6A\uFE6B\uFF01-\uFF03\uFF05-\uFF0A\uFF0C-\uFF0F\uFF1A\uFF1B\uFF1F\uFF20\uFF3B-\uFF3D\uFF3F\uFF5B\uFF5D\uFF5F-\uFF65]|\uD800[\uDD00-\uDD02\uDF9F\uDFD0]|\uD801\uDD6F|\uD802[\uDC57\uDD1F\uDD3F\uDE50-\uDE58\uDE7F\uDEF0-\uDEF6\uDF39-\uDF3F\uDF99-\uDF9C]|\uD804[\uDC47-\uDC4D\uDCBB\uDCBC\uDCBE-\uDCC1\uDD40-\uDD43\uDD74\uDD75\uDDC5-\uDDC9\uDDCD\uDDDB\uDDDD-\uDDDF\uDE38-\uDE3D\uDEA9]|\uD805[\uDC4B-\uDC4F\uDC5B\uDC5D\uDCC6\uDDC1-\uDDD7\uDE41-\uDE43\uDE60-\uDE6C\uDF3C-\uDF3E]|\uD807[\uDC41-\uDC45\uDC70\uDC71]|\uD809[\uDC70-\uDC74]|\uD81A[\uDE6E\uDE6F\uDEF5\uDF37-\uDF3B\uDF44]|\uD82F\uDC9F|\uD836[\uDE87-\uDE8B]|\uD83A[\uDD5E\uDD5F]/
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/categories/Z/regex.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/uc.micro/categories/Z/regex.js":[function(require,module,exports){
 module.exports=/[ \xA0\u1680\u2000-\u200A\u202F\u205F\u3000]/
-},{}],"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/index.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/uc.micro/index.js":[function(require,module,exports){
 'use strict';
 
 exports.Any = require('./properties/Any/regex');
@@ -54705,9 +54194,9 @@ exports.Cf  = require('./categories/Cf/regex');
 exports.P   = require('./categories/P/regex');
 exports.Z   = require('./categories/Z/regex');
 
-},{"./categories/Cc/regex":"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/categories/Cc/regex.js","./categories/Cf/regex":"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/categories/Cf/regex.js","./categories/P/regex":"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/categories/P/regex.js","./categories/Z/regex":"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/categories/Z/regex.js","./properties/Any/regex":"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/properties/Any/regex.js"}],"/home/tobloef/Downloads/code/markant.io/node_modules/uc.micro/properties/Any/regex.js":[function(require,module,exports){
+},{"./categories/Cc/regex":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/uc.micro/categories/Cc/regex.js","./categories/Cf/regex":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/uc.micro/categories/Cf/regex.js","./categories/P/regex":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/uc.micro/categories/P/regex.js","./categories/Z/regex":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/uc.micro/categories/Z/regex.js","./properties/Any/regex":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/uc.micro/properties/Any/regex.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/uc.micro/properties/Any/regex.js":[function(require,module,exports){
 module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]/
-},{}],"/home/tobloef/Downloads/code/markant.io/scripts/app.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/app.js":[function(require,module,exports){
 // Main module for the app. This is where everything is initialized and all other module calls stem from.
 ;(function() {
 	// Import the error handler module and set up the global error event listener.
@@ -54802,7 +54291,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	}
 }());
 
-},{"./editor":"/home/tobloef/Downloads/code/markant.io/scripts/editor.js","./utils/app_functions":"/home/tobloef/Downloads/code/markant.io/scripts/utils/app_functions.js","./utils/document_title":"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js","./utils/error_handler":"/home/tobloef/Downloads/code/markant.io/scripts/utils/error_handler.js","./utils/google_analytics":"/home/tobloef/Downloads/code/markant.io/scripts/utils/google_analytics.js","./utils/modals/modal":"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/modal.js","./utils/modals/settings_modal":"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/settings_modal.js","./utils/navbar":"/home/tobloef/Downloads/code/markant.io/scripts/utils/navbar.js","./utils/pane_resizer":"/home/tobloef/Downloads/code/markant.io/scripts/utils/pane_resizer.js","./utils/resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./utils/scroll_sync":"/home/tobloef/Downloads/code/markant.io/scripts/utils/scroll_sync.js","./utils/settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","./utils/shortcuts":"/home/tobloef/Downloads/code/markant.io/scripts/utils/shortcuts.js","./utils/unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","./viewer":"/home/tobloef/Downloads/code/markant.io/scripts/viewer.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/editor.js":[function(require,module,exports){
+},{"./editor":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/editor.js","./utils/app_functions":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/app_functions.js","./utils/document_title":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/document_title.js","./utils/error_handler":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/error_handler.js","./utils/google_analytics":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/google_analytics.js","./utils/modals/modal":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/modals/modal.js","./utils/modals/settings_modal":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/modals/settings_modal.js","./utils/navbar":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/navbar.js","./utils/pane_resizer":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/pane_resizer.js","./utils/resource_loader":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/resource_loader.js","./utils/scroll_sync":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/scroll_sync.js","./utils/settings_helper":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/settings_helper.js","./utils/shortcuts":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/shortcuts.js","./utils/unsaved_changes":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/unsaved_changes.js","./viewer":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/viewer.js","jquery":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/jquery/dist/jquery.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/editor.js":[function(require,module,exports){
 // Main module for the editor logic.
 ;(function() {
 	const resourceLoader = require("./utils/resource_loader");
@@ -54891,7 +54380,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"./utils/resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./utils/settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","codemirror":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/lib/codemirror.js","codemirror/addon/edit/continuelist":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/addon/edit/continuelist.js","codemirror/mode/gfm/gfm":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/mode/gfm/gfm.js","codemirror/mode/markdown/markdown":"/home/tobloef/Downloads/code/markant.io/node_modules/codemirror/mode/markdown/markdown.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/app_functions.js":[function(require,module,exports){
+},{"./utils/resource_loader":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/resource_loader.js","./utils/settings_helper":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/settings_helper.js","codemirror":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/codemirror/lib/codemirror.js","codemirror/addon/edit/continuelist":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/codemirror/addon/edit/continuelist.js","codemirror/mode/gfm/gfm":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/codemirror/mode/gfm/gfm.js","codemirror/mode/markdown/markdown":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/codemirror/mode/markdown/markdown.js","jquery":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/jquery/dist/jquery.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/app_functions.js":[function(require,module,exports){
 // A library of various functions that can be called by the app.
 // This is kept in a seperate module, so the navbar and the shortcuts can call the same functions.
 ;(function() {
@@ -55023,7 +54512,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		};
 	};
 }());
-},{"./document_title":"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js","./exporters/html":"/home/tobloef/Downloads/code/markant.io/scripts/utils/exporters/html.js","./file_saver":"/home/tobloef/Downloads/code/markant.io/scripts/utils/file_saver.js","./markdown_import":"/home/tobloef/Downloads/code/markant.io/scripts/utils/markdown_import.js","./pane_resizer":"/home/tobloef/Downloads/code/markant.io/scripts/utils/pane_resizer.js","./resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","./text_inserter":"/home/tobloef/Downloads/code/markant.io/scripts/utils/text_inserter.js","./unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js":[function(require,module,exports){
+},{"./document_title":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/document_title.js","./exporters/html":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/exporters/html.js","./file_saver":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/file_saver.js","./markdown_import":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/markdown_import.js","./pane_resizer":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/pane_resizer.js","./resource_loader":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/resource_loader.js","./settings_helper":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/settings_helper.js","./text_inserter":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/text_inserter.js","./unsaved_changes":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/unsaved_changes.js","jquery":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/jquery/dist/jquery.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/document_title.js":[function(require,module,exports){
 // Logic for the document title input field. To properly resize the input field,
 // a hidden input field is mirroring the visible's field's text.
 ;(function() {
@@ -55114,7 +54603,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"./settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","./unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/error_handler.js":[function(require,module,exports){
+},{"./settings_helper":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/settings_helper.js","./unsaved_changes":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/unsaved_changes.js","jquery":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/jquery/dist/jquery.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/error_handler.js":[function(require,module,exports){
 // Module for handling errors and exceptions.
 ;(function() {
 	const debug = true;
@@ -55140,7 +54629,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		setUpListener
 	};
 }());
-},{}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/exporters/html.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/exporters/html.js":[function(require,module,exports){
 // Markdown to HTML exporter
 // Todo: Currently not enabled, as various functions such as Math isn't working.
 ;(function() {
@@ -55162,7 +54651,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		}
 	};
 }());
-},{"../error_handler":"/home/tobloef/Downloads/code/markant.io/scripts/utils/error_handler.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/file_saver.js":[function(require,module,exports){
+},{"../error_handler":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/error_handler.js","jquery":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/jquery/dist/jquery.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/file_saver.js":[function(require,module,exports){
 // Save a file to the user's local drive.
 ;(function() {
 	// Convert some data to a file and save it to the user's local drive with
@@ -55190,7 +54679,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/google_analytics.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/google_analytics.js":[function(require,module,exports){
 // Code snippet for initializing Google Analytics
 ;(function() {
 		(function(i, s, o, g, r, a, m) {
@@ -55209,7 +54698,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		ga('send', 'pageview');
 }());
 
-},{}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/markdown_import.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/markdown_import.js":[function(require,module,exports){
 // Logic for importing a Markdown document from the user's lcoal drive.
 // A hidden <input type="file"> tag i clicked and the user is prompted to choose the file.
 ;(function() {
@@ -55279,222 +54768,212 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"./document_title":"/home/tobloef/Downloads/code/markant.io/scripts/utils/document_title.js","./settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","./unsaved_changes":"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/markdown_it_katex.js":[function(require,module,exports){
+},{"./document_title":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/document_title.js","./settings_helper":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/settings_helper.js","./unsaved_changes":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/unsaved_changes.js","jquery":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/jquery/dist/jquery.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/markdown_it_katex.js":[function(require,module,exports){
 // KaTeX plugin for Markdown-it, original code from:
 // https://github.com/waylonflinn/markdown-it-katex
-;(function() {
-	'use strict';
 
-    if (!silent) {
+
+;(function() {
+	/* Process inline math */
+	/*
+	Like markdown-it-simplemath, this is a stripped down, simplified version of:
+	https://github.com/runarberg/markdown-it-math
+
+	It differs in that it takes (a subset of) LaTeX as input and relies on KaTeX
+	for rendering output.
+	*/
+
+	/*jslint node: true */
+	'use strict';
 
 	var katex = require('katex');
 
 	// Test if potential opening or closing delimieter
 	// Assumes that there is a "$" at state.src[pos]
 	function isValidDelim(state, pos) {
-	    var prevChar, nextChar,
-	    max = state.posMax,
-	        can_open = true,
-	        can_close = true;
+		var prevChar, nextChar,
+			max = state.posMax,
+			can_open = true,
+			can_close = true;
 
-	    prevChar = pos > 0 ? state.src.charCodeAt(pos - 1) : -1;
-	    nextChar = pos + 1 <= max ? state.src.charCodeAt(pos + 1) : -1;
+		prevChar = pos > 0 ? state.src.charCodeAt(pos - 1) : -1;
+		nextChar = pos + 1 <= max ? state.src.charCodeAt(pos + 1) : -1;
 
-	    // Check non-whitespace conditions for opening and closing, and
-	    // check that closing delimeter isn't followed by a number
-	    if (prevChar === 0x20 /* " " */ || prevChar === 0x09 /* \t */ || (nextChar >= 0x30 /* "0" */ && nextChar <= 0x39 /* "9" */ )) {
-	        can_close = false;
-	    }
-	    if (nextChar === 0x20 /* " " */ || nextChar === 0x09 /* \t */ ) {
-	        can_open = false;
-	    }
+		// Check non-whitespace conditions for opening and closing, and
+		// check that closing delimeter isn't followed by a number
+		if (prevChar === 0x20/* " " */ || prevChar === 0x09/* \t */ ||
+				(nextChar >= 0x30/* "0" */ && nextChar <= 0x39/* "9" */)) {
+			can_close = false;
+		}
+		if (nextChar === 0x20/* " " */ || nextChar === 0x09/* \t */) {
+			can_open = false;
+		}
 
-	    return {
-	        can_open: can_open,
-	        can_close: can_close
-	    };
+		return {
+			can_open: can_open,
+			can_close: can_close
+		};
 	}
 
 	function math_inline(state, silent) {
-	    var start, match, token, res, pos, esc_count;
+		var start, match, token, res, pos, esc_count;
 
-	    if (state.src[state.pos] !== "$") {
-	        return false;
-	    }
+		if (state.src[state.pos] !== "$") { return false; }
 
-	    res = isValidDelim(state, state.pos);
-	    if (!res.can_open) {
-	        if (!silent) {
-	            state.pending += "$";
-	        }
-	        state.pos += 1;
-	        return true;
-	    }
+		res = isValidDelim(state, state.pos);
+		if (!res.can_open) {
+			if (!silent) { state.pending += "$"; }
+			state.pos += 1;
+			return true;
+		}
 
-	    // First check for and bypass all properly escaped delimieters
-	    // This loop will assume that the first leading backtick can not
-	    // be the first character in state.src, which is known since
-	    // we have found an opening delimieter already.
-	    start = state.pos + 1;
-	    match = start;
-	    while ((match = state.src.indexOf("$", match)) !== -1) {
-	        // Found potential $, look for escapes, pos will point to
-	        // first non escape when complete
-	        pos = match - 1;
-	        while (state.src[pos] === "\\") {
-	            pos -= 1;
-	        }
+		// First check for and bypass all properly escaped delimieters
+		// This loop will assume that the first leading backtick can not
+		// be the first character in state.src, which is known since
+		// we have found an opening delimieter already.
+		start = state.pos + 1;
+		match = start;
+		while ( (match = state.src.indexOf("$", match)) !== -1) {
+			// Found potential $, look for escapes, pos will point to
+			// first non escape when complete
+			pos = match - 1;
+			while (state.src[pos] === "\\") { pos -= 1; }
 
-	        // Even number of escapes, potential closing delimiter found
-	        if (((match - pos) % 2) == 1) {
-	            break;
-	        }
-	        match += 1;
-	    }
+			// Even number of escapes, potential closing delimiter found
+			if ( ((match - pos) % 2) == 1 ) { break; }
+			match += 1;
+		}
 
-	    // No closing delimter found.  Consume $ and continue.
-	    if (match === -1) {
-	        if (!silent) {
-	            state.pending += "$";
-	        }
-	        state.pos = start;
-	        return true;
-	    }
+		// No closing delimter found.  Consume $ and continue.
+		if (match === -1) {
+			if (!silent) { state.pending += "$"; }
+			state.pos = start;
+			return true;
+		}
 
-	    // Check if we have empty content, ie: $$.  Do not parse.
-	    if (match - start === 0) {
-	        if (!silent) {
-	            state.pending += "$$";
-	        }
-	        state.pos = start + 1;
-	        return true;
-	    }
+		// Check if we have empty content, ie: $$.  Do not parse.
+		if (match - start === 0) {
+			if (!silent) { state.pending += "$$"; }
+			state.pos = start + 1;
+			return true;
+		}
 
-	    // Check for valid closing delimiter
-	    res = isValidDelim(state, match);
-	    if (!res.can_close) {
-	        if (!silent) {
-	            state.pending += "$";
-	        }
-	        state.pos = start;
-	        return true;
-	    }
-	        token = state.push('math_inline', 'math', 0);
-	        token.markup = "$";
-	        token.content = state.src.slice(start, match);
-	    }
+		// Check for valid closing delimiter
+		res = isValidDelim(state, match);
+		if (!res.can_close) {
+			if (!silent) { state.pending += "$"; }
+			state.pos = start;
+			return true;
+		}
 
-	    state.pos = match + 1;
-	    return true;
+		if (!silent) {
+			token         = state.push('math_inline', 'math', 0);
+			token.markup  = "$";
+			token.content = state.src.slice(start, match);
+		}
+
+		state.pos = match + 1;
+		return true;
 	}
 
-	function math_block(state, start, end, silent) {
-	    var firstLine, lastLine, next, lastPos, found = false,
-	        token,
-	        pos = state.bMarks[start] + state.tShift[start],
-	        max = state.eMarks[start]
+	function math_block(state, start, end, silent){
+		var firstLine, lastLine, next, lastPos, found = false, token,
+			pos = state.bMarks[start] + state.tShift[start],
+			max = state.eMarks[start]
 
-	    if (pos + 2 > max) {
-	        return false;
-	    }
-	    if (state.src.slice(pos, pos + 2) !== '$$') {
-	        return false;
-	    }
+		if(pos + 2 > max){ return false; }
+		if(state.src.slice(pos,pos+2)!=='$$'){ return false; }
 
-	    pos += 2;
-	    firstLine = state.src.slice(pos, max);
+		pos += 2;
+		firstLine = state.src.slice(pos,max);
 
-	    if (silent) {
-	        return true;
-	    }
-	    if (firstLine.trim().slice(-2) === '$$') {
-	        // Single line expression
-	        firstLine = firstLine.trim().slice(0, - 2);
-	        found = true;
-	    }
+		if(silent){ return true; }
+		if(firstLine.trim().slice(-2)==='$$'){
+			// Single line expression
+			firstLine = firstLine.trim().slice(0, -2);
+			found = true;
+		}
 
-	    for (next = start; !found;) {
+		for(next = start; !found; ){
 
-	        next++;
+			next++;
 
-	        if (next >= end) {
-	            break;
-	        }
+			if(next >= end){ break; }
 
-	        pos = state.bMarks[next] + state.tShift[next];
-	        max = state.eMarks[next];
+			pos = state.bMarks[next]+state.tShift[next];
+			max = state.eMarks[next];
 
-	        if (pos < max && state.tShift[next] < state.blkIndent) {
-	            // non-empty line with negative indent should stop the list:
-	            break;
-	        }
+			if(pos < max && state.tShift[next] < state.blkIndent){
+				// non-empty line with negative indent should stop the list:
+				break;
+			}
 
-	        if (state.src.slice(pos, max).trim().slice(-2) === '$$') {
-	            lastPos = state.src.slice(0, max).lastIndexOf('$$');
-	            lastLine = state.src.slice(pos, lastPos);
-	            found = true;
-	        }
+			if(state.src.slice(pos,max).trim().slice(-2)==='$$'){
+				lastPos = state.src.slice(0,max).lastIndexOf('$$');
+				lastLine = state.src.slice(pos,lastPos);
+				found = true;
+			}
 
-	    }
+		}
 
-	    state.line = next + 1;
+		state.line = next + 1;
 
-	    token = state.push('math_block', 'math', 0);
-	    token.block = true;
-	    token.content = (firstLine && firstLine.trim() ? firstLine + '\n' : '') + state.getLines(start + 1, next, state.tShift[start], true) + (lastLine && lastLine.trim() ? lastLine : '');
-	    token.map = [start, state.line];
-	    token.markup = '$$';
-	    return true;
+		token = state.push('math_block', 'math', 0);
+		token.block = true;
+		token.content = (firstLine && firstLine.trim() ? firstLine + '\n' : '')
+		+ state.getLines(start + 1, next, state.tShift[start], true)
+		+ (lastLine && lastLine.trim() ? lastLine : '');
+		token.map = [ start, state.line ];
+		token.markup = '$$';
+		return true;
 	}
 
 	module.exports = function math_plugin(md, options) {
-	    // Default options
+		// Default options
 
-	    options = options || {};
+		options = options || {};
 
-	    // set KaTeX as the renderer for markdown-it-simplemath
-	    var katexInline = function(latex) {
-	        options.displayMode = false;
-	        try {
-	            return katex.renderToString(latex, options);
-	        } catch (error) {
-	            if (options.throwOnError) {
-	                console.log(error);
-	            }
-	            return latex;
-	        }
-	    };
+		// set KaTeX as the renderer for markdown-it-simplemath
+		var katexInline = function(latex){
+			options.displayMode = false;
+			try{
+				return katex.renderToString(latex, options);
+			}
+			catch(error){
+				if(options.throwOnError){ console.log(error); }
+				return latex;
+			}
+		};
 
-	    var inlineRenderer = function(tokens, idx) {
-	        return katexInline(tokens[idx].content);
-	    };
+		var inlineRenderer = function(tokens, idx){
+			return katexInline(tokens[idx].content);
+		};
 
-	    var katexBlock = function(latex) {
-	        options.displayMode = true;
-	        try {
-	            return "<p>" + katex.renderToString(latex, options) + "</p>";
-	        } catch (error) {
-	            if (options.throwOnError) {
-	                console.log(error);
-	            }
-	            return latex;
-	        }
-	    }
+		var katexBlock = function(latex){
+			options.displayMode = true;
+			try{
+				return "<p>" + katex.renderToString(latex, options) + "</p>";
+			}
+			catch(error){
+				if(options.throwOnError){ console.log(error); }
+				return latex;
+			}
+		}
 
-	    var blockRenderer = function(tokens, idx) {
-	        return katexBlock(tokens[idx].content) + '\n';
-	    }
+		var blockRenderer = function(tokens, idx){
+			return  katexBlock(tokens[idx].content) + '\n';
+		}
 
-	    md.inline.ruler.after('escape', 'math_inline', math_inline);
-	    md.block.ruler.after('blockquote', 'math_block', math_block, {
-	        alt: ['paragraph', 'reference', 'blockquote', 'list']
-	    });
-	    md.renderer.rules.math_inline = inlineRenderer;
-	    md.renderer.rules.math_block = blockRenderer;
+		md.inline.ruler.after('escape', 'math_inline', math_inline);
+		md.block.ruler.after('blockquote', 'math_block', math_block, {
+			alt: [ 'paragraph', 'reference', 'blockquote', 'list' ]
+		});
+		md.renderer.rules.math_inline = inlineRenderer;
+		md.renderer.rules.math_block = blockRenderer;
 	};
 }());
 
-},{"katex":"/home/tobloef/Downloads/code/markant.io/node_modules/katex/katex.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/modal.js":[function(require,module,exports){
+},{"katex":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/katex/katex.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/modals/modal.js":[function(require,module,exports){
 // Logic for the general modal UI.
 ;(function() {
 	const $ = require("jquery");
@@ -55518,7 +54997,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	});
 }());
 
-},{"jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/modals/settings_modal.js":[function(require,module,exports){
+},{"jquery":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/jquery/dist/jquery.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/modals/settings_modal.js":[function(require,module,exports){
 // Logic for the user settings modal.
 ;(function() {
 	const $ = require("jquery");
@@ -55612,7 +55091,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	}
 }());
 
-},{"../settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/navbar.js":[function(require,module,exports){
+},{"../settings_helper":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/settings_helper.js","jquery":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/jquery/dist/jquery.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/navbar.js":[function(require,module,exports){
 // Logic for the top navigation bar (navbar) in the app.
 ;(function() {
 	const $ = require("jquery");
@@ -55684,7 +55163,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		setVisibilityIcon
 	};
 }());
-},{"./app_functions":"/home/tobloef/Downloads/code/markant.io/scripts/utils/app_functions.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/pane_resizer.js":[function(require,module,exports){
+},{"./app_functions":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/app_functions.js","jquery":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/jquery/dist/jquery.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/pane_resizer.js":[function(require,module,exports){
 // Handler for resizing the two panes. It handles the logic of the dragable bar in
 // the middle and the buttons to open collapsed panes.
 ;(function() {
@@ -55916,7 +55395,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"./navbar":"/home/tobloef/Downloads/code/markant.io/scripts/utils/navbar.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js":[function(require,module,exports){
+},{"./navbar":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/navbar.js","jquery":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/jquery/dist/jquery.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/resource_loader.js":[function(require,module,exports){
 // Logic to load scripts and styles from an url.
 // Used for loading both internal and external resources.
 ;(function() {
@@ -55960,7 +55439,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/scroll_sync.js":[function(require,module,exports){
+},{"jquery":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/jquery/dist/jquery.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/scroll_sync.js":[function(require,module,exports){
 // Logic for syncing the scrollbars of the editor and the viewer panes.
 ;(function() {
 	const $ = require("jquery");
@@ -56019,7 +55498,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js":[function(require,module,exports){
+},{"jquery":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/jquery/dist/jquery.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/settings_helper.js":[function(require,module,exports){
 // Helper functions for saving and loading user settings with localstorage.
 ;(function() {
 	// Default values for various user settings.
@@ -56098,7 +55577,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		reset
 	};
 }());
-},{}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/shortcuts.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/shortcuts.js":[function(require,module,exports){
 // Logic for handling bindings for keyboard shortcuts.
 ;(function() {
 	const bindings = {};
@@ -56167,7 +55646,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		handleKeypress
 	};
 }());
-},{}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/style_updater.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/style_updater.js":[function(require,module,exports){
 // For adding rules to an existing <style> tag.
 ;(function() {
 	const $ = require("jquery");
@@ -56188,7 +55667,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js"}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/text_inserter.js":[function(require,module,exports){
+},{"jquery":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/jquery/dist/jquery.js"}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/text_inserter.js":[function(require,module,exports){
 // Logic for inserting text into the editor.
 ;(function() {
 	// Add some emphasis, like bold (**) or underscore (~~) to the selected text.
@@ -56226,7 +55705,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{}],"/home/tobloef/Downloads/code/markant.io/scripts/utils/unsaved_changes.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/unsaved_changes.js":[function(require,module,exports){
 // Small module for setting whether the user has unsaved changes.
 ;(function() {
 	const defaultMessage = "You have unsaved changes. Are you sure you want to continue?";
@@ -56245,6 +55724,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		hasChanges = value;
 	}
 
+	// Getter method for hasChanged
 	function getHasChanges() {
 		return hasChanges;
 	}
@@ -56256,7 +55736,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{}],"/home/tobloef/Downloads/code/markant.io/scripts/viewer.js":[function(require,module,exports){
+},{}],"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/viewer.js":[function(require,module,exports){
 // Main module for the HTML preview logic.
 ;(function() {
 	const $ = require("jquery");
@@ -56384,6 +55864,6 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{"./utils/markdown_it_katex":"/home/tobloef/Downloads/code/markant.io/scripts/utils/markdown_it_katex.js","./utils/resource_loader":"/home/tobloef/Downloads/code/markant.io/scripts/utils/resource_loader.js","./utils/settings_helper":"/home/tobloef/Downloads/code/markant.io/scripts/utils/settings_helper.js","./utils/style_updater":"/home/tobloef/Downloads/code/markant.io/scripts/utils/style_updater.js","highlight.js":"/home/tobloef/Downloads/code/markant.io/node_modules/highlight.js/lib/index.js","jquery":"/home/tobloef/Downloads/code/markant.io/node_modules/jquery/dist/jquery.js","markdown-it":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it/index.js","markdown-it-lazy-headers":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-lazy-headers/index.js","markdown-it-mathjax":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-mathjax/markdown-it-mathjax.js","markdown-it-sanitizer":"/home/tobloef/Downloads/code/markant.io/node_modules/markdown-it-sanitizer/index.js"}]},{},["/home/tobloef/Downloads/code/markant.io/scripts/app.js"])
+},{"./utils/markdown_it_katex":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/markdown_it_katex.js","./utils/resource_loader":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/resource_loader.js","./utils/settings_helper":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/settings_helper.js","./utils/style_updater":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/utils/style_updater.js","highlight.js":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/highlight.js/lib/index.js","jquery":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/jquery/dist/jquery.js","markdown-it":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it/index.js","markdown-it-lazy-headers":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it-lazy-headers/index.js","markdown-it-mathjax":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it-mathjax/markdown-it-mathjax.js","markdown-it-sanitizer":"/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/node_modules/markdown-it-sanitizer/index.js"}]},{},["/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io/scripts/app.js"])
 
 //# sourceMappingURL=app-bundle.js.map

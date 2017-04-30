@@ -2,18 +2,18 @@
   "_args": [
     [
       {
-        "raw": "katex",
+        "raw": "katex@^0.7.1",
         "scope": null,
         "escapedName": "katex",
         "name": "katex",
-        "rawSpec": "",
-        "spec": "latest",
-        "type": "tag"
+        "rawSpec": "^0.7.1",
+        "spec": ">=0.7.1 <0.8.0",
+        "type": "range"
       },
-      "/home/tobloef/Downloads/code/markant.io"
+      "/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io"
     ]
   ],
-  "_from": "katex@latest",
+  "_from": "katex@>=0.7.1 <0.8.0",
   "_id": "katex@0.7.1",
   "_inCache": true,
   "_location": "/katex",
@@ -29,23 +29,22 @@
   "_npmVersion": "3.10.10",
   "_phantomChildren": {},
   "_requested": {
-    "raw": "katex",
+    "raw": "katex@^0.7.1",
     "scope": null,
     "escapedName": "katex",
     "name": "katex",
-    "rawSpec": "",
-    "spec": "latest",
-    "type": "tag"
+    "rawSpec": "^0.7.1",
+    "spec": ">=0.7.1 <0.8.0",
+    "type": "range"
   },
   "_requiredBy": [
-    "#USER",
     "/"
   ],
   "_resolved": "https://registry.npmjs.org/katex/-/katex-0.7.1.tgz",
   "_shasum": "06bb5298efad05e1e7228035ba8e1591f3061b8f",
   "_shrinkwrap": null,
-  "_spec": "katex",
-  "_where": "/home/tobloef/Downloads/code/markant.io",
+  "_spec": "katex@^0.7.1",
+  "_where": "/mnt/c/Users/tobloef/Google Drive/Projekter/Code/markant.io",
   "bin": {
     "katex": "cli.js"
   },
