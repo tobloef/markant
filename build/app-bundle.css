@@ -19,6 +19,17 @@
   height: 100%;
 }
 
+.navbar-icon {
+  font-size: 35px;
+  float: right;
+  color: white;
+  padding-right: 10px;
+  padding-left: 5px;
+  padding-top: 6px;
+  box-sizing: border-box;
+  display: inline-block;
+}
+
 .navbar-button {
   min-width: 60px;
 }
@@ -65,6 +76,11 @@
 
 .dropdown-content li:not(.dropdown-divider):hover {
   background-color: #2780e3;
+}
+
+.dropdown-content svg {
+  padding-right: 7px;
+  width: 1.28571429em;
 }
 
 .dropdown-content i {

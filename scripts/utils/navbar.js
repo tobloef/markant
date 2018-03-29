@@ -46,7 +46,9 @@
 
 		// When the dropdown item is clicked, call the appropriate function.
 		$links.on("click", function(event) {
-			event.preventDefault();
+			if ($(this).attr("href") === "#") {
+				event.preventDefault();
+			}
 			const id = $(this).attr("id");
 			if (id in idFunctionMap) {
 				idFunctionMap[id]($(this));
@@ -66,6 +68,6 @@
 
 	module.exports = {
 		initialize,
-		setVisibilityIcon
+		setVisibilityIcon,
 	};
 }());
