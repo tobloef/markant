@@ -1,5 +1,7 @@
 // Helper functions for saving and loading user settings with localstorage.
 ;(function() {
+	const prefix = "markant";
+	
 	// Default values for various user settings.
 	const defaultValues = {
 		"editorFontFamily": "monospace",
@@ -31,7 +33,7 @@
 	function getSetting(key) {
 		let setting;
 		try {
-			setting = JSON.parse(localStorage.getItem(key));
+			setting = JSON.parse(localStorage.getItem(prefix+key));
 		} catch (exception) {
 			// Ignored
 		}
@@ -48,7 +50,7 @@
 			value = getDefaultValue(key);
 		}
 		try {
-			localStorage.setItem(key, JSON.stringify(value));
+			localStorage.setItem(prefix+key, JSON.stringify(value));
 		} catch (exception) {
 			console.error(`Error saving setting.\nKey: ${key}\nValue: ${value}\n`);
 		}
