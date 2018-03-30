@@ -14,7 +14,6 @@
 	const navbar = require("./utils/navbar");
 	const settings = require("./utils/settings_helper");
 	require("./utils/document_title");
-	require("./utils/google_analytics");
 	require("./utils/modals/modal");
 	require("./utils/modals/settings_modal");
 
