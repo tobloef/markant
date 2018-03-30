@@ -6,14 +6,14 @@
 
 	loadSettings();
 	// WHen the save button is clicked, save the user's settings and close the modal
-	$("#modal-settings-save").on("click", function() {
+	$("#modal-settings-save").on("click touchstart", function() {
 		saveSettings();
 		$(this).closest(".modal").removeClass("active");
 		unsavedChanges.setHasChanges(false);
 		window.location.reload();
 	});
 	// When the reset button is clicked, reset the user's settings and load the new values.
-	$("#modal-settings-reset").on("click", function() {
+	$("#modal-settings-reset").on("click touchstart", function() {
 		resetSettings();
 		loadSettings();
 	});

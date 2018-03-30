@@ -45,7 +45,7 @@
 		const $links = $(".navbar a");
 
 		// When the dropdown item is clicked, call the appropriate function.
-		$links.on("click", function(event) {
+		$links.on("click touchstart", function(event) {
 			if ($(this).attr("href") === "#") {
 				event.preventDefault();
 			}
@@ -57,7 +57,7 @@
 		});
 
 		// Close all open dropdowns if the user clicks anywhere but the dropdown.
-		$(document).click(function(event) {
+		$(document).on("click touchstart", function(event) {
 			closeDropdowns();
 			const $navbarDropdown = $(event.target).parent(".navbar-dropdown");
 			if ($navbarDropdown.length !== 0) {

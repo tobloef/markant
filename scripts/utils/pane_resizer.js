@@ -52,8 +52,8 @@
 
 	// When the buttons to open a collapsed pane is pressed,
 	// open the appropriate pane.
-	$editorCollapseButton.on("click", toggleViewer);
-	$viewerCollapseButton.on("click", toggleEditor);
+	$editorCollapseButton.on("click touchstart", toggleViewer);
+	$viewerCollapseButton.on("click touchstart", toggleEditor);
 
 	$dragbar.on("mousedown", function(mousedownEvent) {
 		dragging = true;
@@ -173,7 +173,7 @@
 			$editorCollapseButton.hide();
 		}
 		const leftPaneHasScrollbar = $editorScrollbar.height() > 0;
-		let rightOffset = 29;
+		const rightOffset = 29;
 		$editorCollapseButton.css("left", `calc(100% - ${rightOffset}px)`);
 		if (editorPanePercentage === 0) {
 			$viewerCollapseButton.css("margin-left", "5px");
@@ -190,11 +190,11 @@
 				viewerPanePercentage = oldViewerPanePercentage;
 			} else {
 				editorPanePercentage = 100;
-				viewerPanePercentage = 0
+				viewerPanePercentage = 0;
 			}
 		} else {
 			editorPanePercentage = 0;
-			viewerPanePercentage = 100
+			viewerPanePercentage = 100;
 		}
 		resizePanesToPercentage(editorPanePercentage, viewerPanePercentage);
 		setNavbarIconVisibility();
@@ -208,11 +208,11 @@
 				viewerPanePercentage = oldViewerPanePercentage;
 			} else {
 				editorPanePercentage = 0;
-				viewerPanePercentage = 100
+				viewerPanePercentage = 100;
 			}
 		} else {
 			editorPanePercentage = 100;
-			viewerPanePercentage = 0
+			viewerPanePercentage = 0;
 		}
 		resizePanesToPercentage(editorPanePercentage, viewerPanePercentage);
 		setNavbarIconVisibility();
@@ -224,7 +224,7 @@
 		}
 		return {
 			toggleViewer,
-			toggleEditor
-		}
+			toggleEditor,
+		};
 	};
 }());
