@@ -54213,7 +54213,6 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	const navbar = require("./utils/navbar");
 	const settings = require("./utils/settings_helper");
 	require("./utils/document_title");
-	require("./utils/google_analytics");
 	require("./utils/modals/modal");
 	require("./utils/modals/settings_modal");
 
@@ -54292,7 +54291,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	}
 }());
 
-},{"./editor":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/editor.js","./utils/app_functions":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/app_functions.js","./utils/document_title":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/document_title.js","./utils/error_handler":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/error_handler.js","./utils/google_analytics":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/google_analytics.js","./utils/modals/modal":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/modals/modal.js","./utils/modals/settings_modal":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/modals/settings_modal.js","./utils/navbar":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/navbar.js","./utils/pane_resizer":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/pane_resizer.js","./utils/resource_loader":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/resource_loader.js","./utils/scroll_sync":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/scroll_sync.js","./utils/settings_helper":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/settings_helper.js","./utils/shortcuts":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/shortcuts.js","./utils/unsaved_changes":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/unsaved_changes.js","./viewer":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/viewer.js","jquery":"/mnt/c/Users/tobloef/Code/Archive/markant.io/node_modules/jquery/dist/jquery.js"}],"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/editor.js":[function(require,module,exports){
+},{"./editor":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/editor.js","./utils/app_functions":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/app_functions.js","./utils/document_title":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/document_title.js","./utils/error_handler":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/error_handler.js","./utils/modals/modal":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/modals/modal.js","./utils/modals/settings_modal":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/modals/settings_modal.js","./utils/navbar":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/navbar.js","./utils/pane_resizer":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/pane_resizer.js","./utils/resource_loader":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/resource_loader.js","./utils/scroll_sync":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/scroll_sync.js","./utils/settings_helper":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/settings_helper.js","./utils/shortcuts":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/shortcuts.js","./utils/unsaved_changes":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/unsaved_changes.js","./viewer":"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/viewer.js","jquery":"/mnt/c/Users/tobloef/Code/Archive/markant.io/node_modules/jquery/dist/jquery.js"}],"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/editor.js":[function(require,module,exports){
 // Main module for the editor logic.
 ;(function() {
 	const resourceLoader = require("./utils/resource_loader");
@@ -54680,25 +54679,6 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	};
 }());
 
-},{}],"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/google_analytics.js":[function(require,module,exports){
-// Code snippet for initializing Google Analytics
-;(function() {
-		(function(i, s, o, g, r, a, m) {
-			i['GoogleAnalyticsObject'] = r;
-			i[r] = i[r] || function() {
-				(i[r].q = i[r].q || []).push(arguments);
-			}, i[r].l = 1 * new Date();
-			a = s.createElement(o),
-				m = s.getElementsByTagName(o)[0];
-			a.async = 1;
-			a.src = g;
-			m.parentNode.insertBefore(a, m);
-		})(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
-
-		ga('create', 'UA-73558830-7', 'auto');
-		ga('send', 'pageview');
-}());
-
 },{}],"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/markdown_import.js":[function(require,module,exports){
 // Logic for importing a Markdown document from the user's lcoal drive.
 // A hidden <input type="file"> tag i clicked and the user is prompted to choose the file.
@@ -54985,12 +54965,12 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	const $close = $(".close-modal");
 
 	// Close the modal
-	$close.on("click", function() {
+	$close.on("click touchstart", function() {
 		$(this).closest(".modal").removeClass("active");
 	});
 
 	// Switch to the clicked tab
-	$tabs.on("click", function() {
+	$tabs.on("click touchstart", function() {
 		$contents.removeClass("active");
 		$(`#${$(this).data("tab")}`).addClass("active");
 		$tabs.removeClass("active");
@@ -55007,14 +54987,14 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 	loadSettings();
 	// WHen the save button is clicked, save the user's settings and close the modal
-	$("#modal-settings-save").on("click", function() {
+	$("#modal-settings-save").on("click touchstart", function() {
 		saveSettings();
 		$(this).closest(".modal").removeClass("active");
 		unsavedChanges.setHasChanges(false);
 		window.location.reload();
 	});
 	// When the reset button is clicked, reset the user's settings and load the new values.
-	$("#modal-settings-reset").on("click", function() {
+	$("#modal-settings-reset").on("click touchstart", function() {
 		resetSettings();
 		loadSettings();
 	});
@@ -55142,7 +55122,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		const $links = $(".navbar a");
 
 		// When the dropdown item is clicked, call the appropriate function.
-		$links.on("click", function(event) {
+		$links.on("click touchstart", function(event) {
 			if ($(this).attr("href") === "#") {
 				event.preventDefault();
 			}
@@ -55154,7 +55134,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		});
 
 		// Close all open dropdowns if the user clicks anywhere but the dropdown.
-		$(document).click(function(event) {
+		$(document).on("click touchstart", function(event) {
 			closeDropdowns();
 			const $navbarDropdown = $(event.target).parent(".navbar-dropdown");
 			if ($navbarDropdown.length !== 0) {
@@ -55224,8 +55204,8 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 	// When the buttons to open a collapsed pane is pressed,
 	// open the appropriate pane.
-	$editorCollapseButton.on("click", toggleViewer);
-	$viewerCollapseButton.on("click", toggleEditor);
+	$editorCollapseButton.on("click touchstart", toggleViewer);
+	$viewerCollapseButton.on("click touchstart", toggleEditor);
 
 	$dragbar.on("mousedown", function(mousedownEvent) {
 		dragging = true;
@@ -55345,7 +55325,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			$editorCollapseButton.hide();
 		}
 		const leftPaneHasScrollbar = $editorScrollbar.height() > 0;
-		let rightOffset = 29;
+		const rightOffset = 29;
 		$editorCollapseButton.css("left", `calc(100% - ${rightOffset}px)`);
 		if (editorPanePercentage === 0) {
 			$viewerCollapseButton.css("margin-left", "5px");
@@ -55362,11 +55342,11 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 				viewerPanePercentage = oldViewerPanePercentage;
 			} else {
 				editorPanePercentage = 100;
-				viewerPanePercentage = 0
+				viewerPanePercentage = 0;
 			}
 		} else {
 			editorPanePercentage = 0;
-			viewerPanePercentage = 100
+			viewerPanePercentage = 100;
 		}
 		resizePanesToPercentage(editorPanePercentage, viewerPanePercentage);
 		setNavbarIconVisibility();
@@ -55380,11 +55360,11 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 				viewerPanePercentage = oldViewerPanePercentage;
 			} else {
 				editorPanePercentage = 0;
-				viewerPanePercentage = 100
+				viewerPanePercentage = 100;
 			}
 		} else {
 			editorPanePercentage = 100;
-			viewerPanePercentage = 0
+			viewerPanePercentage = 0;
 		}
 		resizePanesToPercentage(editorPanePercentage, viewerPanePercentage);
 		setNavbarIconVisibility();
@@ -55396,8 +55376,8 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		}
 		return {
 			toggleViewer,
-			toggleEditor
-		}
+			toggleEditor,
+		};
 	};
 }());
 
@@ -55507,6 +55487,8 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 },{"jquery":"/mnt/c/Users/tobloef/Code/Archive/markant.io/node_modules/jquery/dist/jquery.js"}],"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/settings_helper.js":[function(require,module,exports){
 // Helper functions for saving and loading user settings with localstorage.
 ;(function() {
+	const prefix = "markant";
+	
 	// Default values for various user settings.
 	const defaultValues = {
 		"editorFontFamily": "monospace",
@@ -55538,7 +55520,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 	function getSetting(key) {
 		let setting;
 		try {
-			setting = JSON.parse(localStorage.getItem(key));
+			setting = JSON.parse(localStorage.getItem(prefix+key));
 		} catch (exception) {
 			// Ignored
 		}
@@ -55555,7 +55537,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 			value = getDefaultValue(key);
 		}
 		try {
-			localStorage.setItem(key, JSON.stringify(value));
+			localStorage.setItem(prefix+key, JSON.stringify(value));
 		} catch (exception) {
 			console.error(`Error saving setting.\nKey: ${key}\nValue: ${value}\n`);
 		}
@@ -55583,6 +55565,7 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 		reset
 	};
 }());
+
 },{}],"/mnt/c/Users/tobloef/Code/Archive/markant.io/scripts/utils/shortcuts.js":[function(require,module,exports){
 // Logic for handling bindings for keyboard shortcuts.
 ;(function() {
